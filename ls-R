@@ -890,6 +890,7 @@ memdesign
 metafont-beginners
 modes
 rsfs
+tipa
 
 ./doc/fonts/ae:
 COPYING
@@ -1023,6 +1024,33 @@ README
 README
 README.type1
 
+./doc/fonts/tipa:
+00README
+00README.doc
+boxchar.sty
+codelist.sty
+gentfm.sh
+gentipa.sh
+gentipx.sh
+genxipa.sh
+genxipx.sh
+Makefile
+Makefile.doc
+Manifest.txt
+mktipapk.sh
+mkxipapk.sh
+tipa.bib
+tipaman.pdf
+tipaman.sty
+tipaman.tex
+tipaman0.tex
+tipaman1.tex
+tipaman2.tex
+tipaman3.tex
+tipaman4.tex
+vowel.pdf
+vowel.tex
+
 ./doc/generic:
 2up
 abbr
@@ -1030,6 +1058,7 @@ apnum
 around-the-bend
 autoaligne
 babel-english
+babel-hebrew
 barr
 bitelist
 borceux
@@ -1133,6 +1162,12 @@ README
 ./doc/generic/babel-english:
 english.pdf
 README
+
+./doc/generic/babel-hebrew:
+00readme.heb
+heb209.pdf
+hebinp.pdf
+hebrew.pdf
 
 ./doc/generic/barr:
 diaxydoc.pdf
@@ -2134,9 +2169,11 @@ bitset
 bookmark
 carlisle
 checklistings
+cjhebrew
 colortbl
 comprehensive
 ctanify
+datetime2-hebrew
 dickimaw
 docsurvey
 dtxtut
@@ -2147,6 +2184,7 @@ epstopdf-pkg
 etex-pkg
 etexcmds
 etoolbox
+euenc
 everyshi
 expkv-bundle
 fancyhdr
@@ -2154,6 +2192,7 @@ filehook
 first-latex-doc
 firstaid
 fix2col
+fontspec
 forest-quickstart
 geometry
 gettitlestring
@@ -2197,6 +2236,7 @@ listings-ext
 lshort-english
 luacolor
 macros2e
+makecmds
 math-into-latex-4
 maths-symbols
 memoirchapterstyles
@@ -2209,6 +2249,7 @@ pagesel
 pdfescape
 pfarrei
 pictexsum
+polyglossia
 psnfss
 pspicture
 pythontex
@@ -2232,6 +2273,7 @@ url
 visualfaq
 webguide
 xebaposter
+xkeyval
 yet-another-guide-latex2e
 
 ./doc/latex/a0poster:
@@ -2648,6 +2690,12 @@ example.tex
 Makefile
 README.md
 
+./doc/latex/cjhebrew:
+cjhebrew.pdf
+cjhebrew.tex
+cjhebtst.tex
+README
+
 ./doc/latex/colortbl:
 colortbl-DE.pdf
 colortbl-DE.tex
@@ -2692,6 +2740,10 @@ unicode2eps.pe
 
 ./doc/latex/ctanify:
 ctanify.pdf
+README
+
+./doc/latex/datetime2-hebrew:
+datetime2-hebrew.pdf
 README
 
 ./doc/latex/dickimaw:
@@ -2926,6 +2978,11 @@ etoolbox.pdf
 etoolbox.tex
 README.md
 
+./doc/latex/euenc:
+euenc.pdf
+README
+test-euxlm.ltx
+
 ./doc/latex/everyshi:
 everyshi.pdf
 README.md
@@ -2982,6 +3039,14 @@ README.md
 ./doc/latex/fix2col:
 fix2col.pdf
 README
+
+./doc/latex/fontspec:
+CHANGES.md
+fontspec-code.pdf
+fontspec-example.tex
+fontspec.pdf
+LICENSE
+README.md
 
 ./doc/latex/forest-quickstart:
 forest-quickstart.pdf
@@ -4163,6 +4228,10 @@ macros2e.tex
 Makefile
 README
 
+./doc/latex/makecmds:
+makecmds.pdf
+README
+
 ./doc/latex/math-into-latex-4:
 amsart.tpl
 amsproc.template
@@ -4368,6 +4437,25 @@ pictexsum.pdf
 pictexsum.tex
 README
 useful.sty
+
+./doc/latex/polyglossia:
+example-arabic.pdf
+example-arabic.tex
+example-chinese.pdf
+example-chinese.tex
+example-japanese.pdf
+example-japanese.tex
+example-korean.pdf
+example-korean.tex
+example-thai.pdf
+example-thai.tex
+examples.pdf
+examples.tex
+polyglossia.pdf
+polyglossia.tex
+README.md
+test-welsh.pdf
+test-welsh.tex
 
 ./doc/latex/psnfss:
 changes.txt
@@ -7010,6 +7098,21 @@ fig5.pdf
 fig6.pdf
 logo.png
 shariflogo.png
+
+./doc/latex/xkeyval:
+README
+xkeyval.bib
+xkeyval.pdf
+xkveca.cls
+xkvecb.cls
+xkvesa.sty
+xkvesb.sty
+xkvesc.sty
+xkvex1.tex
+xkvex2.tex
+xkvex3.tex
+xkvex4.tex
+xkvpream.ble
 
 ./doc/latex/yet-another-guide-latex2e:
 README
@@ -10864,6 +10967,7 @@ xeindex
 xespotcolor
 xetex-itrans
 xevlna
+xunicode
 zbmath-review-template
 
 ./doc/xelatex/arabxetex:
@@ -11164,6 +11268,9 @@ xevlna-inc.tex
 xevlna.pdf
 xevlna.tex
 
+./doc/xelatex/xunicode:
+README
+
 ./doc/xelatex/zbmath-review-template:
 figures
 README.md
@@ -11399,6 +11506,7 @@ pzdr.afm
 
 ./fonts/afm/public:
 amsfonts
+cjhebrew
 lm
 rsfs
 
@@ -11565,6 +11673,10 @@ msbm7.afm
 msbm8.afm
 msbm9.afm
 
+./fonts/afm/public/cjhebrew:
+cjheblsm.afm
+cjhebltx.afm
+
 ./fonts/afm/public/lm:
 lmb10.afm
 lmbo10.afm
@@ -11707,6 +11819,7 @@ dvips
 
 ./fonts/enc/dvips:
 base
+cjhebrew
 lm
 tetex
 
@@ -11744,6 +11857,9 @@ texmext.enc
 texmital.enc
 texmsym.enc
 texnansx.enc
+
+./fonts/enc/dvips/cjhebrew:
+cjhebltx.enc
 
 ./fonts/enc/dvips/lm:
 lm-cs.enc
@@ -11817,6 +11933,7 @@ ckx.map
 
 ./fonts/map/dvips:
 amsfonts
+cjhebrew
 cm
 dummy-space
 lm
@@ -11825,6 +11942,7 @@ psnfss
 rsfs
 symbol
 tetex
+tipa
 zapfding
 
 ./fonts/map/dvips/amsfonts:
@@ -11834,6 +11952,9 @@ cyrillic.map
 euler.map
 latxfont.map
 symbols.map
+
+./fonts/map/dvips/cjhebrew:
+cjhebrew.map
 
 ./fonts/map/dvips/cm:
 cmtext-bsr-interpolated.map
@@ -11886,6 +12007,9 @@ pdftex35.map
 ps2pk35.map
 README
 
+./fonts/map/dvips/tipa:
+tipa.map
+
 ./fonts/map/dvips/zapfding:
 uzd.map
 
@@ -11928,6 +12052,7 @@ fontmapping
 ./fonts/misc/xetex/fontmapping:
 arabxetex
 base
+polyglossia
 unimath-plain-xetex
 xetex-itrans
 xetex-tibetan
@@ -12017,6 +12142,20 @@ qx-unicode.map
 qx-unicode.tec
 tex-text.map
 tex-text.tec
+
+./fonts/misc/xetex/fontmapping/polyglossia:
+arabicdigits.map
+arabicdigits.tec
+bengalidigits.map
+bengalidigits.tec
+devanagaridigits.map
+devanagaridigits.tec
+farsidigits.map
+farsidigits.tec
+gurmukhidigits.map
+gurmukhidigits.tec
+thaidigits.map
+thaidigits.tec
 
 ./fonts/misc/xetex/fontmapping/unimath-plain-xetex:
 unimath-bb.map
@@ -12870,6 +13009,7 @@ mflogo
 modes
 rsfs
 shade
+tipa
 
 ./fonts/source/public/amsfonts:
 cmextra
@@ -13165,6 +13305,94 @@ scriptu.mf
 
 ./fonts/source/public/shade:
 shade.mf
+
+./fonts/source/public/tipa:
+tipa.mf
+tipa10.mf
+tipa12.mf
+tipa17.mf
+tipa8.mf
+tipa9.mf
+tipab10.mf
+tipabase.mf
+tipabs10.mf
+tipabx10.mf
+tipabx12.mf
+tipabx8.mf
+tipabx9.mf
+tipadiac.mf
+tipaextr.mf
+tipagerm.mf
+tipanew.mf
+tipapnct.mf
+tipaprm.def
+tiparoml.mf
+tipasb10.mf
+tipasc.mf
+tipasi10.mf
+tipasl10.mf
+tipasl12.mf
+tipasl8.mf
+tipasl9.mf
+tipass10.mf
+tipass12.mf
+tipass17.mf
+tipass8.mf
+tipass9.mf
+tipasym1.mf
+tipasym2.mf
+tipasym3.mf
+tipasym4.mf
+tipatone.mf
+tipatr.mf
+tipats10.mf
+tipatt10.mf
+tipatt12.mf
+tipatt8.mf
+tipatt9.mf
+tipx.mf
+tipx10.mf
+tipx12.mf
+tipx17.mf
+tipx8.mf
+tipx9.mf
+tipxb10.mf
+tipxbs10.mf
+tipxbx10.mf
+tipxbx12.mf
+tipxbx8.mf
+tipxbx9.mf
+tipxsb10.mf
+tipxsi10.mf
+tipxsl10.mf
+tipxsl12.mf
+tipxsl8.mf
+tipxsl9.mf
+tipxss10.mf
+tipxss12.mf
+tipxss17.mf
+tipxss8.mf
+tipxss9.mf
+tipxts10.mf
+tipxtt10.mf
+tipxtt12.mf
+tipxtt8.mf
+tipxtt9.mf
+xipa10.mf
+xipab10.mf
+xipabs10.mf
+xipaprm.def
+xipasb10.mf
+xipasi10.mf
+xipasl10.mf
+xipass10.mf
+xipx10.mf
+xipxb10.mf
+xipxbs10.mf
+xipxsb10.mf
+xipxsi10.mf
+xipxsl10.mf
+xipxss10.mf
 
 ./fonts/tfm:
 adobe
@@ -13762,6 +13990,7 @@ msyr.tfm
 ./fonts/tfm/public:
 ae
 amsfonts
+cjhebrew
 cm
 etex
 knuth-lib
@@ -13772,6 +14001,7 @@ mflogo
 pdftex
 pslatex
 rsfs
+tipa
 
 ./fonts/tfm/public/ae:
 aeb10.tfm
@@ -13931,6 +14161,14 @@ msbm6.tfm
 msbm7.tfm
 msbm8.tfm
 msbm9.tfm
+
+./fonts/tfm/public/cjhebrew:
+cjhblsm.tfm
+cjhbltx.tfm
+cjheblsm.tfm
+cjhebltx.tfm
+rcjhblsm.tfm
+rcjhbltx.tfm
 
 ./fonts/tfm/public/cm:
 cmb10.tfm
@@ -14667,6 +14905,76 @@ rsfs10.tfm
 rsfs5.tfm
 rsfs7.tfm
 
+./fonts/tfm/public/tipa:
+tipa10.tfm
+tipa12.tfm
+tipa17.tfm
+tipa8.tfm
+tipa9.tfm
+tipab10.tfm
+tipabs10.tfm
+tipabx10.tfm
+tipabx12.tfm
+tipabx8.tfm
+tipabx9.tfm
+tipasb10.tfm
+tipasi10.tfm
+tipasl10.tfm
+tipasl12.tfm
+tipasl8.tfm
+tipasl9.tfm
+tipass10.tfm
+tipass12.tfm
+tipass17.tfm
+tipass8.tfm
+tipass9.tfm
+tipats10.tfm
+tipatt10.tfm
+tipatt12.tfm
+tipatt8.tfm
+tipatt9.tfm
+tipx10.tfm
+tipx12.tfm
+tipx17.tfm
+tipx8.tfm
+tipx9.tfm
+tipxb10.tfm
+tipxbs10.tfm
+tipxbx10.tfm
+tipxbx12.tfm
+tipxbx8.tfm
+tipxbx9.tfm
+tipxsb10.tfm
+tipxsi10.tfm
+tipxsl10.tfm
+tipxsl12.tfm
+tipxsl8.tfm
+tipxsl9.tfm
+tipxss10.tfm
+tipxss12.tfm
+tipxss17.tfm
+tipxss8.tfm
+tipxss9.tfm
+tipxts10.tfm
+tipxtt10.tfm
+tipxtt12.tfm
+tipxtt8.tfm
+tipxtt9.tfm
+xipa10.tfm
+xipab10.tfm
+xipabs10.tfm
+xipasb10.tfm
+xipasi10.tfm
+xipasl10.tfm
+xipass10.tfm
+xipx10.tfm
+xipxb10.tfm
+xipxbs10.tfm
+xipxsb10.tfm
+xipxsi10.tfm
+xipxsl10.tfm
+xipxss10.tfm
+
 ./fonts/tfm/urw35vf:
 symbol
 zapfding
@@ -14683,9 +14991,11 @@ urw
 
 ./fonts/type1/public:
 amsfonts
+cjhebrew
 lm
 pdftex
 rsfs
+tipa
 
 ./fonts/type1/public/amsfonts:
 cm
@@ -14993,6 +15303,10 @@ msbm8.pfm
 msbm9.pfb
 msbm9.pfm
 
+./fonts/type1/public/cjhebrew:
+cjheblsm.pfb
+cjhebltx.pfb
+
 ./fonts/type1/public/lm:
 lmb10.pfb
 lmb10.pfm
@@ -15192,6 +15506,76 @@ rsfs5.pfm
 rsfs7.pfb
 rsfs7.pfm
 
+./fonts/type1/public/tipa:
+tipa10.pfb
+tipa12.pfb
+tipa17.pfb
+tipa8.pfb
+tipa9.pfb
+tipab10.pfb
+tipabs10.pfb
+tipabx10.pfb
+tipabx12.pfb
+tipabx8.pfb
+tipabx9.pfb
+tipasb10.pfb
+tipasi10.pfb
+tipasl10.pfb
+tipasl12.pfb
+tipasl8.pfb
+tipasl9.pfb
+tipass10.pfb
+tipass12.pfb
+tipass17.pfb
+tipass8.pfb
+tipass9.pfb
+tipats10.pfb
+tipatt10.pfb
+tipatt12.pfb
+tipatt8.pfb
+tipatt9.pfb
+tipx10.pfb
+tipx12.pfb
+tipx17.pfb
+tipx8.pfb
+tipx9.pfb
+tipxb10.pfb
+tipxbs10.pfb
+tipxbx10.pfb
+tipxbx12.pfb
+tipxbx8.pfb
+tipxbx9.pfb
+tipxsb10.pfb
+tipxsi10.pfb
+tipxsl10.pfb
+tipxsl12.pfb
+tipxsl8.pfb
+tipxsl9.pfb
+tipxss10.pfb
+tipxss12.pfb
+tipxss17.pfb
+tipxss8.pfb
+tipxss9.pfb
+tipxts10.pfb
+tipxtt10.pfb
+tipxtt12.pfb
+tipxtt8.pfb
+tipxtt9.pfb
+xipa10.pfb
+xipab10.pfb
+xipabs10.pfb
+xipasb10.pfb
+xipasi10.pfb
+xipasl10.pfb
+xipass10.pfb
+xipx10.pfb
+xipxb10.pfb
+xipxbs10.pfb
+xipxsb10.pfb
+xipxsi10.pfb
+xipxsl10.pfb
+xipxss10.pfb
+
 ./fonts/type1/urw:
 symbol
 zapfding
@@ -15209,6 +15593,7 @@ public
 
 ./fonts/vf/public:
 ae
+cjhebrew
 pslatex
 
 ./fonts/vf/public/ae:
@@ -15262,6 +15647,10 @@ aett9.vf
 laess8.vf
 laessb8.vf
 laessi8.vf
+
+./fonts/vf/public/cjhebrew:
+cjhblsm.vf
+cjhbltx.vf
 
 ./fonts/vf/public/pslatex:
 pcrr7tn.vf
@@ -16175,6 +16564,7 @@ slitest.tex
 
 ./source/generic:
 babel-english
+babel-hebrew
 bitelist
 catcodes
 dirtree
@@ -16208,6 +16598,13 @@ texdate
 ./source/generic/babel-english:
 english.dtx
 english.ins
+
+./source/generic/babel-hebrew:
+heb209.dtx
+hebinp.dtx
+hebrew.dtx
+hebrew.fdd
+hebrew.ins
 
 ./source/generic/bitelist:
 bitelist.tex
@@ -16499,14 +16896,17 @@ bookmark
 carlisle
 checklistings
 colortbl
+datetime2-hebrew
 epstopdf-pkg
 etexcmds
+euenc
 everyshi
 expkv-bundle
 fancyhdr
 filehook
 firstaid
 fix2col
+fontspec
 geometry
 gettitlestring
 graphics
@@ -16530,6 +16930,7 @@ latexfileinfo-pkgs
 letltxmacro
 listings-ext
 luacolor
+makecmds
 mflogo
 mfnfss
 natbib
@@ -16538,6 +16939,7 @@ oberdiek
 pagesel
 pdfescape
 pfarrei
+polyglossia
 pslatex
 psnfss
 pspicture
@@ -16549,6 +16951,7 @@ stringenc
 tools
 tracklang
 uniquecounter
+xkeyval
 
 ./source/latex/aalok:
 aalok.dtx
@@ -16767,6 +17170,10 @@ checklistings.ins
 colortbl.dtx
 colortbl.ins
 
+./source/latex/datetime2-hebrew:
+datetime2-hebrew.dtx
+datetime2-hebrew.ins
+
 ./source/latex/epstopdf-pkg:
 epstopdf.drv
 epstopdf.dtx
@@ -16774,6 +17181,10 @@ epstopdf.ins
 
 ./source/latex/etexcmds:
 etexcmds.dtx
+
+./source/latex/euenc:
+euenc.dtx
+Makefile
 
 ./source/latex/everyshi:
 everyshi.dtx
@@ -16803,6 +17214,43 @@ latex2e-first-aid-for-external-files.dtx
 ./source/latex/fix2col:
 fix2col.dtx
 fix2col.ins
+
+./source/latex/fontspec:
+fontspec-code-api.dtx
+fontspec-code-closing.dtx
+fontspec-code-enc.dtx
+fontspec-code-feat-aat.dtx
+fontspec-code-feat-opentype.dtx
+fontspec-code-fontload.dtx
+fontspec-code-graphite.dtx
+fontspec-code-interfaces.dtx
+fontspec-code-internal.dtx
+fontspec-code-keyval.dtx
+fontspec-code-lang.dtx
+fontspec-code-load.dtx
+fontspec-code-math.dtx
+fontspec-code-msg.dtx
+fontspec-code-opening.dtx
+fontspec-code-opentype.dtx
+fontspec-code-scripts.dtx
+fontspec-code-user.dtx
+fontspec-code-vars.dtx
+fontspec-code-xfss.dtx
+fontspec-code.ltx
+fontspec-doc-api.tex
+fontspec-doc-enc.tex
+fontspec-doc-featset.tex
+fontspec-doc-fontsel.tex
+fontspec-doc-intro.tex
+fontspec-doc-luatex.tex
+fontspec-doc-opentype.tex
+fontspec-doc-style.sty
+fontspec-doc-xetex.tex
+fontspec-example.tex
+fontspec-lua.dtx
+fontspec.dtx
+fontspec.ins
+fontspec.ltx
 
 ./source/latex/geometry:
 geometry-de.drv
@@ -16997,6 +17445,10 @@ listings-ext.ins
 ./source/latex/luacolor:
 luacolor.dtx
 
+./source/latex/makecmds:
+makecmds.dtx
+makecmds.ins
+
 ./source/latex/mflogo:
 mflogo.dtx
 mflogo.ins
@@ -17067,6 +17519,9 @@ pdfescape.dtx
 ./source/latex/pfarrei:
 pfarrei.dtx
 README
+
+./source/latex/polyglossia:
+polyglossia.dtx
 
 ./source/latex/pslatex:
 fontinst
@@ -17148,6 +17603,9 @@ tracklang.ins
 
 ./source/latex/uniquecounter:
 uniquecounter.dtx
+
+./source/latex/xkeyval:
+xkeyval.dtx
 
 ./source/latex-dev:
 base
@@ -17675,6 +18133,7 @@ atbegshi
 autoaligne
 babel
 babel-english
+babel-hebrew
 barr
 bibtex
 bigintcalc
@@ -17772,6 +18231,7 @@ ulem
 unicode-data
 uniquecounter
 upca
+xkeyval
 xlop
 yax
 
@@ -19176,6 +19636,42 @@ newzealand.ldf
 UKenglish.ldf
 USenglish.ldf
 
+./tex/generic/babel-hebrew:
+8859-8.def
+cp1255.def
+cp862.def
+he8aharoni.fd
+he8cmr.fd
+he8cmss.fd
+he8cmtt.fd
+he8david.fd
+he8drugulin.fd
+he8enc.def
+he8frankruehl.fd
+he8miriam.fd
+he8nachlieli.fd
+he8OmegaHebrew.fd
+he8yad.fd
+hebcal.sty
+hebfont.sty
+hebrew.ldf
+hebrew_newcode.sty
+hebrew_oldcode.sty
+hebrew_p.sty
+lheclas.fd
+lhecmr.fd
+lhecmss.fd
+lhecmtt.fd
+lhecrml.fd
+lheenc.def
+lhefr.fd
+lheredis.fd
+lheshold.fd
+lheshscr.fd
+lheshstk.fd
+rlbabel.def
+si960.def
+
 ./tex/generic/barr:
 diagxy.tex
 
@@ -20229,6 +20725,13 @@ uniquecounter.sty
 ./tex/generic/upca:
 upca.tex
 
+./tex/generic/xkeyval:
+keyval.tex
+pst-xkey.tex
+xkeyval.tex
+xkvtxhdr.tex
+xkvutils.tex
+
 ./tex/generic/xlop:
 xlop.sty
 xlop.tex
@@ -20267,20 +20770,24 @@ bundledoc
 carlisle
 checklistings
 chklref
+cjhebrew
 clojure-pamphlet
 colortbl
+datetime2-hebrew
 emoji
 encxvlna
 enigma
 epstopdf-pkg
 etex-pkg
 etoolbox
+euenc
 everyshi
 expkv-bundle
 fancyhdr
 filehook
 firstaid
 fix2col
+fontspec
 geometry
 graphics
 graphics-cfg
@@ -20308,6 +20815,7 @@ lm
 ltxmisc
 luacolor
 macros2e
+makecmds
 mflogo
 mfnfss
 multido
@@ -20317,6 +20825,7 @@ oberdiek
 pagesel
 pdfxup
 pfarrei
+polyglossia
 pslatex
 psnfss
 pspicture
@@ -20327,11 +20836,13 @@ rerunfilecheck
 symbol
 tex4ebook
 texosquery
+tipa
 tools
 tracklang
 url
 xebaposter
 xindex
+xkeyval
 zapfding
 
 ./tex/latex/a0poster:
@@ -20745,11 +21256,17 @@ checklistings.sty
 ./tex/latex/chklref:
 chklref.sty
 
+./tex/latex/cjhebrew:
+cjhebrew.sty
+
 ./tex/latex/clojure-pamphlet:
 clojure-pamphlet.sty
 
 ./tex/latex/colortbl:
 colortbl.sty
+
+./tex/latex/datetime2-hebrew:
+datetime2-hebrew.ldf
 
 ./tex/latex/emoji:
 emoji-table.def
@@ -20771,6 +21288,22 @@ etex.sty
 ./tex/latex/etoolbox:
 etoolbox.def
 etoolbox.sty
+
+./tex/latex/euenc:
+eu1enc.def
+eu1lmdh.fd
+eu1lmr.fd
+eu1lmss.fd
+eu1lmssq.fd
+eu1lmtt.fd
+eu1lmvtt.fd
+eu2enc.def
+eu2lmdh.fd
+eu2lmr.fd
+eu2lmss.fd
+eu2lmssq.fd
+eu2lmtt.fd
+eu2lmvtt.fd
 
 ./tex/latex/everyshi:
 everyshi-2001-05-15.sty
@@ -20806,6 +21339,13 @@ latex2e-first-aid-for-external-files.ltx
 
 ./tex/latex/fix2col:
 fix2col.sty
+
+./tex/latex/fontspec:
+fontspec-luatex.sty
+fontspec-xetex.sty
+fontspec.cfg
+fontspec.lua
+fontspec.sty
 
 ./tex/latex/geometry:
 geometry.sty
@@ -21088,6 +21628,9 @@ luacolor.sty
 ./tex/latex/macros2e:
 extlabels.sty
 
+./tex/latex/makecmds:
+makecmds.sty
+
 ./tex/latex/mflogo:
 mflogo.sty
 ulogo.fd
@@ -21156,6 +21699,268 @@ pdfxup-template.tex
 ./tex/latex/pfarrei:
 a5toa4.tex
 pfarrei.sty
+
+./tex/latex/polyglossia:
+arabicnumbers.sty
+babel-hebrewalph.def
+babelsh.def
+bengalidigits.sty
+cal-util.def
+devanagaridigits.sty
+farsical.sty
+gloss-acadien.ldf
+gloss-aeb.ldf
+gloss-af.ldf
+gloss-afb.ldf
+gloss-afrikaans.ldf
+gloss-albanian.ldf
+gloss-am.ldf
+gloss-american.ldf
+gloss-amharic.ldf
+gloss-apd.ldf
+gloss-ar-IQ.ldf
+gloss-ar-JO.ldf
+gloss-ar-LB.ldf
+gloss-ar-MR.ldf
+gloss-ar-PS.ldf
+gloss-ar-SY.ldf
+gloss-ar-YE.ldf
+gloss-ar.ldf
+gloss-arabic.ldf
+gloss-armenian.ldf
+gloss-arq.ldf
+gloss-ary.ldf
+gloss-arz.ldf
+gloss-ast.ldf
+gloss-asturian.ldf
+gloss-australian.ldf
+gloss-austrian.ldf
+gloss-ayl.ldf
+gloss-bahasa.ldf
+gloss-bahasai.ldf
+gloss-bahasam.ldf
+gloss-basque.ldf
+gloss-be-tarask.ldf
+gloss-be.ldf
+gloss-belarusian.ldf
+gloss-bengali.ldf
+gloss-bg.ldf
+gloss-bn.ldf
+gloss-bo.ldf
+gloss-bosnian.ldf
+gloss-br.ldf
+gloss-brazil.ldf
+gloss-breton.ldf
+gloss-british.ldf
+gloss-bs.ldf
+gloss-bulgarian.ldf
+gloss-ca.ldf
+gloss-canadian.ldf
+gloss-canadien.ldf
+gloss-catalan.ldf
+gloss-chinese.ldf
+gloss-ckb-Arab.ldf
+gloss-ckb-Latn.ldf
+gloss-ckb.ldf
+gloss-cop.ldf
+gloss-coptic.ldf
+gloss-croatian.ldf
+gloss-cy.ldf
+gloss-cz.ldf
+gloss-czech.ldf
+gloss-da.ldf
+gloss-danish.ldf
+gloss-de-AT-1901.ldf
+gloss-de-AT-1996.ldf
+gloss-de-AT.ldf
+gloss-de-CH-1901.ldf
+gloss-de-CH-1996.ldf
+gloss-de-CH.ldf
+gloss-de-DE-1901.ldf
+gloss-de-DE-1996.ldf
+gloss-de-DE.ldf
+gloss-de-Latf-AT-1901.ldf
+gloss-de-Latf-AT-1996.ldf
+gloss-de-Latf-AT.ldf
+gloss-de-Latf-CH-1901.ldf
+gloss-de-Latf-CH-1996.ldf
+gloss-de-Latf-CH.ldf
+gloss-de-Latf-DE-1901.ldf
+gloss-de-Latf-DE-1996.ldf
+gloss-de-Latf-DE.ldf
+gloss-de-Latf.ldf
+gloss-de.ldf
+gloss-divehi.ldf
+gloss-dsb.ldf
+gloss-dutch.ldf
+gloss-dv.ldf
+gloss-el-monoton.ldf
+gloss-el-polyton.ldf
+gloss-el.ldf
+gloss-en-AU.ldf
+gloss-en-CA.ldf
+gloss-en-GB.ldf
+gloss-en-NZ.ldf
+gloss-en-US.ldf
+gloss-en.ldf
+gloss-english.ldf
+gloss-eo.ldf
+gloss-es-ES.ldf
+gloss-es-MX.ldf
+gloss-es.ldf
+gloss-esperanto.ldf
+gloss-estonian.ldf
+gloss-et.ldf
+gloss-eu.ldf
+gloss-fa.ldf
+gloss-farsi.ldf
+gloss-fi.ldf
+gloss-finnish.ldf
+gloss-fr-CA.ldf
+gloss-fr-CH.ldf
+gloss-fr-FR.ldf
+gloss-fr.ldf
+gloss-french.ldf
+gloss-friulan.ldf
+gloss-friulian.ldf
+gloss-fur.ldf
+gloss-ga.ldf
+gloss-gaelic.ldf
+gloss-galician.ldf
+gloss-gd.ldf
+gloss-georgian.ldf
+gloss-german.ldf
+gloss-germanb.ldf
+gloss-gl.ldf
+gloss-grc.ldf
+gloss-greek.ldf
+gloss-he.ldf
+gloss-hebrew.ldf
+gloss-hi.ldf
+gloss-hindi.ldf
+gloss-hr.ldf
+gloss-hsb.ldf
+gloss-hu.ldf
+gloss-hungarian.ldf
+gloss-hy.ldf
+gloss-ia.ldf
+gloss-icelandic.ldf
+gloss-id.ldf
+gloss-interlingua.ldf
+gloss-irish.ldf
+gloss-is.ldf
+gloss-it.ldf
+gloss-italian.ldf
+gloss-ja.ldf
+gloss-japanese.ldf
+gloss-ka.ldf
+gloss-kannada.ldf
+gloss-khmer.ldf
+gloss-km.ldf
+gloss-kmr-Arab.ldf
+gloss-kmr-Latn.ldf
+gloss-kmr.ldf
+gloss-kn.ldf
+gloss-ko.ldf
+gloss-korean.ldf
+gloss-ku-Arab.ldf
+gloss-ku-Latn.ldf
+gloss-ku.ldf
+gloss-kurdish.ldf
+gloss-kurmanji.ldf
+gloss-la-x-classic.ldf
+gloss-la-x-ecclesia.ldf
+gloss-la-x-medieval.ldf
+gloss-la.ldf
+gloss-lao.ldf
+gloss-latex.lde
+gloss-latin.ldf
+gloss-latinclassic.ldf
+gloss-latinecclesiastic.ldf
+gloss-latinmedieval.ldf
+gloss-latvian.ldf
+gloss-lithuanian.ldf
+gloss-lo.ldf
+gloss-lowersorbian.ldf
+gloss-lsorbian.ldf
+gloss-lt.ldf
+gloss-lv.ldf
+gloss-macedonian.ldf
+gloss-magyar.ldf
+gloss-malay.ldf
+gloss-malayalam.ldf
+gloss-marathi.ldf
+gloss-mk.ldf
+gloss-ml.ldf
+gloss-mn.ldf
+gloss-mongolian.ldf
+gloss-mr.ldf
+gloss-naustrian.ldf
+gloss-nb.ldf
+gloss-newzealand.ldf
+gloss-ngerman.ldf
+gloss-nko.ldf
+gloss-norsk.ldf
+gloss-norwegian.ldf
+gloss-nswissgerman.ldf
+gloss-nynorsk.ldf
+gloss-occitan.ldf
+gloss-pa.ldf
+gloss-persian.ldf
+gloss-piedmontese.ldf
+gloss-polish.ldf
+gloss-polutonikogreek.ldf
+gloss-portuges.ldf
+gloss-portuguese.ldf
+gloss-punjabi.ldf
+gloss-romanian.ldf
+gloss-romansh.ldf
+gloss-russian.ldf
+gloss-sami.ldf
+gloss-samin.ldf
+gloss-sanskrit.ldf
+gloss-scottish.ldf
+gloss-serbian.ldf
+gloss-serbianc.ldf
+gloss-slovak.ldf
+gloss-slovene.ldf
+gloss-slovenian.ldf
+gloss-sorbian.ldf
+gloss-spanish.ldf
+gloss-spanishmx.ldf
+gloss-swedish.ldf
+gloss-swissgerman.ldf
+gloss-syriac.ldf
+gloss-tamil.ldf
+gloss-telugu.ldf
+gloss-thai.ldf
+gloss-tibetan.ldf
+gloss-turkish.ldf
+gloss-turkmen.ldf
+gloss-ug.ldf
+gloss-ukrainian.ldf
+gloss-uppersorbian.ldf
+gloss-urdu.ldf
+gloss-usorbian.ldf
+gloss-uyghur.ldf
+gloss-vietnamese.ldf
+gloss-welsh.ldf
+gloss-zh-CN.ldf
+gloss-zh-TW.ldf
+gurmukhidigits.sty
+hebrewcal.sty
+hijrical.sty
+nkonumbers.sty
+polyglossia-french.lua
+polyglossia-korean.lua
+polyglossia-latin.lua
+polyglossia-punct.lua
+polyglossia-sanskrit.lua
+polyglossia-tibt.lua
+polyglossia.lua
+polyglossia.sty
+xgreek-fixes.def
+xpg-cyrillicnumbers.sty
 
 ./tex/latex/pslatex:
 pslatex.sty
@@ -21291,6 +22096,31 @@ texosquery.cfg
 texosquery.sty
 texosquery.tex
 
+./tex/latex/tipa:
+exaccent.sty
+extraipa.sty
+t3cmr.fd
+t3cmss.fd
+t3cmtt.fd
+t3enc.def
+t3phv.fd
+t3ptm.fd
+tipa.sty
+tipx.sty
+tone.sty
+ts3cmr.fd
+ts3cmss.fd
+ts3cmtt.fd
+ts3enc.def
+ts3phv.fd
+ts3ptm.fd
+utipx.fd
+utipxss.fd
+utipxtt.fd
+uxipx.fd
+uxipxss.fd
+vowel.sty
+
 ./tex/latex/tools:
 .tex
 afterpage.sty
@@ -21352,6 +22182,12 @@ xebaposter.cls
 
 ./tex/latex/xindex:
 xindex.sty
+
+./tex/latex/xkeyval:
+pst-xkey.sty
+xkeyval.sty
+xkvltxp.sty
+xkvview.sty
 
 ./tex/latex/zapfding:
 uuzd.fd
@@ -22801,6 +23637,7 @@ xespotcolor
 xetex-pstricks
 xetexconfig
 xevlna
+xunicode
 zbmath-review-template
 
 ./tex/xelatex/arabxetex:
@@ -22892,6 +23729,9 @@ crop.cfg
 
 ./tex/xelatex/xevlna:
 xevlna.sty
+
+./tex/xelatex/xunicode:
+xunicode.sty
 
 ./tex/xelatex/zbmath-review-template:
 zb-basics.sty
