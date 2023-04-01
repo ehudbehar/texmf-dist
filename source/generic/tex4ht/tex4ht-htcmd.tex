@@ -1,0 +1,803 @@
+% $Id: tex4ht-htcmd.tex 748 2020-06-29 22:18:30Z karl $
+%       tex tex4ht-htcmd
+% or ht tex tex4ht-htcmd
+%
+% htcmd is apparently not used for anything, but this .tex file is
+% preserved for history.
+% 
+% htcmd OPTFLAG CMDLINE  passed CMDLINE to system(), translating each
+% forward slash into a single or double backslash for OPTFLAG set to
+% -slash or -dslash respectively.
+%
+% Copyright 2009-2020 TeX Users Group
+% Copyright 1996-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\input common
+\input tex4ht.sty    
+
+\Preamble{xhtml,th4,sections+,xhtml}\EndPreamble    
+
+   \input ProTex.sty
+   \AlProTex{c,<<<>>>,`,title,list,_^}
+
+%\input tex4ht-cpright.tex (see below)
+
+\Comment{   
+}{}
+\def\CodeId#1#2{}
+
+
+\def\UnderLine#1{\ifHtml
+   \HCode{<strong>}#1\HCode{</strong>}\else\underbar{#1}\fi}
+\let\CModifyShowCode=\ModifyShowCode
+\let\CModifyOutputCode=\ModifyOutputCode
+\def\ModifyShowCode{\def\[##1({##1\UnderLine{(}}\def
+                        \;{\UnderLine{;}}\CModifyShowCode}
+   \catcode`\^=7  \catcode`\@=6  \catcode`\#=12 \catcode`\^^M=13\relax%
+\def\ModifyOutputCode{%
+\def\;{ SEP }%
+\def\[@@1(@@2)@@3;{@@1
+#ifdef ANSI
+#define SEP  ,
+(@@3)
+#undef  SEP  
+#else
+#define SEP  ;
+(@@2)@@3;
+#undef  SEP  
+#endif
+}%
+\CModifyOutputCode}%
+   \catcode`\^^M=5 \catcode`\@=12 \catcode`\#=6 \catcode`\^=13
+
+
+\let\'=\Verb
+\def\`{\expandafter\expandafter\expandafter\qts\Verb}
+\def\qts#1{`#1\aftergroup'}
+
+\def\FTP{http://www.cse.ohio-state.edu/\string~gurari/tpf/}
+
+\input tex4ht-cpright
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<htcmd.c\><<<
+/* htcmd.c (`version), generated from `jobname.tex
+   Copyright 2009-2020 TeX Users Group
+   Copyright `CopyYear.1996. Eitan M. Gurari
+   `<TeX4ht copyright`> */
+`<htcmd.h`>
+`<defines`>
+`<vars`>
+`<header functions`>
+`<functions`>
+`[
+int `<CDECL`> main(argc, argv)
+       int  argc`;  
+       Q_CHAR **argv
+;{ `<main's vars`> 
+   `<set signals`>
+#ifdef PLATFORM
+   (IGNORED) printf("htcmd.c (`version %s)\n",PLATFORM);
+#else
+   (IGNORED) printf("htcmd.c (`version)\n");
+#endif
+  `<main's init`> 
+  `<command = job args`>
+  `<make system call`>
+   return 0;
+}
+>>>
+
+
+
+\<htcmd.h\><<<
+/* **********************************************
+    Compiler options                            *
+    (uncommented | command line)                *
+------------------------------------------------*
+        Clasic C (CC)             default
+#define ANSI                      ansi-c, c++
+#define DOS_C
+#define HAVE_STRING_H             <string.h>
+#define HAVE_DIRENT_H             <dirent.h>
+#define HAVE_SYS_NDIR_H           <sys/ndir.h>
+#define HAVE_SYS_DIR_H            <sys/dir.h>
+#define HAVE_NDIR_H               <ndir.h>
+#define HAVE_IO_H                 <io.h>
+#define HAVE_UNISTD_H             <unistd.h>
+#define WIN32
+#define KPATHSEA             
+#define SYSTEM_FUNCTION_OK 
+#define CDECL                    ..........
+#define BCC32                    bordland c++
+
+*************************************************
+    Tex4ht variables                            *
+    (uncommented | command line)                *
+----------------------------------------------- */
+`<h-defines`>
+/* ******************************************** */
+`<define MSVC-1-52`>
+`<bordland: bcc32 -DBCC32 htcmd`>
+`<bordland: bcc -DBCC tex4ht`>
+`<DJGPP`>
+#ifdef DOS_C
+#define DOS
+#endif
+#ifdef DOS
+#define DOS_WIN32
+#ifndef HAVE_STRING_H
+#define HAVE_STRING_H
+#endif
+#endif
+#ifdef WIN32
+#define DOS_WIN32
+#endif
+`<h-defines DOS-WIN32`>
+`<h-defines KWIN32`>
+`<h-include`>
+`<h-defines 2`>
+>>>
+
+\<htcmd.h\><<<
+#ifdef DOS
+#define PROTOTYP
+#endif
+#ifdef ANSI
+#define PROTOTYP
+#endif
+#ifdef KWIN32
+#define PROTOTYP
+#endif
+>>>
+
+
+\<htcmd.h\><<<
+#ifdef KPATHSEA
+#ifdef WIN32
+#undef CDECL
+#define CDECL                     __cdecl
+#else
+#define CDECL
+#endif
+#endif
+>>>
+
+\<h-defines KWIN32\><<<
+#ifdef KPATHSEA
+#ifdef WIN32
+#define KWIN32  
+#endif
+#endif
+>>>
+
+
+
+\''open(file, ..._FLAGS)': All
+text files should be opened with "r" or "w"; all binary files with "rb"
+or "wb". This is the portable way and will work both under Unix and DOS;
+as Unix doesn't distinguish between text and binary files, its compilers
+will simply ignore the "b" part.
+
+  On the subject of the .lg file: you open the tex4ht.env file in binary
+mode ("rb"), which results in strange line endings in the .lg file
+(CR/CR/LF). Changing the mode to "r" fixes this.
+
+
+\<htcmd.h\><<<
+#if defined(DOS_WIN32) || defined(__MSDOS__)
+#define READ_BIN_FLAGS "rb"
+#define READ_TEXT_FLAGS "r"
+#define WRITE_BIN_FLAGS "wb"
+#define WRITE_TEXT_FLAGS "w"
+#else
+#define READ_BIN_FLAGS "r"
+#define READ_TEXT_FLAGS "r"
+#define WRITE_BIN_FLAGS "w"
+#define WRITE_TEXT_FLAGS "w"
+#endif
+>>>
+
+\<defines\><<<
+#define Q_CHAR char
+#define U_CHAR char
+#define C_CHAR char
+#define Q_NULL (Q_CHAR *) 0
+#define U_NULL (U_CHAR *) 0
+#define C_NULL (C_CHAR *) 0
+>>>
+
+
+\<defines\><<<
+#define IGNORED void
+>>>
+
+\<defines\><<<
+#ifndef EXIT_FAILURE
+#define EXIT_FAILURE 1
+#endif
+>>>
+
+
+
+\<defines\><<<
+#ifdef PROTOTYP
+#define VOID void
+#define ARG_I(x) x
+#define ARG_II(x,y) x,y
+#define ARG_III(x,y,z) x,y,z
+#define ARG_IV(x,y,z,w) x,y,z,w
+#define ARG_V(x,y,z,w,u) x,y,z,w,u
+#else
+#define VOID 
+#define ARG_I(x) 
+#define ARG_II(x,y) 
+#define ARG_III(x,y,z) 
+#define ARG_IV(x,y,z,w) 
+#define ARG_V(x,y,z,w,u) 
+#endif
+>>>
+
+
+
+\<defines\><<<
+struct sys_call_rec{
+  Q_CHAR * filter;
+  struct sys_call_rec *next;
+};
+>>>
+
+
+\<vars\><<<
+static BOOL system_yes;
+>>>
+
+
+\<defines\><<<
+struct script_struct{
+  Q_CHAR *command;
+  struct script_struct *next;
+};
+>>>
+
+\<defines\><<<
+#define NULL_SCRIPT (struct script_struct *) 0
+>>>
+
+
+\SubSection{Signals}
+
+\<h-include\><<<
+#include <signal.h>
+>>>
+
+\<header functions\><<<
+static void 
+`<CDECL`>
+sig_err(ARG_I(int));
+>>>
+
+
+
+
+\<functions\><<<
+`[
+static void
+`<CDECL`>
+sig_err(s)  int s
+;{
+  (void) signal(s,SIG_IGN);  `%ignore the signal`%
+  switch( s ){
+#ifdef SIGSEGV
+    case SIGSEGV: err_i(2); 
+#endif
+    case SIGFPE : err_i(3);  
+#if defined(SIGINT) && !defined(WIN32)
+    case SIGINT : err_i(4);
+#endif
+  } 
+  `<DJGPP signals`>
+}
+>>>
+
+
+
+
+Forgetting \`'_pascal' and \`'_cdecl' modifiers: Each C function may
+be either \`'_pascal' or \`'_cdecl'. This modifier defines how
+parameters are passed to it. Default for Smalltalk definition is
+\`'_cdecl'. Default for C functions depends on compiler settings, and
+you can use other types uncompatible with Smalltalk. In Windows API
+16-bit functions are \`'_pascal' and 32-bit \`'_cdecl'.
+ 
+
+
+\<CDECL\><<< 
+#ifdef CDECL
+CDECL
+#endif
+>>>
+ 
+
+
+
+\<set signals\><<<
+
+#ifdef SIGSEGV
+  (void) signal(SIGSEGV,sig_err);
+#endif
+  (void) signal(SIGFPE,sig_err);
+#ifdef KWIN32
+  `<KWIN32 signals`>
+#else 
+#ifdef SIGINT
+  (void) signal(SIGINT,sig_err);    `%Control-c, user interrupt`%
+#endif
+#endif
+>>>
+
+
+
+SIGFPE is handled by the C library, SIGSEGV too but not generated by
+the system, so it does nothing but is harmless 
+
+SetConsoleCtrlHandler is need to catch Ctrl+C and Ctrl+Break under
+Windows, SIGINT is not generated by the system.
+ 
+\<KWIN32 signals\><<<
+SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
+>>>
+
+
+
+SIGSEGV, SIGILL, SIGTERM not implemented in MS-DOS. They are supplied just for
+compatibility. Looks like that SIGINT is defined for windows but not for dos.
+
+\<vars\><<<
+static int system_return;
+>>>
+
+\<main's vars\><<<
+int i;
+BOOL slash, dslash;
+char *in_command, *command, *p, *q;
+>>>
+
+\<command = job args\><<<
+  in_command = (char *) malloc(1024);  
+  command = (char *) malloc(1024);  
+  in_command[0] = '\0';
+  `<kpathsea arg 0`>
+  if( argc == 1 ){ bad_arg; }
+  slash = eq_str(argv[1],"-slash") ;
+  dslash = eq_str(argv[1],"-dslash") ;
+  for(i=1+slash+dslash; i<argc; i++){
+     (IGNORED) printf("%s ", argv[i]);
+     (IGNORED) strct(in_command,argv[i]);
+     (IGNORED) strct(in_command," ");
+  }
+  (IGNORED) printf("\n");     
+>>>
+
+
+\<make system call\><<<
+p = in_command;
+q = command;
+do{
+  if( (*p != '"' ) && (*p != '\'' ) && (*p != '``' ) ){ 
+    if(slash && (*p == '/')) {
+      *(q++) = '\\'; 
+    } 
+    else if(dslash && (*p == '/')) {
+      *(q++) = '\\'; 
+      *(q++) = '\\'; 
+    } 
+    else { *(q++) =  *p;  }
+  }
+} while (*(p++) != '\0');
+(IGNORED) call_sys(command);
+>>>
+
+
+\SubSection{PreProcessor Directives}
+
+
+Symantec C++ for wid95:
+\''sc htcmd.c -mn -o+time -WA -3 -a8 -c -D_CONSOLE=1 -ohtcmd.obj'
+
+
+
+
+
+
+\<bordland: bcc32 -DBCC32 htcmd\><<<
+#ifdef BCC32
+#define WIN32 
+#define ANSI       
+#define HAVE_IO_H
+#define HAVE_STRING_H
+#define PLATFORM "ms-win32"
+#endif
+>>>
+
+% 
+
+\<bordland: bcc -DBCC tex4ht\><<<
+#ifdef BCC
+#define DOS_C
+#define ANSI       
+#define HAVE_IO_H
+#define PLATFORM "ms-dos"
+#endif
+>>>
+
+
+\<h-include\><<<
+#include <stdio.h>   `% EOF, FILE `%
+#include <stdlib.h>  `% EXIT_FAILURE `%
+>>>
+
+
+
+  Under ANSI C, all malloc stuff is declared in \`'<stdlib.h>' (which you
+also include), hence this non-standard header is redundant.
+
+
+
+
+
+\<h-include\><<<
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+>>>
+
+
+
+
+
+
+\<h-defines DOS-WIN32\><<<
+#ifdef DOS_WIN32
+#define STRUCT_DIRENT
+#endif
+>>>
+
+
+\<h-include\><<<
+#ifdef HAVE_DIRENT_H
+`<needs dirent.h`>
+#else
+#ifndef STRUCT_DIRENT
+#define STRUCT_DIRECT
+#endif
+`<needs simulated dirent.h`>
+#endif 
+>>>
+
+
+
+\<needs dirent.h\><<<
+#include <dirent.h>
+>>>
+
+
+\<needs simulated dirent.h\><<<
+#ifdef HAVE_SYS_NDIR_H
+#include <sys/ndir.h>
+#endif
+#ifdef HAVE_SYS_DIR_H
+#include <sys/dir.h>
+#endif
+#ifdef HAVE_NDIR_H
+#include <ndir.h>
+#endif
+>>>
+
+
+REPLACE EXIT with somthing that DOS also accept.
+
+
+
+
+
+
+
+\SubSection{KPATHSEA}
+
+\<h-defines 2NO\><<<
+`<h-include before KPATHSEA`>
+#ifdef KPATHSEA
+#ifndef HAVE_STRCHR
+#define  strchr  index
+#endif
+#ifndef HAVE_STRRCHR
+#define  strrchr  rindex
+#endif
+#include <kpathsea/config.h>
+#include <kpathsea/c-errno.h>
+#include <kpathsea/c-ctype.h>
+#include <kpathsea/c-fopen.h>
+#include <kpathsea/c-pathmx.h>
+#include <kpathsea/proginit.h>
+#include <kpathsea/tex-file.h>
+#include <kpathsea/tex-make.h>
+#include <signal.h>
+#if !defined(_AMIGA) && !defined(WIN32)
+#include <sys/time.h>
+#endif
+#include <fcntl.h>
+#include <setjmp.h>
+#endif `%/* KPATHSEA */`%
+`<h-include after KPATHSEA`>
+>>>
+
+\<h-defines 2\><<<
+`<h-include before KPATHSEA`>
+#ifdef KPATHSEA
+#include <kpathsea/config.h>
+#include <kpathsea/c-errno.h>
+#include <kpathsea/c-ctype.h>
+#include <kpathsea/c-fopen.h>
+#include <kpathsea/c-pathmx.h>
+#include <kpathsea/proginit.h>
+#include <kpathsea/tex-file.h>
+#include <kpathsea/tex-make.h>
+#include <signal.h>
+#if !defined(_AMIGA) && !defined(WIN32)
+#include <sys/time.h>
+#endif
+#include <fcntl.h>
+#include <setjmp.h>
+#endif `%/* KPATHSEA */`%
+`<h-include after KPATHSEA`>
+>>>
+
+
+The \`'__cdecl' is defined in KPATHSEA: kpathsea/c-protos.h 
+is defined to nothing for compilers
+other than MS.
+
+
+
+
+
+
+
+\<DJGPP\><<<
+#ifdef __DJGPP__
+#define DOS_WIN32
+#define ANSI
+#endif
+>>>
+
+
+
+
+\<DJGPP signals\><<<
+#ifdef __DJGPP__
+  if (s != SIGINT && s != SIGQUIT)
+    exit(EXIT_FAILURE);
+#endif
+>>>
+
+
+
+\<h-include before KPATHSEA\><<<
+#ifndef __DJGPP__         
+`<h-include near KPATHSEA`>
+#endif
+>>>
+
+
+
+The following is because \`'<unistd.h>
+defines F_OK in DJGPP'.
+
+\<h-include after KPATHSEA\><<<
+#ifdef __DJGPP__         
+`<h-include near KPATHSEA`>
+#endif
+>>>
+
+\<h-include near KPATHSEANO\><<<
+#ifndef F_OK
+#ifdef DOS_WIN32
+#define  F_OK 0               `% does file exist `%
+#endif
+#ifndef DOS_WIN32
+#define HAVE_UNISTD_H
+#endif
+#endif
+#ifdef HAVE_IO_H
+#include <io.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>    
+#endif
+>>>
+
+\<h-include near KPATHSEA\><<<
+#ifndef F_OK
+#ifdef DOS_WIN32
+#define  F_OK 0               `% does file exist `%
+#endif
+#ifndef KPATHSEA  
+#ifndef DOS_WIN32
+#define HAVE_UNISTD_H
+#endif
+#endif
+#endif
+#ifdef HAVE_IO_H
+#include <io.h>
+#endif
+#ifndef KPATHSEA  
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>    
+#endif
+#endif
+>>>
+
+
+\<defines\><<<
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
+#ifndef BOOL
+#define BOOL int
+#endif
+>>>
+
+
+
+
+\<defines\><<<
+#define bad_arg            err_arg(0)
+#define bad_mem             err_i(1)
+>>>
+
+
+
+
+
+
+\<header functions\><<<
+static void err_i( ARG_I(int) );
+>>>
+
+\<functions\><<<
+`[
+static void err_i(n)      int  n
+
+;{  (IGNORED) fprintf(stderr,"--- error --- ");
+    (IGNORED) fprintf(stderr, "%s", warn_err_mssg[n]);
+   exit(EXIT_FAILURE);  
+}
+>>>
+
+
+
+\<header functions\><<<
+static void err_arg( ARG_I(int) );
+>>>
+
+\<functions\><<<
+`[
+static void err_arg(n)      int  n
+
+;{  (IGNORED) fprintf(stderr,"--- error --- ");
+    (IGNORED) fprintf(stderr, "%s", warn_err_mssg[n]);
+   exit(EXIT_FAILURE);  
+}
+>>>
+
+
+
+\<vars\><<<
+static C_CHAR *warn_err_mssg[]={ `<warn and err messages`> "" };
+>>>
+
+
+
+\<warn and err messages\><<<
+"\n---------------------------------------------------------------\n\
+htcmd optional-flag command-line\n\n\
+   optional-flag:\n\
+        -slash     translate '/' into '\\'\n\
+        -dslash    translate '/' into '\\\\'\n\n\
+Example: \n\
+   htcmd t4ht name -d/WWW/temp/ -etex4ht-32.env -m644\n\
+---------------------------------------------------------------\n"
+>>>
+
+
+
+
+
+\<system exist?\><<<
+#ifdef SYSTEM_FUNCTION_OK
+0
+#else
+system( yes ) != 0
+#endif
+>>>
+
+
+
+
+
+
+
+
+\<header functions\><<<
+static void call_sys(ARG_I(Q_CHAR *));
+>>>
+
+\<functions\><<<
+`[
+static void call_sys(command)  Q_CHAR * command
+;{
+   if( *command ){
+      (IGNORED) printf("htcmd calls: %s\n", command);
+      system_return = system_yes?  (int) system(command) : -1;
+      (IGNORED) printf("%shtcmd returns: %d\n",
+            system_return? "--- Warning --- " : "", system_return );
+   }
+}
+>>>
+
+
+
+
+
+strcat should be in string.h, but c++ doesn't find it there.
+We use it just for concatenating an extension of 
+file name. Should have the interface
+\`'char *strcat( ARG_II(C_CHAR *, const Q_CHAR *) );'.
+
+\<header functions\><<<
+static void strct( ARG_II(C_CHAR *, C_CHAR *) );
+>>>
+
+\<functions\><<<
+`[
+static void strct( str1, str2 ) 
+     Q_CHAR * str1`;
+     Q_CHAR * str2
+
+;{   Q_CHAR * ch;
+   ch = str1 + (int) strlen(str1);
+   (IGNORED) strcpy( ch, str2 );
+}
+>>>
+
+
+
+\<main's init\><<<
+{                   C_CHAR   *yes = NULL;
+  system_yes = (`<system exist?`>);
+}
+>>>
+
+\<defines\><<<
+#define eq_str(x,y) (!strcmp(x,y))
+>>>
+
+
+
+
+
+
+%----------------------------------------------------
+
+\OutputCodE\<htcmd.c\>
+
+
+\bye

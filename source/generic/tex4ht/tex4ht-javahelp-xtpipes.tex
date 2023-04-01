@@ -1,0 +1,641 @@
+% $Id: tex4ht-javahelp-xtpipes.tex 740 2020-06-13 22:35:32Z karl $
+% htlatex tex4ht-javahelp-xtpipes "xhtml,next,3" "" "-d./"
+%
+% Copyright 2009-2020 TeX Users Group
+% Copyright 2002-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\documentclass{article}
+    \Configure{ProTex}{log,<<<>>>,title,list,`,[[]]}
+    \usepackage{url}
+\begin{document}
+
+\input{common}
+\input{tex4ht-cpright}
+\input{tex4ht-dir}
+
+%%%%%%%%%%%%%%%%%%
+\part{Post Processing for Html Output Mode}
+%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Outline}
+%%%%%%%%%%%%%%%%%%
+
+\AtEndDocument{\OutputCodE\<javahelp.4xt\>}
+
+\Needs{"xmllint --valid --noout javahelp.4xt"} 
+
+\<javahelp.4xt\><<<
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE xtpipes SYSTEM "xtpipes.dtd" >
+<!-- jsml.4xt (`version), generated from `jobname.tex
+     Copyright (C) 2009-2010 TeX Users Group
+     Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> -->
+<xtpipes preamble="yes" signature="javahelp.4xt (`version)">
+   <sax content-handler="xtpipes.util.ScriptsManager" 
+        lexical-handler="xtpipes.util.ScriptsManagerLH" >
+     `<tabular script`>
+     `<longtable script`>
+     `<email scriptNO`>
+     `<empty html element scriptNO`>
+   </sax>
+</xtpipes>
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{email script}
+%%%%%%%%%%%%%%%%%%
+
+\<email script\><<<
+<script element="span::email" >
+   `<set htm email links`>
+</script> 
+>>>
+
+   <set name="email" >
+      `<open xslt script`>
+      `<email templates`>
+      `<close xslt script`>
+   </set>
+   <xslt name="." xml="." xsl="email" />
+
+
+\<email templates\><<<
+<xsl:template match=" text()[contains(.,'@')] " >
+<span class="set-emails">
+      <xsl:copy>
+      </xsl:copy> 
+</span>     
+</xsl:template> 
+>>>
+
+
+\<set htm email links\><<<
+<sax name="." xml="." content-handler="tex4ht.XhtmlEmails" />
+>>>
+
+
+% \AtEndDocument{ 
+%    \OutputCodE\<XhtmlEmails.java\> 
+% } 
+% \Needs{"
+%     javac -classpath /home/4/gurari/tex4ht.dir/texmf/tex4ht/bin/tex4ht.jar
+%           XhtmlEmails.java
+%           -d /home/4/gurari/xtpipes.dir/. 
+% "} 
+ 
+\<XhtmlEmails.java\><<< 
+package tex4ht;
+/* XhtmlEmails.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+import xtpipes.XtpipesUni;
+import org.xml.sax.*;
+import org.xml.sax.helpers.DefaultHandler;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.HashMap;
+
+public class XhtmlEmails extends DefaultHandler {
+        PrintWriter out = null;
+        String data = "";
+  public XhtmlEmails(PrintWriter out, 
+                       HashMap<String,Object> scripts,
+                       Method method, PrintWriter log, boolean trace) {
+    this.out = out;
+  }
+  public void characters(char[] ch, int start, int length) {
+    data += new String(ch, start, length);
+
+//XtpipesUni.toUni(ch, start, length, "<>&");
+  }
+
+  public void startElement(String ns, String sName,
+                                      String qName,
+                                      Attributes atts) {
+      String s = "<" + qName + "\n";
+      for (int i = 0; i < atts.getLength(); i++) {
+        String name = atts.getQName(i);
+        s += (" " + name + "=\"" 
+            + XtpipesUni.toUni(atts.getValue(i), "<>&\"")
+            + "\"");
+      } 
+      s += ">";
+      `<process email data`>
+      out.print(XtpipesUni.toUni(data, "&") + s);
+      data = "";
+  }
+  public void endElement(String ns, String sName, String qName) {
+      String s = "</" + qName + ">";
+      `<process email data`>
+      out.print( XtpipesUni.toUni(data, "&") + s);
+      data = "";
+  }  
+
+}
+>>>
+
+
+\<process email data\><<<
+while( data.indexOf('@') >0 ){
+  `<clean prefix`>
+  `<clean postfix`>
+}
+data = XtpipesUni.toUni(data, "<>&");
+>>>
+
+
+
+
+\<clean prefix\><<<
+String [] pre = data.split(
+                   "[`<email name`>]*@"
+                   , 2);
+if( pre[0].endsWith("}") ){
+  if( pre[0].indexOf("{") != -1 ){
+     pre[0] = pre[0].substring( 0, pre[0].lastIndexOf("{") );        
+} }
+int len = pre[0] . length();
+if( len > 0 ){
+   out.print( XtpipesUni.toUni(pre[0], "<>&") );
+   data = data.substring(len);
+}
+>>>
+
+\<clean postfix\><<<
+String [] post = data.split(
+                   "@[`<email name`>]*"
+                   , 2);
+if( post[1] . length() > 0 ){
+  data = data.substring(0, data.length() - post[1] . length());
+}
+`<set a link to email`>
+data = post[1];
+>>>
+
+
+\<set a link to email\><<<
+if( data.indexOf("{") == -1 ){
+   out.print(
+      "<a href=\"mailto:" + XtpipesUni.toUni(data, "&") + "\">"
+      + XtpipesUni.toUni(data, "<>&")
+      + "</a>"
+   );
+} else {
+  int idx = data.indexOf('@');
+  String ext = data.substring(idx);
+  data = data.substring(0,idx);
+  `<clean group prefix`>
+}
+>>>
+
+
+
+\<clean group prefix\><<<
+while( true ){
+   pre = data.split(
+                "[`<email name`>]+"
+                , 2);    
+   if( pre.length < 2 ){
+      out.print( XtpipesUni.toUni(data + ext, "<>&") );
+      data = "";
+      break;
+   }
+   len = pre[0] . length();
+   if( len > 0 ){
+      out.print( XtpipesUni.toUni(pre[0], "<>&") );
+      data = data.substring(len);
+   }
+   data = data.substring(0, data.length() - pre[1].length());   
+   out.print(
+      "<a href=\"mailto:" + XtpipesUni.toUni(data + ext, "&") + "\">"
+      + XtpipesUni.toUni(data, "<>&")
+      + "</a>"
+   );
+   data = pre[1];
+}
+>>>
+
+\<email name\><<<
+\\p{javaLowerCase}\\p{javaUpperCase}\\d\\-_\\./&>>>
+
+
+\url{http://tools.ietf.org/html/rfc2368}
+
+\begin{verbatim}
+Alice Smith" <alice@somewhere.com>
+{alice, bob}@somewhere.com
+alice@somewhere.com, bob@somewhere.com
+\end{verbatim}
+
+%%%%%%%%%%%%%%%%%%
+\section{Long Tables}
+%%%%%%%%%%%%%%%%%%
+
+
+ 
+\<longtable script\><<<
+<script element="table::longtable" >
+   <set name="longtbl" >
+      `<open xslt script`>
+      `<longtable templates`>
+      `<close xslt script`>
+   </set>
+   <xslt name="." xml="." xsl="longtbl" />
+</script> 
+>>>
+
+
+\<longtable templates\><<<
+<xsl:template match=" table[ @class='longtable' ]
+                    / tr[ (normalize-space(.)='') ] " >
+   <xsl:if test=" normalize-space(following-sibling::*) != '' ">
+      <xsl:copy>
+         <xsl:apply-templates select="*|@*|text()|comment()" />
+      </xsl:copy>      
+   </xsl:if>
+</xsl:template> 
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Tabular}
+%%%%%%%%%%%%%%%%%%
+
+
+ 
+\<tabular script\><<<
+<script element="table::tabular" >
+   <set name="tabular" >
+      `<open xslt script`>
+      `<tabular templates`>
+      `<close xslt script`>
+   </set>
+   <xslt name="." xml="." xsl="tabular" />
+</script> 
+>>>
+
+
+\<tabular templates\><<<
+<xsl:template match=" table[ @class='tabular' ]
+                    / tr[ (normalize-space(.)='') ] " >
+
+<xsl:message terminate="no">
+OK 1
+</xsl:message>
+
+   <xsl:if test=" normalize-space(following-sibling::*) != '' ">
+      <xsl:copy>
+         <xsl:apply-templates select="*|@*|text()|comment()" />
+<xsl:message terminate="no">
+OK 2
+</xsl:message>
+      </xsl:copy>      
+   </xsl:if>
+</xsl:template> 
+>>>
+
+
+
+
+
+\<tabular templates\><<<
+<xsl:template match=" tr[ (normalize-space(.)='') 
+                          and
+                          (parent::table[ @class='tabular' ])
+                        ] " >
+
+<xsl:message terminate="no">
+OK 1
+</xsl:message>
+
+   <xsl:if test=" normalize-space(following-sibling::*) != '' ">
+      <xsl:copy>
+         <xsl:apply-templates select="*|@*|text()|comment()" />
+<xsl:message terminate="no">
+OK 2
+</xsl:message>
+      </xsl:copy>      
+   </xsl:if>
+</xsl:template> 
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Empty HTML Element Script}
+%%%%%%%%%%%%%%%%%%
+
+\<empty html element script\><<<
+<script element="meta" >
+   <set name="meta" >
+      `<open xslt script`>
+      <xsl:template match="meta" >
+         <xsl:text disable-output-escaping="yes">&lt;meta</xsl:text>
+             <xsl:apply-templates select="@*" mode="attrs" />
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text>
+      </xsl:template> 
+      `<copy attributes`>
+      `<close xslt script`>
+   </set>
+   <xslt name="." xml="." xsl="meta" />
+</script> 
+>>>
+
+
+\<empty html element script\><<< 
+<script element="area" > 
+   <set name="area" > 
+      `<open xslt script`> 
+      <xsl:template match="area" > 
+         <xsl:text disable-output-escaping="yes">&lt;area</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="area" /> 
+</script>  
+>>> 
+
+
+
+
+\<empty html element script\><<< 
+<script element="base" > 
+   <set name="base" > 
+      `<open xslt script`> 
+      <xsl:template match="base" > 
+         <xsl:text disable-output-escaping="yes">&lt;base</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="base" /> 
+</script>  
+>>> 
+
+
+
+
+ \<empty html element script\><<< 
+<script element="basefont" > 
+   <set name="basefont" > 
+      `<open xslt script`> 
+      <xsl:template match="basefont" > 
+         <xsl:text disable-output-escaping="yes">&lt;basefont</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="basefont" /> 
+</script>  
+>>> 
+
+
+
+
+ \<empty html element script\><<< 
+<script element="br" > 
+   <set name="br" > 
+      `<open xslt script`> 
+      <xsl:template match="br" > 
+         <xsl:text disable-output-escaping="yes">&lt;br</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="br" /> 
+</script>  
+>>> 
+
+
+
+
+ \<empty html element script\><<< 
+<script element="col" > 
+   <set name="col" > 
+      `<open xslt script`> 
+      <xsl:template match="col" > 
+         <xsl:text disable-output-escaping="yes">&lt;col</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="col" /> 
+</script>  
+>>> 
+
+
+
+
+ \<empty html element script\><<< 
+<script element="frame" > 
+   <set name="frame" > 
+      `<open xslt script`> 
+      <xsl:template match="frame" > 
+         <xsl:text disable-output-escaping="yes">&lt;frame</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="frame" /> 
+</script>  
+>>> 
+
+
+
+
+ \<empty html element script\><<< 
+<script element="hr" > 
+   <set name="hr" > 
+      `<open xslt script`> 
+      <xsl:template match="hr" > 
+         <xsl:text disable-output-escaping="yes">&lt;hr</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="hr" /> 
+</script>  
+>>> 
+
+
+
+
+ \<empty html element script\><<< 
+<script element="img" > 
+   <set name="img" > 
+      `<open xslt script`> 
+      <xsl:template match="img" > 
+         <xsl:text disable-output-escaping="yes">&lt;img</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="img" /> 
+</script>  
+>>> 
+
+
+
+
+ \<empty html element script\><<< 
+<script element="input" > 
+   <set name="input" > 
+      `<open xslt script`> 
+      <xsl:template match="input" > 
+         <xsl:text disable-output-escaping="yes">&lt;input</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="input" /> 
+</script>  
+>>> 
+
+
+
+
+ \<empty html element script\><<< 
+<script element="isindex" > 
+   <set name="isindex" > 
+      `<open xslt script`> 
+      <xsl:template match="isindex" > 
+         <xsl:text disable-output-escaping="yes">&lt;isindex</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="isindex" /> 
+</script>  
+>>> 
+
+
+
+
+ \<empty html element script\><<< 
+<script element="link" > 
+   <set name="link" > 
+      `<open xslt script`> 
+      <xsl:template match="link" > 
+         <xsl:text disable-output-escaping="yes">&lt;link</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="link" /> 
+</script>  
+>>> 
+
+
+
+
+ \<empty html element script\><<< 
+<script element="param" > 
+   <set name="param" > 
+      `<open xslt script`> 
+      <xsl:template match="param" > 
+         <xsl:text disable-output-escaping="yes">&lt;param</xsl:text> 
+             <xsl:apply-templates select="@*" mode="attrs" /> 
+         <xsl:text disable-output-escaping="yes">/&gt;</xsl:text> 
+      </xsl:template>  
+      `<copy attributes`> 
+      `<close xslt script`> 
+   </set> 
+   <xslt name="." xml="." xsl="param" /> 
+</script>  
+>>> 
+
+
+
+
+
+
+
+
+
+
+\<copy attributes\><<<
+<xsl:template match="@*" mode="attrs" >
+   <xsl:text> </xsl:text>
+   <xsl:value-of select="name()" />
+   <xsl:text>="</xsl:text>
+   <xsl:value-of select="." />
+   <xsl:text>"</xsl:text>
+</xsl:template>
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Shared}
+%%%%%%%%%%%%%%%%%%
+
+
+
+\<open xslt script\><<<
+<![CDATA[ 
+   <xsl:stylesheet version="1.0"
+      xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+   >
+      <xsl:output omit-xml-declaration = "yes" method="xml" />
+>>>
+
+\<close xslt script\><<<
+      <xsl:template match="*|@*|text()|comment()" >
+        <xsl:copy>
+          <xsl:apply-templates select="*|@*|text()|comment()" />
+        </xsl:copy>
+      </xsl:template>
+   </xsl:stylesheet> 
+]]>
+>>>
+
+
+
+
+\ifdojava
+\AtEndDocument{\Needs{%
+    "pushd \XTPIPES || exit 1
+     ;  
+     jar cf tex4ht.jar *
+     ;
+     popd
+     ;
+     mv tex4ht.jar \TEXMFTEXivBIN
+     ;
+     if [ ! -d \TEXMFTEXivXTPIPES\space]; then exit 1; fi
+"}}
+\fi
+
+\end{document}

@@ -1,0 +1,45 @@
+name = "standalone"
+description = """
+A simple template for the standalone class, with support for
+class options, new engines (with fontspec fallback), list of
+packages, and TikZ and corresponding libraries.
+"""
+authors = [ "Island of TeX" ]
+requirements = []
+document = '''
+\documentclass#if($options)[$options]#{end}{standalone}
+
+#if ($xetex || $luatex)
+\usepackage{fontspec}
+#else
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+#end
+#if ($packages)
+
+#foreach ($package in $packages)
+\usepackage{$package}
+#end
+#end
+#if ($tikz)
+
+\usepackage{tikz}
+#if ($libraries)
+#foreach ($library in $libraries)
+\usetikzlibrary{$library}
+#end
+#end
+#end
+
+\begin{document}
+
+\end{document}
+'''
+
+[handlers]
+xetex = "to-boolean"
+luatex = "to-boolean"
+tikz = "to-boolean"
+libraries = "to-csv-list"
+packages = "to-csv-list"
+

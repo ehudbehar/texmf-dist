@@ -1,0 +1,700 @@
+% \iffalse meta-comment
+%
+% File: expkv-pop.dtx Copyright (C) 2020-2023 Jonathan P. Spratte
+%
+% This work  may be  distributed and/or  modified under  the conditions  of the
+% LaTeX Project Public License (LPPL),  either version 1.3c  of this license or
+% (at your option) any later version.  The latest version of this license is in
+% the file:
+%
+%   http://www.latex-project.org/lppl.txt
+%
+% ------------------------------------------------------------------------------
+%
+%<*driver>^^A>>=
+\def\expkvDocNoGenerate{}
+\input expkv-bundle.ins
+\generate{\file{expkv-pop.sty}{\from{expkv-pop.dtx}{pkg}}}
+\generate{\file{expkv-pop.tex}{\from{expkv-pop.dtx}{tex}}}
+\generate{\file{t-expkv-pop.tex}{\from{expkv-pop.dtx}{ctx}}}
+\endbatchfile
+%</driver>^^A=<<
+% \fi
+%
+% \section{\expkvp}
+%^^A the LaTeX package >>=
+% \subsection{The \LaTeX\ Package}
+% Set up the \LaTeX\ package.
+% \gobbledocstriptag
+%<*pkg>
+%    \begin{macrocode}
+\RequirePackage{expkv}
+\def\ekvp@tmp
+  {%
+    \ProvidesFile{expkv-pop.tex}%
+      [\ekvpDate\space v\ekvpVersion\space a prefix oriented parser]%
+  }
+\input{expkv-pop.tex}
+\ProvidesPackage{expkv-pop}%
+  [\ekvpDate\space v\ekvpVersion\space a prefix oriented parser]
+%    \end{macrocode}
+% \gobbledocstriptag
+%</pkg>
+%^^A=<<
+%^^A the ConTeXt module >>=
+% \subsection{The \ConTeXt\ module}
+% Set up the \ConTeXt\ module.
+% \gobbledocstriptag
+%<*ctx>
+%    \begin{macrocode}
+\writestatus{loading}{ConTeXt User Module / expkv-pop}
+\usemodule[expkv]
+\unprotect
+\input expkv-pop.tex
+\writestatus{loading}
+  {ConTeXt User Module / expkv-pop / Version \ekvpVersion\space loaded}
+\protect\endinput
+%    \end{macrocode}
+% \gobbledocstriptag
+%</ctx>
+%^^A=<<
+%^^A main file >>=
+% \subsection{The Generic Code}
+% And another generic code package we need to set up.
+% \gobbledocstriptag
+%<*tex>
+%
+% Loading the generic \expkv\ package if it wasn't already loaded, utilizing
+% that \expkv\ prevents itself from loading multiple times.
+%    \begin{macrocode}
+\input expkv
+%    \end{macrocode}
+%
+% Introduce an own guard against being loaded multiple times:
+%    \begin{macrocode}
+\expandafter\ifx\csname ekvpVersion\endcsname\relax
+\else
+  \expandafter\endinput
+\fi
+%    \end{macrocode}
+%
+% \begin{macro}{\ekvpVersion,\ekvpDate}
+%   Specify the own version and date
+%    \begin{macrocode}
+\def\ekvpVersion{1.0}
+\def\ekvpDate{2023-01-23}
+%    \end{macrocode}
+% \end{macro}
+%
+% Reporting back who we are for \LaTeX\ (the package will have set up things for
+% us).
+%    \begin{macrocode}
+\csname ekvp@tmp\endcsname
+%    \end{macrocode}
+%
+% Package internal category code setup (stored to restore it at the end -- we
+% have to be careful to not lose this definition of |\ekvp@tmp| inside the
+% package).
+%    \begin{macrocode}
+\expandafter\chardef\csname ekvp@tmp\endcsname=\catcode`\@
+\catcode`\@=11
+%    \end{macrocode}
+%
+% \subsubsection{Parsing}^^A>>=
+%
+% \begin{macro}{\ekvpParse}
+% \begin{macro}[internal]
+%   {
+%     \ekvpParse@a,\ekvpParse@b,\ekvpParse@c,
+%     \ekvpParse@unsafe,\ekvpParse@unsafe@auto
+%   }
+%   Parsing should be done in two steps of expansion, hence we put
+%   |\unexpanded\expanded| around it. Next we check whether the parser is
+%   defined, and afterwards run |\ekvparse|. For that we expand it once and
+%   remove the |\unexpanded| which it uses itself.
+%    \begin{macrocode}
+\long\def\ekvpParse#1#2%
+  {%
+    \ekv@unexpanded\ekv@expanded
+      {{\expandafter\ekvpParse@a\detokenize{#1}\ekv@mark{#2}}}%
+  }
+\def\ekvpParse@a#1\ekv@mark
+  {%
+    \ekv@ifdefined{ekvp@@p@#1}%
+      {\expandafter\ekvpParse@b\csname ekvp@@p@#1\endcsname}%
+      {\ekvp@err@unknownparser{#1}\@gobble}%
+  }
+\def\ekvpParse@b#1%
+  {%
+    \ekv@ifdefined{#1{ppa}}%
+      {%
+        \expandafter\ekvpParse@c\expandafter
+          {\expandafter#1\csname#1{ppa}\endcsname}%
+      }%
+      {\ekvpParse@c{#1{}}}%
+  }
+\def\ekvpParse@c#1#2#3{#2#3}
+\ekv@expargtwice{\long\def\ekvpParse@c#1#2}%
+  {\expandafter\ekvpParse@c\ekvparse{\ekvp@k#1}{\ekvp@p#1}{#2}}
+\long\def\ekvpParse@unsafe#1#2#3{\ekv@unexpanded\ekv@expanded{{#2#3}}}
+\ekv@expargtwice{\long\def\ekvpParse@unsafe@auto#1#2#3}
+  {\expandafter\ekvpParse@unsafe\ekvparse{\ekvp@k#1#2}{\ekvp@p#1#2}{#3}}
+\ekv@expargtwice{\long\def\ekvpParse@unsafe#1#2}%
+  {\expandafter\ekvpParse@unsafe\ekvparse{\ekvp@k#1{}}{\ekvp@p#1{}}{#2}}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekvp@k}
+%   For |NoVal| we use the parser specific rule.
+%    \begin{macrocode}
+\def\ekvp@k#1{\csname #1k\endcsname#1}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekvp@ifspace,\ekvp@ifspace@}
+%   This checks whether a space is inside its argument (gobbling up to the first
+%   space and checking for an empty remainder).
+%    \begin{macrocode}
+\long\def\ekvp@ifspace#1%
+  {%
+    \ekvp@ifspace@#1 \ekv@ifempty@B\ekv@ifempty@false
+      \ekv@ifempty@A\ekv@ifempty@B\@firstoftwo
+  }
+\long\def\ekvp@ifspace@#1 % keep this space
+  {\ekv@ifempty@\ekv@ifempty@A}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekvp@p}
+% \begin{macro}[internal]{\ekvp@prefix}
+% \begin{macro}[internal]{\ekvp@prefix@a,\ekvp@prefix@b}
+%   If there should be a prefix there needs to be a space, so we check for one.
+%   Then we split the first prefix of the rest.
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekvp@prefix#1}%
+  {%
+    \ekvp@ifspace{#1}%
+      {\ekvp@prefix@a#1\ekv@stop}%
+      {\ekvp@noprefix{#1}}%
+  }
+%    \end{macrocode}
+%   A prefix is parsed with a few additional logical groups. The input |#1| is
+%   the parser's name macro, |#2| is the full item which should be parsed. And
+%   we place an additional group in which the prefix macros will be collected.
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekvp@p#1#2#3}{\ekvp@prefix{#3}#1{#2}{#3}}
+%    \end{macrocode}
+%   The prefix is |\detokenize|d and forwarded. Then we check whether it's a
+%   defined type or prefix.
+%    \begin{macrocode}
+\long\def\ekvp@prefix@a#1 % keep this space
+  {\expandafter\ekvp@prefix@b\detokenize{#1}\ekv@mark{#1}}
+\ekv@exparg{\long\def\ekvp@prefix@b#1\ekv@mark#2#3\ekv@stop#4}%
+  {%
+    \ekv@ifdefined{#4{pt}@#1}
+      {\expandafter\ekvp@prefix@pt\csname #4{pt}@#1\endcsname{#1}}%
+      {%
+        \ekv@ifdefined{#4{pp}@#1}%
+          {\expandafter\ekvp@prefix@pp\csname #4{pp}@#1\endcsname}%
+          {\@firstoftwo{\ekvp@noprefix{#2 #3}}}%
+      }%
+      {#3}#4%
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekvp@prefix@pt,\ekvp@prefix@pt@}
+%   A type ends the prefix parsing (every item can only have one type). The
+%   argument |#1| is that type macro, and in |#2| is the types name. |#3| then
+%   contains the name of the element, |#4| is the parser's name macro (which is
+%   no longer needed here), |#5| is the list of prefix macros, |#6| the entire
+%   unchanged item, and |#7| is the value provided to the current item. The
+%   prefix macro list will be stepped through, each macro will get the type
+%   name, element name, and complete unprocessed item, whereas the type macro
+%   will not receive the type string (but instead the value), which is why we
+%   put a |\@firstoftwo| there to remove the type. |\ekvp@prefix@pt@| is a
+%   helper to fetch the first prefix macro (or the type should |#5| be empty).
+%    \begin{macrocode}
+\long\def\ekvp@prefix@pt#1#2#3#4#5#6#7%
+  {%
+    \ekvp@prefix@pt@{#2}{#3}{#6}#5{\@firstoftwo#1}{#7}\ekvpEOT
+    \ekv@unexpanded{\ekvpEOA{#6}}%
+  }
+\long\def\ekvp@prefix@pt@#1#2#3#4{#4{#1}{#2}{#3}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekvp@prefix@pp}
+%   A prefix macro is added to the list of prefixes (argument |#4|) and the next
+%   prefix is searched.
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekvp@prefix@pp#1#2#3#4}{\ekvp@prefix{#2}#3{#4#1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekvp@noprefix}
+%   If no prefix was found (either because there was no space, or the first
+%   space delimited thing wasn't a valid prefix) we check if there is a notype
+%   rule or throw an error.
+%    \begin{macrocode}
+\long\def\ekvp@noprefix#1#2%
+  {%
+    \ekv@ifdefined{#2{pn}}
+      {\expandafter\ekvp@prefix@pt\csname #2{pn}\endcsname{}{#1}}
+      \ekvp@err@missingtype
+      #2%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+%^^A=<<
+%
+% \subsubsection{Defining Parsers}^^A>>=
+%
+% \begin{macro}{\ekvpNewParser}
+% \begin{macro}[internal]{\ekvpNewParser@}
+%   To define a new parser we need to assert that it doesn't already exists (if
+%   so we throw an error) and define the parser name. A parser name is defined
+%   as the macro \cs[no-index]{ekvp@@p@\meta{name}}, that macro will take one
+%   argument and build the name of a prefix or type. Additionally a new parser
+%   gets its |NoVal| rule set up as the default rule.
+%    \begin{macrocode}
+\protected\long\def\ekvpNewParser#1%
+  {\expandafter\ekvpNewParser@\detokenize{#1}\ekv@mark}
+\protected\def\ekvpNewParser@#1\ekv@mark
+  {%
+    \ekv@ifdefined{ekvp@@p@#1}%
+      {\ekvp@errm{Parser `#1' already defined}}%
+      {%
+        \expandafter\def\csname ekvp@@p@#1\endcsname##1{ekvp@@##1@#1}
+        \expandafter
+        \let\csname\csname ekvp@@p@#1\endcsname k\endcsname\ekvp@k@default
+      }%
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ekvpValueAlwaysRequired}
+% \begin{macro}[internal]{\ekvpValueAlwaysRequired@}
+%   This just changes the default |NoVal| rule to throw an error.
+%    \begin{macrocode}
+\protected\long\def\ekvpValueAlwaysRequired#1%
+  {\ekvp@parser@def{#1}\ekvpValueAlwaysRequired@{}}
+\protected\def\ekvpValueAlwaysRequired@#1%
+  {\expandafter\let\csname#1k\endcsname\ekvp@err@noval}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ekvpDefNoValue}
+% \begin{macro}[internal]{\ekvpDefNoValue@}
+%    \begin{macrocode}
+\protected\long\def\ekvpDefNoValue#1%
+  {\ekvp@parser@def{#1}\ekvpDefNoValue@\@gobble}
+\protected\long\def\ekvpDefNoValue@#1#2%
+  {%
+    \def\ekvp@tmp##1{\ekv@unexpanded{#2}}%
+    \ekv@exparg{\long\expandafter\def\csname#1k\endcsname##1##2##3}%
+      {\ekvp@tmp{##3}}%
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ekvpUseNoValueMarker}
+% \begin{macro}[internal]{\ekvpUseNoValueMarker@}
+%
+%    \begin{macrocode}
+\protected\long\def\ekvpUseNoValueMarker#1%
+  {\ekvp@parser@def{#1}\ekvpUseNoValueMarker@\@gobble}
+\protected\long\def\ekvpUseNoValueMarker@#1#2%
+  {%
+    \long\expandafter\edef\csname#1k\endcsname##1##2##3%
+      {\ekv@unexpanded{\ekvp@p}##1{##2}{##3}{\ekv@unexpanded{#2}}}%
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ekvpDefNoValuePrefix}
+% \begin{macro}[internal]{\ekvpDefNoValuePrefix@,\ekvpDefNoValuePrefix@@}
+%   This might be the most complicated of the |NoVal|-behaviour changes. The
+%   first two steps should be clear.
+%    \begin{macrocode}
+\protected\long\def\ekvpDefNoValuePrefix#1%
+  {\ekvp@parser@def{#1}\ekvpDefNoValuePrefix@\@gobbletwo}
+\protected\def\ekvpDefNoValuePrefix@#1%
+  {\expandafter\ekvpDefNoValuePrefix@@\csname#1{ppn}\endcsname#1}
+%    \end{macrocode}
+%   This step is the complicated one combining the effects of \cs{ekvpDefPrefix}
+%   with the standard |NoVal|-rule (but for which the no-value marker might have
+%   been changed), so here's what happens:
+%   We set up a temporary meaning for the control sequence name
+%   forwarded as |#1| to extract the no-value marker of the current parser. Then
+%   we set up the |NoVal|-macro of the current parser to expand to the normal
+%   parsing route, there we inject |#1| as the first prefix macro in the
+%   corresponding first argument of \cs[no-index]{ekvp@p}, and we extract the
+%   no-value marker with the |\expandafter#1|-chain. This last step might
+%   actually fail badly if \cs{ekvpValueAlwaysRequired} or \cs{ekvpDefNoValue}
+%   was used.
+%    \begin{macrocode}
+\protected\long\def\ekvpDefNoValuePrefix@@#1#2%
+  {%
+    \long\def#1\ekvp@p##1##2##3%
+      {%
+        \ekv@unexpanded{\ekvp@p}%
+          ####1{####2\ekv@unexpanded{#1}}{####3}{\ekv@unexpanded{##3}}%
+      }%
+    \long\expandafter\edef\csname#2k\endcsname##1##2##3%
+      {\expandafter\expandafter\expandafter#1\csname#2k\endcsname{}{}{}}%
+    \ekvp@parser@def@prefix#1%
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ekvpDefAutoPrefix}
+% \begin{macro}[internal]{\ekvpDefAutoPrefix@}
+%    \begin{macrocode}
+\protected\long\def\ekvpDefAutoPrefix#1%
+  {\ekvp@parser@def{#1}\ekvpDefAutoPrefix@\@gobbletwo}
+\protected\long\def\ekvpDefAutoPrefix@#1%
+  {\expandafter\ekvp@parser@def@prefix\csname#1{ppa}\endcsname}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekvp@parser@def,\ekvp@parser@def@}
+%   This just makes sure that the parser is defined and builds the parser name.
+%   |#1| should be the user-level parser name, |#2| the macro that gets the
+%   code-level parser forwarded, and |#3| should gobble all additional arguments
+%   needed by whichever frontend macro this is used for in case of an error.
+%    \begin{macrocode}
+\long\def\ekvp@parser@def#1%
+  {\expandafter\ekvp@parser@def@\detokenize{#1}\ekv@mark}
+\def\ekvp@parser@def@#1\ekv@mark#2#3%
+  {%
+    \ekv@ifdefined{ekvp@@p@#1}%
+      {\ekv@exparg{#2}{\csname ekvp@@p@#1\endcsname}}%
+      {\ekvp@errm{Parser `#1' not defined}#3}%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvpDefPrefix}
+% \begin{macro}[internal]{\ekvpDefPrefix@,\ekvp@parser@def@prefix}
+%   A prefix is stored as a macro. At first we define a temporary meaning just
+%   to make sure that the user uses only the first three arguments.
+%   The real macro is a bit more complicated. It places the user provided before
+%   action (|#3|) where it currently is, the after action (|#4|) after
+%   |\ekvpEOT| (so after the type action). It also fetches the next prefix or
+%   the type macro and forwards the arguments to it.
+%    \begin{macrocode}
+\protected\long\def\ekvpDefPrefix#1%
+  {\ekvp@parser@def{#1}\ekvpDefPrefix@\@gobblethree}
+\protected\long\def\ekvpDefPrefix@#1#2%
+  {\expandafter\ekvp@parser@def@prefix\csname#1{pp}@\detokenize{#2}\endcsname}
+\protected\long\def\ekvp@parser@def@prefix#1#2#3%
+  {%
+    \def#1##1##2##3{#2#3}%
+    \long\def#1##1##2##3##4##5\ekvpEOT
+      {\ekv@unexpanded{#2}##4{##1}{##2}{##3}##5\ekvpEOT\ekv@unexpanded{#3}}%
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ekvpDefPrefixLet,\ekvpDefPrefixStore}
+%   These are just special cases of |\ekvpDefPrefix|, so nothing complicated
+%   here.
+%    \begin{macrocode}
+\ekv@exparg{\protected\long\def\ekvpDefPrefixLet#1#2#3#4#5}%
+  {\ekvpDefPrefix{#1}{#2}{\ekvpProtect{\let#3= #4}}{\ekvpProtect{\let#3= #5}}}
+\ekv@exparg{\protected\long\def\ekvpDefPrefixStore#1#2#3#4#5}%
+  {%
+    \ekvpDefPrefix{#1}{#2}%
+      {\ekvpProtect{\edef#3{\ekv@unexpanded{#4}}}}%
+      {\ekvpProtect{\edef#3{\ekv@unexpanded{#5}}}}%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvpDefType,\ekvpDefNoType}
+% \begin{macro}[internal]{\ekvpDefType@,\ekvpDefNoType@,\ekvpDefType@NoType}
+%   A type macro and a notype-macro are pretty similar, the whole difference is
+%   the naming scheme. The macro leaves the user definition in the input and
+%   places the |\ekvpEOP| and |\ekvpEOT| markers.
+%    \begin{macrocode}
+\protected\long\def\ekvpDefType#1{\ekvp@parser@def{#1}\ekvpDefType@\@gobbletwo}
+\protected\long\def\ekvpDefType@#1#2%
+  {\ekvpDefType@NoType{#1{pt}@\detokenize{#2}}}%
+\protected\long\def\ekvpDefNoType#1{\ekvp@parser@def{#1}\ekvpDefNoType@\@gobble}
+\protected\long\def\ekvpDefNoType@#1{\ekvpDefType@NoType{#1{pn}}}
+\protected\long\def\ekvpDefType@NoType#1#2%
+  {%
+    \long\expandafter\def\csname#1\endcsname##1##2##3\ekvpEOT
+      {\ekv@unexpanded{\ekvpEOP{##2}#2\ekvpEOT{##2}}}%
+  }%
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ekvpLet}
+% \begin{macro}[internal]{\ekvpLet@a,\ekvpLet@b,\ekvpLet@c,\ekvpLet@d}
+%   Letting has an optional argument, so we can't use |\ekvp@parser@def|
+%   directly here, first we need to convert the optional argument to a normal
+%   one so that we can gobble it normally. Then we check that the two parsers
+%   are defined, and afterwards that the copy macro is. If all this is correct
+%   we do the |\let|. Since arguments are shuffled around here, I'll list them
+%   each time they get reordered (some might be curried).
+%
+%   |#1| is the parser name, |#2| the type, |#3| the new \prefix/\type\ name,
+%   |#4| the optional other parser name, |#5| the already existing
+%   \prefix/\type\ which should be copied.
+%    \begin{macrocode}
+\protected\long\def\ekvpLet#1#2#3{\ekvoptarg{\ekvpLet@a{#1}{#2}{#3}}{#1}}
+\protected\long\def\ekvpLet@a#1%
+  {\ekvp@parser@def{#1}\ekvpLet@b{\@firstoftwo\@gobblethree}}
+\protected\long\def\ekvpLet@b#1#2#3#4%
+  {\ekvp@parser@def{#4}\ekvpLet@c{\@firstoftwo\@gobblethree}#1{#2}{#3}}
+%    \end{macrocode}
+%   |#1| the other parser's macro, |#2| the parser's macro, |#3| the type, |#4|
+%   the new \prefix/\type, |#5| the already existing \prefix/\type.
+%    \begin{macrocode}
+\protected\long\def\ekvpLet@c#1#2#3%
+  {%
+    \ekv@ifdefined{ekvpLet@@\detokenize{#3}}%
+      {\expandafter\ekvpLet@d\csname ekvpLet@@\detokenize{#3}\endcsname{#1}{#2}}%
+      {\ekvp@errm{unknown type \detokenize{#3}}\@gobbletwo}%
+  }
+%    \end{macrocode}
+%   |#1| the type's macro, |#2| the other parser's macro, |#3| the parser's
+%   macro, |#4| the new \prefix/\type, |#5| the already existing \prefix/\type.
+%    \begin{macrocode}
+\protected\long\def\ekvpLet@d#1#2#3#4#5%
+  {%
+    \ekv@ifdefined{#2{#1}@\detokenize{#5}}%
+      {%
+        \expandafter\let
+          \csname#3{#1}@\detokenize{#4}\expandafter\endcsname
+          \csname#2{#1}@\detokenize{#5}\endcsname
+      }%
+      {\ekvp@errm{Undefined prefix/type \detokenize{#5} can't be copied}}%
+  }
+\def\ekvpLet@@prefix{pp}
+\def\ekvpLet@@type{pt}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+%^^A=<<
+%
+% \subsubsection{\texttt{NoVal} Handling}^^A>>=
+%
+% The idea of |NoVal| handling is taken from \pkg{expl3}. We define a marker
+% (or directly use \pkg{expl3}'s). The defined test is not as robust as
+% \pkg{expl3}'s, but pretty fast (and based on |\ekv@ifempty|).
+%
+% \begin{macro}{\ekvpIfNoVal}
+% \begin{macro}[internal]{\ekvp@novalflag,\ekvp@ifnoval}
+% \begin{macro}[internal]{\ekvp@k@default}
+%    \begin{macrocode}
+\ekv@ifdefined{c_novalue_tl}
+  {\expandafter\let\expandafter\ekvp@novalflag\csname c_novalue_tl\endcsname}
+  {%
+    \begingroup
+    \lccode`\Z=`\-
+    \lccode`\:=`\-
+    \lccode`\N=\z@
+    \lccode`\V=\z@
+    \lowercase{\endgroup\def\ekvp@novalflag{ZNoValue:}}%
+  }
+\def\ekvpIfNoVal#1%
+  {%
+    \long\def\ekvpIfNoVal##1%
+      {%
+        \ekvp@ifnoval{}##1{}?!#1??!\ekv@ifempty@B\ekv@ifempty@true
+          \ekv@ifempty@A\ekv@ifempty@B\@secondoftwo
+      }%
+    \long\def\ekvp@ifnoval##1#1##2?##3?!{\ekv@ifempty@\ekv@ifempty@A##1##2}%
+    \long\def\ekvp@k@default##1##2##3{\ekvp@p##1{##2}{##3}{#1}}%
+  }
+\expandafter\ekvpIfNoVal\expandafter{\ekvp@novalflag}
+\let\ekvp@novalflag\ekvp@undefined
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+%^^A=<<
+%
+% \subsubsection{Assertions}^^A>>=
+%
+% Assertions are just wrappers around user provided code to throw errors. Each
+% of them
+%
+% \begin{macro}{\ekvpAssertIf,\ekvpAssertIfNot}
+% \begin{macro}[internal]{\ekvpAssertIf@,\ekvpAssertIf@good,\ekvpAssert@notgood}
+%    \begin{macrocode}
+\def\ekvpAssertIf{\romannumeral\ekv@alignsafe\ekvoptarg{\ekvpAssertIf@{}}{EOT}}
+\def\ekvpAssertIfNot
+  {\romannumeral\ekv@alignsafe\ekvoptarg{\ekvpAssertIf@\else}{EOT}}
+\long\def\ekvpAssertIf@#1#2#3%
+  {%
+    #3#1\ekvpAssertIf@good\fi
+    \ekvpAssert@notgood{#2}%
+  }
+\long\def\ekvpAssertIf@good\fi\ekvpAssert@notgood#1#2%
+  {\fi\ekv@endalignsafe\ekv@zero}
+\long\def\ekvpAssert@notgood#1%
+  {%
+    \ekv@ifdefined{ekvpAssert@@#1}%
+      {\csname ekvpAssert@@#1\endcsname}%
+      {\ekvp@err@unknownmarker{#1}\ekvpAssert@@EOA}%
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ekvpAssertTF,\ekvpAssertTFNot}
+% \begin{macro}[internal]{\ekvpAssertTF@}
+%    \begin{macrocode}
+\def\ekvpAssertTF{\ekvoptarg{\ekvpAssertTF@{}}{EOT}}
+\def\ekvpAssertTFNot{\ekvoptarg{\ekvpAssertTF@{\@secondoftwo\@firstoftwo}}{EOT}}
+\long\def\ekvpAssertTF@#1#2#3%
+  {%
+    \ekv@alignsafe
+    #3#1%
+      {\ekv@endalignsafe\@gobble}%
+      {\romannumeral\ekvpAssert@notgood{#2}}%
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}
+%   {
+%     \ekvpAssertValue,\ekvpAssertNoValue,\ekvpAssertOneValue,
+%     \ekvpAssertTwoValues
+%   }
+% \begin{macro}[internal]{\ekvpAssert@further}
+% \begin{macro}[internal]{\ekvp@assert@num@args}
+%   These here are special cases of assertions. First we define a helper, the
+%   following might look like a recursive call, but we'll redefine the helper
+%   later and need this definition only temporary.
+%    \begin{macrocode}
+\ekv@exparg{\def\ekvpAssert@further#1#2#3}%
+  {\ekvoptarg{\ekvpAssert@further{#1}{#2}{#3}}{EOT}}
+%    \end{macrocode}
+%   Now the definitions, we just need to set up the tests and corresponding
+%   error messages. All this passes through the \cs{ekvpAssertTF} check (which
+%   we shortcut to its internal auxiliary function here).
+%    \begin{macrocode}
+\ekv@exparg{\def\ekvpAssertValue}%
+  {\ekvpAssert@further{\@secondoftwo\@firstoftwo}{\ekvpIfNoVal}{missing value}}
+\ekv@exparg{\def\ekvpAssertNoValue}%
+  {\ekvpAssert@further{}{\ekvpIfNoVal}{superfluous value}}
+\ekv@exparg{\def\ekvpAssertOneValue}%
+  {\ekvpAssert@further{}{\ekvp@assert@num@args\@gobble}{argument count != 1}}
+\ekv@exparg{\def\ekvpAssertTwoValues}%
+  {\ekvpAssert@further{}{\ekvp@assert@num@args\@gobbletwo}{argument count != 2}}
+\long\def\ekvp@assert@num@args#1#2%
+  {%
+    \expandafter\ekv@ifempty@\expandafter\ekv@ifempty@A#1#2\ekv@ifempty@B
+      \ekv@ifempty@true\ekv@ifempty@A\ekv@ifempty@B\@secondoftwo
+  }
+%    \end{macrocode}
+%   And finally redefine our auxiliary that just does a bit of argument
+%   reordering for us.
+%    \begin{macrocode}
+\long\def\ekvpAssert@further#1#2#3#4#5{\ekvpAssertTF@{#1}{#4}{#2{#5}}{#3}}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekvpAssert@@EOP,\ekvpAssert@@EOT,\ekvpAssert@@EOA}
+%    \begin{macrocode}
+\def\ekvpAssert@@EOA#1#2%
+  {\long\def#1##1##2#2##3{\ekvp@err{##1 at `##3'}\ekv@endalignsafe\ekv@zero}}
+\ekvpAssert@@EOA\ekvpAssert@@EOP\ekvpEOP
+\ekvpAssert@@EOA\ekvpAssert@@EOT\ekvpEOT
+\ekvpAssert@@EOA\ekvpAssert@@EOA\ekvpEOA
+%    \end{macrocode}
+% \end{macro}
+%
+%^^A=<<
+%
+% \subsubsection{Markers}^^A>>=
+%
+% \begin{macro}
+%   {\ekvpGobbleP,\ekvpGobbleT,\ekvpGobbleA,\ekvpEOP,\ekvpEOT,\ekvpEOA}
+%   Since after the |\ekvpEOT|, \emph{etc.} markers the full element is placed,
+%   they are defined as |\@gobble|, and the functions gobbling up to them gobble
+%   that argument as well.
+%    \begin{macrocode}
+\long\def\ekvpGobbleP#1\ekvpEOP#2{}
+\long\def\ekvpGobbleT#1\ekvpEOT#2{}
+\long\def\ekvpGobbleA#1\ekvpEOA#2{}
+\let\ekvpEOP\@gobble
+\let\ekvpEOT\@gobble
+\let\ekvpEOA\@gobble
+%    \end{macrocode}
+% \end{macro}
+%
+%^^A=<<
+%
+% \subsubsection{Miscellaneous Auxiliaries}^^A>>=
+%
+% \begin{macro}{\ekvpProtect}
+% \begin{macro}[internal]{\ekvpProtect@,\ekvpProtect@@}
+%   The idea of this macro is pretty simple. In contexts in which a |\protected|
+%   macro isn't expanded the |\ekvpProtect@@| expansion will just expand to
+%   itself and in the process protect the argument using |\unexpanded|. If a
+%   |\protected| macro would be expanded the |\ekvpProtect@| will remove
+%   |\ekvpProtect@@| and unpack the argument.
+%    \begin{macrocode}
+\def\ekvpProtect{\ekvpProtect@\ekvpProtect@@}
+\protected\long\def\ekvpProtect@\ekvpProtect@@#1{#1}
+\long\def\ekvpProtect@@#1{\ekv@unexpanded{\ekvpProtect@@{#1}}}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+%^^A=<<
+%
+% \subsubsection{Error messages}^^A>>=
+%
+% \begin{macro}[internal]
+%   {
+%     \ekvp@err,\ekvp@err@unknownparser,\ekvp@err@noval,\ekvp@err@missingtype,
+%     \ekvp@errm
+%   }
+%   These should be pretty straight forward. We use |\ekverr| to throw
+%   expandable errors.
+%    \begin{macrocode}
+\protected\long\def\ekvp@errm#1{\errmessage{expkv-pop Error: #1}}
+\ekv@exparg{\long\def\ekvp@err#1}{\ekverr{expkv-pop}{#1}}
+\def\ekvp@err@unknownparser#1{\ekvp@err{unknown parser `#1'}}
+\long\def\ekvp@err@noval#1#2#3{\ekvp@err{missing value for `#3'}}
+\long\def\ekvp@err@missingtype#1#2#3#4{\ekvp@err{missing type in `#3'}}
+\long\def\ekvp@err@unknownmarker#1{\ekvp@err{unknown marker `#1'}}
+%    \end{macrocode}
+% \end{macro}
+%
+%^^A=<<
+%
+% Undefine the no longer needed |\ekvp@prefix| and restore the category code of
+% |@|:
+%    \begin{macrocode}
+\let\ekvp@prefix\ekvp@undefined
+\catcode`\@=\ekvp@tmp
+%    \end{macrocode}
+%
+% \gobbledocstriptag
+%</tex>
+%^^A=<<

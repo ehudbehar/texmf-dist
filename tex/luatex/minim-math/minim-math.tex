@@ -1,0 +1,586 @@
+
+\ifdefined \minimmathloaded
+    \message{(skipped)}
+    \expandafter\endinput \fi
+\chardef\minimmathloaded=\catcode`:
+\catcode`:=11
+
+\input minim-alloc
+
+% \mathdef c {expansion}
+\protected\def\mathdef#1#2{%
+    \def\mathdef:tmp{#2}%
+    \mathlet{#1}\mathdef:tmp}
+% \mathlet c \csname
+\protected\def\mathlet#1#2{%
+    \mathcode`#1="8000\relax
+    \letcharcode`#1=#2}
+
+% 1 Global style transformations
+
+% first, helper functions for parsing arguments
+
+\def\math:parselist#1#2#3#4{% \function \argwrap {list} {arg}
+    \edef\math:expandedlist{{#3}}%
+    \def\math:listaction##1{#1{##1}{#2{#4}}}%
+    \expandafter\splitcommalist
+        \expandafter\math:parseitem
+            \math:expandedlist}
+
+\def\math:parseitem#1{\math:getrange#1--\math:getrange}
+\def\math:getrange#1-#2-{\def\math:tmp{#2}%
+    \ifx\math:tmp\empty \math:singleargument{#1}\fi
+    \math:rangeargument{#1}{#2}}
+\def\math:singleargument#1#2\math:getrange{\fi%
+    \math:listaction{#1}}
+\def\math:rangeargument#1#2#3\math:getrange{%
+    \math:listaction{\the\numexpr(#1)@\the\numexpr(#2)}}
+
+\def\math:simplequote#1{#1}
+\def\math:tonumber#1{\the\numexpr(#1)\relax}
+
+% then, the user interface
+
+\protected\def\mathcls{\math:parselist\math:mathcls\math:simplequote}
+\protected\def\mathfam{\math:parselist\math:mathfam\math:tonumber}
+\protected\def\mathmap{\math:parselist\math:mathmap\math:simplequote}
+
+% defined from the lua side: \usemathvariant, \usemathdefault, \mathstyle
+
+% 1 Local style transformations
+
+% We use the variable class, but not the family mechanism
+\fam = -1
+\let\setfam=\fam
+
+% for backwards compatibility with plain.tex
+\newcount\math:famcount
+\protected\def\fam{%
+    \afterassignment\math:fam
+    \math:famcount}
+\def\math:fam{%
+    \ifcase\math:famcount
+        \mathstyle{up}\or
+        \mathstyle{it}\or
+        \mathstyle{cal}\or
+        \or % plain family 3 is \tenex
+        \mathstyle{it}\or
+        \mathstyle{sf}\or % slanted math not in unicode
+        \mathstyle{bf}\or
+        \mathstyle{tt}\fi}
+
+% style switches
+\protected\def\mit#1{{\mathstyle{it}#1}}
+\protected\def\mup#1{{\mathstyle{up}#1}}
+\protected\def\mbf#1{{\mathstyle{bf}#1}}
+\protected\def\mbfit#1{{\mathstyle{bfit}#1}}
+\protected\def\mbb#1{{\mathstyle{bb}#1}}
+\protected\def\frak#1{{\mathstyle{frak}#1}}
+\protected\def\bffrak#1{{\mathstyle{bffrak}#1}}
+\protected\def\scr#1{{\mathstyle{scr}#1}}     \let\mcal  = \scr
+\protected\def\bfscr#1{{\mathstyle{bfscr}#1}} \let\bfcal = \bfscr
+
+% 1 Processing the character table
+
+\newcount \radicalfam    \radicalfam    = 0
+\newcount \accentfam     \accentfam     = 0
+\newcount \extensiblefam \extensiblefam = 0
+
+\def\math:accent{\ifmmode% spec num char
+    \expandafter\math:mathaccent\else
+    \expandafter\math:textaccent\fi}
+\def\math:mathaccent#1#2#3{\Umathaccent #1"0 \accentfam #2 }
+\def\math:textaccent#1#2#3#4{#4#3}% might be a normal combining accent
+
+\def\math:stack#1#2#3{% spec num char
+    \withoptions[]{\math:stack:{#1}{#2}{#3}}}
+\def\math:stack:#1#2#3[#4]#5{%
+    {\mathop{\math:accent{#1}{#2}{#3}{#5}}%
+        \ifx\math:stack#4\math:stack\else \limits
+            \ifx\math:stack#1\math:stack^\else_\fi{#4}\fi}}
+
+\def\math:radical{\ifmmode% num char
+    \expandafter\math:mathradical\else
+    \expandafter\math:textradical\fi}
+\def\math:mathradical#1#2{\Uradical\radicalfam #1 }
+\def\math:textradical#1#2{#2}
+
+% We initiate the processing here instead of from the lua side, because the lua 
+% file will be executed again inside \everyjob. We are only setting parameters 
+% here that will be saved to the format file, so we need not repeat it.
+
+\directlua{%
+    local m = require('minim-math')
+    local file = kpse.find_file('minim-math-table', 'lua')
+    local table = loadfile(file)()
+    for _, t in ipairs(table) do
+        m.add_mathchar(t)
+    end
+}
+
+% 1 Fixing a few characters
+
+% fixing a math cs (prevents expansion loops)
+\def\explicitmathchar#1{%
+    \expandafter\Umathcharnumdef
+        \expandafter#1%
+            \expandafter\Umathcodenum
+                \expandafter`#1}
+
+% special characters must be explicit
+\explicitmathchar\lbrace    \let\{=\lbrace
+\explicitmathchar\rbrace    \let\}=\rbrace
+\explicitmathchar\percent
+\explicitmathchar\mathdollar
+\explicitmathchar\octothorpe
+\explicitmathchar\ampersand
+
+% decimal comma settings
+\explicitmathchar \comma
+\Umathchardef \ordcomma "0"0"2C
+\protected\def\smartcomma{%
+    \futurelet\smartcomma:next\smartcomma:do}
+\def\smartcomma:do{\let\smartcomma:c\comma
+    \ifx0\smartcomma:next\let\smartcomma:c\ordcomma\fi
+    \ifx1\smartcomma:next\let\smartcomma:c\ordcomma\fi
+    \ifx2\smartcomma:next\let\smartcomma:c\ordcomma\fi
+    \ifx3\smartcomma:next\let\smartcomma:c\ordcomma\fi
+    \ifx4\smartcomma:next\let\smartcomma:c\ordcomma\fi
+    \ifx5\smartcomma:next\let\smartcomma:c\ordcomma\fi
+    \ifx6\smartcomma:next\let\smartcomma:c\ordcomma\fi
+    \ifx7\smartcomma:next\let\smartcomma:c\ordcomma\fi
+    \ifx8\smartcomma:next\let\smartcomma:c\ordcomma\fi
+    \ifx9\smartcomma:next\let\smartcomma:c\ordcomma\fi
+    \smartcomma:c}
+
+\protected\def\decimalcomma  {\Umathcode`\, = 0 \Umathcharfam`\, `\,}
+\protected\def\nodecimalcomma{\Umathcode`\, = 6 \Umathcharfam`\, `\,}
+\protected\def\smartdecimalcomma{\mathlet,\smartcomma}
+
+
+% set the colon to how it used to be
+\Umathcode`\:="3"0"2236 % \ratio
+\Umathchardef\colon "6"0"3A
+
+% ldot as a punctuation mark
+\Umathchardef\ldotp "6"0"2E
+\let \period = \ldotp
+
+% remapping two characters
+\mathlet * \ast
+\mathlet - \minus
+
+% interpret the normal middle dot as the middle dot operator
+\mathlet · \cdot
+\Umathchardef\cdotp "6"0"B7
+
+% move a macro over
+\protected\def\*{\discretionary{\thinspace
+    \the\textfont\Umathcharfam`\×\Uchar`\×}{}{}}
+
+% some aliases
+\let\neq  = \ne
+\let\le   = \leq
+\let\ge   = \geq
+\let\owns = \ni
+\let\gets = \leftarrow
+\let\to   = \rightarrow
+\let\land = \wedge
+\let\lor  = \vee
+\let\lnot = \neg
+
+% replace \mathhexbox macros
+\protected\def\mathcharbox#1{\leavevmode
+    \hbox{$\mathsurround0pt\relax#1$}}
+\protected\def\dag{\mathcharbox†}
+\protected\def\ddag{\mathcharbox‡}
+\protected\def\S{\mathcharbox§}
+\protected\def\P{\mathcharbox¶}
+\protected\def\Orb{\mathcharbox◯}
+
+% wide accents are default
+\let\widehat   = \hat
+\let\widetilde = \tilde
+\let\overline  = \overbar
+\let\underline = \underbar
+
+% integrals
+\let\intlimits=\nolimits
+
+\explicitmathchar\intop
+\explicitmathchar\iintop
+\explicitmathchar\iiintop
+\explicitmathchar\ointop
+\explicitmathchar\oiintop
+\explicitmathchar\oiiintop
+\explicitmathchar\intclockwiseop
+\explicitmathchar\varointclockwiseop
+\explicitmathchar\ointctrclockwiseop
+
+\edef\int              {\intop\intlimits}
+\edef\iint             {\iintop\intlimits}
+\edef\iiint            {\iiintop\intlimits}
+\edef\oint             {\ointop\intlimits}
+\edef\oiint            {\oiintop\intlimits}
+\edef\oiiint           {\oiiintop\intlimits}
+\edef\intclockwise     {\intclockwiseop\intlimits}
+\edef\varointclockwise {\varointclockwiseop\intlimits}
+\edef\ointctrclockwise {\ointctrclockwiseop\intlimits}
+
+\mathlet ∫ \int
+\mathlet ∬ \iint
+\mathlet ∭ \iiint
+\mathlet ∮ \oint
+\mathlet ∯ \oiint
+\mathlet ∰ \oiiint
+\mathlet ∱ \intclockwise
+\mathlet ∲ \varointclockwise
+\mathlet ∳ \ointctrclockwise
+
+% 1 Roots
+
+\protected\def\sqrt{\sqrt:make{\Uradical\radicalfam"221A}}
+\protected\def\root#1\of{\sqrt:make{\Uroot\radicalfam"221A{#1}}}
+\def\sqrt:open#1#2{#1{#2}} % braces are necessary
+\def\sqrt:close#1{\mathpalette{\sqrt:closed{#1}}}
+\def\sqrt:closed#1#2#3{% root style content
+    \setbox0=\hbox{$#2\Uradical\radicalfam"221A{#3}$}%
+    #2#1{#3\mkern2mu}\kern-\Umathradicalrule#2%
+    \raise\dimexpr\ht0-1\Umathradicalkern#2-.5\Umathradicalrule#2\hbox
+        {\vrule height0pt depth.2\ht0 width\Umathradicalrule#2}%
+    \kern\Umathradicalkern#2}
+
+\protected\def\normalroots{\let\sqrt:make\sqrt:open}
+\protected\def\closedroots{\let\sqrt:make\sqrt:close}
+
+\normalroots
+
+\mathlet √ \sqrt
+\mathdef ∛ {\root3\of}
+\mathdef ∜ {\root4\of}
+
+% 1 Dots
+
+% \vdots, \ddots, \adots
+\newdimen\mathdots:pt
+\newbox\mathdots:box
+\def\mathdots:init#1#2{%
+    \mathdots:pt=.1\fontdimen6#20\relax
+    \setbox\mathdots:box=\hbox{$#1.$}%
+    \ht\mathdots:box=\mathdots:pt}
+\def\mathdots:choice#1{\mathinner{\mathchoice
+    {\mathdots:init\displaystyle\textfont#1}
+    {\mathdots:init\textstyle\textfont#1}
+    {\mathdots:init\scriptstyle\scriptfont#1}
+    {\mathdots:init\scriptscriptstyle\scriptscriptfont#1}}}
+\protected\def\texvdots{\mathdots:choice{\vbox{%
+    \baselineskip4\mathdots:pt\lineskiplimit0pt\relax \kern6\mathdots:pt
+    \copy\mathdots:box \copy\mathdots:box \copy\mathdots:box}}}
+\protected\def\texddots{\mathdots:choice{\mkern1mu
+    \raise7\mathdots:pt \vbox{\kern7\mathdots:pt\copy\mathdots:box}\mkern2mu
+    \raise4\mathdots:pt \copy\mathdots:box\mkern2mu
+    \raise1\mathdots:pt \copy\mathdots:box\mkern1mu}}
+\protected\def\texadots{\mathdots:choice{\mkern1mu
+    \raise1\mathdots:pt \copy\mathdots:box\mkern2mu
+    \raise4\mathdots:pt \copy\mathdots:box\mkern2mu
+    \raise7\mathdots:pt \vbox{\kern7\mathdots:pt\copy\mathdots:box}\mkern1mu}}
+
+% \ldots and \cdots are unchanged from plain.tex
+\protected\edef\texldots{\ldots}
+\protected\edef\texcdots{\cdots}
+
+% \traditionaldots
+\protected\def\traditionaldots{%
+    \mathlet \⋮ \texvdots \let\vdots = \texvdots
+    \mathlet \⋯ \texcdots \let\cdots = \texcdots
+    \mathlet \⋰ \texadots \let\adots = \texadots
+    \mathlet \⋱ \texddots \let\ddots = \texddots
+    \mathlet \… \texldots \let\ldots = \texldots}
+
+% \unicodedots
+\protected\def\unicodedots{%
+    \Umathcode `\⋮ = "3"0"22EE \let\vdots = \unicodevdots
+    \Umathcode `\⋯ = "0"0"22EF \let\cdots = \unicodecdots
+    \Umathcode `\⋰ = "3"0"22F0 \let\adots = \unicodeadots
+    \Umathcode `\⋱ = "3"0"22F1 \let\ddots = \unicodeddots
+    \Umathcode `\… = "3"0"2026 \let\ldots = \unicodeellipsis}
+
+\traditionaldots
+
+% 1 Primes
+
+% primes
+\mathdef'{\math:prime{}}
+\mathdef`{\math:bprime{}}
+\def\math:prime#1{%
+    \nextifx'{\math:prime:plus{#1}}%
+        {^\csname#1prime\endcsname}}
+\def\math:prime:plus#1'{%
+    \math:prime{#1p}}
+\def\math:bprime#1{%
+    \nextifx`{\math:bprime:plus{#1}}%
+        {^\csname b#1prime\endcsname}}
+\def\math:bprime:plus#1`{%
+    \math:bprime{#1p}}
+% \pprime etc.
+\let\pprime=\dprime
+\let\ppprime=\trprime
+\let\pppprime=\qprime
+\let\bprime=\backprime
+\let\bpprime=\backdprime
+\let\bppprime=\backtrprime
+
+% 1 Superscripts and subscripts
+
+\edef\math:tmp{%
+    \mathdef\Uchar"00B2{^2}
+    \mathdef\Uchar"00B3{^3}
+    \mathdef\Uchar"00B9{^1}
+    \mathdef\Uchar"2070{^0}
+    \mathdef\Uchar"2071{^i}
+    \mathdef\Uchar"2074{^4}
+    \mathdef\Uchar"2075{^5}
+    \mathdef\Uchar"2076{^6}
+    \mathdef\Uchar"2077{^7}
+    \mathdef\Uchar"2078{^8}
+    \mathdef\Uchar"2079{^9}
+    \mathdef\Uchar"207A{^+}
+    \mathdef\Uchar"207B{^-}
+    \mathdef\Uchar"207C{^=}
+    \mathdef\Uchar"207D{^(}
+    \mathdef\Uchar"207E{^)}
+    \mathdef\Uchar"207F{^n}
+    \mathdef\Uchar"1D62{_i}
+    \mathdef\Uchar"1D63{_r}
+    \mathdef\Uchar"1D64{_u}
+    \mathdef\Uchar"1D65{_v}
+    \mathdef\Uchar"1D66{_β}
+    \mathdef\Uchar"1D67{_γ}
+    \mathdef\Uchar"1D68{_ρ}
+    \mathdef\Uchar"1D69{_φ}
+    \mathdef\Uchar"1D6A{_χ}
+    \mathdef\Uchar"2080{_0}
+    \mathdef\Uchar"2081{_1}
+    \mathdef\Uchar"2082{_2}
+    \mathdef\Uchar"2083{_3}
+    \mathdef\Uchar"2084{_4}
+    \mathdef\Uchar"2085{_5}
+    \mathdef\Uchar"2086{_6}
+    \mathdef\Uchar"2087{_7}
+    \mathdef\Uchar"2088{_8}
+    \mathdef\Uchar"2089{_9}
+    \mathdef\Uchar"208A{_+}
+    \mathdef\Uchar"208B{_-}
+    \mathdef\Uchar"208C{_=}
+    \mathdef\Uchar"208D{_(}
+    \mathdef\Uchar"208E{_)}
+    \mathdef\Uchar"2090{_a}
+    \mathdef\Uchar"2091{_e}
+    \mathdef\Uchar"2092{_o}
+    \mathdef\Uchar"2093{_x}
+    \mathdef\Uchar"2094{_ə}
+    \mathdef\Uchar"2095{_h}
+    \mathdef\Uchar"2096{_k}
+    \mathdef\Uchar"2097{_l}
+    \mathdef\Uchar"2098{_m}
+    \mathdef\Uchar"2099{_n}
+    \mathdef\Uchar"209A{_p}
+    \mathdef\Uchar"209B{_s}
+    \mathdef\Uchar"209C{_t}
+    \mathdef\Uchar"2C7C{_j}}
+\math:tmp
+
+% 1 Long arrows
+
+\def\extend#1#2#3{\withoptions[]{\extend:#1{#2}{#3}}}
+\def\extend:#1#2#3[#4]#5{\mathrel{% char left right below above
+    \mathpalette\extend:choose{#1{#2}{#3}{#4}{#5}}}}
+\def\extend:choose#1#2{\extend:choose:#1#2}
+\def\extend:choose:#1#2#3#4#5#6{% style char left right below above
+    \setbox0=\hbox{$#1#5$}\setbox2=\hbox{$#1#6$}%
+    \ifdim \wd0 < \wd2
+        \mathop{\Uoverdelimiter  \extensiblefam `#2
+            {\mkern#3mu#6\mkern#4mu}}\limits_{#5}\else
+        \mathop{\Uunderdelimiter \extensiblefam `#2
+            {\mkern#3mu#5\mkern#4mu}}\limits^{#6}\fi}
+ 
+\protected\def\xleftarrow {\extend←73}
+\protected\def\xrightarrow{\extend→37}
+
+\protected\def\xLeftarrow {\extend⇐73}
+\protected\def\xRightarrow{\extend⇒37}
+
+\protected\def\xleftrightarrow{\extend↔77}
+\protected\def\xLeftrightarrow{\extend⇔77}
+
+\protected\def\xmapsto    {\extend↦47}
+\protected\def\xmapsfrom  {\extend↤74}
+
+\protected\def\xhookrightarrow {\extend↪67}
+\protected\def\xhookleftarrow  {\extend↩76}
+
+\protected\def\xleftrightarrows  {\extend⇆77}
+\protected\def\xleftleftarrows   {\extend⇇73}
+\protected\def\xrightrightarrows {\extend⇉37}
+
+\protected\def\xeq{\extend=11}
+
+\let \→ \xrightarrow
+\let \⇒ \xRightarrow
+\let \← \xleftarrow
+\let \⇐ \xLeftarrow
+\let \↔ \xleftrightarrow
+\let \⇔ \xLeftrightarrow
+\let \↦ \xmapsto
+\let \↤ \xmapsfrom
+
+% 1 Miscellaneous mathematical functions
+
+% \stackrel {super} {rel}
+\protected\def\stackrel#1#2{\mathrel{\mathop{#2}\limits^{#1}}}
+% \stackbin {super} {bin}
+\protected\def\stackbin#1#2{\mathbin{\mathop{#2}\limits^{#1}}}
+
+% \text {text}
+\newcount\textfam
+\textfam=0
+\protected\def\text#1{{\mathchoice
+    {\hbox{\the\textfont\textfam#1}}%
+    {\hbox{\the\textfont\textfam#1}}%
+    {\hbox{\the\scriptfont\textfam#1}}%
+    {\hbox{\the\scriptscriptfont\textfam#1}}}}
+
+% some definitions with vertical lines
+\def\bra#1{\left⟨#1\right\vert}
+\def\ket#1{\left\vert#1\right⟩}
+\def\braket#1#2{\left⟨#1\middle\vert#2\right⟩}
+\def\norm#1{\left\vert#1\right\vert} \let \abs=\norm
+\def\Norm#1{\left\Vert#1\right\Vert}
+
+% a slightly smaller unary minus
+\def\unaryminus{\mathord{\mathpalette\unaryminus:make{}}}
+\def\unaryminus:make#1#2{%
+    \setbox0 = \hbox{$#1-$}
+    \kern .75\wd0
+    \pdfextension save
+    \pdfextension setmatrix{.75 0 0 1} 
+    \kern -\wd0 \box0
+    \pdfextension restore}
+
+% a smaller inverse-function sign
+\protected\def\inv{^{\scriptscriptstyle\unaryminus1}}%
+
+% upright multiletter symbols
+\def\mord#1{\mathord{\mathstyle{up}#1}}
+\def\mop #1{\mathop {\mathstyle{up}#1}\nolimits}
+\def\mlop#1{\mathop {\mathstyle{up}#1}\limits}
+
+% \frac, \tfrac, \dfrac
+\protected\def\frac#1#2{\Ustack{#1\over#2}}
+\protected\def\tfrac#1#2{{\textstyle{#1\over#2}}}
+\protected\def\dfrac#1#2{{\displaystyle{#1\over#2}}}
+
+% make a few plain macros \protected
+\def\minim:protect#1{\protected\edef#1{\expandafter\unexpanded\expandafter{#1}}}
+\minim:protect\smash
+\minim:protect\dotfill
+
+% 1 Operators
+
+\def\newmathop#1{\protected\expandafter\def
+    \csname#1\endcsname{\mathop{\mathstyle{up}#1}\nolimits}}
+\def\newlargemathop#1{\protected\expandafter\def
+    \csname#1\endcsname{\mathop{\mathstyle{up}#1}}}
+
+% ported operators
+\newlargemathop {lim}
+\newlargemathop {gcd} \newlargemathop {lcm}
+\newlargemathop {max} \newlargemathop {min}
+\newlargemathop {sup} \newlargemathop {inf}
+\newlargemathop {det}
+\newlargemathop {Pr}
+\newmathop {log} \newmathop {lg}     \newmathop {ln}
+\newmathop {sin} \newmathop {arcsin} \newmathop {sinh}
+\newmathop {cos} \newmathop {arccos} \newmathop {cosh}
+\newmathop {tan} \newmathop {arctan} \newmathop {tanh}
+\newmathop {cot} \newmathop {coth}
+\newmathop {sec} \newmathop {csc}
+\newmathop {arg}
+\newmathop {ker}
+\newmathop {dim}
+\newmathop {hom}
+\newmathop {exp}
+\newmathop {deg}
+
+\protected\def\limsup{\mathop{\mathstyle{up}lim\,sup}}
+\protected\def\liminf{\mathop{\mathstyle{up}lim\,inf}}
+
+\let\para=\parallel
+
+% additional operators
+\newmathop {Tr} \newmathop {tr} \newmathop{Span}
+\newmathop {GL} \newmathop {SL}
+\newmathop {SU} \newmathop {U}
+\newmathop {SO} \newmathop {O}
+\newmathop {Sp}
+\newmathop {im}
+\newmathop {End} \newmathop {Aut}
+\newmathop {Dom} \newmathop {Codom}
+
+% 1 Displayed equations
+
+\newif\ifdisplay:
+\newif\ifdisplay:nr
+\newif\ifleftdisplays
+\newtoks\setdisplaynr
+\newtoks\display:specialnr
+\display:specialnr{\the\setdisplaynr}
+
+% \display
+\protected\def\display{\display:true}
+% \displaynr {nr}
+\protected\def\displaynr{\display:true\display:nrtrue
+    \nextifcat\bgroup\display:specialnr\relax}
+
+% \[ ... \]
+\protected\def\[{\ifdisplay:\expandafter\startdisplay\else\Ustartmath\fi}
+\protected\def\]{\global\expandafter\display:false
+    \ifdisplay:\expandafter\stopdisplay\else\Ustopmath\fi}
+
+\protected\def\startdisplay{%
+    % if the display starts a paragraph, omit baselineskip
+    % and ensure that the long \beforedisplayskip is used
+    \ifvmode \nointerlineskip
+        \noindent \hbox to .5\hsize{\hss}\fi
+    \Ustartdisplaymath
+    % for left-aligned equations, force manual placement
+    \ifleftdisplays\muskip0mu\fi}
+\protected\def\stopdisplay{%
+    \ifleftdisplays
+        \hskip\displaywidth minus\displaywidth\fi
+    \global\expandafter\display:nrfalse
+        \ifdisplay:nr
+            \eqno\the\display:specialnr
+            \global\display:specialnr{\the\setdisplay:nr}\fi
+    \Ustopdisplaymath
+    \ignorespaces}
+
+% default equation numbering
+\newcount\equationnumber \equationnumber = 0
+\setdisplaynr{\global\advance\eqnr1(\the\equationnumber)}
+
+
+%  standard mappings
+
+\mathstyle{clear}
+\mathmap{latin, greek, Latin}{it}
+
+% map ħ (h-with-stroke) to ℏ (planck-constant)
+\mathdef ħ {ℏ}
+
+% \reqno
+\let\reqno = \eqno
+
+\let\math:tmp=\undefined
+\catcode`:=\minimmathloaded
+

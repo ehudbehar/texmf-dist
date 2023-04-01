@@ -1,0 +1,451 @@
+%% This is part of the OpTeX project, see http://petr.olsak.net/optex
+
+\_codedecl \colordef {Colors <2022-03-07>} % preloaded in format
+
+   \_doc -----------------------------
+   The basic colors in CMYK
+   \`\Blue` \`\Red` \`\Brown` \`\Green` \`\Yellow` \`\Cyan` \`\Magenta`
+   \`\Grey` \`\LightGrey` \`\White` and \`\Black`
+   are declared here.
+   \_cod -----------------------------
+
+\_def\Blue      {\_setcmykcolor{1 1 0 0}}
+\_def\Red       {\_setcmykcolor{0 1 1 0}}
+\_def\Brown     {\_setcmykcolor{0 .67 .67 .5}}
+\_def\Green     {\_setcmykcolor{1 0 1 0}}
+\_def\Yellow    {\_setcmykcolor{0 0 1 0}}
+\_def\Cyan      {\_setcmykcolor{1 0 0 0}}
+\_def\Magenta   {\_setcmykcolor{0 1 0 0}}
+\_def\Grey      {\_setcmykcolor{0 0 0 .5}}
+\_def\LightGrey {\_setcmykcolor{0 0 0 .2}}
+\_def\White     {\_setgreycolor{1}}
+\_def\Black     {\_setgreycolor{0}}
+
+   \_doc -----------------------------
+   By default, the \`\setcmykcolor` \`\setrgbcolor` and \`\setgreycolor`
+   macros with `{<componetns>}` parameter
+   expand to \^`\_setcolor``{<color-data>}{<fill-op>}{<stroke-op>}` where
+   <color-data> is <R> <G> <B> or <C> <M> <Y> <K> or <G> and
+   <fill-op> is color operator for filling, <stroke-op> is color operator
+   for stroking.
+   \_cod -----------------------------
+
+\_def\_setcmykcolor#1{\_setcolor{#1}kK}
+\_def\_setrgbcolor#1{\_setcolor{#1}{rg}{RG}}
+\_def\_setgreycolor#1{\_setcolor{#1}gG}
+\_public \setcmykcolor \setrgbcolor \setgreycolor ;
+
+   \_doc -----------------------------
+   The \`\onlyrgb` declaration redefines \^`\setcmykcolor` to do conversion
+   to RGB just before \^`\_setcolor` is used.
+   The \`\onlycmyk` declaration redefines \^`\setrgbcolor` to do conversion
+   to CMYK just before \^`\_setcolor` is used.
+   Moreover, \^`\onlyrgb` re-defines three basic RGB
+   colors for RGB color space and re-declares \^`\colordef` as \^`\rgbcolordef`.
+   \_cod -----------------------------
+
+\_def\_onlyrgb{\_def\Red{\_setrgbcolor{1 0 0}}%
+   \_def\Green{\_setrgbcolor{0 1 0}}\_def\Blue{\_setrgbcolor{0 0 1}}%
+   \_let\_colordef=\_rgbcolordef
+   \_def\_setrgbcolor##1{\_setcolor{##1}{rg}{RG}}%
+   \_def\_setcmykcolor##1{\_ea\_setcolor\_ea{\_expanded{\_cmyktorgb ##1 ;}}{rg}{RG}}%
+   \_public \colordef \setrgbcolor \setcmykcolor ;}
+\_def\_onlycmyk{%
+   \_let\_colordef=\_cmykcolordef
+   \_def\_setrgbcolor##1{\_ea\_setcolor\_ea{\_expanded{\_rgbtocmyk ##1 ;}}kK}%
+   \_def\_setcmykcolor##1{\_setcolor{##1}kK}%
+   \_public \colordef \setrgbcolor \setcmykcolor ;}
+\_public \onlyrgb \onlycmyk ;
+
+   \_doc -----------------------------
+   The \`\_colorattr` for coloring is allocated and
+   \`\_setcolor``{<color-data>}{<fill-op>}{<stroke-op>}` is defined here.
+   This macro does `\_colorattr=`\`\_colorcnt` if the <color data> was not used
+   before and prepare mapping from this integer value to the <color data>
+   and increments \^`\_colorcnt`.
+   If the <color data> were used already, then \^`\_setcolor`
+   does `\_colorattr=<stored-value>`.
+   This work is done by the \`\_translatecolor` macro. The following mapping
+   macros are created:
+   \begtt \catcode`<=13
+   \_color::<data> <fill-op>    ... expands to used <attribute-value>
+   \_color:<attribute-value>    ... expands to <data> <fill-op>
+   \_color-s:<attribute-value>  ... expands to <data> <stroke-op>
+   \endtt
+   \_cod -----------------------------
+
+\_newattribute \_colorattr
+\_newcount \_colorcnt \_colorcnt=1 % allocations start at 1
+\_protected\_def\_setcolor{\_colorprefix\_colorattr=\_translatecolor}
+\_def\_translatecolor#1#2#3{\_ifcsname _color::#1 #2\_endcsname\_lastnamedcs\_relax
+   \_else
+      \_colorcnt
+      \_sxdef{_color::#1 #2}{\_the\_colorcnt}%
+      \_sxdef{_color:\_the\_colorcnt}{#1 #2}%
+      \_sxdef{_color-s:\_the\_colorcnt}{#1 #3}%
+      \_incr \_colorcnt
+   \_fi
+}
+% Black is the default color.
+\_sdef{_color::0 g}{0}
+\_sdef{_color:0}{0 g}
+\_sdef{_color-s:0}{0 G}
+
+   \_doc -----------------------------
+   We support concept of non-local color, i.e. all changes of the color
+   attribute are global by setting \`\_colorprefix` to `\global`.
+   \`\localcolor` is the default, i.e.\ \^`\_colorprefix` is `\relax`.\nl
+   You can write `\global\Red` if you want to have global setting of the
+   color.
+   \_cod -----------------------------
+
+\_protected\_def \_localcolor   {\_let\_colorprefix=\_relax}
+\_protected\_def \_nolocalcolor {\_let\_colorprefix=\_global}
+\_public \localcolor \nolocalcolor ;
+\_localcolor
+
+   \_doc -----------------------------
+   The attribute \`\_transpattr` is allocated and set by the
+   \`\transparency``<number>` macro. If such level of the tranparency was
+   never used in the document then
+   \^`\addextgstate{tr<number>}`\code{\{<</ca X /CA X>>\}} is applied
+   (where `X` is `(255-<number>)/255`).
+   This information is used when shipout is processed (similarly as colors).
+   It means `/tr<number> gs` is inserted when the attribute is changed.\nl
+   \`\_resetattrs` resets the \^`\_colorattr` and \^`\_transpattr`
+   to their initial value `-"7FFFFFFF`.
+   \_cod -----------------------------
+
+\_newattribute\_transpattr
+\_def\_transparency {\_afterassignment\_transparencyA \_transpattr}
+\_def\_transparencyA{%
+   \_ifnum\_transpattr<1 \_transpattr=\_noattr \_fi
+   \_ifnum\_transpattr>255 \_opwarning{\_noexpand\transparency > 255 not allowed}%
+       \_transpattr=\_noattr
+   \_else
+      \_ifcsname _transp:\_the\_transpattr\_endcsname \_else
+         \_edef\_transpv{\_expr{(255-\_the\_transpattr)/255}}%
+         \_addextgstate{tr\_the\_transpattr}{<</ca \_transpv\_space /CA \_transpv>>}%
+         \_sxdef{_transp:\_the\_transpattr}{}%
+         \_ifcsname _transp:0\_endcsname \_else
+            \_addextgstate{tr0}{<</ca 1 /CA 1>>}%
+            \_sxdef{_transp:0}{}%
+         \_fi
+      \_fi
+   \_fi
+}
+\_def\_thetransparency{\_ifnum \_transpattr=-"7FFFFFFF 0\_else \_the\_transpattr \_fi}
+\_def\_resetattrs{\_colorattr=\_noattr \_transpattr=\_noattr}
+
+\_public \transparency \thetransparency ;
+
+   \_doc -----------------------------
+   We use Lua codes for RGB to CMYK or CMYK to RGB conversions and for
+   addition color components in the \^`\colordef` macro.
+   The \`\_rgbtocmyk` `<R> <G> <B> ;` expands to `<C> <M> <Y> <K>` and
+   the \`\_cmyktorgb` `<C> <M> <Y> <K> ;` expands to `<R> <G> <B>`.
+   The \`\_colorcrop`, \`\_colordefFin` and \`\_douseK` are auxiliary macros
+   used in the \^`\colordef`. The `\_colorcrop` rescales color components in order
+   to they are in $[0,1]$ interval. The `\colordefFin` expands to the values
+   accumulated in Lua code `color_C`, `color_M`, `color_Y` and `color_K`.
+   The `\_douseK` applies \^`\useK` to CMYK components.
+   \nl
+   The `\_tocmyk:<rgb>` or `\_torgb:<cmyk>` control sequences (given by
+   \^`\rgbcmykmap`) have precedence.
+   \_cod -----------------------------
+
+\_def\_rgbtocmyk #1 #2 #3 ;{\_trycs{_tocmyk:#1 #2 #3}{%
+   \_ea \_stripzeros \_detokenize \_ea{\_directlua{
+      local kr = math.max(#1,#2,#3)
+      if (kr==0) then
+         tex.print('0. 0. 0. 1 ;')
+      else
+         tex.print(string.format('\_pcent.3f \_pcent.3f \_pcent.3f \_pcent.3f ;',
+            (kr-#1)/kr, (kr-#2)/kr, (kr-#3)/kr, 1-kr))
+      end
+}}}}
+\_def\_cmyktorgb #1 #2 #3 #4 ;{\_trycs{_torgb:#1 #2 #3 #4}{%
+   \_ea \_stripzeros \_detokenize \_ea{\_directlua{
+      local kr = 1-#4
+      tex.print(string.format('\_pcent.3f \_pcent.3f \_pcent.3f ;',
+         (1-#1)*kr, (1-#2)*kr, (1-#3)*kr))
+}}}}
+\_def\_colorcrop{\_directlua{
+   local m=math.max(color_C, color_M, color_Y, color_K)
+   if (m>1) then
+      color_C=color_C/m  color_M=color_M/m  color_Y=color_Y/m color_K=color_K/m
+   end
+}}
+\_def\_colordefFin{\_colorcrop \_ea \_stripzeros \_detokenize \_ea{\_directlua{
+   tex.print(string.format('\_pcent.3f \_pcent.3f \_pcent.3f \_pcent.3f ;',
+      color_C, color_M, color_Y, color_K))
+}}}
+\_def\_douseK{\_colorcrop \_directlua{
+   kr=math.min(color_C, color_M, color_Y)
+   if (kr>=1) then
+      color_C=0  color_M=0  color_Y=0  color_K=1
+   else
+      color_C=(color_C-kr)/(1-kr)  color_M=(color_M-kr)/(1-kr)
+      color_Y=(color_Y-kr)/(1-kr)  color_K=math.min(color_K+kr,1)
+   end
+}}
+
+   \_doc -----------------------------
+   We have a problem with the `%.3f` directive in Lua code. It prints trailed
+   zeros: (0.300 instead desired 0.3) but we want to save PDF file space. The macro
+   \`\_stripzeros` removes these trailing zeros at the expand processor
+   level. So `\_stripzeros 0.300 0.400 0.560 ;` expands to `.3 .4 .56`.
+   \_cod -----------------------------
+
+\_def\_stripzeros #1.#2 #3{\_ifx0#1\_else#1\_fi.\_stripzeroA #2 0 :%
+    \_ifx;#3\_else \_space \_ea\_stripzeros\_ea#3\_fi}
+\_def\_stripzeroA #10 #2:{\_ifx^#2^\_stripzeroC#1:\_else \_stripzeroB#1 0 :\_fi}
+\_def\_stripzeroB #10 #2:{\_ifx^#2^\_stripzeroC#1:\_else #1\_fi}
+\_def\_stripzeroC #1 #2:{#1}
+
+   \_doc -----------------------------
+   \`\rgbcmykmap` `{<R> <G> <B>}`\,`{<C> <M> <Y> <K>}` declares mapping from
+   RGB to CMYK and from CMYK to RGB for given color. It has precedence
+   before general formulae used in the \^`\_rgbtocmyk` and \^`\_cmyktorgb`
+   macros. Note, that the values <R> <G> <B> <C> <M> <Y> <K> must be given
+   exacly in the same format as in \^`\setcmykcolor` and \^`\setrgbcolor`
+   parameters. For example, `0.5` or `.5` or `.50` are different values from
+   point of view of this mapping.
+   \_cod -----------------------------
+
+\_def\_rgbcmykmap#1#2{\_sxdef{_torgb:#2}{#1}\_sxdef{_tocmyk:#1}{#2}}
+\_public \rgbcmykmap ;
+
+   \_doc -----------------------------
+   The \`\rgbcolordef` and \`\cmykcolordef` use common macro
+   \`\_commoncolordef` with different first four parameters.
+   The `\_commoncolordef <selector><K><R><G><what-define>{<data>}` does the
+   real work. It initializes the Lua variables for summation.
+   It expands <data> in the group where color selectors have
+   special meaning, then it adjusts the resulting string by \^`\replstring`
+   and runs it. Example shows how the <data> are processed:
+   \begtt \catcode`\<=13
+   input <data>:  ".3\Blue + .6^\KhakiC \useK -\Black"
+   expanded to:  ".3 !=K 1 1 0 0 +.6^!=R .804 .776 .45 \_useK -!=G 0"
+   adjusted to:  "\_addcolor .3!=K 1 1 0 0 \_addcolor .6!^R .804 .776 .45
+                  \_useK \_addcolor -1!=G 0"
+   and this is processed.
+   \endtt
+   \`\_addcolor` `<coef.>!<mod><type>` expands to `\_addcolor:<mod><type> <coef>`
+   for example it expands to `\_addcolor:=K <coef>` followed by one or three or four
+   numbers (depending on <type>). <mod> is `=` (use as is) or `^` (use
+   complementary color). <type> is `K` for CMYK, `R` for RGB and `G` for
+   GREY color space. Uppercase <type> informs that `\cmykcolordef` is
+   processed and lowercase <type> informs that `\rgbcolordef` is processed.
+   All variants of commands `\_addcolor:<mod><type>` are defined. All of
+   them expand to `\_addcolorA <v1> <v2> <v3> <v4>` which adds the values of Lua
+   variables. The `\rgbcolordef` uses `\_addcolorA <R> <G> <B> 0` and
+   `\cmkykcolordef` uses `\_addcolorA <C> <M> <Y> <K>`. So the Lua variable
+   names are a little confusing when `\rgbcolordef` is processed.
+
+   Next, `\_commoncolordef` saves resulting values from Lua to `\_tmpb`
+   using `\_colordefFin`. If `\rgbcolordef` is processed, then we must to
+   remove the last <K> component which is in the format `.0` in such case.
+   The `\_stripK` macro does it.
+   Finally, the `<what-define>` is defined as `<selector>{<expanded _tmpb>}`,
+   for example `\_setcmykclor{1 0 .5 .3}`.
+   \_cod -----------------------------
+
+\_def\_rgbcolordef  {\_commoncolordef \_setrgbcolor  krg}
+\_def\_cmykcolordef {\_commoncolordef \_setcmykcolor KRG}
+\_def\_commoncolordef#1#2#3#4#5#6{%
+  \_begingroup
+     \_directlua{color_C=0 color_M=0 color_Y=0 color_K=0}%
+     \_def\_setcmykcolor##1{!=#2 ##1 }%
+     \_def\_setrgbcolor ##1{!=#3 ##1 }%
+     \_def\_setgreycolor##1{!=#4 ##1 }%
+     \_let\_useK=\_relax
+     \_edef\_tmpb{+#6}%
+     \_replstring\_tmpb{+ }{+}\_replstring\_tmpb{- }{-}%
+     \_replstring\_tmpb{+}{\_addcolor}\_replstring\_tmpb{-}{\_addcolor-}%
+     \_replstring\_tmpb{^!=}{!^}\_replstring\_tmpb{-!}{-1!}%
+     \_ifx K#2\_let\_useK=\_douseK \_fi
+     \_tmpb
+     \_edef\_tmpb{\_colordefFin}%
+     \_ifx k#2\_edef\_tmpb{\_ea\_stripK \_tmpb;}\_fi
+  \_ea\_endgroup
+  \_ea\_def\_ea#5\_ea{\_ea#1\_ea{\_tmpb}}%
+}
+\_def\_addcolor#1!#2#3{\_cs{addcolor:#2#3}#1}
+\_def\_addcolorA #1 #2 #3 #4 #5 {%
+   \_def\_tmpa{#1}\_ifx\_tmpa\_empty \_else \_edef\_tmpa{\_tmpa*}\_fi
+   \_directlua{color_C=math.max(color_C+\_tmpa#2,0)
+               color_M=math.max(color_M+\_tmpa#3,0)
+               color_Y=math.max(color_Y+\_tmpa#4,0)
+               color_K=math.max(color_K+\_tmpa#5,0)
+}}
+\_sdef{addcolor:=K}#1 #2 #3 #4 #5 {\_addcolorA #1 #2 #3 #4 #5 }
+\_sdef{addcolor:^K}#1 #2 #3 #4 #5 {\_addcolorA #1 (1-#2) (1-#3) (1-#4) #5 }
+\_sdef{addcolor:^G}#1 #2 {\_addcolorA #1 0 0 0 #2 }
+\_sdef{addcolor:=G}#1 #2 {\_addcolorA #1 0 0 0 (1-#2) }
+\_sdef{addcolor:=R}#1 #2 #3 #4 {%
+   \_edef\_tmpa{\_noexpand\_addcolorA #1 \_rgbtocmyk #2 #3 #4 ; }\_tmpa
+}
+\_sdef{addcolor:^R}#1 #2 #3 #4 {\_cs{addcolor:=R}#1 (1-#2) (1-#3) (1-#4) }
+
+\_sdef{addcolor:=k}#1 #2 #3 #4 #5 {%
+   \_edef\_tmpa{\_noexpand\_addcolorA #1 \_cmyktorgb #2 #3 #4 #5 ; 0 }\_tmpa
+}
+\_sdef{addcolor:^k}#1 #2 #3 #4 #5 {\_cs{addcolor:=k}#1 (1-#2) (1-#3) (1-#4) #5 }
+\_sdef{addcolor:^g}#1 #2 {\_addcolorA #1 (1-#2) (1-#2) (1-#2) 0 }
+\_sdef{addcolor:=g}#1 #2 {\_addcolorA #1 #2 #2 #2 0 }
+\_sdef{addcolor:=r}#1 #2 #3 #4 {\_addcolorA #1 #2 #3 #4 0 }
+\_sdef{addcolor:^r}#1 #2 #3 #4 {\_addcolorA #1 (1-#2) (1-#3) (1-#4) 0 }
+\_def\_stripK#1 .0;{#1}
+\_let\_colordef=\_cmykcolordef  % default \_colordef is \_cmykcolordef
+
+   \_doc -----------------------------
+   Public versions of \`\colordef` and \`\useK` macros are declared using
+   `\_def`, because the internal versions `\_colordef` and `\_useK` are
+   changed during processing.
+   \_cod -----------------------------
+
+\_def \useK{\_useK}
+\_def \colordef {\_colordef}
+\_public \cmykcolordef \rgbcolordef ;
+
+   \_doc -----------------------------
+   The \LaTeX/ file `x11nam.def` is read by \`\morecolors`. The numbers
+   0,1,2,3,4 are transformed to letters O, <none>, B, C, D in the name of the
+   color. Colors defined already are not re-defined. The empty \`\_showcolor`
+   macro should be re-defined for color catalog printing. For example:
+   \begtt
+   \def\vr{\vrule height10pt depth2pt width20pt}
+   \def\_showcolor{\hbox{\tt\_bslash\_tmpb: \csname\_tmpb\endcsname \vr}\space\space}
+   \begmulti 4 \typosize[10/14]
+   \morecolors
+   \endmulti
+   \endtt
+   \_cod -----------------------------
+
+\_def\_morecolors{%
+   \_long\_def\_tmp##1\preparecolorset##2##3##4##5{\_tmpa ##5;,,,;}
+   \_def\_tmpa##1,##2,##3,##4;{\_ifx,##1,\_else
+      \_def\_tmpb{##1}\_replstring\_tmpb{1}{}\_replstring\_tmpb{2}{B}%
+      \_replstring\_tmpb{3}{C}\_replstring\_tmpb{4}{D}\_replstring\_tmpb{0}{O}%
+      \_ifcsname \_tmpb\_endcsname \_else
+          \_sdef{\_tmpb}{\_setrgbcolor{##2 ##3 ##4}}\_showcolor\_fi
+      \_ea\_tmpa\_fi
+   }
+   \_ea\_tmp\_input x11nam.def
+}
+\_let\_showcolor=\_relax % re-define it if you want to print a color catalog
+\_public \morecolors ;
+
+\_endcode % -------------------------------------
+
+\secc Basic concept
+
+Setting of color in PDF is handled by graphics operators which change the
+graphics context. Colors for fills/strokes are distinguished, but apart from
+that, only one color is active at time and is used for all material drawn by
+following graphics operators, until next color is set. Each PDF content (e.g.
+page or form XObject) has its own graphics context, that is initialized from
+zero. Hence we have different concept of selecting fonts in \TeX/ (it
+depends on \TeX/ groups but does not depends on pages) and color handling in
+PDF.
+
+\TeX/ itself has no concept of colors. Colors have always been handled by
+inserting whatsits (either using `\special` for DVI or using
+`\pdfliteral`/`\pdfcolorstack` for PDF). It is very efficient and \TeX/ doesn't
+even have to know anything about colors, but it is also problematic in many
+ways.
+
+That is the reason why we decided to change color handling from
+`\pdfcolorstack` to \LuaTeX/ attributes in version 1.04 of \OpTeX. Using
+attributes, the color setting behaves exactly like font selection from \TeX/
+point of view: it respects \TeX/ groups, colors can span more pages,
+independent colors can be set for `\insert`s, etc. Moreover, once a material is
+created (using `\setbox` for example) then it has its fonts and its colors
+frozen and you can rely on it when you are using e.g. `\unhbox`. There are no
+internal whatsits for colors which can interfere with other typesetting
+material. In the end something like setting text to red (`{\Red text}`) should
+have the same nice behavior like setting text to bold (`{\bf text}`).
+
+\LuaTeX/ attributes can be set like count register -- one attribute holds one
+number at a time. But the value of attribute is propagated to each created
+typesetting element until the attribute is unset or set to another value. Very
+much like the font property. We use one attribute \^`\_colorattr` for storing
+the currently selected color (in number form).
+
+Macros \^`\setcmykcolor``{<C> <M> <Y> <K>}` or \^`\setrgbcolor``{<R> <G> <B>}`
+or\nl \^`\setgreycolor``{<Grey>}` are used in color selectors. These
+macros expand to internal \^`\_setcolor` macro which sets the \^`\_colorattr`
+attribute to an integer value and prepares mapping between this value and the real
+color data. This mapping is used just before each `\shipout` in output routine.
+The \^`\_preshipout` pseudo-primitive is used here, it converts attribute
+values to internal PDF commands for selecting colors.
+
+\secc Color mixing
+
+The color mixing processed by the \^`\colordef` is done in the subtractive color
+model CMYK. If the result has a component greater than 1 then all
+components are multiplied by a coefficient in order to the maximal component is
+equal to 1.
+
+You can move a shared amount of CMY components (i.e. their minimum) to the
+$K$ component. This saves the color tonners and the result is more true.
+This should be done by \^`\useK` command at the end of a linear combination
+used in `\colordef`. For example
+\begtt
+\colordef \myColor {.3\Green + .4\Blue \useK}
+\endtt
+The `\useK` command exactly does:
+$$
+  \displaylines{
+  k' =\min(C,M,Y), \cr \ C=(C-k')/(1-k'), \ M=(M-k')/(1-k'), \ Y=(Y-k')/(1-k'), \cr
+  K = \min(1,K+k').
+}
+$$
+
+You can use minus instead of plus in the linear combination in `\colordef`. The
+given color is substracted in such case and the negative components are
+rounded to zero immediately. For example
+\begtt
+\colordef \Color {\Brown-\Black}
+\endtt
+can be used for removing the black component from the color. You can use
+the `-\Black` trick after `\useK` command to remove grey components
+occurred during color mixing.
+
+Finally, you can use `^` immediately preceded before the macro name of the
+color. Then the complementary color is used here.
+\begtt
+\colordef\mycolor{\Grey+.6^\Blue} % the same as \colordef\mycolor{\Grey+.6\Yellow}
+\endtt
+
+The \^`\rgbcolordef` can be used to mix colors in additive color model RGB.
+If \^`\onlyrgb` is declared, then \^`\colordef` works as \^`\rgbcolordef`.
+
+If a CMYK to RGB or RGB to CMYK conversion is needed then
+direct conversion of given color is used (if declared using
+\^`\rgbcmykmap``{<rgb>}{<cmyk>}`) or the following simple formulae are used
+(ICC profiles are not supported):
+$$
+\displaylines{
+   \hbox{CMYK to RGB:}\cr
+   R = (1-C)(1-K), \ G = (1-M)(1-K), \ B = (1-Y)(1-K). \cr
+   \hbox{RGB to CMYK:}\cr
+   K'=\max(R,G,B), \ C=(K'-R)/K', \ M=(K'-G)/K', \ Y=(K'-B)/K', \ K=1-K'.
+}
+$$
+The RGB to CMYK conversion is invoked when a color is declared using `\setrgbcolor`
+and it is used in \^`\colordef` or if it is printed when \^`\onlycmyk` is declared.
+The CMYK to RGB conversion is invoked when a color is declared using \^`\setcmykcolor`
+and it is used in \^`\rgbcolordef` or if it is printed when \^`\onlyrgb` is declared.
+
+\secc Implementation
+
+\_endinput
+
+2022-03-07 \_resetattrs instead \_resetcolor
+2022-03-05 \transparency added
+2021-07-16 colors reimplemented, now they are based on attributes
+2021-05-28 \rgbcmykmap introduced
+2020-04-22 \replstring\tmpb{+ }{+}, {- }{-} added in \colordef, bug fixed
+2020-03-18 introduced

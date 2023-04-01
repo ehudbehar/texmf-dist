@@ -1,0 +1,3106 @@
+% \iffalse meta-comment
+%
+% This program can be distributed and/or modified under the terms
+% of the LaTeX Project Public License either version 1.3c of this
+% license or (at your option) any later version.
+% The latest version of this license is in
+%    http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This file has the LPPL maintenance status "maintained".
+%
+%    Lua-Typo package for LaTeX version 2e
+%
+%    Copyright © 2020-2023 by Daniel Flipo
+%
+%    Please report errors to: daniel (dot) flipo (at) free (dot) fr
+%
+%<*batch>
+%<*gobble>
+\ifx\jobname\relax\let\documentclass\undefined\fi
+\ifx\documentclass\undefined
+\csname fi\endcsname
+%</gobble>
+\input docstrip.tex
+\keepsilent
+\let\MetaPrefix\relax
+\preamble
+\endpreamble
+\postamble
+\endpostamble
+\let\MetaPrefix\DoubleperCent
+\askforoverwritefalse
+\generate{%
+     \file{lua-typo.sty}{\from{lua-typo.dtx}{sty}}%
+     \nopreamble
+     \file{lua-typo.cfg}{\from{lua-typo.dtx}{cfg}}%
+     \file{lua-typo-fr.ltx}{\from{lua-typo.dtx}{driver,docfr}}%
+     \file{lua-typo.ltx}{\from{lua-typo.dtx}{driver,doc}}%
+    }
+\iffalse
+   \generate{%
+     \file{lua-typo.sty}{\from{lua-typo.dtx}{sty,dbg}}%
+     \file{scan-page.sty}{\from{lua-typo.dtx}{scan}}%
+    }
+\fi
+\endbatchfile
+%</batch>
+%<*gobble>
+\fi
+\expandafter\ifx\csname @currname\endcsname\empty
+\csname fi\endcsname
+%</gobble>
+%<*driver>
+%<+doc>\DocumentMetadata{pdfstandard=A-2b, lang=en-GB}
+%<+doc>\documentclass[a4paper,british]{ltxdoc}
+%<+docfr>\DocumentMetadata{pdfstandard=A-2b, lang=fr-FR}
+%<+docfr>\documentclass[a4paper,french]{ltxdoc}
+\usepackage{fontspec}
+\setmainfont{erewhon}
+\setsansfont{Cabin}[Scale=MatchLowercase]
+\setmonofont{VeraMono.ttf}[
+  Scale = MatchLowercase,
+  ItalicFont     = VeraMoIt.ttf,
+  BoldFont       = VeraMoBd.ttf,
+  BoldItalicFont = VeraMoBI.ttf,
+  HyphenChar=None,
+  Color=5D1D00,
+  ]
+\usepackage[expansion=true, protrusion=true]{microtype}
+\usepackage{babel,varioref}
+%<+docfr>\frenchsetup{og=«, fg=»}
+
+\usepackage[ShortPages, OverfullLines, UnderfullLines,
+            Widows, Orphans, EOPHyphens, RepeatedHyphens
+           ]{lua-typo}
+\renewcommand*\descriptionlabel[1]{%
+   \hspace{\labelsep}\texttt{#1}}
+\usepackage{array,url,verbatim}
+\usepackage[numbered]{hypdoc}
+\hypersetup{colorlinks,urlcolor=blue,unicode}
+%
+%<+docfr>\OnlyDescription
+%<+docfr>\let\FrenchDoc\begingroup\let\endFrenchDoc\endgroup
+%<+doc|docfr>\let\Debugging\comment\let\endDebugging\endcomment
+%<*doc>
+\let\FrenchDoc\comment\let\endFrenchDoc\endcomment
+\RecordChanges
+\AtEndDocument{%
+  \clearpage
+  \section{Change History}%
+   \GlossaryPrologue{}%
+   Changes are listed in reverse order (latest first)
+   from version~0.30.
+   \PrintChanges
+}
+%</doc>
+\newcommand*\texdir[1]{\textsc{#1}}
+\newcommand*\file[1]{\texttt{#1}}
+\newcommand*\pkg[1]{\texttt{#1}}
+\newcommand*\opt[1]{\texttt{#1}}
+\renewcommand\meta[1]{\texttt{\textsl{<#1>}}}
+\newcommand*\node[1]{\textsc{#1}}
+%
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{.3\baselineskip plus 0.3pt minus 0.3pt}
+\begin{document}
+\GetFileInfo{lua-typo.sty}
+\DocInput{lua-typo.dtx}
+\end{document}
+
+%%% Local Variables:
+%%% coding: utf-8
+%%% TeX-engine: luatex
+%%% End:
+%</driver>
+%<*gobble>
+\fi
+%</gobble>
+% \fi
+%
+% \begin{FrenchDoc}
+% \begin{center}
+%   \textbf{\Large Recherche d’imperfections typographiques\\[3pt]
+%           avec LuaLaTeX}
+%   \\[.5\baselineskip]^^A\]
+%   {\large Daniel Flipo}\\
+%   \texttt{daniel.flipo@free.fr}
+% \end{center}
+%
+% \section{De quoi s’agit-il ?}
+%
+%    L’extension \pkg{lua-typo} décrite ci-dessous%
+%    \footnote{Version \fileversion, mise à jour le \filedate.}
+%    permet de mettre en lumière par un changement de couleur, les
+%    lignes potentiellement imparfaites d’un fichier PDF produit par
+%    LuaLaTeX ; comme son nom l’indique elle ne fonctionne qu’avec
+%    LuaLaTeX. Une liste des pages concernées est affichée à la fin
+%    du fichier \file{.log}, permettant un accès rapide aux pages
+%    incriminées. \pkg{lua-typo} crée également un fichier de suffixe
+%    \file{.typo} regroupant les informations (type, page, ligne) sur
+%    les imperfections relevées.
+%
+%    Normalement, c’est-à-dire lorsque la justification n’est pas trop
+%    étroite, (Lua)TeX fait du bon travail, surtout si \pkg{microtype}
+%    est utilisé mais il peut rester des points à vérifier, notamment
+%    des lignes trop pleines ou lavées (\emph{Overfull, Underfull box}),
+%    des veuves et des orphelines, des mots coupés en fin de page ou
+%    d’alinéa ou sur plusieurs lignes consécutives, des dernières lignes
+%    d’alinéa trop courtes ou presque pleines, des pages quasi vides.
+%    La répétition d’un même mot ou partie de mot au début ou à la fin
+%    de deux lignes consécutives est aussi détectée.
+%    La présence en fin de ligne de certains mots très courts (une ou
+%    deux lettres, liste dépendant de la langue) peut également être
+%    recherchée.
+%
+%    \textbf{Important :} a) les lignes totalement ou partiellement
+%    coloriées par \pkg{lua-typo} le sont uniquement pour
+%    \emph{attirer l’attention} du correcteur à qui il appartient
+%    de décider si ces lignes doivent être remaniées ou non.
+%    Certains « défauts » peuvent être acceptables dans certaines
+%    conditions (multicolonnage, documents techniques) et pas dans
+%    d’autres, œuvres litéraires par exemple.
+%    Seul un humain entrainé peut décider si une ligne légèrement lavée
+%    est acceptable ou non, ou si la suppression d’une coupure malvenue
+%    ne va pas provoquer d’autres désordres bien plus graves.\\
+%    b) Inversement, il n’est pas exclu que \pkg{lua-typo} comporte
+%    des bogues l’empêchant de détecter des lignes potentiellement
+%    imparfaites.
+%
+%    \pkg{lua-typo} est largement configurable et devrait pouvoir
+%    s’adapter aux exigences variables des auteurs ou correcteurs : voir
+%    ci-dessous la liste des options et le fichier de configuration
+%    \file{lua-typo.cfg}.
+%
+%    \pkg{lua-typo} ne corrigeant aucun des « défauts » relevés, quels
+%    sont les moyens à notre disposition pour le faire manuellement ?
+%    Reformuler une phrase est souvent efficace, un auteur peut se le
+%    permettre, un correcteur ne le peut pas. Il est possible de jouer
+%    sur l’espace inter-mots grâce à la commande TeX \cs{spaceskip},
+%    ou sur l’interlettrage grâce à la commande \cs{textls} de
+%    \pkg{microtype} mais dans les deux cas, il faut le faire \emph{avec
+%    parcimonie}%
+%    \footnote{Le but ultime est de parvenir à un « gris typographique »,
+%    aussi parfait que possible ; l’argument optionnel de \cs{textls} ne
+%    devrait guère sortir de l’intervalle $[-5,+15]$ (unité
+%    1/1000\up{e}\,\texttt{em}) et \cs{spaceskip} devrait rester très
+%    proche de l’espace-mot standard déterminée par les \cs{fontdimen}.}
+%    pour que le remède ne soit pas pire que le mal.
+%    Un \emph{léger} accroissement de l’espace inter-mots ou de
+%    l’interlettrage dans un groupe de mots peut rendre acceptable la
+%    dernière ligne initialement trop courte d’un paragraphe ou, si elle
+%    était presque pleine, ajouter une ligne, ce qui peut permettre
+%    de supprimer une orpheline.
+%    De même une légère contraction peut supprimer la dernière ligne
+%    (courte) d’un paragraphe et éviter une veuve en début de la page
+%    suivante.
+%
+%    Je conseille de n’appliquer \pkg{lua-typo} que sur des textes
+%    « presque au point », d’améliorer ce qui peut l’être puis de
+%    \emph{supprimer} l’appel à \pkg{lua-typo} afin de ne pas risquer
+%    de mettre en lumière les imperfections que l’on aura renoncé
+%    à corriger. Pour appliquer toutes les vérifications proposées par
+%    \pkg{lua-typo}, il suffit d’ajouter dans le préambule la ligne %\\
+%    |\usepackage[All]{lua-typo}|
+%
+%    La version courante (0.65) nécessite un noyau LaTeX récent,
+%    2021/06/01 ou ultérieur. Ceux qui ne disposent que d’un noyau plus
+%    ancient reçoivent un message d’avertissement et un message d’erreur
+%    «\texttt{Unable to register callback}» ; une version «rollback »
+%    est prévue à leur intention, elle se charge par la commande
+%    |\usepackage[All]{lua-typo}[=v0.4]|.
+%
+%    Les fichiers \file{demo.tex} et \file{demo.pdf} fournissent un
+%    exemple du traitement opéré par \pkg{lua-typo}.
+%
+%    Un grand merci à Jacques André et Thomas Savary pour avoir accepté
+%    de tester les pré-versions et pour leurs retours riches et toujours
+%    pertinents ; leurs suggestions et leurs encouragements ont
+%    grandement contribué à améliorer la première version mise en ligne.
+%    Merci également à Michel Bovani pour ses remarques et suggestions
+%    qui ont conduit à la version~0.61.
+%
+%  \section{Utilisation}
+%
+%    Comme indiqué plus haut la vérification la plus complète s’obtient
+%    par :\\
+%    |\usepackage[All]{lua-typo}|
+%
+%    Il est possible de choisir les tests à activer de deux
+%    manières, soit « tout sauf … » soit « seulement ceci et cela ».
+%    Pour tout activer sauf les options \meta{OptX} et \meta{OptY} :\\
+%    |\usepackage[All, |\meta{OptX}|=false, |\meta{OptY}|=false]{lua-typo}|\\
+%    ou pour se limiter aux tests \meta{OptX} et \meta{OptY} :\\
+%    |\usepackage[|\meta{OptX}|, |\meta{OptY}|]{lua-typo}|
+%
+%    La liste des options et le type des vérifications proposées sont
+%    présentés dans le tableau \vpageref{options-fr}.
+%    Par exemple, pour limiter les vérifications aux lignes trop pleines
+%    ou creuses, il suffit de coder :\\
+%    |\usepackage[OverfullLines, UnderfullLines]{lua-typo}|\\
+%    Pour tout vérifier sauf les coupures répétées en fin de ligne on
+%    codera :\\
+%    |\usepackage[All, RepeatedHyphens=false]{lua-typo}|\\
+%    Notez que l’option that \opt{All} doit être la première de la
+%    liste, les suivantes étant rétirées de la liste complète définie
+%    par~\opt{All}.
+%
+%    \begin{table}[ht]
+%      \centering\label{options-fr}
+%    \begin{tabular}{>{\ttfamily}ll}
+%      \multicolumn{1}{l}{Nom} & Imperfection à signaler\\ \hline
+%      All             & Active toutes les options ci-dessous\\
+%      ShortLines      & Dernière ligne d’alinéa trop courte ?\\
+%      BackParindent   & Dernière ligne d’alinéa \emph{presque} pleine ?\\
+%      ShortPages      & Page quasi vide (quelques lines) ?\\
+%      OverfullLines   & Ligne trop pleine ?\\
+%      UnderfullLines  & Ligne lavée ? \\
+%      Widows          & Veuve (haut de page) ?\\
+%      Orphans         & Orpheline (bas de page) ?\\
+%      EOPHyphens      & Mot coupé en bas de page ?\\
+%      RepeatedHyphens & Coupures sur trop de lignes consécutives ?\\
+%      ParLastHyphen   & Coupure à l’avant-dernière ligne d’un alinéa ?\\
+%      EOLShortWords   & Mots courts (1 or 2 lettres) en fin de ligne ?\\
+%      FirstWordMatch  & Même (partie de) mot en début de lignes
+%                        consécutives ?\\
+%      LastWordMatch   & Même (partie de) mot en fin de lignes
+%                        consécutives ?\\
+%      FootnoteSplit   & Fin de note de bas de page sur page suivante?\\
+%      ShortFinalWord  & Mot de fin de phrase court en haut de page\\
+%      \hline
+%    \end{tabular}
+%    \end{table}
+%
+%    Le nom des différentes options n’étant pas facile à mémoriser, il
+%    est possible de les retrouver sans devoir consulter la
+%    documentation ; l’option \opt{ShowOptions} affiche la liste
+%    complète dans le fichier \file{.log} :
+%    |\usepackage[ShowOptions]{lua-typo}|
+%
+%    L’option \opt{None}, empêche toute vérification :
+%    |\usepackage[None]{lua-typo}|
+%    a pour effet de supprimer complètement tout ajout de code LuaTeX
+%    (aucune fonction n’est ajoutée aux \emph{callbacks} de LuaTeX).
+%    Cette option peut-être utile lors de la toute dernière compilation,
+%    elle n’est pas tout-à-fait équivalente à la mise en commentaire de la
+%    ligne car les variables utilisées par \pkg{luatypo} restent
+%    définies ; si certaines ont été modifiées dans le préambule aucun
+%    message d’erreur du type ``\emph{Undefined Control Sequence}’’ ne
+%    sera émis à leur sujet.
+%
+%    Terminons par quelques précisions sur ces options.
+%    \begin{description}
+%    \item[FirstWordMatch :] les répétitions en début de ligne dans les
+%      listes ne sont pas signalées. Ceci est voulu car elles résultent
+%      d’un choix délibéré de l’auteur.
+%    \item[ShortPages :] lorsque le nombre de lignes d’une page est jugé
+%      insuffisant (voir ci-dessous), seule la dernière ligne de celle-ci
+%      est mise en couleur.
+%    \item[RepeatedHyphens :] de même, lorsque le nombre de lignes
+%      consécutives affectées par des coupures dépasse le seuil fixé
+%      (voir ci-dessous), ne sont coloriées que les coupures en excès.
+%    \item[ShortFinalWord :] lorsque le premier mot de la première ligne
+%      d’une page termine une phrase et qu’il est court (au plus
+%      |\luatypoMinLen=4| lettres), on le signale.
+%    \end{description}
+%
+%    \section{Paramétrage personnalisé}
+%
+%    Pour certaines vérifications faites par \pkg{lua-typo} un
+%    paramétrage est nécessaire : à partir de quelle limite une dernière
+%    ligne d’alinéa est-elle considérée comme trop courte ?
+%    Combien de coupures consécutives en bout de ligne sont-elles
+%    acceptables ? Ces réglages dépendent évidemment du contexte, un
+%    correcteur de romans aura des exigences plus strictes qu’un auteur
+%    de documentation technique par exemple…
+%
+%    \pkg{lua-typo} permet de modifier le réglage des curseurs soit dans
+%    le fichier \file{lua-typo.cfg} soit dans le préambule après l’appel
+%    de \pkg{lua-typo} ; les réglages placés dans le préambule prévalent
+%    sur ceux du fichier \file{lua-typo.cfg} qui eux-mêmes prévalent sur
+%    les réglages internes de l’extension.
+%
+%    Le fichier \file{lua-typo.cfg} fourni avec la distribution reprend
+%    exactement les réglages internes, il se trouve normalement dans le
+%    répertoire \texdir{texmfdist} des distributions TeXLive, MikTeX, etc.
+%    L’utilisateur a la possibilité de recopier ce fichier soit dans son
+%    répertoire de travail pour un document particulier, soit dans son
+%    répertoire \texdir{texmfhome} ou \texdir{texmflocal} et de le
+%    personnaliser comme il l’entend.
+%
+%    Voici la liste complète des paramètres personnalisables avec leur
+%    valeur par défaut, leurs noms sont systématiquement préfixés par
+%    |luatypo| afin d’éviter de possibles conflits avec d’autres
+%    extensions.
+%    \begin{description}
+%      \item[BackParindent :]  la dernière ligne d’un alinéa
+%        devrait, soit se terminer à plus de |\luatypoBackPI=1em|
+%        de la marge droite, soit être (approximativement) pleine
+%        (tolérance |\luatypoBackFuzz=2pt|)%
+%        \footnote{Certains auteurs n’acceptent pas les lignes pleines
+%          en fin de paragraphe, ceux-là pourront faire
+%          \cs{luatypoBackFuzz=0pt} pour qu’elles soient détectées comme
+%          fautives.}.
+%
+%      \item[ShortLines :]  |\luatypoLLminWD=2\parindent|%
+%        \footnote{Ou \texttt{20pt} si \cs{parindent=0pt}.}
+%        fixe la longueur minimale acceptable pour la dernière ligne
+%        d’un alinéa.
+%
+%      \item[ShortPages :] |\luatypoPageMin=5| fixe le nombre minimal de
+%        lignes d’une page pour que celle-ci ne soit pas déclarée trop
+%        courte. En fait, la position de la dernière ligne est prise en
+%        compte afin que les pages de titre ou celles contenant une
+%        image ne soient pas signalées comme fautives.
+%
+%      \item[RepeatedHyphens :] |\luatypoHyphMax=2| fixe le nombre maximal
+%        acceptable de lignes consécutives terminées par un mot coupé.
+%
+%      \item[UnderfullLines :] |\luatypoStretchMax=200| fixe le
+%        pourcentage maximal acceptable pour l’étirement des
+%        espaces-mots, au-delà la ligne est déclarée lavée.
+%        La valeur donnée doit être un entier supérieur ou égal à~100,
+%        cette valeur 100 correspond à l’étirement maximal prévu par la
+%        fonte (|\fontdimen3|) ; avec ce réglage attendez-vous à trouver
+%        une kyrielle de lignes les creuses ! En fait la valeur par défaut
+%        (200) correspond approximativement à ce que TeX, avec les
+%        réglages par défaut (|\tolerance=200|, |\hbadness=1000|),
+%        considère comme \emph{Underfull hbox}.
+%
+%      \item[First/LastWordMatch:] |\luatypoMinFull=3|\hfil et\hfil
+%        |\luatypoMinPart=4|\hfil nombres\linebreak[4] minimaux de lettres
+%        identiques (resp. pour un mot complet ou pour une partie de
+%        mot) au début ou à la fin de deux lignes consécutives
+%        déclenchant l’avertissement.
+%        Avec ce réglage (3 et 4), seront détectées deux lignes se
+%        terminant par « cible» et « invincible » (quatre lettres en
+%        commun), ainsi que la présence de « mon » en début ou fin de
+%        deux lignes consécutives (trois lettres en commun).
+%
+%    \item[EOLShortWords:] cette option signale la présence en fin de
+%        ligne de mots très courts (une ou deux lettres)
+%        qui sont répertoriés dans une des listes
+%        suivantes (elles dépendent de la langue courante) :\\
+%        |\luatypoOneChar{|\meta{langue}|}{'|\meta{liste de mots}|'}|\\
+%        |\luatypoTwoChars{|\meta{langue}|}{'|\meta{liste de mots}|'}|
+%
+%        Lorsque les listes correspondant à la langue du document sont
+%        vides, aucune vérification n’est effectuée. Pour l’instant,
+%        il y a deux lignes (non actives) prévues pour le français :\\
+%        |\luatypoOneChar{french}{'À Ô Y'}|\\
+%        |\luatypoTwoChars{french}{'Je Tu Il On Au De'}|
+%
+%        Deux contraintes sont à respecter lorsqu’on veut
+%        personnaliser ces listes :\\
+%        a) le premier argument (langue) \emph{doit être connu de}
+%        \pkg{babel}, aussi les commandes |\luatypoOneChar| et
+%        |\luatypoTwoChars|, si elles sont utilisées, doivent l’être
+%        \emph{après} le chargement de \pkg{babel}, une bonne habitude
+%        à prendre est donc de toujours charger \pkg{lua-typo}
+%        \emph{après} \pkg{babel} ;
+%        b) le second argument \emph{doit être une chaîne de
+%        caractères}, donc entourée de simples ou doubles
+%        \emph{quotes} \textsc{ascii} et composées de mots séparés
+%        par des espaces comme dans les exemples ci-dessus.
+%    \end{description}
+%
+%    À chacune des vérifications faites par \pkg{lua-typo} peut être
+%    attachée une couleur spécifique pour mettre en évidence les
+%    imperfections détectées.
+%    Actuellement, seulement cinq couleurs sont utilisées par défaut,
+%    voici leur définition dans \file{lua-typo.cfg} :
+%    \begin{verbatim}
+% \definecolor{LTgrey}{gray}{0.6}
+% \definecolor{LTred}{rgb}{1,0.55,0}
+% \luatypoSetColor0{red}      % Coupure à l’avant-dernière ligne
+% \luatypoSetColor1{red}      % Coupure en bas de page
+% \luatypoSetColor2{red}      % Coupures consécutives
+% \luatypoSetColor3{red}      % Mot court en fin de ligne
+% \luatypoSetColor4{cyan}     % Veuve
+% \luatypoSetColor5{cyan}     % Orpheline
+% \luatypoSetColor6{cyan}     % Dernière ligne d’alinéa trop courte
+% \luatypoSetColor7{blue}     % Ligne trop pleine
+% \luatypoSetColor8{blue}     % Ligne creuse
+% \luatypoSetColor9{red}      % Page presque vide (qq. lignes)
+% \luatypoSetColor{10}{LTred} % Répétitions en début de ligne
+% \luatypoSetColor{11}{LTred} % Répétitions en fin de ligne
+% \luatypoSetColor{12}{LTgrey}% Dernière ligne d’alinéa presque pleine
+% \luatypoSetColor{13}{cyan}  % Note de bas de page éclatée
+% \luatypoSetColor{14}{red}   % Mot de fin de phrase en haut de page
+%    \end{verbatim}
+%    \pkg{lua-typo} charge les extensions \pkg{luacolor} et donc
+%    \pkg{color}. Seules les couleurs portant un nom (\emph{named
+%    colors}) peuvent être utilisées dans la commande
+%    |\luatypoSetColor| ; pour en définir de nouvelles il faut donc,
+%    soit utiliser la commande |\definecolor| de l’extension
+%    \pkg{color} (comme ci-dessus pour |LTgrey| ou |LTred|), soit
+%    charger l’extension \pkg{xcolor} qui donne accès à une
+%    kyrielle de noms de couleurs.
+% \end{FrenchDoc}
+%
+% \StopEventually{}
+%
+% \begin{center}
+%   \textbf{\Large Highlighting Typographical Flaws with LuaLaTeX}
+%   \\[.5\baselineskip]^^A\]
+%   {\large Daniel Flipo}\\
+%   \texttt{daniel.flipo@free.fr}
+% \end{center}
+%
+% \section{What is it about?}
+%
+%    The file \file{\filename}\footnote{The file described in this
+%    section has version number \fileversion\ and was last revised on
+%    \filedate.}, is meant for careful writers and proofreaders who do
+%    not feel totally satisfied with LaTeX output, the most frequent
+%    issues being overfull or underfull lines, widows and orphans,
+%    hyphenated words split across two pages, two many consecutive lines
+%    ending with hyphens, paragraphs ending on too short or nearly full
+%    lines, homeoarchy, etc.
+%
+%    This package, which works with LuaLaTeX only,
+%    \emph{does not try to correct anything} but just highlights
+%    potential issues (the offending lines or end of lines are printed
+%    in colour) and provides at the end of the \file{.log} file a summary
+%    of pages to be checked and manually improved if possible.
+%    \pkg{lua-typo} also creates a \file{<jobname>.typo} file which
+%    summarises the informations (type, page, line number) about the
+%    detected issues.
+%
+%    \textbf{Important notice:} a) the highlighted lines are only meant
+%    to \emph{draw the proofreader’s attention} on possible issues, it
+%    is up to him/her to decide whether an improvement is desirable or
+%    not; they should \emph{not} be regarded as blamable! some issues
+%    may be acceptable in some conditions (multi-columns, technical
+%    papers) and unbearable in others (literary works f.i.).
+%    Moreover, correcting a potential issue somewhere may result in
+%    other much more serious flaws somewhere else …\\
+%    b) Conversely, possible bugs in \pkg{lua-typo} might hide issues
+%    that should normally be highlighted.
+%
+%    \pkg{lua-typo} is highly configurable in order to meet the
+%    variable expectations of authors and correctors: see the options’
+%    list and the \file{lua-typo.cfg} configuration file below.
+%
+%    When \pkg{lua-typo} shows possible flaws in the page layout,
+%    how can we fix them? The simpliest way is to rephrase some bits of
+%    text… this is an option for an author, not for a proofreader.
+%    When the text can not be altered, it is possible to \emph{slightly}
+%    adjust the inter-word spacing (via the TeX commands |\spaceskip| and
+%    |\xspaceskip|) and/or the letter spacing (via \pkg{microtype}’s
+%    |\textls| command): slightly enlarging either of them or both may
+%    be sufficient to make a paragraph’s last line acceptable when it
+%    was originally too short or add a line to a paragraph when its last
+%    line was nearly full, thus possibly removing an orphan.
+%    Conversely, slightly reducing them may remove a paragraph’s last line
+%    (when it was short) and get rid of a widow on top of next page.
+%
+%    I suggest to add a call |\usepackage[All]{lua-typo}| to the
+%    preamble of a document which is ``nearly finished’’
+%    \emph{and to remove it} once all possible corrections have been
+%    made:  if some flaws remain, getting them printed in colour in
+%    the final document would be a shame!
+%
+%    Starting with version 0.50 a recent LaTeX kernel (dated 2021/06/01)
+%    is reiquired.  Users running an older kernel will get a warning
+%    and an error message ``\texttt{Unable to register callback}’’;
+%    for them, a ``rollback’’ version of \pkg{lua-typo} is provided,
+%    it can be loaded this way: |\usepackage[All]{lua-typo}[=v0.4]|.
+%
+%    See files \file{demo.tex} and \file{demo.pdf} for a short example
+%    (in French).
+%
+%    I am very grateful to Jacques André and Thomas Savary, who kindly
+%    tested my beta versions, providing much valuable feedback and
+%    suggesting many improvements for the first released version.
+%    Special thanks to both of them and to Michel Bovani whose
+%    contributions led to version~0.61!
+%
+%  \section{Usage}
+%
+%    The easiest way to trigger all checks perfomed by \pkg{lua-typo}
+%    is:\\
+%    |\usepackage[All]{lua-typo}|
+%
+%    It is possible to enable or disable some checks through boolean
+%    options passed to \pkg{lua-typo};
+%    you may want to perform all checks except a few, then
+%    \pkg{lua-typo} should be loaded this way:\\
+%    |\usepackage[All, |\meta{OptX}|=false, |\meta{OptY}|=false]{lua-typo}|\\
+%    or to enable just a few checks, then do it this way:\\
+%    |\usepackage[|\meta{OptX}|, |\meta{OptY}|, |\meta{OptZ}|]{lua-typo}|
+%
+%    Here is the full list of possible checks (name and purpose):\\[12pt]
+%    \begin{tabular}{>{\ttfamily}ll}
+%      \multicolumn{1}{l}{Name}  & Glitch to highlight\\ \hline
+%      All             & Turns all options to \opt{true}\\
+%      BackParindent   & paragraph’s last line \emph{nearly} full?\\
+%      ShortLines      & paragraph’s last line too short?\\
+%      ShortPages      & nearly empty page (just a few lines)?\\
+%      OverfullLines   & overfull lines?\\
+%      UnderfullLines  & underfull lines?\\
+%      Widows          & widows (top of page)?\\
+%      Orphans         & orphans (bottom of page)?\\
+%      EOPHyphens      & hyphenated word split across two pages?\\
+%      RepeatedHyphens & too many consecutive hyphens?\\
+%      ParLastHyphen   & paragraph’s last full line hyphenated?\\
+%      EOLShortWords   & short words (1 or 2 chars) at end of line?\\
+%      FirstWordMatch  & same (part of) word starting two consecutive lines?\\
+%      LastWordMatch   & same (part of) word ending two consecutive lines?\\
+%      FootnoteSplit   & footnotes spread over two pages or more?\\
+%      ShortFinalWord  & Short word ending a sentence on the next page\\
+%       \hline
+%    \end{tabular}\\[12pt]
+%    For example, if you want \pkg{lua-typo} to only warn about overfull
+%    and underfull lines, you can load \pkg{lua-typo} like this:\\
+%    |\usepackage[OverfullLines, UnderfullLines]{lua-typo}|\\
+%    If you want everything to be checked except paragraphs ending on
+%    a short line try:\\
+%    |\usepackage[All, ShortLines=false]{lua-typo}|\\
+%    please note that \opt{All} has to be the first one, as options are
+%    taken into account as they are read \emph{i.e.} from left to right.
+%
+%    The list of all available options is printed to the \file{.log}
+%    file when option \opt{ShowOptions} is passed to \pkg{lua-typo},
+%    this option provides an easy way to get their names without having
+%    to look into the documentation.
+%
+%    With option \opt{None}, \pkg{lua-typo} \emph{does absolutely
+%    nothing}, all checks are disabled as the main function is not added
+%    to any LuaTeX callback.  It not quite equivalent to commenting out
+%    the |\usepackage{lua-typo}| line though, as user defined commands
+%    related to \pkg{lua-typo} are still defined and will not print
+%    any error message.
+%
+%    Please be aware of the following features:
+%    \begin{description}
+%      \item[FirstWordMatch:] the first word of consecutive list items
+%        is not highlighted, as these repetitions result of the author’s
+%        choice.
+%      \item[ShortPages:] if a page is considered too short, its last
+%        line only is highlighted, not the whole page.
+%      \item[RepeatedHyphens:] ditto, when the number of consecutives
+%        hyphenated lines is too high, only the hyphenated words in
+%        excess (the last ones) are hightlighted.
+%      \item[ShortFinalWord :] the first word on a page is highlighted
+%        if it ends a sentence and is short (up to |\luatypoMinLen=4|
+%        letters).
+%    \end{description}
+%
+%    \section{Customisation}
+%
+%    Some of the checks mentionned above require tuning, for
+%    instance, when is a last paragraph’s length called too short?
+%    how many hyphens ending consecutive lines are acceptable?
+%    \pkg{lua-typo} provides user customisable parameters to set
+%    what is regarded as acceptable or not.
+%
+%    A default configuration file \file{lua-typo.cfg} is provided
+%    with all parameters set to their defaults; it is located under
+%    the \texdir{texmfdist} directory.  It is up to the users to copy
+%    this file into their working directory (or \texdir{texmfhome} or
+%    \texdir{texmflocal}) and tune the defaults according to their own
+%    taste.
+%
+%    It is also possible to provide defaults directly in the
+%    document’s preamble (this overwrites the corresponding settings
+%    done in the configuration file found on TeX’s search path: current
+%    directory, then \texdir{texmfhome}, \texdir{texmflocal} and
+%    finally \texdir{texmfdist}.
+%
+%    Here are the parameters names (all prefixed by |luatypo| in order
+%    to avoid conflicts with other packages) and their default values:
+%    \begin{description}
+%      \item[BackParindent :] paragraphs’ last line should either end at
+%        at sufficient distance (|\luatypoBackPI|, default |1em|) of the
+%        right margin, or (approximately) touch the right margin ---the
+%        tolerance is |\luatypoBackFuzz| (default |2pt|)%
+%        \footnote{Some authors do not accept full lines at end of
+%          paragraphs, they can just set \cs{luatypoBackFuzz=0pt}
+%          to make them pointed out as faulty.}.
+%
+%      \item[ShortLines:] |\luatypoLLminWD=2\parindent|%
+%        \footnote{Or \texttt{20pt} if \cs{parindent=0pt}.}
+%        sets the minimum acceptable length for paragraphs’ last lines.
+%
+%      \item[ShortPages:] |\luatypoPageMin=5| sets the minimum
+%        acceptable number of lines on a page (chapters’ last page
+%        for instance).  Actually, the last line’s vertical position on
+%        the page is taken into account so that f.i.\ title pages or
+%        pages ending on a picture are not pointed out.
+%
+%      \item[RepeatedHyphens:] |\luatypoHyphMax=2| sets the maximum
+%        acceptable number of consecutive hyphenated lines.
+%
+%      \item[UnderfullLines:] |\luatypoStretchMax=200| sets the maximum
+%        acceptable percentage of stretch acceptable before a line is
+%        tagged by \pkg{lua-typo} as underfull; it must be an integer
+%        over 100, 100 means that the slightest stretch exceeding the
+%        font tolerance (|\fontdimen3|) will be warned about (be
+%        prepared for a lot of ``underfull lines’’ with this setting),
+%        the default value 200 is just below what triggers TeX’s
+%        ``Underfull hbox’’ message (when |\tolerance=200| and
+%        |\hbadness=1000|).
+%
+%      \item[First/LastWordMatch:] |\luatypoMinFull=3| and
+%        |\luatypoMinPart=4| set the minimum number of characters
+%        required for a match to be pointed out.  With this setting (3
+%        and 4), two occurrences of the word `out’ at the beginning or
+%        end of two consecutive lines will be highlighted (three chars,
+%        `in’ wouldn’t match), whereas a line ending with ``full’’ or
+%        ``overfull’’ followed by one ending with ``underfull’’ will
+%        match (four chars): the second occurence of ``full’’ or
+%        ``erfull’’ will be highlighted.
+%
+%      \item[EOLShortWords:] this check deals with lines ending with
+%        very short words (one or two characters), not all of them but
+%        a user selected list depending on the current language.\\
+%        |\luatypoOneChar{|\meta{language}|}{'|\meta{list of words}|'}|\\
+%        |\luatypoTwoChars{|\meta{language}|}{'|\meta{list of words}|'}|
+%
+%        Currently, defaults (commented out) are suggested for the French
+%        language only:\\
+%        |\luatypoOneChar{french}{'À Ô Y'}|\\
+%        |\luatypoTwoChars{french}{'Je Tu Il On Au De'}|
+%
+%        Feel free to customise these lists for French or to add your
+%        own shorts words for other languages but remember that
+%        a) the first argument (language name) \emph{must be known by}
+%        \pkg{babel}, so if you add |\luatypoOneChar| or
+%        |\luatypoTwoChars| commands, please make sure that
+%        \pkg{lua-typo} is loaded \emph{after} \pkg{babel};
+%        b) the second argument \emph{must be a string}
+%        (\emph{i.e.} surrounded by single or double \textsc{ascii}
+%        quotes) made of your words separated by spaces.
+%
+%    \end{description}
+%
+%    It is possible to define a specific colour for each
+%    typographic flaws that \pkg{lua-typo} deals with.
+%    Currently, only five colours are used in \file{lua-typo.cfg}:
+%    \begin{verbatim}
+% \definecolor{LTgrey}{gray}{0.6}
+% \definecolor{LTred}{rgb}{1,0.55,0}
+% \luatypoSetColor0{red}      % Paragraph last full line hyphenated
+% \luatypoSetColor1{red}      % Page last word hyphenated
+% \luatypoSetColor2{red}      % Hyphens on consecutive lines
+% \luatypoSetColor3{red}      % Short word at end of line
+% \luatypoSetColor4{cyan}     % Widow
+% \luatypoSetColor5{cyan}     % Orphan
+% \luatypoSetColor6{cyan}     % Paragraph ending on a short line
+% \luatypoSetColor7{blue}     % Overfull lines
+% \luatypoSetColor8{blue}     % Underfull lines
+% \luatypoSetColor9{red}      % Nearly empty page (a few lines)
+% \luatypoSetColor{10}{LTred} % First word matches
+% \luatypoSetColor{11}{LTred} % Last word matches
+% \luatypoSetColor{12}{LTgrey}% Paragraph’s last line nearly full
+% \luatypoSetColor{13}{cyan}  % Footnotes spread over two pages
+% \luatypoSetColor{14}{red}   % Short final word on top of the page
+%    \end{verbatim}
+%
+%    \pkg{lua-typo} loads the \pkg{luacolor} package which loads the
+%    \pkg{color} package from the LaTeX graphic bundle.
+%    |\luatypoSetColor| requires named colours, so you can either use
+%    the |\definecolor| from \pkg{color} package to define yours
+%    (as done in the config file for `LTgrey’ and `LTred’) or load the
+%    \pkg{xcolor} package which provides a bunch of named colours.
+%
+%    \section{\TeX{}nical details}
+%
+% \iffalse
+%<*sty|scan>
+%% IMPORTANT NOTICE:
+%% For the copyright see the source file `lua-typo.dtx’.
+%%
+\NeedsTeXFormat{LaTeX2e}[2021/06/01]
+%</sty|scan>
+%<+sty>\ProvidesPackage{lua-typo}
+%<+scan>\ProvidesPackage{scan-page}
+%<+dtx>\ProvidesFile{lua-typo.dtx}
+%<*dtx|sty|scan>
+                [2023-03-08 v.0.65 Daniel Flipo]
+%</dtx|sty|scan>
+%<*sty>
+% \fi
+%
+% \changes{v0.50}{2021/05/05}{Rollback mechanism used for recovering
+%    older versions.}
+%
+%    Starting with version~0.50, this package uses the rollback
+%    mechanism to provide easier backward compatibility.
+%    Rollback version~0.40 is provided for users who would have
+%    a LaTeX kernel older than 2021/06/01.
+%
+%    \begin{macrocode}
+\ifdefined\DeclareRelease
+  \DeclareRelease{v0.4}{2021-01-01}{lua-typo-2021-04-18.sty}
+  \DeclareCurrentRelease{}{2023-03-08}
+\else
+  \PackageWarning{lua-typo}{Your LaTeX kernel is too old to provide
+    access\MessageBreak to former versions of the lua-typo package.%
+    \MessageBreak Anyway, lua-typo requires a LaTeX kernel dated%
+    \MessageBreak 2020-01-01 or newer; reported}
+\fi
+\NeedsTeXFormat{LaTeX2e}[2021/06/01]
+%    \end{macrocode}
+%
+%    This package only runs with LuaLaTeX and requires packages
+%    \pkg{luatexbase}, \pkg{luacode}, \pkg{luacolor} and
+%    \pkg{atveryend}.
+%
+%    \begin{macrocode}
+\ifdefined\directlua
+  \RequirePackage{luatexbase,luacode,luacolor}
+  \RequirePackage{kvoptions,atveryend}
+\else
+  \PackageError{This package is meant for LuaTeX only! Aborting}
+               {No more information available, sorry!}
+\fi
+%    \end{macrocode}
+%
+%    Let’s define the necessary internal counters, dimens, token
+%    registers and commands…
+%
+%    \begin{macrocode}
+\newdimen\luatypoLLminWD
+\newdimen\luatypoBackPI
+\newdimen\luatypoBackFuzz
+\newcount\luatypoStretchMax
+\newcount\luatypoHyphMax
+\newcount\luatypoPageMin
+\newcount\luatypoMinFull
+\newcount\luatypoMinPart
+\newcount\luatypoMinLen
+\newcount\luatypo@LANGno
+\newcount\luatypo@options
+\newtoks\luatypo@single
+\newtoks\luatypo@double
+%    \end{macrocode}
+%    … and define a global table for this package.
+%    \begin{macrocode}
+\begin{luacode}
+luatypo = { }
+\end{luacode}
+%    \end{macrocode}
+%
+%    Set up \pkg{kvoptions} initializations.
+%
+%    \begin{macrocode}
+\SetupKeyvalOptions{
+   family=luatypo,
+   prefix=LT@,
+}
+\DeclareBoolOption[false]{ShowOptions}
+\DeclareBoolOption[false]{None}
+\DeclareBoolOption[false]{All}
+\DeclareBoolOption[false]{BackParindent}
+\DeclareBoolOption[false]{ShortLines}
+\DeclareBoolOption[false]{ShortPages}
+\DeclareBoolOption[false]{OverfullLines}
+\DeclareBoolOption[false]{UnderfullLines}
+\DeclareBoolOption[false]{Widows}
+\DeclareBoolOption[false]{Orphans}
+\DeclareBoolOption[false]{EOPHyphens}
+\DeclareBoolOption[false]{RepeatedHyphens}
+\DeclareBoolOption[false]{ParLastHyphen}
+\DeclareBoolOption[false]{EOLShortWords}
+\DeclareBoolOption[false]{FirstWordMatch}
+\DeclareBoolOption[false]{LastWordMatch}
+\DeclareBoolOption[false]{FootnoteSplit}
+\DeclareBoolOption[false]{ShortFinalWord}
+%    \end{macrocode}
+%    Option \opt{All} resets all booleans relative to specific
+%    typographic checks to \opt{true}.
+%    \begin{macrocode}
+\AddToKeyvalOption{luatypo}{All}{%
+  \LT@ShortLinestrue     \LT@ShortPagestrue
+  \LT@OverfullLinestrue  \LT@UnderfullLinestrue
+  \LT@Widowstrue         \LT@Orphanstrue
+  \LT@EOPHyphenstrue     \LT@RepeatedHyphenstrue
+  \LT@ParLastHyphentrue  \LT@EOLShortWordstrue
+  \LT@FirstWordMatchtrue \LT@LastWordMatchtrue
+  \LT@BackParindenttrue  \LT@FootnoteSplittrue
+  \LT@ShortFinalWordtrue
+}
+\ProcessKeyvalOptions{luatypo}
+%    \end{macrocode}
+%
+%     Forward these options to the |luatypo| global table.
+%     Wait until the config file \file{lua-typo.cfg} has been read
+%     in order to give it a chance of overruling the boolean options.
+%     This enables the user to permanently change the defaults.
+%
+%    \begin{macrocode}
+\AtEndOfPackage{%
+  \ifLT@None
+    \directlua{ luatypo.None = true }%
+  \else
+    \directlua{ luatypo.None = false }%
+  \fi
+  \ifLT@BackParindent
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.BackParindent = true }%
+  \else
+    \directlua{ luatypo.BackParindent = false }%
+  \fi
+  \ifLT@ShortLines
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.ShortLines = true }%
+  \else
+    \directlua{ luatypo.ShortLines = false }%
+  \fi
+  \ifLT@ShortPages
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.ShortPages = true }%
+  \else
+    \directlua{ luatypo.ShortPages = false }%
+  \fi
+  \ifLT@OverfullLines
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.OverfullLines = true }%
+  \else
+    \directlua{ luatypo.OverfullLines = false }%
+  \fi
+  \ifLT@UnderfullLines
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.UnderfullLines = true }%
+  \else
+    \directlua{ luatypo.UnderfullLines = false }%
+  \fi
+  \ifLT@Widows
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.Widows = true }%
+  \else
+    \directlua{ luatypo.Widows = false }%
+  \fi
+  \ifLT@Orphans
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.Orphans = true }%
+  \else
+    \directlua{ luatypo.Orphans = false }%
+  \fi
+  \ifLT@EOPHyphens
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.EOPHyphens = true }%
+  \else
+    \directlua{ luatypo.EOPHyphens = false }%
+  \fi
+  \ifLT@RepeatedHyphens
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.RepeatedHyphens = true }%
+  \else
+    \directlua{ luatypo.RepeatedHyphens = false }%
+  \fi
+  \ifLT@ParLastHyphen
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.ParLastHyphen = true }%
+  \else
+    \directlua{ luatypo.ParLastHyphen = false }%
+  \fi
+  \ifLT@EOLShortWords
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.EOLShortWords = true }%
+  \else
+    \directlua{ luatypo.EOLShortWords = false }%
+  \fi
+  \ifLT@FirstWordMatch
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.FirstWordMatch = true }%
+  \else
+    \directlua{ luatypo.FirstWordMatch = false }%
+  \fi
+  \ifLT@LastWordMatch
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.LastWordMatch = true }%
+  \else
+    \directlua{ luatypo.LastWordMatch = false }%
+  \fi
+  \ifLT@FootnoteSplit
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.FootnoteSplit = true }%
+  \else
+    \directlua{ luatypo.FootnoteSplit = false }%
+  \fi
+  \ifLT@ShortFinalWord
+    \advance\luatypo@options by 1
+    \directlua{ luatypo.ShortFinalWord = true }%
+  \else
+    \directlua{ luatypo.ShortFinalWord = false }%
+  \fi
+}
+%    \end{macrocode}
+%
+%    |ShowOptions| is specific:
+%
+%    \begin{macrocode}
+\ifLT@ShowOptions
+  \GenericWarning{* }{%
+     *** List of possible options for lua-typo ***\MessageBreak
+     [Default values between brackets]%
+     \MessageBreak
+     ShowOptions     [false]\MessageBreak
+     None            [false]\MessageBreak
+     BackParindent   [false]\MessageBreak
+     ShortLines      [false]\MessageBreak
+     ShortPages      [false]\MessageBreak
+     OverfullLines   [false]\MessageBreak
+     UnderfullLines  [false]\MessageBreak
+     Widows          [false]\MessageBreak
+     Orphans         [false]\MessageBreak
+     EOPHyphens      [false]\MessageBreak
+     RepeatedHyphens [false]\MessageBreak
+     ParLastHyphen   [false]\MessageBreak
+     EOLShortWords   [false]\MessageBreak
+     FirstWordMatch  [false]\MessageBreak
+     LastWordMatch   [false]\MessageBreak
+     FootnoteSplit   [false]\MessageBreak
+     ShortFinalWord  [false]\MessageBreak
+     \MessageBreak
+     *********************************************%
+     \MessageBreak Lua-typo [ShowOptions]
+   }%
+\fi
+%    \end{macrocode}
+%
+%   Some defaut values which can be customised in the preamble
+%   are forwarded to Lua AtBeginDocument.
+%
+%    \begin{macrocode}
+\AtBeginDocument{%
+  \directlua{
+    luatypo.HYPHmax = tex.count.luatypoHyphMax
+    luatypo.PAGEmin = tex.count.luatypoPageMin
+    luatypo.Stretch = tex.count.luatypoStretchMax
+    luatypo.MinFull = tex.count.luatypoMinFull
+    luatypo.MinPart = tex.count.luatypoMinPart
+    luatypo.MinLen  = tex.count.luatypoMinLen
+    luatypo.LLminWD = tex.dimen.luatypoLLminWD
+    luatypo.BackPI  = tex.dimen.luatypoBackPI
+    luatypo.BackFuzz  = tex.dimen.luatypoBackFuzz
+   }%
+}
+%    \end{macrocode}
+%
+%    Print the summary of offending pages ---if any--- at the
+%    (very) end of document and write the report file on disc,
+%    unless option |None| has been selected.
+%
+%    \begin{macrocode}
+\AtVeryEndDocument{%
+\ifnum\luatypo@options = 0 \LT@Nonetrue \fi
+\ifLT@None
+  \directlua{
+    texio.write_nl(' ')
+    texio.write_nl('***********************************')
+    texio.write_nl('*** lua-typo loaded with NO option:')
+    texio.write_nl('*** NO CHECK PERFORMED! ***')
+    texio.write_nl('***********************************')
+    texio.write_nl(' ')
+   }%
+\else
+  \directlua{
+    texio.write_nl(' ')
+    texio.write_nl('*************************************')
+    if luatypo.pagelist == " " then
+       texio.write_nl('*** lua-typo: No Typo Flaws found.')
+    else
+       texio.write_nl('*** lua-typo: WARNING *************')
+       texio.write_nl('The following pages need attention:')
+       texio.write(luatypo.pagelist)
+    end
+    texio.write_nl('***********************************')
+    texio.write_nl(' ')
+    local fileout= tex.jobname .. ".typo"
+    local out=io.open(fileout,"w+")
+    out:write(luatypo.buffer)
+    io.close(out)
+   }%
+\fi}
+%    \end{macrocode}
+%
+% \begin{macro}{\luatypoOneChar}
+% \begin{macro}{\luatypoTwoChars}
+%    These commands set which short words should be avoided at end of
+%    lines.  The first argument is a language name, say \opt{french},
+%    which is turned into a command |\l@french| expanding to a number
+%    known by luatex, otherwise an error message occurs.
+%    The utf-8 string entered as second argument has to be
+%    converted into the font internal coding.
+%    \begin{macrocode}
+\newcommand*{\luatypoOneChar}[2]{%
+  \def\luatypo@LANG{#1}\luatypo@single={#2}%
+  \ifcsname l@\luatypo@LANG\endcsname
+    \luatypo@LANGno=\the\csname l@\luatypo@LANG\endcsname \relax
+    \directlua{
+      local langno = \the\luatypo@LANGno
+      local string = \the\luatypo@single
+      luatypo.single[langno] = " "
+      for p, c in utf8.codes(string) do
+        local s = utf8.char(c)
+        luatypo.single[langno] = luatypo.single[langno] .. s
+      end
+%<dbg>      texio.write_nl("SINGLE=" .. luatypo.single[langno])
+%<dbg>      texio.write_nl(' ')
+     }%
+  \else
+    \PackageWarning{luatypo}{Unknown language "\luatypo@LANG",
+       \MessageBreak \protect\luatypoOneChar\space command ignored}%
+  \fi}
+\newcommand*{\luatypoTwoChars}[2]{%
+  \def\luatypo@LANG{#1}\luatypo@double={#2}%
+  \ifcsname l@\luatypo@LANG\endcsname
+    \luatypo@LANGno=\the\csname l@\luatypo@LANG\endcsname \relax
+    \directlua{
+      local langno = \the\luatypo@LANGno
+      local string = \the\luatypo@double
+      luatypo.double[langno] = " "
+      for p, c in utf8.codes(string) do
+        local s = utf8.char(c)
+        luatypo.double[langno] = luatypo.double[langno] .. s
+      end
+%<dbg>      texio.write_nl("DOUBLE=" .. luatypo.double[langno])
+%<dbg>      texio.write_nl(' ')
+    }%
+  \else
+    \PackageWarning{luatypo}{Unknown language "\luatypo@LANG",
+       \MessageBreak \protect\luatypoTwoChars\space command ignored}%
+  \fi}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \vspace*{\baselineskip}
+% \begin{macro}{\luatypoSetColor}
+%    This is a user-level command to customise the colours highlighting
+%    the fourteen types of possible typographic flaws.
+%    The first argument is a number (flaw type), the second the named
+%    colour associated to it.
+%    The colour support is based on the \pkg{luacolor} package (colour
+%    attributes).
+%    \begin{macrocode}
+\newcommand*{\luatypoSetColor}[2]{%
+  \begingroup
+    \color{#2}%
+    \directlua{luatypo.colortbl[#1]=\the\LuaCol@Attribute}%
+  \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%    The Lua code now, initialisations.
+%
+%    \begin{macrocode}
+\begin{luacode}
+luatypo.single = { }
+luatypo.double = { }
+luatypo.colortbl  = { }
+luatypo.pagelist  = " "
+luatypo.buffer    = "List of typographic flaws found for "
+                    .. tex.jobname .. ".pdf:\string\n\string\n"
+
+local char_to_discard = { }
+char_to_discard[string.byte(",")] = true
+char_to_discard[string.byte(".")] = true
+char_to_discard[string.byte("!")] = true
+char_to_discard[string.byte("?")] = true
+char_to_discard[string.byte(":")] = true
+char_to_discard[string.byte(";")] = true
+char_to_discard[string.byte("-")] = true
+
+local eow_char = { }
+eow_char[string.byte(".")] = true
+eow_char[string.byte("!")] = true
+eow_char[string.byte("?")] = true
+eow_char[utf8.codepoint("…")] = true
+
+local DISC  = node.id("disc")
+local GLYPH = node.id("glyph")
+local GLUE  = node.id("glue")
+local KERN  = node.id("kern")
+local RULE  = node.id("rule")
+local HLIST = node.id("hlist")
+local VLIST = node.id("vlist")
+local LPAR  = node.id("local_par")
+local MKERN = node.id("margin_kern")
+local PENALTY = node.id("penalty")
+local WHATSIT = node.id("whatsit")
+%    \end{macrocode}
+%    Glue subtypes:
+%    \begin{macrocode}
+local USRSKIP  = 0
+local PARSKIP  = 3
+local LFTSKIP  = 8
+local RGTSKIP  = 9
+local TOPSKIP = 10
+local PARFILL = 15
+%    \end{macrocode}
+%    Hlist subtypes:
+%    \begin{macrocode}
+local LINE    = 1
+local BOX     = 2
+local INDENT  = 3
+local ALIGN   = 4
+local EQN     = 6
+%    \end{macrocode}
+%    Penalty subtypes:
+%    \begin{macrocode}
+local USER = 0
+local HYPH = 0x2D
+%    \end{macrocode}
+%    Glyph subtypes:
+%    \begin{macrocode}
+local LIGA = 0x102
+%    \end{macrocode}
+%    Counter |parline| (current paragraph) \emph{must not be reset}
+%    on every new page!
+%    \begin{macrocode}
+local parline = 0
+%    \end{macrocode}
+%    Local definitions for the `node’ library:
+%    \begin{macrocode}
+local dimensions = node.dimensions
+local rangedimensions = node.rangedimensions
+local effective_glue = node.effective_glue
+local set_attribute = node.set_attribute
+local slide = node.slide
+local traverse = node.traverse
+local traverse_id = node.traverse_id
+local has_field = node.has_field
+local uses_font = node.uses_font
+local is_glyph  = node.is_glyph
+%    \end{macrocode}
+%    Local definitions from the `unicode.utf8’ library: replacements are
+%    needed for functions |string.gsub()|, |string.find()| and
+%    |string.reverse()| which are meant for one-byte characters only.
+%
+% \changes{v0.65}{2023/03/02}{Three new functions for utf-8 strings’
+%    manipulations.}
+%
+%    |utf8_find| requires an utf-8 string and a `pattern’ (also utf-8),
+%    it returns |nil| if pattern is not found, or the \emph{byte}
+%    position of the first match otherwise [not an issue as we only
+%    care for true/false].
+%    \begin{macrocode}
+local utf8_find = unicode.utf8.find
+%    \end{macrocode}
+%    |utf8_gsub| mimics |string.gsub| for utf-8 strings.
+%    \begin{macrocode}
+local utf8_gsub = unicode.utf8.gsub
+%    \end{macrocode}
+%    |utf8_reverse| returns the reversed string (utf-8 chars read  from
+%    end to beginning) [same as |string.reverse| but for utf-8 strings].
+%    \begin{macrocode}
+local utf8_reverse = function (s)
+  if utf8.len(s) > 1 then
+     local so = ""
+     for p, c in utf8.codes(s) do
+         so = utf8.char(c) .. so
+     end
+     s = so
+  end
+  return s
+end
+%    \end{macrocode}
+%
+%\changes{v0.32}{2021/03/14}{Better protection against unexpected
+%    nil nodes.}
+%
+%    The next function colours glyphs and discretionaries.
+%    It requires two arguments: a node and a (named) colour.
+%
+%    \begin{macrocode}
+local color_node = function (node, color)
+  local attr = oberdiek.luacolor.getattribute()
+  if node and node.id == DISC then
+     local pre = node.pre
+     local post = node.post
+     local repl = node.replace
+     if pre then
+        set_attribute(pre,attr,color)
+     end
+     if post then
+        set_attribute(post,attr,color)
+     end
+     if repl then
+        set_attribute(repl,attr,color)
+     end
+  elseif node then
+     set_attribute(node,attr,color)
+  end
+end
+%    \end{macrocode}
+%
+%    The nextfunction colours a whole line.  It requires two
+%    arguments: a line’s node and a (named) colour.\par
+%    Digging into nested hlists and vlists is needed f.i.\ to colour
+%    aligned equations.
+%
+% \changes{v0.50}{2021/05/05}{Go down deeper into hlists and vlists to
+%    colour nodes.}
+%
+%    \begin{macrocode}
+local color_line = function (head, color)
+  local first = head.head
+  for n in traverse(first) do
+      if n.id == HLIST or n.id == VLIST then
+         local ff = n.head
+         for nn in traverse(ff) do
+           if nn.id == HLIST or nn.id == VLIST then
+              local f3 = nn.head
+              for n3 in traverse(f3) do
+                if n3.id == HLIST or n3.id == VLIST then
+                   local f4 = n3.head
+                   for n4 in traverse(f4) do
+                     if n4.id == HLIST or n4.id == VLIST then
+                        local f5 = n4.head
+                        for n5 in traverse(f5) do
+                          if n5.id == HLIST or n5.id == VLIST then
+                             local f6 = n5.head
+                             for n6 in traverse(f6) do
+                               color_node(n6, color)
+                             end
+                          else
+                             color_node(n5, color)
+                          end
+                        end
+                     else
+                        color_node(n4, color)
+                     end
+                   end
+                else
+                   color_node(n3, color)
+                end
+              end
+           else
+              color_node(nn, color)
+           end
+         end
+      else
+         color_node(n, color)
+      end
+  end
+end
+%    \end{macrocode}
+%
+%    The next function takes four arguments: a string, two numbers
+%    (which can be \node{nil}) and a flag.  It appends a line to
+%    a buffer which will be written to file `\cs{jobname.typo}’.
+%
+% \changes{v0.50}{2021/05/13}{Summary of flaws written to file
+%    `\cs{jobname.typo}’.}
+%
+%    \begin{macrocode}
+log_flaw= function (msg, line, colno, footnote)
+  local pageno = tex.getcount("c@page")
+  local prt ="p. " .. pageno
+  if colno then
+     prt = prt .. ", col." .. colno
+  end
+  if line then
+     local l = string.format("%2d, ", line)
+     if footnote then
+        prt = prt .. ", (ftn.) line " .. l
+     else
+        prt = prt .. ", line " .. l
+     end
+  end
+  prt =  prt .. msg
+  luatypo.buffer = luatypo.buffer .. prt .. "\string\n"
+end
+%    \end{macrocode}
+%
+%    The next three functions deal with ``homeoarchy’’, \emph{i.e.}
+%    lines beginning or ending with the same (part of) word.
+%    While comparing two words, the only significant nodes are glyphs
+%    and ligatures, dicretionnaries other than ligatures, kerns
+%    (letterspacing) should be discarded.
+%    For each word to be compared we build a ``signature’’ made of
+%    glyphs and split ligatures.
+%
+% \changes{v0.65}{2023/03/02}{All ligatures are now split using the
+%    node’s `components’ field rather than a table.}
+%
+%    The first function adds a node to a signature of type string.
+%    It returns the augmented string and its length.
+%    The last argument is a boolean needed when building a signature
+%    backwards (see |check_line_last_word|).
+%    \begin{macrocode}
+local signature = function (node, string, swap)
+  local n = node
+  local str = string
+  if n and n.id == GLYPH then
+     local b = n.char
+     if b and not char_to_discard[b] then
+%    \end{macrocode}
+%    Punctuation has to be discarded; other glyphs may be ligatures,
+%    then they have a |components| field which holds the list of glyphs
+%    which compose the ligature.
+%    \begin{macrocode}
+        if n.components then
+           local c = ""
+           for nn in traverse_id(GLYPH, n.components) do
+             c = c .. utf8.char(nn.char)
+           end
+           if swap then
+              str = str .. utf8_reverse(c)
+           else
+              str = str .. c
+           end
+        else
+           str = str .. utf8.char(b)
+        end
+     end
+  elseif n and n.id == DISC then
+%    \end{macrocode}
+%    Discretionaries are split into |pre| and |post| and both parts
+%    are stored.  They might be ligatures (\emph{ffl, ffi})…
+%    \begin{macrocode}
+    local pre = n.pre
+    local post = n.post
+    local c1 = ""
+    local c2 = ""
+    if pre and pre.char then
+       if pre.components then
+          for nn in traverse_id(GLYPH, post.components) do
+            c1 = c1 .. utf8.char(nn.char)
+          end
+       else
+          c1 = utf8.char(pre.char)
+       end
+       c1 = utf8_gsub(c1, "-", "")
+    end
+    if post and post.char then
+       if post.components then
+          for nn in traverse_id(GLYPH, post.components) do
+            c2 = c2 .. utf8.char(nn.char)
+          end
+       else
+          c2 = utf8.char(post.char)
+       end
+    end
+    if swap then
+       str = str .. utf8_reverse(c2) .. c1
+    else
+       str = str .. c1 .. c2
+    end
+  end
+%    \end{macrocode}
+%    The returned length is the number of \emph{letters}.
+%    \begin{macrocode}
+  local len = utf8.len(str)
+  if utf8_find(str, "_") then
+     len = len - 1
+  end
+  return len, str
+end
+%    \end{macrocode}
+%
+%    The next function looks for consecutive lines ending with
+%    the same letters.\par
+%    It requires five arguments: a string (previous line’s signature),
+%    a node (the last one on the current line), a line number, a column
+%    number (possibly |nil|) and a boolean to cancel checking in some
+%    cases (end of paragraphs).
+%    It prints the matching part at end of linewith with the supplied
+%    colour and returns the current line’s last word and a boolean (match).
+%
+% \changes{v0.32}{2021/03/14}{Functions `check\_line\_first\_word’ and
+%    `check\_line\_last\_word’ rewritten.}
+%
+% \changes{v0.50}{2021/05/13}{Homeoarchy detection added for lines
+%    starting or ending on \cs{mbox}.}
+%
+% \changes{v0.61}{2023/02/06}{`check\_line\_last\_word’ returns a flag
+%    to set pageflag.}
+%
+%    \begin{macrocode}
+local check_line_last_word = function (old, node, line, colno, flag)
+  local COLOR = luatypo.colortbl[11]
+  local match = false
+  local new = ""
+  local maxlen = 0
+  if node then
+     local swap = true
+     local box, go
+%    \end{macrocode}
+%    Step back to the last glyph or discretionary.
+%    \begin{macrocode}
+     local lastn = node
+     while lastn and lastn.id ~= GLYPH and lastn.id ~= DISC and
+           lastn.id ~= HLIST do
+       lastn = lastn.prev
+     end
+%    \end{macrocode}
+%    A signature is built from the last two words on the current line.
+%    \begin{macrocode}
+     local n = lastn
+     if n and n.id == HLIST then
+        box = n
+        prev = n.prev
+        lastn = slide(n.head)
+        n = lastn
+     end
+     while n and n.id ~= GLUE do
+       maxlen, new = signature (n, new, swap)
+       n = n.prev
+     end
+     if n and n.id == GLUE then
+        new = new .. "_"
+        go = true
+     elseif box and not n then
+        local p = box.prev
+        if p.id == GLUE then
+           new = new .. "_"
+           n = p
+         else
+           n = box
+         end
+         go = true
+     end
+     if go then
+        repeat
+          n = n.prev
+          maxlen, new = signature (n, new, swap)
+        until not n or n.id == GLUE
+     end
+     new = utf8_reverse(new)
+%<dbg>     texio.write_nl("EOLsigold=" .. old)
+%<dbg>     texio.write("   EOLsig=" .. new)
+%    \end{macrocode}
+%     When called with flag |false|, |check_line_last_word| returns
+%     the last word’s signature, but doesn’t compare it with the
+%     previous line’s.
+%    \begin{macrocode}
+     if flag then
+        local MinFull = luatypo.MinFull
+        local MinPart = luatypo.MinPart
+        MinFull = math.min(MinPart,MinFull)
+        local k = MinPart
+        local dlo = utf8_reverse(old)
+        local wen = utf8_reverse(new)
+        local oldlast = utf8_gsub (old, ".*_", "_")
+        local newlast = utf8_gsub (new, ".*_", "_")
+        local i
+        if utf8_find(newlast, "_") then
+           i = utf8.len(newlast)
+        end
+        if i and i > maxlen - MinPart + 1 then
+           k = MinPart + 1
+        end
+        local oldsub = ""
+        local newsub = ""
+        for p, c in utf8.codes(dlo) do
+          if utf8.len(oldsub) < k then
+             oldsub = utf8.char(c) .. oldsub
+          end
+        end
+        for p, c in utf8.codes(wen) do
+          if utf8.len(newsub) < k then
+             newsub = utf8.char(c) .. newsub
+          end
+        end
+        local l = utf8.len(new)
+        if oldsub == newsub and l >= k then
+%<dbg>           texio.write_nl("EOLnewsub=" .. newsub)
+           match = true
+        elseif oldlast == newlast and utf8.len(newlast) > MinFull then
+%<dbg>           texio.write_nl("EOLnewlast=" .. newlast)
+           match = true
+           oldsub = oldlast
+           newsub = newlast
+           k = utf8.len(newlast)
+        end
+        if match then
+%    \end{macrocode}
+%    Minimal partial match; any more glyphs matching?
+%    \begin{macrocode}
+           local osub = oldsub
+           local nsub = newsub
+           while osub == nsub and k <= maxlen do
+             k = k +1
+             osub = string.sub(old,-k)
+             nsub = string.sub(new,-k)
+             if osub == nsub then
+                newsub = nsub
+             end
+           end
+           newsub = utf8_gsub(newsub, "^_", "")
+%<dbg>           texio.write_nl("EOLfullmatch=" .. newsub)
+           local msg = "E.O.L. MATCH=" .. newsub
+           log_flaw(msg, line, colno, footnote)
+%    \end{macrocode}
+%    Lest’s colour the matching string.
+%    \begin{macrocode}
+           oldsub = utf8_reverse(newsub)
+           local newsub = ""
+           local n = lastn
+           repeat
+             if n and n.id ~= GLUE then
+                color_node(n, COLOR)
+                l, newsub = signature(n, newsub, swap)
+             elseif n and n.id == GLUE then
+                newsub = newsub .. "_"
+             elseif not n and box then
+                n = box
+             else
+                break
+             end
+             n = n.prev
+           until newsub == oldsub or l >= k
+        end
+     end
+  end
+  return new, match
+end
+%    \end{macrocode}
+%
+%    Same thing for beginning of lines: check the first two words
+%    and compare their signature with the previous line’s.
+%
+% \changes{v0.61}{2023/02/06}{`check\_line\_first\_word’ returns a flag
+%    to set pageflag.}
+%
+%    \begin{macrocode}
+local check_line_first_word = function (old, node, line, colno, flag)
+  local COLOR = luatypo.colortbl[10]
+  local match = false
+  local swap = false
+  local new = ""
+  local maxlen = 0
+  local n = node
+  local box, go
+  while n and n.id ~= GLYPH and n.id ~= DISC and
+        (n.id ~= HLIST or n.subtype == INDENT) do
+     n = n.next
+  end
+  local start = n
+  if n and n.id == HLIST then
+     box = n
+     start = n.head
+     n = n.head
+  end
+  while n and n.id ~= GLUE do
+    maxlen, new = signature (n, new, swap)
+    n = n.next
+  end
+  if n and n.id == GLUE then
+     new = new .. "_"
+     go = true
+  elseif box and not n then
+     local bn = box.next
+     if bn.id == GLUE then
+        new = new .. "_"
+        n = bn
+     else
+        n = box
+     end
+     go = true
+  end
+  if go then
+     repeat
+       n = n.next
+       maxlen, new = signature (n, new, swap)
+     until not n or n.id == GLUE
+  end
+%<dbg>  texio.write_nl("BOLsigold=" .. old)
+%<dbg>  texio.write("   BOLsig=" .. new)
+%    \end{macrocode}
+%     When called with flag |false|, |check_line_first_word| returns
+%     the first word’s signature, but doesn’t compare it with the
+%     previous line’s.
+%    \begin{macrocode}
+  if flag then
+     local MinFull = luatypo.MinFull
+     local MinPart = luatypo.MinPart
+     MinFull = math.min(MinPart,MinFull)
+     local k = MinPart
+     local oldfirst = utf8_gsub (old, "_.*", "_")
+     local newfirst = utf8_gsub (new, "_.*", "_")
+     local i
+     if utf8_find(newfirst, "_") then
+        i = utf8.len(newfirst)
+     end
+     if i and i <= MinPart then
+        k = MinPart + 1
+     end
+     local oldsub = ""
+     local newsub = ""
+     for p, c in utf8.codes(old) do
+       if utf8.len(oldsub) < k then oldsub = oldsub .. utf8.char(c) end
+     end
+     for p, c in utf8.codes(new) do
+       if utf8.len(newsub) < k then newsub = newsub .. utf8.char(c) end
+     end
+     local l = utf8.len(newsub)
+     if oldsub == newsub and l >= k then
+%<dbg>        texio.write_nl("BOLnewsub=" .. newsub)
+        match = true
+     elseif oldfirst == newfirst  and utf8.len(newfirst) > MinFull then
+%<dbg>        texio.write_nl("BOLnewfirst=" .. newfirst)
+        match = true
+        oldsub = oldfirst
+        newsub = newfirst
+        k = utf8.len(newfirst)
+     end
+     if match then
+%    \end{macrocode}
+%    Minimal partial match; any more glyphs matching?
+%    \begin{macrocode}
+        local osub = oldsub
+        local nsub = newsub
+        while osub == nsub and k <= maxlen do
+          k = k + 1
+          osub = string.sub(old,1,k)
+          nsub = string.sub(new,1,k)
+          if osub == nsub then
+             newsub = nsub
+          end
+        end
+        newsub = utf8_gsub(newsub, "_$", "")   --$
+%<dbg>        texio.write_nl("BOLfullmatch=" .. newsub)
+        local msg = "B.O.L. MATCH=" .. newsub
+        log_flaw(msg, line, colno, footnote)
+%    \end{macrocode}
+%    Lest’s colour the matching string.
+%    \begin{macrocode}
+        oldsub = newsub
+        local newsub = ""
+        local k = utf8.len(oldsub)
+        local n = start
+        repeat
+          if n and n.id ~= GLUE then
+             color_node(n, COLOR)
+             l, newsub = signature(n, newsub, swap)
+          elseif n and n.id == GLUE then
+             newsub = newsub .. "_"
+          elseif not n and box then
+             n = box
+          else
+             break
+          end
+          n = n.next
+        until newsub == oldsub or l >= k
+     end
+  end
+  return new, match
+end
+%    \end{macrocode}
+%
+% \changes{v0.65}{2023/03/02}{New `check\_page\_first\_word’ function.}
+%
+%    The next function checks the first word on a new page: if
+%    it ends a sentence and is short (up to |luatypoMinLen| characters),
+%    the function returns |true| and colors the offending word.
+%    Otherwise it just retrurs |false|.
+%    The function requires two arguments: the line’s first node and
+%    a column number (possibly |nil|).
+%
+%    \begin{macrocode}
+local check_page_first_word = function (node, colno)
+  local COLOR = luatypo.colortbl[14]
+  local match = false
+  local swap = false
+  local new = ""
+  local maxlen = luatypo.MinLen
+  local len = 0
+  local n = node
+  local pn
+  while n and n.id ~= GLYPH and n.id ~= DISC and
+        (n.id ~= HLIST or n.subtype == INDENT) do
+     n = n.next
+  end
+  local start = n
+  if n and n.id == HLIST then
+     start = n.head
+     n = n.head
+  end
+  repeat
+    len, new = signature (n, new, swap)
+    n = n.next
+  until len > maxlen or (n and n.id == GLYPH and eow_char[n.char]) or
+        (n and n.id == GLUE) or
+        (n and n.id == KERN and n.subtype == 1)
+%    \end{macrocode}
+%    In French `?’ and `!’ are preceded by a glue (babel) or a kern
+%    (polyglossia).
+%    \begin{macrocode}
+  if n and (n.id == GLUE or n.id == KERN) then
+     pn = n
+     n = n.next
+  end
+  if len <= maxlen and n and n.id == GLYPH and eow_char[n.char] then
+     match =true
+     if pn and (pn.id == GLUE or pn.id == KERN) then
+        new = new .. " "
+        len = len + 1
+     end
+     len = len + 1
+  end
+%<dbg>  texio.write_nl("FinalWord=" .. new)
+   if match then
+     local msg = "ShortFinalWord=" .. new
+     log_flaw(msg, 1, colno, false)
+%    \end{macrocode}
+%    Lest’s colour the final word and punctuation sign.
+%    \begin{macrocode}
+     local n = start
+     repeat
+       color_node(n, COLOR)
+       n = n.next
+     until eow_char[n.char]
+     color_node(n, COLOR)
+  end
+  return match
+end
+%    \end{macrocode}
+%
+%    The next function looks for a short word (one or two
+%    chars) at end of lines, compares it to a given list and colours it
+%    if matches.  The first argument must be a node of type |GLYPH|,
+%    usually the last line’s node, the next two are the line and
+%    column number.
+%
+% \changes{v0.61}{2023/02/06}{`check\_regexpr’ returns a flag
+%    to set pageflag in `check\_vtop’.}
+%
+%    \begin{macrocode}
+local check_regexpr = function (glyph, line, colno)
+  local COLOR = luatypo.colortbl[3]
+  local lang = glyph.lang
+  local match = false
+  local retflag = false
+  local lchar, id = is_glyph(glyph)
+  local previous = glyph.prev
+%    \end{macrocode}
+%    First look for single chars unless the list of words is empty.
+%    \begin{macrocode}
+  if lang and luatypo.single[lang] then
+%    \end{macrocode}
+%    For single char words, the previous node is a glue.
+%    \begin{macrocode}
+     if lchar and previous and previous.id == GLUE then
+        match = utf8_find(luatypo.single[lang], utf8.char(lchar))
+        if match then
+           retflag = true
+           local msg = "RGX MATCH=" .. utf8.char(lchar)
+           log_flaw(msg, line, colno, footnote)
+           color_node(glyph,COLOR)
+        end
+     end
+  end
+%    \end{macrocode}
+%    Look for two chars words unless the list of words is empty.
+%    \begin{macrocode}
+  if lang and luatypo.double[lang] then
+     if lchar and previous and previous.id == GLYPH then
+        local pchar, id = is_glyph(previous)
+        local pprev = previous.prev
+%    \end{macrocode}
+%    For two chars words, the previous node is a glue…
+%    \begin{macrocode}
+        if pchar and pprev and pprev.id == GLUE then
+           local pattern = utf8.char(pchar) .. utf8.char(lchar)
+           match = utf8_find(luatypo.double[lang], pattern)
+           if match then
+              retflag = true
+              local msg = "RGX MATCH=" .. pattern
+              log_flaw(msg, line, colno, footnote)
+              color_node(previous,COLOR)
+              color_node(glyph,COLOR)
+           end
+        end
+%    \end{macrocode}
+%    …unless a kern is found between the two chars.
+%    \begin{macrocode}
+     elseif lchar and previous and previous.id == KERN then
+        local pprev = previous.prev
+        if pprev and pprev.id == GLYPH then
+           local pchar, id = is_glyph(pprev)
+           local ppprev = pprev.prev
+           if pchar and ppprev and ppprev.id == GLUE then
+              local pattern = utf8.char(pchar) .. utf8.char(lchar)
+              match = utf8_find(luatypo.double[lang], pattern)
+              if match then
+                 retflag = true
+                 local msg = "REGEXP MATCH=" .. pattern
+                 log_flaw(msg, line, colno, footnote)
+                 color_node(pprev,COLOR)
+                 color_node(glyph,COLOR)
+              end
+           end
+        end
+     end
+  end
+return retflag
+end
+%    \end{macrocode}
+%
+%    The next function prints the first part of an hyphenated
+%    word up to the discretionary, with a supplied colour.
+%    It requires two arguments: a \node{disc} node and a (named) colour.
+%
+%    \begin{macrocode}
+local show_pre_disc = function (disc, color)
+  local n = disc
+  while n and n.id ~= GLUE do
+    color_node(n, color)
+    n = n.prev
+  end
+  return n
+  end
+%    \end{macrocode}
+%
+% \begin{macro}{footnoterule-ahead}
+%    The next function scans the current \node{vlist} in search
+%    of a |\footnoterule|; it returns |true| if found, false otherwise.
+%    The \node{rule} node above footnotes is normaly surrounded by
+%    two (vertical) \node{kern} nodes, the total height is either
+%    0 (standard and koma classes) or equals the rule’s height
+%    (memoir class).
+%
+% \changes{v0.50}{2021/05/02}{New function `footnoterule\_ahead’.}
+%
+%    \begin{macrocode}
+local footnoterule_ahead = function (head)
+  local n = head
+  local flag = false
+  local totalht, ruleht, ht1, ht2, ht3
+  if n and n.id == KERN and n.subtype == 1 then
+     totalht = n.kern
+     n = n.next
+%<dbg>     ht1 = string.format("%.2fpt", totalht/65536)
+%    \end{macrocode}
+% \changes{v0.51}{2023/01/17}{In some cases glue nodes might preceed
+%    the footnote rule; next line added}
+%    \begin{macrocode}
+     while n and n.id == GLUE do n = n.next end
+     if n and n.id == RULE and n.subtype == 0 then
+        ruleht = n.height
+%<dbg>  ht2 = string.format("%.2fpt", ruleht/65536)
+        totalht = totalht + ruleht
+        n = n.next
+        if n and n.id == KERN and n.subtype == 1 then
+%<dbg>     ht3 = string.format("%.2fpt", n.kern/65536)
+           totalht = totalht + n.kern
+           if totalht == 0 or totalht == ruleht then
+              flag = true
+           else
+%<dbg>             texio.write_nl(" ")
+%<dbg>             texio.write_nl("Not a footnoterule:")
+%<dbg>             texio.write("  KERN height=" .. ht1)
+%<dbg>             texio.write("  RULE height=" .. ht2)
+%<dbg>             texio.write("  KERN height=" .. ht3)
+           end
+         end
+     end
+  end
+  return flag
+end
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{get-pagebody}
+%    The next function scans the \node{vlist}s on the current
+%    page in search of the page body.
+%    It returns the corresponding node or nil in case of failure.
+%
+% \changes{v0.50}{2021/05/02}{New function `get\_pagebody’ required for
+%    callback `pre\_shipout\_filter’.}
+%
+%    \begin{macrocode}
+local get_pagebody = function (head)
+  local textht = tex.getdimen("textheight")
+  local fn = head.list
+  local body = nil
+  repeat
+    fn = fn.next
+  until fn.id == VLIST and fn.height > 0
+%<dbg>  texio.write_nl(" ")
+%<dbg>  local ht = string.format("%.1fpt", fn.height/65536)
+%<dbg>  local dp = string.format("%.1fpt", fn.depth/65536)
+%<dbg>  texio.write_nl("get_pagebody: TOP VLIST")
+%<dbg>  texio.write(" ht=" .. ht .. "  dp=" .. dp)
+  first = fn.list
+  for n in traverse_id(VLIST,first) do
+      if n.subtype == 0 and n.height == textht then
+%<dbg>         local ht = string.format("%.1fpt",  n.height/65536)
+%<dbg>         texio.write_nl("BODY found: ht=" .. ht)
+%<dbg>         texio.write_nl(" ")
+         body = n
+         break
+      else
+%<dbg>         texio.write_nl("Skip short VLIST:")
+%<dbg>         local ht = string.format("%.1fpt",  n.height/65536)
+%<dbg>         local dp = string.format("%.1fpt",  n.depth/65536)
+%<dbg>         texio.write(" ht=" .. ht .. "  dp=" .. dp)
+         first = n.list
+         for n in traverse_id(VLIST,first) do
+             if n.subtype == 0 and n.height == textht then
+%<dbg>                local ht = string.format("%.1fpt",  n.height/65536)
+%<dbg>                texio.write_nl("  BODY: ht=" .. ht)
+                body = n
+                break
+             end
+         end
+      end
+  end
+  if not body then
+     texio.write_nl("***lua-typo ERROR: PAGE BODY *NOT* FOUND!***")
+  end
+  return body
+end
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{check-vtop}
+%    The next function is called repeatedly by |check_page| (see below);
+%    it scans the boxes found in the page body (f.i. columns)
+%    in search of typographical flaws and logs.
+%
+% \changes{v0.40}{2021/04/18}{Title pages, pages with figures and/or
+%    tables may not be empty pages: check `vpos’ last line’s position.}
+%
+% \changes{v0.60}{2023/01/28}{Loop redesigned.}
+%
+% \changes{v0.60}{2023/01/29}{Typographical flaws are recorded here
+%    (formerly in check\_page).}
+%
+% \changes{v0.60}{2023/01/29}{Break `check\_vtop’ loop
+%     if a two columns box starts.}
+%
+%    \begin{macrocode}
+check_vtop = function (head, colno, vpos)
+  local PAGEmin   = luatypo.PAGEmin
+  local HYPHmax   = luatypo.HYPHmax
+  local LLminWD   = luatypo.LLminWD
+  local BackPI    = luatypo.BackPI
+  local BackFuzz  = luatypo.BackFuzz
+  local BackParindent   = luatypo.BackParindent
+  local ShortLines      = luatypo.ShortLines
+  local ShortPages      = luatypo.ShortPages
+  local OverfullLines   = luatypo.OverfullLines
+  local UnderfullLines  = luatypo.UnderfullLines
+  local Widows          = luatypo.Widows
+  local Orphans         = luatypo.Orphans
+  local EOPHyphens      = luatypo.EOPHyphens
+  local RepeatedHyphens = luatypo.RepeatedHyphens
+  local FirstWordMatch  = luatypo.FirstWordMatch
+  local ParLastHyphen   = luatypo.ParLastHyphen
+  local EOLShortWords   = luatypo.EOLShortWords
+  local LastWordMatch   = luatypo.LastWordMatch
+  local FootnoteSplit   = luatypo.FootnoteSplit
+  local ShortFinalWord  = luatypo.ShortFinalWord
+  local Stretch  = math.max(luatypo.Stretch/100,1)
+  local blskip   = tex.getglue("baselineskip")
+  local vpos_min = PAGEmin * blskip
+  vpos_min = vpos_min * 1.5
+  local linewd = tex.getdimen("textwidth")
+  local first_bot = true
+  local footnote = false
+  local ftnsplit = false
+  local orphanflag = false
+  local widowflag = false
+  local pageshort  = false
+  local firstwd = ""
+  local lastwd = ""
+  local hyphcount = 0
+  local pageline = 0
+  local ftnline = 0
+  local line = 0
+  local body_bottom = false
+  local page_bottom = false
+  local pageflag = false
+  local pageno = tex.getcount("c@page")
+%    \end{macrocode}
+%    The main loop scans the content of the |\vtop| holding the page
+%    (or column) body, footnotes included.
+%    \begin{macrocode}
+  while head do
+    local nextnode = head.next
+%    \end{macrocode}
+%    Let’s scan the top nodes of this vbox: expected are \node{hlist}
+%    (text lines or vboxes), \node{rule}, \node{kern}, \node{glue}…
+%    \begin{macrocode}
+    if head.id == HLIST and head.subtype == LINE and
+          (head.height > 0 or head.depth > 0) then
+%    \end{macrocode}
+%    This is a text line, store its width, increment counters
+%    |pageline| or |ftnline| and |line| (for |log_flaw|).
+%    Let’s update |vpos| (vertical position in `sp’ units) too.
+%    \begin{macrocode}
+       vpos = vpos + head.height + head.depth
+       local linewd = head.width
+       local first = head.head
+       local ListItem = false
+       if footnote then
+          ftnline = ftnline + 1
+          line = ftnline
+       else
+          pageline = pageline + 1
+          line = pageline
+       end
+%    \end{macrocode}
+%    Is this line the last one on the page or before footnotes?
+%    This has to be known early in order to set the flags |orphanflag|
+%    and |ftnsplit|.
+%    \begin{macrocode}
+       local n = nextnode
+       while n and (n.id == GLUE    or n.id == PENALTY or
+                    n.id == WHATSIT )    do
+         n = n.next
+       end
+       if not n then
+          page_bottom = true
+          body_bottom = true
+       elseif footnoterule_ahead(n) then
+          body_bottom = true
+%<dbg>          texio.write_nl("=> FOOTNOTE RULE ahead")
+%<dbg>          texio.write_nl("check_vtop: last line before footnotes")
+%<dbg>          texio.write_nl(" ")
+       end
+%    \end{macrocode}
+%    Is the current line overfull or underfull?
+% \changes{v0.50}{2021/05/13}{Detection of overfull boxes fixed: the
+%    former code didn’t work for typewriter fonts.}
+%    \begin{macrocode}
+       local hmax = linewd + tex.hfuzz
+       local w,h,d = dimensions(1,2,0, first)
+       if w > hmax and OverfullLines then
+          pageflag = true
+          local wpt = string.format("%.2fpt", (w-head.width)/65536)
+          local msg = "OVERFULL line " .. wpt
+          log_flaw(msg, line, colno, footnote)
+          local COLOR = luatypo.colortbl[7]
+          color_line (head, COLOR)
+       elseif head.glue_set > Stretch and head.glue_sign == 1 and
+              head.glue_order == 0 and UnderfullLines then
+          pageflag = true
+          local s = string.format("%.0f%s", 100*head.glue_set, "%")
+          local msg = "UNDERFULL line stretch=" .. s
+          log_flaw(msg, line, colno, footnote)
+          local COLOR = luatypo.colortbl[8]
+          color_line (head, COLOR)
+       end
+%    \end{macrocode}
+% \enlargethispage*{2\baselineskip}
+%    Set flag |ftnsplit| to |true| on every page’s last line.
+%    This flag will be reset to false if the current line ends a
+%    paragraph.
+%    \begin{macrocode}
+       if footnote and page_bottom then
+          ftnsplit = true
+       end
+%    \end{macrocode}
+%    The current node being a line, |first| is its first node.
+%    Skip margin kern and/or leftskip if any.
+%
+% \changes{v0.40}{2021/04/18}{Both MKERN and LFTSKIP may occur on
+%    the same line.}
+%
+% \changes{v0.40}{2021/04/18}{All hlists of subtype LINE now
+%    count as a pageline.}
+%
+%    \begin{macrocode}
+       while first.id == MKERN or
+             (first.id == GLUE and first.subtype == LFTSKIP) do
+          first = first.next
+       end
+%    \end{macrocode}
+%    Now let’s analyse the beginning of the current line.
+%    \begin{macrocode}
+       if first.id == LPAR then
+%    \end{macrocode}
+%    It starts a paragraph… Reset |parline| except in footnotes
+%    (|parline| and |pageline| counts are for ``body’’ \emph{only},
+%    they are frozen in footnotes).
+%    \begin{macrocode}
+          hyphcount = 0
+          firstwd = ""
+          lastwd = ""
+          if not footnote then
+             parline = 1
+             if body_bottom then
+%    \end{macrocode}
+%    We are at the page bottom (footnotes excluded), this ligne is
+%    an orphan (unless it is the unique line of the paragraph, this
+%    will be checked later when scanning the end of line).
+%    \begin{macrocode}
+                orphanflag = true
+             end
+          end
+%    \end{macrocode}
+%    List items begin with |LPAR| followed by an hbox.
+%    \begin{macrocode}
+          local nn = first.next
+          if nn and nn.id == HLIST and nn.subtype == BOX then
+             ListItem = true
+          end
+       elseif not footnote then
+          parline = parline + 1
+       end
+%    \end{macrocode}
+%
+% \changes{v0.61}{2023/02/07}{Tracking of lines beginning with the same
+%    word moved further down (colour).}
+%
+%    Let’s check the end of line: |ln| (usually a rightskip) and |pn|
+%    are the last two nodes.
+%    \begin{macrocode}
+       local ln = slide(first)
+       local pn = ln.prev
+       if pn and pn.id == GLUE and pn.subtype == PARFILL then
+%    \end{macrocode}
+%    CASE 1: this line ends the paragraph, reset |ftnsplit| and |orphan|
+%    flags to false…
+%    \begin{macrocode}
+          hyphcount = 0
+          ftnsplit = false
+          orphanflag = false
+%    \end{macrocode}
+%    but it is a widow if it is the page’s first line and it does’nt
+%    start a new paragraph. We could colour the whole line right now,
+%    but prefer doing it after |ShortLines| and |BackParindent| checks.
+%    Orphans will be coloured later in CASE~2 or CASE~3.
+%    \begin{macrocode}
+          if pageline == 1 and parline > 1 then
+             widowflag = true
+          end
+%    \end{macrocode}
+%    |PFskip| is the rubber length (in sp) added to complete the line.
+%    \begin{macrocode}
+          local PFskip = effective_glue(pn,head)
+          if ShortLines then
+             local llwd = linewd - PFskip
+%<dbg>             local PFskip_pt = string.format("%.1fpt", PFskip/65536)
+%<dbg>             local llwd_pt = string.format("%.1fpt", llwd/65536)
+%<dbg>             texio.write_nl("PFskip= " .. PFskip_pt)
+%<dbg>             texio.write("  llwd= " .. llwd_pt)
+%    \end{macrocode}
+%    |llwd| is the line’s length. Is it too short?
+%    \begin{macrocode}
+             if llwd < LLminWD then
+                pageflag = true
+                local msg = "SHORT LINE: length=" ..
+                            string.format("%.0fpt", llwd/65536)
+                log_flaw(msg, line, colno, footnote)
+                local COLOR = luatypo.colortbl[6]
+                local attr = oberdiek.luacolor.getattribute()
+%    \end{macrocode}
+%    let’s colour the whole line.
+%    \begin{macrocode}
+                color_line (head, COLOR)
+             end
+          end
+%    \end{macrocode}
+%    Does this (end of paragraph) line ends too close to the right
+%    margin? If so, colour the whole line before checking matching
+%    words.
+%    \begin{macrocode}
+          if BackParindent and PFskip < BackPI and
+             PFskip >= BackFuzz and parline > 1 then
+             pageflag = true
+             local msg = "NEARLY FULL line: backskip=" ..
+                         string.format("%.1fpt", PFskip/65536)
+             log_flaw(msg, line, colno, footnote)
+             local COLOR = luatypo.colortbl[12]
+             local attr = oberdiek.luacolor.getattribute()
+             color_line (head, COLOR)
+          end
+%    \end{macrocode}
+%    A widow may also be a `SHORT’ or `NEARLY FULL’ line, the widow
+%    colour will overright the first two.
+%    \begin{macrocode}
+          if Widows and widowflag then
+             pageflag = true
+             local msg = "WIDOW"
+             log_flaw(msg, line, colno, footnote)
+             local COLOR  = luatypo.colortbl[4]
+             color_line (head, COLOR)
+             widowflag = false
+          end
+%    \end{macrocode}
+%    Does the first word and the one on the previous line match
+%    (except lists)?
+%    \begin{macrocode}
+          if FirstWordMatch then
+             local flag = not ListItem
+             firstwd, flag =
+                check_line_first_word(firstwd, first, line, colno, flag)
+             if flag then
+                pageflag = true
+             end
+          end
+%    \end{macrocode}
+%    Does the last word and the one on the previous line match?
+%    \begin{macrocode}
+          if LastWordMatch then
+             local flag = true
+             if PFskip > BackPI then
+                flag = false
+             end
+             lastwd, flag =
+                check_line_last_word(lastwd, pn, line, colno, flag)
+             if flag then
+                pageflag = true
+             end
+          end
+       elseif pn and pn.id == DISC then
+%    \end{macrocode}
+%    CASE 2: the current line ends with an hyphen.
+%    \begin{macrocode}
+          hyphcount = hyphcount + 1
+%    \end{macrocode}
+%    Colour the whole line now if it is a orphan or a footnote
+%    continuing on the next page.
+%    \begin{macrocode}
+          if orphanflag and Orphans then
+             pageflag = true
+             local msg = "ORPHAN"
+             log_flaw(msg, line, colno, footnote)
+             local COLOR = luatypo.colortbl[5]
+             color_line (head, COLOR)
+          end
+          if ftnsplit and FootnoteSplit then
+             pageflag = true
+             local msg = "FOOTNOTE SPLIT"
+             log_flaw(msg, line, colno, footnote)
+             local COLOR = luatypo.colortbl[13]
+             color_line (head, COLOR)
+          end
+          if (page_bottom or body_bottom) and EOPHyphens then
+%    \end{macrocode}
+%    This hyphen occurs on the page’s last line (body or footnote),
+%    colour (differently) the last word.
+%    \begin{macrocode}
+             pageflag = true
+             local msg = "LAST WORD SPLIT"
+             log_flaw(msg, line, colno, footnote)
+             local COLOR = luatypo.colortbl[1]
+             local pg = show_pre_disc (pn,COLOR)
+          end
+%    \end{macrocode}
+%    Track matching words at the beginning and end of line.
+%    \begin{macrocode}
+          if FirstWordMatch then
+             local flag = not ListItem
+             firstwd, flag =
+                check_line_first_word(firstwd, first, line, colno, flag)
+             if flag then
+                pageflag = true
+             end
+          end
+          if LastWordMatch then
+             local flag = true
+             lastwd, flag =
+                check_line_last_word(lastwd, ln, line, colno, flag)
+             if flag then
+                pageflag = true
+             end
+          end
+          if hyphcount > HYPHmax and RepeatedHyphens then
+             local COLOR = luatypo.colortbl[2]
+             local pg = show_pre_disc (pn,COLOR)
+             pageflag = true
+             local msg = "REPEATED HYPHENS: more than " .. HYPHmax
+             log_flaw(msg, line, colno, footnote)
+          end
+          if nextnode and ParLastHyphen then
+%    \end{macrocode}
+%    Does the next line end the current paragraph? If so, |nextnode| is
+%    a `linebreak penalty’, the next one is a `baseline skip’ and the
+%    node after is a \node{hlist-1} with |glue_order=2|.
+%    \begin{macrocode}
+             local nn = nextnode.next
+             local nnn = nil
+             if nn and nn.next then
+                nnn = nn.next
+                if nnn.id == HLIST and nnn.subtype == LINE and
+                   nnn.glue_order == 2 then
+                   pageflag = true
+                   local msg = "HYPHEN on next to last line"
+                   log_flaw(msg, line, colno, footnote)
+                   local COLOR = luatypo.colortbl[0]
+                   local pg = show_pre_disc (pn,COLOR)
+                end
+             end
+          end
+%    \end{macrocode}
+%    CASE 3: the current line ends with anything else (\node{glyph},
+%    \node{mkern}, \node{hlist}, etc.), reset |hyphcount|, colour
+%    orphans first, then check for `FirstWordMatch’, `LastWordMatch’
+%    and `EOLShortWords’.
+%    \begin{macrocode}
+       else
+          hyphcount = 0
+%    \end{macrocode}
+%    Colour the whole line now if it is a orphan or a footnote
+%    continuing on the next page.
+%    \begin{macrocode}
+          if orphanflag and Orphans then
+             pageflag = true
+             local msg = "ORPHAN"
+             log_flaw(msg, line, colno, footnote)
+             local COLOR = luatypo.colortbl[5]
+             color_line (head, COLOR)
+          end
+          if ftnsplit and FootnoteSplit then
+             pageflag = true
+             local msg = "FOOTNOTE SPLIT"
+             log_flaw(msg, line, colno, footnote)
+             local COLOR = luatypo.colortbl[13]
+             color_line (head, COLOR)
+          end
+%    \end{macrocode}
+%    Track matching words at the beginning and end of line and short
+%    words.
+%    \begin{macrocode}
+          if FirstWordMatch then
+             local flag = not ListItem
+             firstwd, flag =
+                check_line_first_word(firstwd, first, line, colno, flag)
+             if flag then
+                pageflag = true
+             end
+          end
+          if LastWordMatch and pn then
+             local flag = true
+             lastwd, flag =
+                check_line_last_word(lastwd, pn, line, colno, flag)
+             if flag then
+                pageflag = true
+             end
+          end
+          if EOLShortWords then
+             while pn and pn.id ~= GLYPH and pn.id ~= HLIST do
+               pn = pn.prev
+             end
+             if pn and pn.id == GLYPH then
+                if check_regexpr(pn, line, colno) then
+                   pageflag = true
+                end
+             end
+          end
+       end
+%    \end{macrocode}
+%    Check the page’s first word (end of sentence?).
+%    \begin{macrocode}
+       if ShortFinalWord and pageline == 1 and parline > 1 and
+          check_page_first_word(first,colno) then
+          pageflag = true
+       end
+%    \end{macrocode}
+%    End of scanning for the main type of node (text lines).
+%    \begin{macrocode}
+    elseif head.id == HLIST and
+          (head.subtype == EQN or head.subtype == ALIGN) and
+          (head.height > 0 or head.depth > 0) then
+%    \end{macrocode}
+%    This line is a displayed or aligned equation.
+%    Let’s update |vpos| and the line number.
+%
+% \changes{v0.50}{2021/05/05}{Consider displayed and aligned equations
+%    too for overfull boxes.}
+%
+%    \begin{macrocode}
+       vpos = vpos + head.height + head.depth
+       if footnote then
+          ftnline = ftnline + 1
+          line = ftnline
+       else
+          pageline = pageline + 1
+          line = pageline
+       end
+%    \end{macrocode}
+%    Let’s check for an ``Overfull box’’.  For a displayed equation
+%    it is straightforward.  A set of aligned equations all have the
+%    same (maximal) width; in order to avoid highlighting the whole
+%    set, we have to look for glues at the end of embedded
+%    \node{hlist}s.
+%    \begin{macrocode}
+       local fl = true
+       local wd = 0
+       local hmax = 0
+       if head.subtype == EQN then
+          local f = head.list
+          wd = rangedimensions(head,f)
+          hmax = head.width + tex.hfuzz
+       else
+          wd = head.width
+          hmax = tex.getdimen("linewidth") + tex.hfuzz
+       end
+       if wd > hmax and OverfullLines then
+          if head.subtype == ALIGN then
+             local first = head.list
+             for n in traverse_id(HLIST, first) do
+                 local last = slide(n.list)
+                 if last.id == GLUE and last.subtype == USER then
+                    wd = wd - effective_glue(last,n)
+                    if wd <= hmax then fl = false end
+                 end
+             end
+          end
+          if fl then
+             pageflag = true
+             local w = wd - hmax + tex.hfuzz
+             local wpt = string.format("%.2fpt", w/65536)
+             local msg = "OVERFULL equation " .. wpt
+             log_flaw(msg, line, colno, footnote)
+             local COLOR = luatypo.colortbl[7]
+             color_line (head, COLOR)
+          end
+       end
+    elseif head and head.id == RULE and head.subtype == 0  then
+%    \end{macrocode}
+%    This is a \node{rule}, possibly a footnote rule.
+%    \begin{macrocode}
+       vpos = vpos + head.height + head.depth
+       if body_bottom then
+%    \end{macrocode}
+%    If a |\footnoterule| has been detected on the previous run,
+%    set the |footnote| flag and reset some counters and flags
+%    for the coming footnote lines.
+%    \begin{macrocode}
+%<dbg>       texio.write_nl("check_vtop: footnotes start")
+%<dbg>       texio.write_nl(" ")
+          footnote = true
+          ftnline = 0
+          body_bottom = false
+          orphanflag = false
+          hyphcount = 0
+          firstwd = ""
+          lastwd = ""
+       end
+%    \end{macrocode}
+%    Track short pages: check the number of lines at end of page,
+%    in case this number is low, \emph{and} |vpos| is less than
+%    |vpos_min|, fetch the last line and colour it.\par
+%    \begin{macrocode}
+    elseif body_bottom and head.id == GLUE and head.subtype == 0 then
+       if first_bot then
+%<dbg>          local vpos_pt = string.format("%.1fpt", vpos/65536)
+%<dbg>          local vmin_pt = string.format("%.1fpt", vpos_min/65536)
+%<dbg>          texio.write_nl("pageline=" .. pageline)
+%<dbg>          texio.write_nl("vpos=" .. vpos_pt)
+%<dbg>          texio.write("   vpos_min=" .. vmin_pt)
+%<dbg>          if page_bottom then
+%<dbg>             local tht    = tex.getdimen("textheight")
+%<dbg>             local tht_pt = string.format("%.1fpt", tht/65536)
+%<dbg>             texio.write("   textheight=" .. tht_pt)
+%<dbg>          end
+%<dbg>          texio.write_nl(" ")
+          if pageline > 1 and pageline < PAGEmin and ShortPages then
+             pageshort = true
+          end
+          if pageshort and vpos < vpos_min then
+             pageflag = true
+             local msg = "SHORT PAGE: only " .. pageline .. " lines"
+             log_flaw(msg, line, colno, footnote)
+             local COLOR = luatypo.colortbl[9]
+             local n = head
+             repeat
+               n = n.prev
+             until n.id == HLIST
+             color_line (n, COLOR)
+          end
+          first_bot = false
+       end
+    elseif head.id == GLUE then
+%    \end{macrocode}
+%    Increment |vpos| on other vertical glues.
+%    \begin{macrocode}
+       vpos = vpos + effective_glue(head,body)
+    elseif head.id == KERN and head.subtype == 1 then
+%    \end{macrocode}
+%    This is a vertical kern, let’s update |vpos|.
+%    \begin{macrocode}
+       vpos = vpos + head.kern
+    elseif head.id == VLIST then
+%    \end{macrocode}
+%    This is a vertical a |\vbox|, let’s update |vpos|.
+%    \begin{macrocode}
+       vpos = vpos + head.height + head.depth
+%    \end{macrocode}
+%    Leave |check_vtop| if a two columns box starts.
+%    \begin{macrocode}
+    elseif head.id == HLIST and head.subtype == BOX then
+       local hf = head.list
+       if hf and hf.id == VLIST and hf.subtype == 0 then
+%<dbg>          texio.write_nl("check_vtop: BREAK => multicol")
+%<dbg>          texio.write_nl(" ")
+          break
+       end
+    end
+  head = nextnode
+  end
+%<dbg>  if nextnode then
+%<dbg>     texio.write("Exit check_vtop,  next=")
+%<dbg>     texio.write(tostring(node.type(nextnode.id)))
+%<dbg>     texio.write("-".. nextnode.subtype)
+%<dbg>  else
+%<dbg>     texio.write_nl("Exit check_vtop,  next=nil")
+%<dbg>  end
+%<dbg>  texio.write_nl("")
+%    \end{macrocode}
+%    Update the list of flagged pages avoiding duplicates:
+%    \begin{macrocode}
+  if pageflag then
+     local plist = luatypo.pagelist
+     local lastp = tonumber(string.match(plist, "%s(%d+),%s$"))
+     if not lastp or pageno > lastp then
+        luatypo.pagelist = luatypo.pagelist .. tostring(pageno) .. ", "
+     end
+  end
+  return head
+%    \end{macrocode}
+%    |head| is nil unless |check_vtop| exited on a two column start.
+%    \begin{macrocode}
+end
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{check-page}
+%    This is the main function which will be added to the
+%    |pre_shipout_filter| callback unless option |None| is selected.
+%    It executes |get_pagebody| which returns a node of type
+%    \node{vlist}-0, then scans this \node{vlist}: expected are
+%    \node{vlist}-0 (full width block) or \node{hlist}-2 (multi
+%    column block).
+%    The vertical position of the current node is stored in the |vpos|
+%    dimension (integer in `sp’ units, 1\,pt~=~65536\,sp). It is used to
+%    detect short pages.
+%
+% \changes{v0.60}{2023/01/29}{Loop redesigned to properly handle
+%    two colums.}
+%
+%    \begin{macrocode}
+luatypo.check_page = function (head)
+  local textwd = tex.getdimen("textwidth")
+  local vpos = 0
+  local n2, n3, col, colno
+  local body = get_pagebody(head)
+  local footnote = false
+  local top = body
+  local first = body.list
+  if (first and first.id == HLIST and first.subtype == BOX) or
+     (first and first.id == VLIST and first.subtype == 0) then
+%    \end{macrocode}
+%    Some classes (\cls{memoir}, \cls{tugboat} …) use one more level
+%    of bowing, let’s step down one level.
+%    \begin{macrocode}
+%<dbg>     local boxwd = string.format("%.1fpt", first.width/65536)
+%<dbg>     texio.write_nl("One step down: boxwd=" .. boxwd)
+%<dbg>     texio.write_nl(" ")
+     top = body.list
+     first = top.list
+  end
+%    \end{macrocode}
+%    Main loop:
+%    \begin{macrocode}
+  while top do
+    first = top.list
+%<dbg>    texio.write_nl("Page loop: top=" .. tostring(node.type(top.id)))
+%<dbg>    texio.write("-" .. top.subtype)
+%<dbg>    texio.write_nl(" ")
+    if top and top.id == VLIST and top.subtype == 0 and
+       top.width > textwd/2                              then
+%    \end{macrocode}
+%    Single column, run |check_vtop| on the top vlist.
+%    \begin{macrocode}
+%<dbg>       local boxht = string.format("%.1fpt", top.height/65536)
+%<dbg>       local boxwd = string.format("%.1fpt", top.width/65536)
+%<dbg>       texio.write_nl("**VLIST: ")
+%<dbg>       texio.write(tostring(node.type(top.id)))
+%<dbg>       texio.write("-" .. top.subtype)
+%<dbg>       texio.write("  wd=" .. boxwd .. "  ht=" .. boxht)
+%<dbg>       texio.write_nl(" ")
+       local next = check_vtop(first,colno,vpos)
+       if next then
+          top = next
+       elseif top then
+          top = top.next
+       end
+    elseif (top and top.id == HLIST and top.subtype == BOX) and
+           (first and first.id == VLIST and first.subtype == 0) and
+           (first.height > 0 and first.width > 0) then
+%    \end{macrocode}
+%    Two or more columns, each one is boxed in a vlist.\par
+%    Run |check_vtop| on every column.
+%    \begin{macrocode}
+%<dbg>           texio.write_nl("**MULTICOL type1:")
+%<dbg>           texio.write_nl(" ")
+       colno = 0
+       for n in traverse_id(VLIST, first) do
+           colno = colno + 1
+           col = n.list
+%<dbg>           texio.write_nl("Start of col." .. colno)
+%<dbg>           texio.write_nl(" ")
+           check_vtop(col,colno,vpos)
+%<dbg>           texio.write_nl("End of col." .. colno)
+%<dbg>           texio.write_nl(" ")
+       end
+       colno = nil
+       top = top.next
+%<dbg>       texio.write_nl("MULTICOL type1 END: next=")
+%<dbg>       texio.write(tostring(node.type(top.id)))
+%<dbg>       texio.write("-" .. top.subtype)
+%<dbg>       texio.write_nl(" ")
+    elseif (top and top.id == HLIST and top.subtype == BOX) and
+           (first and first.id == HLIST and first.subtype == BOX) and
+           (first.height > 0 and first.width > 0) then
+%    \end{macrocode}
+%    Two or more columns, each one is boxed in an hlist which
+%    holds a vlist.\par
+%    Run |check_vtop| on every column.
+%    \begin{macrocode}
+%<dbg>     texio.write_nl("**MULTICOL type2:")
+%<dbg>     texio.write_nl(" ")
+       colno = 0
+       for n in traverse_id(HLIST, first) do
+           colno = colno + 1
+           local nn = n.list
+           if nn and nn.list then
+              col = nn.list
+%<dbg>              texio.write_nl("Start of col." .. colno)
+%<dbg>              texio.write_nl(" ")
+              check_vtop(col,colno,vpos)
+%<dbg>              texio.write_nl("End of col." .. colno)
+%<dbg>              texio.write_nl(" ")
+           end
+       end
+       colno = nil
+       top = top.next
+    else
+       top = top.next
+    end
+  end
+  return true
+end
+return luatypo.check_page
+\end{luacode}
+%    \end{macrocode}
+% \end{macro}
+%
+% \changes{v0.50}{2021/05/02}{Callback `pre\_output\_filter’ replaced
+%    by `pre\_shipout\_filter’, in the former the material is not boxed
+%    yet and footnotes are not visible.}
+%
+%    NOTE: |effective_glue| requires a `parent’ node, as pointed out by
+%    Marcel Krüger on S.E., this implies using |pre_shipout_filter|
+%    instead of |pre_output_filter|.
+%
+%    Add the |luatypo.check_page| function to the |pre_shipout_filter|
+%    callback (with priority 1 for colour attributes to be effective),
+%    unless option |None| is selected.
+%
+%    \begin{macrocode}
+\AtEndOfPackage{%
+  \directlua{
+    if not luatypo.None then
+       luatexbase.add_to_callback
+           ("pre_shipout_filter",luatypo.check_page,"check_page",1)
+    end
+  }%
+}
+%    \end{macrocode}
+%
+%    Load a config file if present in LaTeX’s search path or
+%    set reasonnable defaults.
+%
+% \changes{v0.61}{2023/02/07}{Colours mygrey, myred renamed as
+%    LTgrey, LTred.}
+%
+%    \begin{macrocode}
+\InputIfFileExists{lua-typo.cfg}%
+   {\PackageInfo{lua-typo.sty}{"lua-typo.cfg" file loaded}}%
+   {\PackageInfo{lua-typo.sty}{"lua-typo.cfg" file not found.
+                               \MessageBreak Providing default values.}%
+    \definecolor{LTgrey}{gray}{0.6}%
+    \definecolor{LTred}{rgb}{1,0.55,0}
+    \luatypoSetColor0{red}%       Paragraph last full line hyphenated
+    \luatypoSetColor1{red}%       Page last word hyphenated
+    \luatypoSetColor2{red}%       Hyphens on to many consecutive lines
+    \luatypoSetColor3{red}%       Short word at end of line
+    \luatypoSetColor4{cyan}%      Widow
+    \luatypoSetColor5{cyan}%      Orphan
+    \luatypoSetColor6{cyan}%      Paragraph ending on a short line
+    \luatypoSetColor7{blue}%      Overfull lines
+    \luatypoSetColor8{blue}%      Underfull lines
+    \luatypoSetColor9{red}%       Nearly empty page
+    \luatypoSetColor{10}{LTred}%  First word matches
+    \luatypoSetColor{11}{LTred}%  Last word matches
+    \luatypoSetColor{12}{LTgrey}% Paragraph ending on a nearly full line
+    \luatypoSetColor{13}{cyan}%   Footnote split
+    \luatypoSetColor{14}{red}%    Too short first (final) word on the page
+    \luatypoBackPI=1em\relax
+    \luatypoBackFuzz=2pt\relax
+    \ifdim\parindent=0pt \luatypoLLminWD=20pt\relax
+    \else\luatypoLLminWD=2\parindent\relax\fi
+    \luatypoStretchMax=200\relax
+    \luatypoHyphMax=2\relax
+    \luatypoPageMin=5\relax
+    \luatypoMinFull=4\relax
+    \luatypoMinPART=4\relax
+    \luatypoMinLen=4\relax
+   }%
+%    \end{macrocode}
+% \iffalse
+%</sty>
+% \fi
+%  \clearpage
+%  \section{Configuration file}
+%
+% \iffalse
+%<*cfg>
+% \fi
+%
+% \let\theCodelineNo\relax
+%    \begin{macrocode}
+%%% Configuration file for lua-typo.sty
+%%% These settings can also be overruled in the preamble.
+
+%% Minimum gap between end of paragraphs’ last lines and the right margin
+\luatypoBackPI=1em\relax
+\luatypoBackFuzz=2pt\relax
+
+%% Minimum length of paragraphs’ last lines
+\ifdim\parindent=0pt \luatypoLLminWD=20pt\relax
+\else \luatypoLLminWD=2\parindent\relax
+\fi
+
+%% Maximum number of consecutive hyphenated lines
+\luatypoHyphMax=2\relax
+
+%% Nearly empty pages: minimum number of lines
+\luatypoPageMin=5\relax
+
+%% Maximum acceptable stretch before a line is tagged as Underfull
+\luatypoStretchMax=200\relax
+
+%% Minimum number of matching characters for words at begin/end of line
+\luatypoMinFull=3\relax
+\luatypoMinPart=4\relax
+
+%% Minimum number of characters for the first word on a page if it ends
+%% a sentence.
+\luatypoMinLen=4\relax
+
+%% Default colours = red, cyan, LTgrey
+\definecolor{LTgrey}{gray}{0.6}
+\definecolor{LTred}{rgb}{1,0.55,0}
+\luatypoSetColor0{red}      % Paragraph last full line hyphenated
+\luatypoSetColor1{red}      % Page last word hyphenated
+\luatypoSetColor2{red}      % Hyphens on to many consecutive lines
+\luatypoSetColor3{red}      % Short word at end of line
+\luatypoSetColor4{cyan}     % Widow
+\luatypoSetColor5{cyan}     % Orphan
+\luatypoSetColor6{cyan}     % Paragraph ending on a short line
+\luatypoSetColor7{blue}     % Overfull lines
+\luatypoSetColor8{blue}     % Underfull lines
+\luatypoSetColor9{red}      % Nearly empty page (just a few lines)
+\luatypoSetColor{10}{LTred} % First word matches
+\luatypoSetColor{11}{LTred} % Last word matches
+\luatypoSetColor{12}{LTgrey}% Paragraph ending on a nearly full line
+\luatypoSetColor{13}{cyan}  % Footnote split
+\luatypoSetColor{14}{red}   % Too short first (final) word on the page
+
+%% Language specific settings (example for French):
+%% short words (two letters max) to be avoided at end of lines.
+%%\luatypoOneChar{french}{"À Ô Y"}
+%%\luatypoTwoChars{french}{"Je Tu Il On Au De"}
+%    \end{macrocode}
+%
+% \iffalse
+%</cfg>
+% \fi
+%
+% \changes{v0.60}{2023/02/02}{Debugging stuff added.}
+%
+%  \section{Debugging lua-typo}
+%
+%    Personal stuff useful \emph{only} for maintaining the
+%    \pkg{lua-typo} package has been added at the end of
+%    \file{lua-typo.dtx} in version~0.60.
+%    It is not extracted unless a) both `|\iffalse|’ and `|\fi|’ on
+%    lines 41 and 46 at the beginning of \file{lua-typo.dtx} are
+%    commented out and b) all files are generated again by a
+%    |luatex lua-typo.dtx| command; then a (very) verbose version of
+%    \file{lua-typo.sty} is generated together with
+%    a \file{scan-page.sty} file which can be used instead of
+%    \file{lua-typo.sty} to show the structured list of nodes
+%    found in a document.
+%
+% \iffalse
+%<*scan>
+% \fi
+%
+% \begin{Debugging}
+%    \begin{macrocode}
+\ifdefined\directlua
+  \RequirePackage{luatexbase,luacode,luacolor}
+  \RequirePackage{kvoptions,atveryend}
+\else
+  \PackageError{This package is meant for LuaTeX only! Aborting}
+               {No more information available, sorry!}
+\fi
+
+\newdimen\luatypoLLminWD
+\newdimen\luatypoBackPI
+\newdimen\luatypoBackFuzz
+\newcount\luatypoStretchMax
+\newcount\luatypoHyphMax
+\newcount\luatypoPageMin
+\newcount\luatypoMinFull
+\newcount\luatypoMinPart
+\newcount\luatypo@LANGno
+\newcount\luatypo@options
+\newtoks\luatypo@single
+\newtoks\luatypo@double
+
+\AtBeginDocument{%
+  \directlua{
+    luatypo.HYPHmax = tex.count.luatypoHyphMax
+    luatypo.PAGEmin = tex.count.luatypoPageMin
+    luatypo.Stretch = tex.count.luatypoStretchMax
+    luatypo.MinFull = tex.count.luatypoMinFull
+    luatypo.MinPart = tex.count.luatypoMinPart
+    luatypo.LLminWD = tex.dimen.luatypoLLminWD
+    luatypo.BackPI  = tex.dimen.luatypoBackPI
+    luatypo.BackFuzz  = tex.dimen.luatypoBackFuzz
+   }%
+}
+
+\AtVeryEndDocument{%
+  \directlua{
+    texio.write_nl(" ")
+    texio.write_nl("***************************")
+    texio.write_nl("*** PAGE SCANNING ONLY: ***")
+    texio.write_nl("*** NO CHECK PERFORMED! ***")
+    texio.write_nl("***************************")
+    texio.write_nl(" ")
+   }%
+}
+
+\newcommand*{\luatypoOneChar}[2]{}
+\newcommand*{\luatypoTwoChars}[2]{}
+\newcommand*{\luatypoSetColor}[2]{}
+
+\begin{luacode}
+luatypo = { }
+luatypo.single = { }
+luatypo.double = { }
+luatypo.colortbl  = { }
+luatypo.pagelist  = " "
+
+local hyphcount = 0
+local pageno = 0
+local prevno = 0
+local pageflag = false
+
+local DISC  = node.id("disc")
+local GLYPH = node.id("glyph")
+local GLUE  = node.id("glue")
+local KERN  = node.id("kern")
+local HLIST = node.id("hlist")
+local VLIST = node.id("vlist")
+local LPAR  = node.id("local_par")
+local MKERN = node.id("margin_kern")
+local PENALTY = node.id("penalty")
+local USRSKIP  = 0
+local PARSKIP  = 3
+local LEFTSKIP = 8
+local TOPSKIP = 10
+local PARFILL = 15
+local LINE    = 1
+local BOX     = 2
+local USER = 0
+
+local dimensions = node.dimensions
+local rangedimensions = node.rangedimensions
+local effective_glue = node.effective_glue
+local set_attribute = node.set_attribute
+local slide = node.slide
+local traverse = node.traverse
+local traverse_id = node.traverse_id
+local has_field = node.has_field
+local uses_font = node.uses_font
+local is_glyph  = node.is_glyph
+
+%    \end{macrocode}
+%    Some helpers functions.
+%    \begin{macrocode}
+local get_pagebody = function (head)
+  local textht = tex.getdimen("textheight")
+  local fn = head.list
+  local body = nil
+  repeat
+    fn = fn.next
+  until fn.id == VLIST and fn.height > 0
+  first = fn.list
+  local ht = string.format("%.1fpt", fn.height/65536)
+  local dp = string.format("%.1fpt", fn.depth/65536)
+  texio.write_nl("SKIP vlist: ht=" .. ht .. " dp=" .. dp)
+  for n in traverse_id(VLIST,first) do
+      if n.subtype == 0 and n.height == textht then
+         local ht = string.format("%.1fpt",  n.height/65536)
+         texio.write_nl("  BODY: " .. ht)
+         texio.write_nl(" ")
+         body = n
+         break
+       else
+         local ht = string.format("%.1fpt",  n.height/65536)
+         local dp = string.format("%.1fpt",  n.depth/65536)
+         texio.write_nl("  SKIP vlist: ht=" .. ht .. " dp=" .. dp)
+         first = n.list
+         for n in traverse_id(VLIST,first) do
+             if n.subtype == 0 and n.height == textht then
+                ht = string.format("%.1fpt",  n.height/65536)
+                texio.write_nl("     BODY: " .. ht)
+                texio.write_nl(" ")
+                body = n
+                break
+             end
+         end
+      end
+  end
+  if not body then
+     texio.write_nl("***lua-typo ERROR: PAGE BODY *NOT* FOUND!***")
+  end
+  return body
+end
+
+local print_subtype = function (node,parent)
+  local n = node
+  if n.id == GLYPH then
+     texio.write(utf8.char(n.char))
+  elseif n.id == GLUE then
+     real_pt = string.format("%.1fpt", effective_glue(n,parent)/65536)
+     texio.write(" realwd=" .. real_pt)
+  elseif n.id == DISC then
+     local c = ""
+     if n.replace then
+        for nn in traverse_id(GLYPH, n.replace) do
+            c = c .. utf8.char(nn.char)
+        end
+        texio.write(c)
+     end
+     if n.pre then
+        c = ""
+        for nn in traverse_id(GLYPH, n.pre) do
+            c = c .. utf8.char(nn.char)
+        end
+        texio.write(" pre=" .. c)
+     end
+     if n.post then
+        c = ""
+        for nn in traverse_id(GLYPH, n.post) do
+            c = c .. utf8.char(nn.char)
+        end
+     texio.write(" post=" .. c)
+     end
+  elseif n.subtype and n.subtype < 256 and n.height and n.depth then
+     ht_pt = string.format("%.1fpt", n.height/65536)
+     dp_pt = string.format("%.1fpt", n.depth/65536)
+     texio.write(" ht=" .. ht_pt .. " dp=" .. dp_pt)
+     if n.width then
+        wd_pt = string.format("%.1fpt", n.width/65536)
+        texio.write(" wd=" .. wd_pt)
+     end
+  end
+end
+
+%    \end{macrocode}
+%    Main function.  It prints a structured list of nodes found on the
+%    page body (header and footer excluded, footnotes included).
+%    \begin{macrocode}
+local scanvlist = function (head)
+  local textht = tex.getdimen("textheight")
+  local textwd = tex.getdimen("textwidth")
+  local pageno = tex.getcount("c@page")
+  texio.write_nl("PAGE " .. pageno)
+  texio.write("  textheight=".. string.format("%.1fpt", textht/65536))
+  texio.write("  textwidth=" .. string.format("%.1fpt", textwd/65536))
+  local linecount = 0
+  local body, parent, ht_pt, dp_pt, real_pt
+  body = get_pagebody(head)
+  if body then
+     parent = body
+     head = body.head
+  end
+  while (head) do
+    texio.write_nl(tostring(node.type(head.id)))
+    texio.write("-")
+    print_subtype(head,body)
+    if head.kern then
+       ht_pt = string.format("%.1fpt", head.kern/65536)
+       texio.write(" KERN ht/wd=" .. ht_pt)
+    end
+    local next = head.next
+    local first = head.head
+    for n in traverse(first) do
+        parent = head
+        texio.write_nl("  " .. tostring(node.type(n.id)))
+        texio.write("-")
+        print_subtype(n,head)
+        if n.id == VLIST or n.id == HLIST then
+          local ff = n.head
+          for nn in traverse(ff) do
+             parent = n
+             texio.write_nl("    " .. tostring(node.type(nn.id)))
+             texio.write("-")
+             print_subtype(nn,n)
+             if nn.id == VLIST or nn.id == HLIST then
+                local f3 = nn.head
+                for n3 in traverse(f3) do
+                  parent = nn
+                  texio.write_nl("      " .. tostring(node.type(n3.id)))
+                  texio.write("-")
+                  print_subtype(n3,nn)
+                  if n3.id == VLIST or n3.id == HLIST then
+                     local f4 = n3.head
+                     for n4 in traverse(f4) do
+                       parent = n3
+                       texio.write_nl("        " .. tostring(node.type(n4.id)))
+                       texio.write("-")
+                       print_subtype(n4,n3)
+                       if n4.id == VLIST or n4.id == HLIST then
+                          local f5 = n4.head
+                          for n5 in traverse(f5) do
+                            parent = n4
+                            texio.write_nl("          " .. tostring(node.type(n4.id)))
+                            texio.write("-")
+                            print_subtype(n5,n4)
+                          end
+                       end
+                     end
+                  end
+                end
+              end
+          end
+        end
+    end
+    head = next
+  end
+  return true
+end
+
+%    \end{macrocode}
+%    Add the main function to callback |pre_shipout_filter|.
+%    \begin{macrocode}
+luatexbase.add_to_callback("pre_shipout_filter",scanvlist,"check_vlists")
+%    \end{macrocode}
+\end{luacode}
+% \end{Debugging}
+%
+% \iffalse
+%</scan>
+% \fi
+%
+% \Finale
+\endinput
+
+%%% Local Variables:
+%%% fill-column: 72
+%%% coding: utf-8
+%%% TeX-engine: luatex
+%%% End:

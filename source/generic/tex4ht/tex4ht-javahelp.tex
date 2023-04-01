@@ -1,0 +1,1737 @@
+% $Id: tex4ht-javahelp.tex 680 2020-03-16 17:42:41Z karl $
+% compile 3 times: latex tex4ht-javahelp   
+%             or  xhlatex tex4ht-javahelp "html,3,sections+"
+%
+% Copyright 2009-2020 TeX Users Group
+% Copyright 2003-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\ifx \HTML\UnDef
+   \def\HTML{javahelp} 
+   \def\PREAMBLE{%
+      \usepackage{url}%
+%      \usepackage{moreverb}
+%      \usepackage{hyperref}%
+   }
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common-code}
+\input{common}
+\input{tex4ht-cpright}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\verbatiminput#1{%
+\immediate\openin15=#1
+\immediate\ifeof15 \else
+\immediate\closein15
+   \bgroup
+   \tt
+   \catcode`\\=12
+   \catcode`\{=12
+   \catcode`\}=12
+   \catcode`\%=12
+%   \catcode`\ =12
+   \catcode`\&=12
+   \catcode`\#=12
+   \catcode`\$=12
+   \catcode`\~=12
+   \catcode`\^=12
+   \catcode`\_=12
+   \input #1
+   \egroup
+\fi
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{The Outline}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%
+\section{The Root}
+%%%%%%%%%%%%%%%%%%%
+
+% \<javahelp.4ht\><<<
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% % javahelp.4ht                         |version %
+% % Copyright (C) |CopyYear.2003.       Eitan M. Gurari         %
+% |<TeX4ht copyright|>
+% >>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Constructs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\def\JHDIR{...../}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Introduction}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Review}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+JavaHelp is an online documentation system for use by Java-based
+applications. 
+
+
+\begin{itemize}
+\item
+It can be activated with the
+`javahelp' options. For instance, 
+`\verb+htlatex jobname "html,3.2,javahelp,unicode,3" " -cmozhtf -u10" "-cjavahelp"+'. 
+\item  Supports HTML 3.2 (+?) and (some?) CSS 1.0 as imported 
+files as well as style attributes.
+\end{itemize}
+
+
+TeX4ht does the following for JavaHelp
+
+\begin{itemize}
+\item Creates keys for the entries in the table of contents
+and the index
+\item Maps the keys into th erl's of the toc and the index (jobname.jhm)
+\item Maps the keys to the entries referenced by the toc (jobname-jht.xml)
+and to the entries referenced by the toc (jobname-jhi.xml)
+\item Creates a manifest of the files (jhelpset.hs), under the assumption
+that jhindexer set a search directory at jobname-jhs
+`{\tt java -jar /n/gold/5/gurari/javahelp.dir/jh1.1.3/javahelp/bin/jhindexer.jar -db jobname-jhs *.html}'
+\end{itemize}
+
+
+
+The javahelp.4ht file should not be loaded before the leading
+\verb+\tableofcontents+ command got active.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{References}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{itemize}
+\item \url{C:/jh1.1.3/doc/spec/FileFormat.html}
+\item \url{http://supportweb.cs.bham.ac.uk/documentation/tutorials/docsystem/build/tutorials/javahelp/javahelp.html}
+\item \url{http://developer.java.sun.com/developer/JDCTechTips/2002/tt0423.html}
+\item \url{http://developer.java.sun.com/developer/JDCTechTips/2002/tt0521.html}
+\item \url{http://www.oreilly.de/catalog/creatingjavahelp/examples/}
+\end{itemize}
+
+
+%%%%%%%%%%%%%
+\subsection{Importing CSS}
+%%%%%%%%%%%%%
+
+\<configure javahelp tex4ht\><<<
+\:CheckOption{-css} \if:Option \else
+   \Log:Note{to ignore CSS code, use the command line option `-css}
+   \:CheckOption{css-in} \if:Option
+      \Log:Note{the inline CSS code is extracted from the input of the
+          previous compilation, so an extra compilation might be needed}
+      \Configure{@HEAD}{|<css inline|>}
+   \else
+      \Log:Note{for inline CSS code, use the command line option `css-in'}
+      \Configure{@HEAD}{\HCode{<link
+         rel="stylesheet" type="text/css"
+         href="\aa:CssFile"\xml:empty>\Hnewline}}
+   \fi
+\fi
+>>>
+
+
+\<css inline\><<<
+\openin15=\jobname .css 
+\ifeof15   \:warning{Missing file: \jobname .css }%
+\else
+\bgroup 
+   \catcode`\{=12  \catcode`\}=12  \catcode`\%=12  \catcode`\#=12 
+   \HCode{\Hnewline<style type="text/css">\Hnewline <!-- \Hnewline}% 
+   \loop  
+      \read15 to \:temp    
+      \def\:tempa{\par}\ifx \:temp\:tempa \let\:temp\empty \fi
+   \ifeof15\else  
+      \expandafter\tmp:toks\expandafter{\:temp}% 
+      \HCode{\the\tmp:toks \Hnewline}% 
+   \repeat 
+   \HCode{\Hnewline-->\Hnewline</style>\Hnewline}% 
+\egroup 
+\fi 
+\closein15 
+>>>
+
+
+\<configure javahelp tex4ht\><<<
+|<0,32,4 preambles|>
+\ifx \a:FontCss:\:UnDef
+   \Configure{FontCss}{Font\string_Css##1}
+                   {Font\string_Css\string_Plus\space##1}
+\fi
+\expandafter\ifx \csname aa:Css\endcsname\relax
+   \Configure{Css}{Css: ##1}
+\fi
+>>>
+
+
+
+
+
+\<configure javahelp latex\><<<
+|<jh defs|>
+\Configure{Preamble}
+  {\:CheckOption{-css} \if:Option 
+   \else |<default cascade style sheets|>\fi}
+  {|<jh at start|>}
+\Configure{@/BODY}
+  {\relax
+   \ifnum \FileNumber=1
+       \SaveEndP
+       \input javahelp-a.4ht
+       \RecallEndP
+   \fi
+  }
+>>>
+
+
+
+\<0,32,4 preambles\><<<
+\:CheckOption{-css} \if:Option 
+   \def\Css#1{}
+   \NewConfigure{CssFile}{2}
+\else
+   |<cascade style sheets|>
+\fi
+>>>
+
+\<cascade style sheets\><<<
+\def\Css#1{{\def\:temp{\Configure{Needs}}%
+   \expandafter\:temp\expandafter{\aa:Css}\Needs{#1}}}
+>>>
+
+\<cascade style sheets\><<<
+\ScriptCommand{\CssFile}{%
+    \immediate\write-1{--- file \aa:CssFile\space ---}%
+    \def\FontSize##1##2{\:Context{##1}\ht:special{t4ht;\%##2}\%}%
+    \def\FontName##1{\:Context{##1}\ht:special{t4ht;=}}%
+    \def\:Context##1{\ht:special{t4ht>\jobname.tmp}##1\ht:special
+       {t4ht>\aa:CssFile}}%
+    \ht:special{t4ht>\jobname.tmp}\ht:special{t4ht>\aa:CssFile}%
+    \bgroup \everypar{}\NoFonts  \bb:CssFile \hfil\break}
+  {\egroup \EndNoFonts
+    \ht:special{t4ht<\aa:CssFile}\ht:special{t4ht<\jobname.tmp}}
+\let\Css:File=\CssFile
+\def\CssFile{\futurelet\:temp\Css:Fl}
+\def\Css:Fl{\ifx [\:temp  \expandafter\Css:fl
+   \else \expand:after{\Css:File \space}\fi}
+\def\Css:fl[#1]{\Css:File\space \css:files #1,,|<par del|>}
+\def\css:files#1,#2|<par del|>{\def\:temp{#1}\ifx \:temp\empty
+   \else \def\:temp{\in:css#1.|<par del|>\css:files#2,,|<par del|>}\fi
+   \:temp }
+\def\in:css#1.#2|<par del|>{\def\:temp{#2}\ifx \:temp\empty
+      \inc:ss#1.css|<par del|>
+   \else \inc:ss#1.#2|<par del|>\fi}
+\def\inc:ss#1.|<par del|>{|<input css file|> }
+\NewConfigure{CssFile}[2]{\def\aa:CssFile{#1}\def\bb:CssFile{#2}}
+>>>
+
+
+
+\<default cascade style sheets\><<<
+{\ifdim \lastskip>\z@ \unskip\fi  \IgnorePar\parindent\z@
+\leavevmode}%
+\immediate\write-1{--- file \aa:CssFile\space ---}%
+\ht:special{t4ht>\aa:CssFile}\ht:special{t4ht=\Hnewline /* css.sty */}%
+\ht:special{t4ht<\aa:CssFile}%
+>>>
+
+\<input css file\><<<
+     \immediate\openin15=#1
+     \ifeof15 \immediate\closein15
+        \:warning{Missing file: #1}%
+     \else \immediate\closein15     \input #1 \fi
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Tabular}
+%%%%%%%%%%%%%
+
+\<configure javahelp latex\><<<
+\:CheckOption{no-array}\if:Option \else
+   |<html latex array/tabular Config 4.0t|>
+\fi
+>>>
+
+
+
+\<configure javahelp array\><<<
+|<html latex array/tabular Config 4.0t|>
+>>>
+
+
+\<html latex array/tabular Config 4.0t\><<<
+\:CheckOption{pic-tabular}  \if:Option \else
+   \ConfigureEnv{tabular}
+     {|<configure tabular noalign|>%
+      \IgnorePar|<inline comment|>\EndP\HCode{<div class="tabular">}%
+      \PushStack\Col:Marg\AllColMargins
+     }
+     {\HCode{</div>}\PopStack\Col:Marg\AllColMargins\ShowPar
+      |<configure clear noalign|>%
+      |<try env inline par|>%
+     }{}{}
+   \Css{div.tabular, div.center div.tabular {text-align: center; 
+           margin-top:0.5em; margin-bottom:0.5em;  }} 
+   \Css{table.tabular td  p{margin-top:0em;}}  
+   \Css{table.tabular {margin-left: auto;
+                       margin-right: auto;}}    |% centering |%
+\fi
+>>>
+
+
+\verb'\AllColMargins' Return a binary string in which 1 represents
+a column, and 0 represents a `@'. \verb'\ColMargins' retrieves the
+zeros before the 1's that represent the current and following 1's.
+
+\<html latex array/tabular Config 4.0t\><<<
+\def\ColMargins{%
+   \ifx \AllColMargins\empty
+      \:warning{Empty \string\AllColMargins}%
+   \else
+      \tmp:cnt=\HCol\relax 
+      \expandafter\nosp:hbr\AllColMargins 1//%
+   \fi }
+\def\nosp:hbr#11#2//{\ifnum \tmp:cnt>1 \advance\tmp:cnt by -1
+   \nosp:hbr#2//\else\nosp:gt#11#2//\fi}
+\def\nosp:gt#11#21#3//{%
+   \def\:temp{#1}\ifx \:temp\empty 1\else 0\fi
+   \def\:temp{#2}\ifx \:temp\empty 1\else 0\fi}
+>>>
+
+
+
+
+\<html latex array/tabular Config 4.0t\><<<
+\Configure{VBorder}
+    {\global\let\oldVBorder=\empty}
+    {\gdef\oldVBorder{border="1"}}
+    {}{}
+\Configure{halignTB<>}{tabular}{\HCode{id="TBL-\TableNo" 
+                                             class="tabular"\Hnewline 
+   \oldVBorder \GROUPS\Hnewline
+   }<>\HAlign}
+\Css{table[rules] {border-left:solid black 0.4pt; 
+                   border-right:solid black 0.4pt; }}
+\:CheckOption{pic-tabular}  \if:Option \else
+   \Configure{tabular}
+      {\ifvmode \IgnorePar\fi \EndP \halignTB{tabular}\putVBorder }
+      {\HCode{</table>}}
+      {\HCode{<tr \Hnewline}\halignTR 
+                            \HCode{ id="TBL-\TableNo-\HRow-">}}
+      {\r:HA}
+      {\HCode{<td \ifnum \HMultispan>1 colspan="\HMultispan"\fi}%
+         \halignTD \HCode{ id="TBL-\TableNo-\HRow-\HCol"
+         \Hnewline class="td}|<tabular td align|>%
+         \HCode{">}|<td save EndP|>%
+         |<start array par box|>\PushStack\Table:Stck\TableNo}
+      {|<end array par box|>\PopStack\Table:Stck\TableNo \d:HA}
+\fi
+\def\R:HA{\HCode{<tr \Hnewline}\halignTR\HCode{>}}
+\def\r:HA{\HCode{</tr>}}
+\def\D:HA{|<td save EndP|> \HCode{<td 
+   \ifnum \HMultispan>1 colspan="\HMultispan"\fi}%
+   \halignTD \HCode{\Hnewline>}\ShowPar\par}
+\def\d:HA{\ifvmode \IgnorePar \fi \EndP\HCode{</td>}|<td recall EndP|>}
+|<configuring @()|>
+\Css{td.td00{ padding-left:0pt; padding-right:0pt; }}
+\Css{td.td01{ padding-left:0pt; padding-right:5pt; }}
+\Css{td.td10{ padding-left:5pt; padding-right:0pt; }}
+\Css{td.td11{ padding-left:5pt; padding-right:5pt; }}
+>>>
+
+
+
+
+
+
+\<configure tabular noalign\><<<
+\Configure{noalign}%
+  {\f:tabular\d:tabular \HCode{<tr><td colspan="\ar:cnt">}}
+  {\HCode{</td></tr>}\pend:def\TableNo{0}\c:tabular\e:tabular}%
+>>>
+
+\<inline comment\><<<
+\ifvmode\else\HCode{<!--tex4ht:inline-->}\fi
+>>>
+
+
+\<configure clear noalign\><<<
+\Configure{noalign}{}{}%
+>>>
+
+
+\<try env inline par\><<<
+\ShowPar 
+>>>
+
+\<try inline par\><<<
+\ShowPar \par{\HCondtrue\noindent}%
+>>>
+
+
+\<tabular td align\><<<
+\NoFonts
+           \bgroup
+              \ifx \ttfamily\:UnDef \else \ttfamily\fi
+              \ColMargins
+           \egroup 
+\EndNoFonts
+>>>
+
+
+\<td save EndP\><<<
+\SaveEndP 
+>>>
+
+\<td recall EndP\><<<
+\RecallEndP 
+>>>
+
+\<start array par box\><<<
+\par  \ShowPar
+>>>
+
+\<end array par box\><<<
+\IgnorePar \EndP
+>>>
+
+
+\<configuring @()\><<<
+\Configure{@{}}{}
+>>>
+
+
+
+
+\<html latex array/tabular Config 4.0t\><<<
+\Configure{halignTB<>}{array}{\HCode{id="TBL-\TableNo" class="array"\Hnewline
+    \GROUPS\Hnewline
+   }<>\HAlign}
+\Css{table[rules] {border-left:solid black 0.4pt; 
+                   border-right:solid black 0.4pt; }}
+\:CheckOption{pic-array}  \if:Option \else
+   \Configure{array}
+      {\ifvmode \IgnorePar\fi \EndP\halignTB{array}\putVBorder}
+      {\HCode{</table>}}
+      {\R:HA}
+      {\r:HA}
+      {\D:HA\HCode{<div class="td}|<tabular td align|>%
+            \HCode{">}|<start array par box|>\pic:env}
+      {|<end array par box|>\HCode{</div>}\d:HA}
+   \Configure{arrayparbox}{\ShowPar}
+\fi
+>>>
+
+
+
+
+
+
+\<html latex array/tabular Config 4.0t\><<<
+  \let\VBorder=\empty   \let\AllColMargins=\empty
+  \Configure{VBorder}
+     {\let\VBorder=\empty \let\AllColMargins=\empty
+      \global\let\GROUPS=\empty \HAssign\NewGroup = 0 
+      \gHAdvance\Next:TableNo by 1 \global\let\TableNo=\Next:TableNo 
+      \global\let\oldVBorder=\empty
+     }
+     {\xdef\VBorder{\VBorder\ifnum \NewGroup> 0 </colgroup>\fi}
+      \HAssign\NewGroup = 0  \gdef\GROUPS{rules="groups"}%
+      \gdef\oldVBorder{border="1" }%
+     }
+     {\Advance:\NewGroup by 1 
+      \ifnum \NewGroup=1 \xdef\VBorder{\VBorder<colgroup 
+          id="TBL-\TableNo-\ar:cnt g">}\fi      
+      \xdef\VBorder{\VBorder<col\Hnewline id="TBL-\TableNo
+         -\ar:cnt"\xml:empty>}\xdef\AllColMargins{\AllColMargins1}}
+     {\xdef\AllColMargins{\AllColMargins 0}}
+%  \Configure{HBorder}
+%     {<tr\Hnewline class="hline">} {<td><hr\xml:empty></td>}   {</tr>}
+%     {<tr\Hnewline class="cline">}
+%     {<td></td>} {<td><hr\xml:empty></td>} {</tr>}
+%     {<tr\Hnewline class="vspace" style="font-size:\HBorderspace">} 
+%         {<td\Hnewline>\string&nbsp;</td>} {</tr>}
+%  \Configure{putHBorder}{\HCode{\HBorder}}
+\HAssign\Next:TableNo=0 \global\let\TableNo=\Next:TableNo
+\Css{.hline hr, .cline hr{  height : 1px; margin:0px; }}
+>>>
+
+
+
+
+\<html latex array/tabular Config 4.0t\><<<
+\def\putVBorder{\expandafter\put:VBorder\VBorder</>|<par del|>}
+\def\put:VBorder#1</#2>#3|<par del|>{\def\:temp{#2}\ifx\:temp\empty
+     \HCode{\VBorder}%
+     \def\:temp{#1}\ifx\:temp\empty \else\HCode{</colgroup>}\fi
+  \else  \def\:temp{\put:VBorder#3|<par del|>}\expandafter\:temp\fi
+}
+>>>
+
+
+\<html latex array/tabular Config 4.0t\><<<
+\Configure{multicolumn}
+   {\let\col:Css\empty
+    \Configure{VBorder} 
+       {}
+       {\edef\col:Css{\col:Css
+                     border-\ifnum \ar:cnt=0 left\else right\fi
+                     :solid black 0.4pt;}%
+       }{}{}%
+   }
+   {\ifx \col:Css\empty \else 
+        \Css{td\#TBL-\TableNo-\HRow-\HCol{\col:Css}}% 
+    \fi
+   }
+   {\ifvmode\IgnorePar\fi     
+    \HCode{<div class="multicolumn" }\HColAlign\HCode{>}%
+    \ifx \col:Css\empty \else 
+        \Css{td\#TBL-\TableNo-\HRow-\HCol{\col:Css}}% 
+    \fi
+   }
+   {\ifvmode\IgnorePar\fi \EndP\HCode{</div>}}
+>>>
+
+\<html latex array/tabular Config 4.0t\><<<
+\def\pic:env{%
+   \def\begin##1{\bgroup
+      \def\end####1{\o:end:{####1}\EndPicture\egroup}%
+      \ifx \EndPicture\:UnDef
+           \Picture+{ class="##1" style="text-align:middle"}%
+      \else \let\EndPicture=\empty\fi
+      \o:begin:{##1}}%
+}
+>>>
+
+
+\<configure javahelp tex4ht\><<<
+\Configure{halignTD} {}{}
+   {<}{\HCode{ style="white-space:nowrap; text-align:left;"}}
+   {-}{\HCode{ style="white-space:nowrap; text-align:center;"}}
+   {>}{\HCode{ style="white-space:nowrap; text-align:right;"}}
+   {^}{\HCode{ style="vertical-align:top; white-space:nowrap;"}}
+   {=}{\HCode{ style="vertical-align:baseline; white-space:nowrap;"}}
+   {||}{\HCode{ style="vertical-align:middle; white-space:nowrap;"}}
+   {_}{\HCode{ style="vertical-align:bottom; white-space:nowrap;"}}
+   {p}{\HCode{ style="white-space:normal; text-align:left;"}\Protect\a:HColWidth}
+   {m}{\HCode{ style="white-space:nowrap; text-align:left; vertical-align:middle;"}}
+   {b}{\HCode{ style="white-space:nowrap; text-align:left; vertical-align:baseline;"}}
+   {}
+\NewConfigure{HColWidth}{1}
+\Configure{HColWidth}{}
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Long Tables}
+%%%%%%%%%%%%%
+
+
+\<configure javahelp longtable\><<<
+  |<config new longtable|>
+>>>
+
+
+\<configure javahelp longtable\><<<
+\:CheckOption{pic-longtable}  \if:Option
+   \ConfigureEnv{longtable}
+     {\IgnorePar\EndP\Tg<div class="pic-longtable">\Picture*{}}
+     {\EndPicture\Tg</div>}{}{}
+   \Css{div.pic-longtable {text-align:center;}}
+\else
+   \Log:Note{for pictorial longtable,
+                      use the command line option `pic-longtable'}
+\fi
+>>>
+
+
+
+\<config new longtable\><<<   
+\Configure{halignTB<>}{longtable}{\HCode{id="TBL-\TableNo"
+                                      class="longtable"\Hnewline 
+   \oldVBorder \GROUPS\Hnewline
+   }<>\HAlign}
+\Css{table[rules] {border-left:solid black 0.4pt; 
+                   border-right:solid black 0.4pt; }}
+\Configure{longtable}
+   {\IgnorePar\EndP
+     \HCode{|<show input line no|><div class="longtable">}%
+    \halignTB{longtable}\putVBorder }
+   {\HCode{</table></div>}}
+   {\HCode{<tr \Hnewline}\halignTR\HCode{ id="TBL-\TableNo-\HRow-">}}
+   {\r:HA}
+   {\HCode{<td \ifnum \HMultispan>1 colspan="\HMultispan"\fi}%
+    \halignTD \HCode{ id="TBL-\TableNo-\HRow-\HCol"
+    \Hnewline class="td}|<tabular td align|>%
+    \HCode{">}|<td save EndP|>%
+    |<start array par box|>\PushStack\Table:Stck\TableNo}
+   {\PopStack\Table:Stck\TableNo |<end array par box|>\d:HA}
+\Css{div.longtable{text-align:center;}}
+\Configure{longtableparbox}{\IgnorePar\leavevmode\ShowPar\par}
+>>>
+
+
+
+\<show input line no\><<<
+<!--l. \the\inputlineno-->%
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Color Tables}
+%%%%%%%%%%%%%
+
+
+\<configure javahelp colortbl\><<<
+\Configure{@classz}
+   {\let\begin:current@color|=\relax
+    \let\end:current@color|=\relax }
+   {%
+     \ifx \CT@column@color\relax \else 
+     \ifx \CT@column@color\empty \else{%
+         \def\CT@color{\@ifnextchar[\color:ii\color:i}%
+         \CT@column@color|<par del|>%
+         \edef\:temp{\noexpand\add:color
+            {background-color}{\:temp}{\ar:cnt}}\:temp
+     }\fi \fi
+   }
+   {\begin:current@color}
+   {\end:current@color}
+\Configure{rowcolor}{\row:clr}
+\def\row:clr#1{{%
+  \HAdvance\HRow by 1
+  \add:color{background-color}{#1}{\HRow-}}}
+\Configure{text-colortbl}
+  {\add:color{color}{\current@color}{\HRow-\HCol}}
+\Configure{cell-colortbl}
+   {\add:color{background-color}{\current@color}{\HRow-\HCol}}
+\def\add:color#1#2#3{%
+  \Configure{SetHColor}{\Css{ \#TBL-\TableNo-#3{ #1:\HColor }}}{#2}}
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Color}
+%%%%%%%%%%%%%
+
+
+\<configure javahelp color\><<<
+\HAssign\textcolorN=0
+\Configure{colorbox}
+    {\bgroup
+     \gHAdvance\textcolorN by 1
+     \ifvmode \let\v:colorbox\def \IgnorePar \EndP
+     \else \let\v:colorbox=\relax \fi
+     |<colorbox background|>%
+     \HCode{<\ifx \v:colorbox\def div\else span\fi \Hnewline
+                  class="colorbox" id="colorbox\textcolorN">}}%
+    {\ifx \v:colorbox\def \EndP\HCode{</div>}\par
+     \else \HCode{</span>}\fi 
+     \egroup
+    }
+>>>
+
+
+
+
+\<configure javahelp color\><<<
+\Configure{textcolor}
+   {\gHAdvance\textcolorN by 1
+    \Configure{color}%
+      {\Configure{SetHColor}
+           {\Css{span\#textcolor\textcolorN{color:\HColor}}}}%
+    \HCode{<span id="textcolor\textcolorN">}}%
+   {\HCode{</span>}}
+>>>
+
+
+
+\<colorbox background\><<<
+\let\A:color=\a:color
+\Configure{color}%
+  {\let\a:color=\A:color
+   \Configure{SetHColor}
+       {\Css{\ifx \v:colorbox\def div\else span\fi
+             \#colorbox\textcolorN{background-color:\HColor;}}}}%
+>>>
+
+
+\<\><<<
+\Configure{fcolorbox}
+   {\gHAdvance\textcolorN by 1
+    \let\A:color=\a:color
+    \Configure{color}%
+        {\Configure{SetHColor}{\Css{\#colorbox\textcolorN{border: 
+                                  solid 1px \HColor;}}}}%
+     \Configure{fbox}{\leavevmode
+              \gHAdvance\textcolorN by -1  \let\a:color=\A:color}{}}
+    {}
+>>>
+
+
+\<color.sty config 4.0t\><<<
+\Configure{fcolorbox}
+   {\bgroup\gHAdvance\textcolorN by 1
+     \ifvmode \let\v:colorbox\def \IgnorePar \EndP 
+     \else \let\v:colorbox=\relax \fi
+     \HCode{<\ifx \v:colorbox\def div\else span\fi \Hnewline
+                  class="colorbox" id="colorbox\textcolorN">}%    
+    |<fcolorbox border|>%
+    \Configure{fbox}{\leavevmode }{}%
+}
+{\ifx \v:colorbox\def \EndP\HCode{</div>}\par
+ \else \HCode{</span>}\fi  \egroup}
+>>>
+
+\<fcolorbox border\><<<
+\let\A:color=\a:color
+\Configure{color}%
+    {|<fcolor background|>%
+     \Configure{SetHColor}{%
+         \Css{\#colorbox\textcolorN{border: solid 1px  \HColor;}}}%
+    }%
+>>>
+
+\<fcolor background\><<<
+\Configure{color}%
+    {\let\a:color=\A:color
+     \Configure{SetHColor}{%           
+         \Css{\#colorbox\textcolorN{background-color: \HColor;}}%
+    }}%
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Fonts}
+%%%%%%%%%%%%%
+
+
+
+
+\<configure javahelp fontmath \><<<
+\Configure{textbf}
+    {\ifimmediate\else \Protect\HCode{<b>}\fi}
+    {\ifimmediate\else \Protect\HCode{</b>}\fi}
+\Configure{textit}
+    {\ifimmediate\else \Protect\HCode{<i>}\fi}
+    {\ifimmediate\else \Protect\HCode{</i>}\fi}
+\Configure{textsl}
+    {\ifimmediate\else \Protect\HCode{<i>}\fi}
+    {\ifimmediate\else \Protect\HCode{</i>}\fi}
+\Configure{texttt}
+    {\ifimmediate\else \Protect\HCode{<tt>}\fi}
+    {\ifimmediate\else \Protect\HCode{</tt>}\fi}
+\Configure{emph}
+    {\ifimmediate\else \Protect\HCode{<em>}\fi}
+    {\ifimmediate\else \Protect\HCode{</em>}\fi}
+>>>
+
+
+\<configure javahelp fontmath\><<<
+\Configure{jhxml}
+{%
+   \let\textbf\empty
+   \let\textit\empty
+   \let\textsl\empty
+   \let\texttt\empty
+   \let\textsc\empty
+   \let\emph\empty
+}  
+>>>
+
+
+
+\<configure javahelp inputenc\><<<
+\Configure{jhxml}
+{%
+   \let\IeC\empty
+}  
+>>>
+
+%%%%%%%%%%%%%
+\subsection{French}
+%%%%%%%%%%%%%
+
+
+
+\<configure javahelp frenchb\><<<
+\Configure{jhxml}
+{%
+  \expandafter\def\csname 
+     a:frenchb-thinspace\endcsname##1frenchb-thinspace\endcsname{}%
+}
+>>>
+
+\<configure javahelp frenchb \><<<
+\expandafter\let\csname jha:ftsp\expandafter\endcsname 
+                        \csname a:frenchb-thinspace\endcsname 
+\expandafter\def\csname a:frenchb-thinspace\endcsname{%
+   \ifimmediate
+      \expandafter\jha:ftspignore
+   \else
+      \expandafter\jha:ftsp
+   \fi
+}
+\def\jha:ftspignore#1frenchb-thinspace\endcsname{}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Ulem}
+%%%%%%%%%%%%%
+
+
+
+\<configure javahelp ulem\><<<
+\Configure{uline}
+   {\HCode{<span class="uline">}} {\HCode{</span>}}
+\Css{.uline{ text-decoration:underline; }}
+\Configure{uuline}
+   {\HCode{<span class="uuline">}} {\HCode{</span>}}
+\Css{.uuline{ text-decoration:underline; }}
+\Configure{sout}
+   {\HCode{<span class="sout">}} {\HCode{</span>}}
+\Css{span.sout {text-decoration: line-through }}
+\Configure{xout}
+   {\HCode{<span class="xout"><span class="underline">}} 
+   {\HCode{</span></span>}}
+\Css{span.xout {text-decoration: line-through }}
+\Configure{uwave}
+   {\HCode{<span class="uwave">}} 
+   {\HCode{</span>}}
+\Css{span.uwave {text-decoration:underline }}
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The JavaHelp Files}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\<javahelp\><<<
+% javahelp.4ht (|version), generated from |jobname.tex
+% Copyright 2009-2019 TeX Users Group
+% Copyright |CopyYear.2003. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+\<double acute iso-8859-2\><<<
+|<double acute code|>%
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The HTML Documentation (*.html)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Prepare a \LaTeX{} file and compile it for HTML 3.2. For instance,
+with the command {\tt htlatex jobname "html,3.2,3,javahelp"}.
+
+% \special{t4ht>foo.log}
+% \special{t4ht=...x...}
+% \special{t4ht*>foo.log}
+% \special{t4ht*>}
+
+
+\<configure javahelp Preamble\><<<
+|<instructions for log|>
+% \newif\ifimmediate
+% \immediatefalse
+>>>
+
+
+
+\<jh defs\><<<
+\def\Write:File#1#2{%
+  \special{t4ht>#1}%
+  \special{t4ht=#2}%
+  \special{t4ht*>#1}%
+  \special{t4ht*>}%
+}
+>>>
+
+
+\<configure javahelp Preamble\><<<
+\NewConfigure{jhxml}[1]{\concat:config\a:jhxml{#1}} 
+\let\a:jhxml\relax 
+>>>
+
+\<javahelp-a.4ht\><<<
+% javahelp-a.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) |CopyYear.2003. Eitan M. Gurari
+|<TeX4ht copywrite|>
+\NextFile{\jobname.tmp}
+\HPage{}
+\bgroup 
+   \catcode`\:=11
+   \catcode`\@=11
+   \catcode`\"=12
+   \Configure{PROLOG}{}   
+   \Configure{HtmlPar}{}{}{}{}
+   \Configure{tableofcontents}{}{}{}{}{}
+   \Configure{htf}{0}{+}{}{}{}{}{}{}{}
+   \ScriptEnv{dito}{\IgnorePar}{}
+   \a:jhxml
+   |<jh util|>
+   |<jh root|>
+   |<jh toc|>
+   |<jh index|>
+   |<jh at end|>
+\egroup
+\EndHPage{}
+>>>
+
+The HPage above is to ensure the all the references in the javahelp
+files will be to locations at other files, and so they will explicitly
+include the names of the files being referenced.  The page is empty
+and not referenced by other pages.
+
+\<instructions for log\><<<
+\immediate\write-1{--------------- JavaHelp -----------------}
+\immediate\write-1{The entry (HelpSet) file for the java program
+                                         is at `\jobname.hs'}
+\immediate\write-1{Generate a search database
+                             with, for instance, the command}
+  \immediate\write-1{ java -jar
+    ...../jh1.1.3/javahelp/bin/jhindexer.jar
+    -db \jobname-jhs \jobname*.html}
+\immediate\write-1{Compile the java program with a command similar to}
+  \immediate\write-1{ javac -classpath
+    ...../jh1.1.3/javahelp/lib/jh.jar  program.java}
+\immediate\write-1{Run the java program with a command similar to}
+  \immediate\write-1{ java -classpath
+    ...../jh1.1.3/javahelp/lib/jh.jar;. program}
+\immediate\write-1{JavaHelp might require a compilation for HTML 3.2,
+     for instance,}
+\immediate\write-1{ htlatex \jobname\space "html,javahelp,3.2,3"}
+\immediate\write-1{------------------------------------------}
+>>>
+
+
+
+\<jh defs\><<<
+\def\jhNote{%
+     Created for JavaHelp
+     (http://java.sun.com/products/javahelp/)\Hnewline
+     by TeX4ht (https://tug.org/tex4ht/)\Hnewline
+     from \jobname.tex \space
+  }
+>>>
+
+We can't keep the comment boundaries 
+in the macro because the adjacent hyphens
+in some cases merge into a n-dash
+  under font encoding T1. For instance,
+
+\begin{verbatim}
+   \documentclass{report} 
+     \usepackage[T1]{fontenc}        
+   \begin{document} 
+    
+   \ScriptEnv{dito}{}{} 
+    
+   \begin{dito} 
+   --[]-[] 
+   \end{dito} 
+   \end{document} 
+\end{verbatim}
+
+
+
+\<tex4ht note\><<<
+\jhNote
+>>>
+
+
+
+\<par del\><<<
+!*?: >>>
+
+
+
+
+
+\<jh defs\><<<
+\Configure{crosslinks}{}{}{}{}{}{}{}{}{}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The JavaHelp Root File (HelpSet File: jobname.hs)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+This file introduces the files in the help distribution.
+
+
+\<jobname.hs: url of jh root file\><<<
+\jobname.hs>>>
+
+
+The etension name must be `hs'!
+
+
+
+\<dtd lang\><<<
+\dTdLaNg>>>
+
+\<jh defs\><<<
+\def\dTdLaNg{\expandafter
+  \ifx \csname a:dtd-lang\endcsname\relax EN\else
+    \csname a:dtd-lang\endcsname
+  \fi   }
+>>>
+
+\<jh root\><<<
+|<jh root config|>
+\IgnorePar\par\leavevmode\special{t4ht>|<jobname.hs: url of jh root file|>}%
+\begin{dito}-\
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+\end{dito}
+|<helpset DTD|>
+\begin{dito}-\
+<!-\relax- |<tex4ht note|> -\relax->
+<helpset version="\dotVersion">
+  <title>|<title label|></title>
+  <maps>
+    <homeID>|<home id|></homeID>
+    <mapref location="|<url of jh keys file|>"/>
+  </maps>
+  <view>
+    <name>TOC</name>
+    <label>|<toc label|></label>
+    <type>javax.help.TOCView</type>
+    <data>|<url of jh toc file|></data>
+  </view>
+  <view>
+    <name>Index</name>
+    <label>|<index label|></label>
+    <type>javax.help.IndexView</type>
+    <data>|<url of the jh index|></data>
+  </view>
+  <view>
+    <name>Search</name>
+    <label>|<search dir label|></label>
+    <type>javax.help.SearchView</type>
+    <data 
+      engine="com.sun.java.help.search.DefaultSearchEngine">|<url of jh serach dir|></data>
+  </view>
+</helpset>
+\end{dito}
+\IgnorePar\par\leavevmode\special{t4ht<|<jobname.hs: url of jh root file|>}
+>>>
+
+
+
+\<toc label\><<<
+\tocLabel>>>
+
+\<index label\><<<
+\indexLabel>>>
+
+\<search dir label\><<<
+Search>>>
+
+\<title label\><<<
+\titleLabel>>>
+
+
+\<jh root config\><<<
+\edef\tocLabel{\ifx\contentsname\:UnDef Table Of Contents\else
+               \ifx\contentsname\empty  Table Of Contents\else 
+               \contentsname\fi\fi}
+\edef\indexLabel{\ifx\indexname\:UnDef Index\else
+                 \ifx\indexname\empty  Index\else \indexname\fi\fi}
+\ifTag{TITLE+}
+   {\edef\titleLabel{\LikeRef{TITLE+}}}
+   {\def\titleLabel{\jobname}}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The JavaHelp Search Directory (jobname-jhs)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<url of jh serach dir\><<<
+\jobname-jhs>>>
+
+\def\JHINDEXER{java -jar
+\JHDIR jh2.0/javahelp/bin/jhindexer.jar
+    -db \jobname-jhs \jobname*.html}
+
+
+
+
+Use a  command similar to `{\tt \JHINDEXER}'
+to create a search directory \verb+JavaHelpSearch+ for JavaHelp from the HTML pages of the documentation.
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The JavaHelp Keys to URLs Mapping (jobname.jhm)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<url of jh keys file\><<<
+\jobname.jhm>>>
+
+
+The homeId tag provides the default entry to present when a HelpSet is
+first shown.
+
+\<home id\><<<
+\jobname>>>                
+
+The default  entry point can be overwritten in:
+
+\<entry point\><<<
+\jobname>>>
+
+
+
+Assigns keys to locations within the HTML document.
+
+
+
+\<jh at start\><<<
+\Write:File
+   {|<url of jh keys file|>}
+   {|<map preamble|>}
+>>>
+
+
+\<map preamble\><<<
+<?xml version="1.0" encoding="ISO-8859-1" ?>\Hnewline
+|<map DTD|>
+\Hnewline <!-- |<tex4ht note|> -->\Hnewline
+<map version="\dotVersion">\Hnewline
+<mapID target="|<entry point|>" url="\jobname.html"/>\Hnewline
+>>>
+
+
+\<jh defs\><<<
+\HAssign\mapEntry=0
+>>>
+
+
+\<add index entry to map\><<<
+\gHAdvance\mapEntry by 1
+\Write:File
+   {|<url of jh keys file|>}%
+   {<mapID target="indexentry-\mapEntry" 
+             url="\RefFileNumber\FileNumber
+       \#\title:chs {dx\last:haddr}{\cur:th\:currentlabel}%
+           " />\Hnewline}%
+>>>
+
+
+
+\<jh defs\><<<
+\AtBeginDocument{%
+  \let\jh:toc=\auto:toc
+  \expandafter\append:defI\csname tableofcontents*\endcsname{%
+     \global\let\jh:toc=\auto:toc }%
+}
+>>>
+
+
+\<load table of contents\><<<
+\expandafter\ifx \csname jh:toc\endcsname\relax
+   \tableofcontents
+\else
+   \expandafter\expandafter\expandafter\tableofcontents
+   \expandafter\expandafter\expandafter[\csname
+                                         jh:toc\endcsname]%
+\fi
+>>>
+
+\<jh at end\><<<
+\special{t4ht>|<url of jh keys file|>}%
+\bgroup
+   |<jh map for toc|>
+  \bgroup \catcode`\:=12 \catcode`\@=12 \let\contentsname\empty
+     |<load table of contents|>%
+  \egroup
+  \HCode {</map>\Hnewline}
+\egroup
+\special{t4ht*>|<url of jh keys file|>}%
+\special{t4ht*>}%
+>>>
+
+\<jh map for toc\><<<
+\Configure{Link}{mapID}{target="\a:mapIdTarget" url=}{}{}
+\Configure{TocLink}{\Link{#2}{}\EndLink}
+\let\jh:doTocEntry\:doTocEntry
+\def\:doTocEntry#1#2#3{%
+   \edef\sectioningKey{\expandafter\gob:IV\string#1}%
+   \edef\:temp{\noexpand\ConfigureToc{\sectioningKey}
+               {}{\relax}{}{}}\:temp
+   |<config toc target entry|>%
+   \jh:doTocEntry#1{#2}{#3}}
+\def\gob:IV#1#2#3#4{}
+\def\sectioningKey{NoToc}
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The JavaHelp TOC (jobname-jht.xml)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<url of jh toc file\><<<
+\jobname-jht.xml>>>
+
+\<jh toc\><<<
+\bgroup
+%\immediatetrue
+|<jh TOC config|>
+|<start jh TOC|>
+     |<load table of contents|>%
+|<end jh TOC|>
+\egroup
+>>>
+
+\<start jh TOC\><<<
+\IgnorePar\par\leavevmode\special{t4ht>|<url of jh toc file|>}%
+\begin{dito}-\
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+\end{dito}
+|<toc DTD|>
+\begin{dito}-\
+<!-\relax- |<tex4ht note|> -\relax->
+<toc version="\dotVersion">
+  <tocitem target="|<entry point|>" text="|<title label|>|<uni sp|>">
+\end{dito}
+\let\end:jhhook=\empty
+\catcode`\:=12 \catcode`\@=12  \let\contentsname\empty
+\NoFonts
+>>>
+
+\<end jh TOC\><<<
+\EndNoFonts
+\catcode`\:=11 \catcode`\@=11
+\end:jhhook
+\begin{dito}
+  </tocitem>
+</toc>
+\end{dito}
+\special{t4ht<|<url of jh toc file|>}
+>>>
+
+
+
+\<jh TOC config\><<<
+\Configure{TocLink}
+   {\HCode{<tocitem target="\a:mapIdTarget"\Hnewline
+                    text="}\hbox{#4}\HCode{|<uni sp|>">\Hnewline}}
+\let\jh:doTocEntry\:doTocEntry
+\def\:doTocEntry#1#2#3{%
+   \edef\sectioningKey{\expandafter\gob:IV\string#1}%
+   \edef\:temp{\noexpand\ConfigureToc{\sectioningKey}
+       {}{\noexpand\set:endtocitem{\sectioningKey}}{}{}}\:temp
+   |<config toc target entry|>%
+   \jh:doTocEntry#1{#2}{#3}}
+\def\gob:IV#1#2#3#4{}
+\def\sectioningKey{NoToc}
+>>>
+
+
+
+\<jh util\><<<
+\def\set:endtocitem#1{%
+   \csname catchAt:#1\endcsname
+   \expandafter\ifx\csname a:end#1\endcsname\relax
+      \HCode{</tocitem>}%
+   \else
+      \expandafter\ifx \csname jh:#1\endcsname\relax
+         |<end tocitem at end of toc|>%
+         \def\:tempc##1,{\if ,##1,%
+               \expandafter\gob:pardel
+            \else              
+               |<end tocitem at toc entry of diff type|>%
+               \expandafter\:tempc
+            \fi}%
+         \expandafter\expandafter\expandafter
+             \:tempc\csname a:end#1\endcsname,,|<par del|>%
+      \fi
+      |<end tocitem at toc entry of same type|>%   
+   \fi
+}
+\def\gob:pardel#1|<par del|>{}
+>>>
+
+
+\<end tocitem at toc entry of same type\><<<
+\csname jh:#1\endcsname
+\expandafter\gdef\csname jh:#1\endcsname{%
+   \expandafter\global\expandafter\let\csname jh:#1\endcsname=\empty
+   \HCode{</tocitem><!--/#1-->}}%
+>>>
+
+\<end tocitem at toc entry of diff type\><<<
+\expandafter\ifx \csname catchAt:##1\endcsname \relax
+  \expandafter\gdef\csname 
+    catchAt:##1\endcsname{\csname jh:#1\endcsname}%
+\else
+  \expandafter\pend:def\csname 
+    catchAt:##1\endcsname{\csname jh:#1\endcsname}%
+  \expandafter\global\expandafter\let\csname 
+    catchAt:##1\expandafter\endcsname\csname catchAt:##1\endcsname
+\fi
+>>>
+
+
+\<end tocitem at end of toc\><<<
+\append:def\end:jhhook{%
+   \csname jh:#1\endcsname
+   \expandafter\global\expandafter
+               \let\csname jh:#1\endcsname\:UnDef}%
+\global\let\end:jhhook\end:jhhook
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The JavaHelp Index (jobname-jhi.xml)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<url of the jh index\><<<
+\jobname-jhi.xml>>>
+
+\<jh index\><<<
+\bgroup
+|<jh IDX config|>
+|<start jh IDX|>
+     |<load index entries|>%
+|<end jh IDX|>
+\egroup
+>>>
+
+
+\<start jh IDX\><<<
+\IgnorePar\par\leavevmode\special{t4ht>|<url of the jh index|>}%
+\begin{dito}-\
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+\end{dito}
+|<index DTD|>
+\begin{dito}-\
+<!-\relax- |<tex4ht note|> -\relax->
+<index version="\dotVersion">
+\end{dito}
+>>>
+
+\<end jh IDX\><<<
+\begin{dito}
+</index>
+\end{dito}
+\special{t4ht<|<url of the jh index|>}%
+>>>
+
+
+\<load index entries\><<<
+\let\indexname\empty
+\def\gobbleLnk#1, \LNK#2#3#4#5{#1\HCode{" target="indexentry-#5"}}
+\Configure{theindex}
+   {}{}
+   {\hbox\bgroup\HCode{<\string !--index-item--><indexitem 
+          text="}\gobbleLnk}
+   {\HCode{/>}\egroup\hfill\break}
+   {\hbox\bgroup\HCode{<\string !--subex-item--><indexitem 
+          text="}\gobbleLnk}
+   {\HCode{/>}\egroup\hfill\break}
+   {\hbox\bgroup\HCode{<\string !--subsubitem--><indexitem 
+          text="}\gobbleLnk}
+   {\HCode{/>}\egroup\hfill\break}
+   {}
+\immediate\openin15=\jobname.ind
+\ifeof15 
+   \immediate\closein15
+\else
+   \immediate\closein15
+   \input \jobname.ind
+\fi
+>>>
+
+
+
+\<load index entriesNO\><<<
+\def\beforeindex#1||LNK#2#3{#1}%
+\def\indexentry#1#2{\HCode{<indexitem target="indexentry-#2" 
+                     text="}\beforeindex#1\HCode{|<uni sp|>" />\Hnewline}}%
+\immediate\openin15=\jobname.4dx
+\ifeof15 
+   \immediate\closein15
+\else
+   \immediate\closein15
+   \input \jobname.4dx
+\fi
+>>>
+
+
+\<jh defs\><<<
+\HAssign\indexEntry=0
+\append:defI\@wrindex{%
+   |<add index entry to map|>%
+}
+>>>
+
+
+JavaHelp has problems with unicode values at the end of text fields in
+the toc of within the jht file: it refuses `\verb+text="Men&#252;"+'
+(but accepts `\verb+text="Men&#252; "+'). The following adds spaces at
+the end of the text attribute values.
+
+\<uni sp\><<<
+ >>>
+
+A similar problem occurs when two unicode character codes follow each
+other. In this case, the second one is not properly rendered.
+
+
+%%%%%%%%%%%%%
+\subsection{Configuring Link Targets}
+%%%%%%%%%%%%%
+
+\<config toc target entry\><<<
+\expandafter\target:info#3//%
+\b:mapIdTarget
+>>>
+
+\<jh defs\><<<
+\def\target:info#1#2#3#4#5#6//{%
+    \let\sectionType=\sectioningKey
+    \let\sectionId\TocCount
+    \Advance:\sectionId 1
+    \def\sectionName{#5}%   
+  }
+\NewConfigure{mapIdTarget}{2}
+\Configure{mapIdTarget}
+   {\sectionType-\sectionId}
+   {}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Version Information}
+%%%%%%%%%%%%%
+
+
+
+\<helpset DTD\><<<
+\begin{dito}-\
+    <!DOCTYPE helpset PUBLIC 
+    "-//Sun Microsystems Inc.//DTD JavaHelp HelpSet Version \dotVersion//|<dtd lang|>"
+    "http://java.sun.com/products/javahelp/helpset_\subVersion.dtd">
+\end{dito}
+>>>
+
+\<toc DTD\><<<
+\begin{dito}-\
+   <!DOCTYPE toc PUBLIC 
+   "-//Sun Microsystems Inc.//DTD JavaHelp TOC Version \dotVersion//|<dtd lang|>" 
+   "http://java.sun.com/products/javahelp/toc_\subVersion.dtd">
+\end{dito}
+>>>
+
+\<index DTD\><<<
+\begin{dito}-\
+   <!DOCTYPE index PUBLIC
+   "-//Sun Microsystems Inc.//DTD JavaHelp Index Version \dotVersion//|<dtd lang|>"    
+   "http://java.sun.com/products/javahelp/index_\subVersion.dtd">
+\end{dito}
+>>>
+
+
+\<old index DTD\><<<
+   <!DOCTYPE index PUBLIC
+   "-//Sun Microsystems Inc.//DTD JavaHelp Index Version \dotVersion//|<dtd lang|>"    
+   "http://java.sun.com/products/javahelp/index_\subVersion.dtd">
+>>>
+
+
+
+
+
+\<map DTD\><<<
+<!DOCTYPE map PUBLIC\Hnewline
+     "-//Sun Microsystems Inc.//DTD
+                    JavaHelp Map Version \dotVersion//|<dtd lang|>"\Hnewline
+     "http://java.sun.com/products/javahelp/map_\subVersion.dtd">  >>>
+
+
+\<jh defs\><<<
+\:CheckOption{jh1.0} \if:Option
+   \def\dotVersion{1.0}
+   \def\subVersion{1\string_0}
+\else
+   \def\dotVersion{2.0}
+   \def\subVersion{2\string_0}
+\fi
+>>>
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Incorporate JavaHelp into a program}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Url of JavaHelp root file (jobname.hs)
+
+\url{http://supportweb.cs.bham.ac.uk/documentation/tutorials/docsystem/build/tutorials/javahelp/javahelp.html}
+
+%// javac -classpath  ~/javahelp.dir/jh2.0/javahelp/lib/jh.jar program.java 
+%// java -classpath  ~/javahelp.dir/jh2.0/javahelp/lib/jh.jar program    
+
+\<program\><<<
+import java.net.URL;
+import javax.help.*;
+import javax.swing.*;
+public class program {
+           //^^^^^^^
+   public static void main(String args[]) {
+      JHelp helpViewer=null;
+      try {
+         ClassLoader cl = program.class.getClassLoader();
+                        //^^^^^^^
+         URL url = HelpSet.findHelpSet(cl, 
+                              "|<jobname.hs: url of jh root file|>");
+         HelpSet hs = new HelpSet(cl, url);
+         helpViewer = new JHelp( hs );
+         /*
+            helpViewer.setCurrentID("|<entry point|>");
+         */
+      } catch (Exception e) { 
+          System.out.println("error"); System.exit(0); 
+      }
+      JFrame frame = new JFrame();
+      frame.getContentPane().add(helpViewer);
+      frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+      frame.setSize(500,500);
+      frame.setVisible(true);
+   }
+}
+>>>
+
+
+\url{http://java.sun.com/developer/technicalArticles/J2SE/Desktop/javahelp/}
+
+\<HelpMenu\><<<
+import java.net.*;
+import javax.help.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+public class HelpMenu {
+   JFrame f;
+   JMenuItem topics;
+
+   public HelpMenu() {
+     f = new JFrame("Menu Example");
+     JMenuBar mbar = new JMenuBar();
+     
+     // a file menu
+     JMenu file = new JMenu("File");
+     JMenu help = new JMenu("Help");
+
+     // add an item to the help menu
+     help.add(topics = new JMenuItem("Help Topics"));
+
+     // add the menu items to the menu bar
+     mbar.add(file);
+     mbar.add(help);
+
+     // 1. create HelpSet and HelpBroker objects
+     HelpSet hs = getHelpSet(|<jobname.hs: url of jh root file|>); 
+     HelpBroker hb = hs.createHelpBroker();
+
+     // 2. assign help to components
+/* 
+     CSH.setCurrentID("|<entry point|>");
+*/     
+     // 3. handle events
+     topics.addActionListener(new CSH.DisplayHelpFromSource(hb));
+
+     // attach menubar to frame, set its size, and make it visible
+     f.setJMenuBar(mbar);
+     f.setSize(500, 300);
+     f.setVisible(true);
+   }
+
+   /**
+    * find the helpset file and create a HelpSet object
+    */
+   public HelpSet getHelpSet(String helpsetfile) {
+      HelpSet hs = null;
+      ClassLoader cl = this.getClass().getClassLoader();
+      try {
+        URL hsURL = HelpSet.findHelpSet(cl, helpsetfile);
+        hs = new HelpSet(null, hsURL);
+      } catch(Exception ee) {
+        System.out.println("HelpSet: "+ee.getMessage());
+        System.out.println("HelpSet: "+ helpsetfile + " not found");
+      }
+      return hs;
+   }
+
+   public static void main(String argv[]) {
+      new HelpMenu();
+   }
+}
+>>>
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%
+\subsection{Compiling}
+%%%%%%%%%%%%%%%%%%%%%
+
+\def\JAVAC{javac -classpath \JHDIR jh2.0/javahelp/lib/jh.jar program.java}
+
+Add JavaHelp to your program, say `program.java', and compile the
+program with the command `{\tt \JAVAC}'.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Running}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\def\RUN{java -classpath \JHDIR jh2.0/javahelp/lib/jh.jar;. program}
+
+Use the a command similar to  `{\tt \RUN}'.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Compressing (with JAR)}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\begin{verbatim}
+javac -classpath c:\jh1.1.3\javahelp\lib\jhall.jar
+      -d c:\temp
+      JavaHelpTest.java 
+
+jar cvfm JavaHelpTest.jar  manifest JavaHelpTest.class
+
+java -jar jh1.3.1/demos/bin/UserGuide.jar 
+\end{verbatim}
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Getting the JavaHelp Software}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Download JavaHelp from 
+      \url{http://java.sun.com/products/javahelp/download_binary.html}
+and unzip it into some directory (say {\tt \JHDIR}).
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Sample}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Help Set}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\verbatiminput{\jobname.hs}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Map Files}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\verbatiminput{\jobname.jhm}   
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Table of Contents}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\verbatiminput{\jobname-jht.xml}  
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Index}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\verbatiminput{\jobname-jhi.xml}   
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \OutputCodE\<javahelp.4ht\>
+\OutputCodE\<javahelp-a.4ht\>
+
+\ifOption{javahelp}
+   {
+    \Needs{"xhlatex \jobname\space \string\"html,3,javahelp\string\""}
+    \Needs{"xhlatex \jobname\space \string\"html,3,javahelp\string\""}
+   }
+   {}
+
+\endinput
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+

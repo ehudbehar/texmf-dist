@@ -1,0 +1,751 @@
+% $Id: tex4ht-xhtmml-xtpipes.tex 740 2020-06-13 22:35:32Z karl $
+% htlatex tex4ht-xhtmml-xtpipes "xhtml,next,3" "" "-d./"
+
+% Copyright 2009-2020 TeX Users Group
+% Copyright 1996-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\documentclass{article}
+    \Configure{ProTex}{log,<<<>>>,title,list,`,[[]]}
+    \usepackage{url}
+    \input{common.tex}
+\begin{document}
+\input tex4ht-cpright.tex
+\input tex4ht-dir
+
+%%%%%%%%%%%%%%%%%%
+\part{Post Processing for HTML Output Mode}
+%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Outline}
+%%%%%%%%%%%%%%%%%% 
+
+\AtEndDocument{\OutputCodE\<xhtmml.4xt\>}
+
+\Needs{"xmllint --valid --noout xhtmml.4xt"} 
+
+\<xhtmml.4xt\><<<
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE xtpipes SYSTEM "xtpipes.dtd" >
+<!-- xhtmml.4xt (`version), generated from `jobname.tex
+     Copyright (C) 2009-2010 TeX Users Group
+     Copyright (C) `CopyYear.2008. Eitan M. Gurari
+`<TeX4ht copyright`> -->
+<xtpipes preamble="yes" signature="xhtmml.4xt (`version)">
+   <sax content-handler="xtpipes.util.ScriptsManager" 
+        lexical-handler="xtpipes.util.ScriptsManagerLH" >
+     `<p script`>
+     `<li script`>
+     `<table script`>
+     `<mrow script`>
+     `<math script`>
+     `<mstyle script`>
+   </sax>
+</xtpipes>
+>>>
+
+
+% 
+\AtEndDocument{\OutputCodE\<XhtmmlUtilities.java\>}
+
+\ifdojava
+  \Needs{"
+  if [ ! -d \XTPIPES\space]; then exit 1; fi
+  ;
+  javac XhtmmlUtilities.java -d \XTPIPES
+  "}
+\fi
+
+\<XhtmmlUtilities.java\><<<
+package tex4ht;
+/* XhtmmlUtilities.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2008. Eitan M. Gurari
+`<TeX4ht copyright`> */
+
+import org.w3c.dom.*;
+public class XhtmmlUtilities {
+  `<static void p(dom)`>
+  `<static void li(dom)`>
+  `<static void table(dom)`>
+  `<static void mrow(dom)`>
+  `<static void math(dom)`>
+  `<void barsIntoFenced(dom)`>
+  `<void digitsIntoNumbers(dom)`>
+}
+>>>
+
+
+
+
+
+\<mrow script\><<<
+<script element="mrow" >
+   <dom name="." xml="." method="mrow" class="tex4ht.XhtmmlUtilities" />
+</script> 
+>>>
+
+
+
+
+\<static void mrow(dom)\><<<
+public static void mrow(Node dom) {
+   barsIntoFenced( dom );
+   digitsIntoNumbers( dom );
+}
+>>>
+
+
+\<math script\><<<
+<script element="math" >
+   <dom name="." xml="." method="math" class="tex4ht.XhtmmlUtilities" />
+   `<math-mstyle script`>
+</script> 
+>>>
+
+
+
+
+\<static void math(dom)\><<<
+public static void math(Node dom) {
+   barsIntoFenced( dom );
+   digitsIntoNumbers( dom );
+}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+\section{Empty Paragraphs}
+%%%%%%%%%%%%%
+
+\<p script\><<<
+<script element="p" >
+   <dom name="." xml="." method="p" class="tex4ht.XhtmmlUtilities" />
+</script> 
+>>>
+
+\<p script\><<<
+<script element="div" >
+   <dom name="." xml="." method="p" class="tex4ht.XhtmmlUtilities" />
+</script> 
+>>>
+
+
+\<static void p(dom)\><<<
+public static void p(Node dom) {
+   Node pNode = dom.getFirstChild();
+   if( pNode.hasChildNodes() ){
+      boolean drop = true;
+      Node child = pNode.getFirstChild();
+      while( child != null ){
+         short type = child.getNodeType();
+         if(              
+             (type == Node.ELEMENT_NODE)
+           ||             
+             (type == Node.CDATA_SECTION_NODE)
+           ||             
+             (type == Node.TEXT_NODE)
+           &&
+             !((Text) child).getWholeText().trim().equals("")  
+         ){         
+            drop = false; break;
+         }
+         child = child.getNextSibling();
+      }
+      if( drop ){
+         dom.removeChild( pNode );
+      }        
+   } else {
+      dom.removeChild( pNode );
+   }
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\section{Tables}
+%%%%%%%%%%%%%
+
+
+Remove Empty Trailling Row
+
+\<table script\><<<
+<script element="table" >
+   <dom name="." xml="." method="table" class="tex4ht.XhtmmlUtilities" />
+</script> 
+>>>
+
+
+\<static void table(dom)\><<<
+public static void table(Node dom) {
+   Node tableNode = dom.getFirstChild();
+   if( tableNode.hasChildNodes() ){
+      Node trChild = tableNode.getLastChild();
+      while( (trChild != null)
+             &&
+             !trChild.getNodeName().equals("tr") ){
+         trChild = trChild.getPreviousSibling();
+      }
+      if( (trChild != null) && trChild.hasChildNodes() ){
+         Node tdChild = trChild.getLastChild();
+         while( (tdChild != null)
+                &&
+                !tdChild.getNodeName().equals("td") ){
+            tdChild = tdChild.getPreviousSibling();
+         }
+         if( !tdChild.hasChildNodes() ){
+            tableNode.removeChild( trChild );
+         } else {
+            Node child = tdChild.getFirstChild();
+            if(
+               (child.getNodeType() == Node.TEXT_NODE)
+               &&
+               ((Text) child).getWholeText().trim().equals("") 
+               &&
+               (child.getNextSibling() == null)
+            ){
+               tableNode.removeChild( trChild );
+}  }  }  } }
+>>>
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+\section{List Items}
+%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+\subsection{Outline}
+%%%%%%%%%%%%%
+
+
+
+\<li script\><<<
+<script element="li" >
+   <dom name="." xml="." method="li" class="tex4ht.XhtmmlUtilities" />
+</script> 
+>>>
+
+
+
+
+\<static void li(dom)\><<<
+public static void li(Node dom) {
+   Node liNode = dom.getFirstChild();
+   Node liChild;
+   boolean hasBlock = false, hasInline = false;
+   `<hasBlock, hasInline := exist in li?`>
+   if( hasBlock && hasInline ){
+      `<p := inline code`>
+      `<insert p node as first child`>
+   }
+}
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Place Inline Code into Paragraphs}
+%%%%%%%%%%%%%
+
+
+
+\<p := inline code\><<<
+liChild = liNode.getLastChild();
+Element g = ((Document) dom).createElement("p");
+g.setAttribute("class", "noindent");
+while( liChild != null ){
+   short type = liChild.getNodeType();
+   if( `<liChild == block?`> ){
+      `<insert p node after block node`>
+      liChild = liChild.getPreviousSibling();
+   } else {            
+      Node nextChild = liChild;
+      liChild = liChild.getPreviousSibling();
+      `<move node into p`>
+}  }
+>>>
+
+
+\<move node into p\><<<
+nextChild = liNode.removeChild(nextChild);
+type = nextChild.getNodeType();
+if(
+     (type != Node.COMMENT_NODE)
+   &&
+   (
+     (type != Node.TEXT_NODE)
+   ||
+     !((Text) nextChild).getWholeText().trim().equals("") 
+   )
+){
+   if( g.hasChildNodes() ){
+      g.insertBefore( nextChild, g.getFirstChild() );
+   } else {
+      g.appendChild( nextChild );
+} } 
+>>>         
+
+%%%%%%%%%%%%%
+\subsection{Place Paragraphs into List Items}
+%%%%%%%%%%%%%
+
+\<insert p node as first child\><<<
+if( liNode.hasChildNodes() ){
+  liNode.insertBefore( g, liNode.getFirstChild() );
+} else {
+  liNode.appendChild( g );
+}
+>>>
+
+
+\<insert p node after block node\><<<
+if( g.hasChildNodes() ){
+   Node nextChild = liChild.getNextSibling();
+   if( nextChild == null  ){
+      liNode.appendChild( g );
+   } else {
+      liNode.insertBefore( g, nextChild );
+   }
+   g = ((Document) dom).createElement("p");
+   g.setAttribute("class", "noindent");
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Check Nature of Item Content}
+%%%%%%%%%%%%%
+
+\<hasBlock, hasInline := exist in li?\><<<
+liChild = liNode.getFirstChild();
+while( liChild != null ){
+   short type = liChild.getNodeType();
+   if( `<liChild == block?`> ){  hasBlock = true; }
+   else if(  type == Node.TEXT_NODE ){ 
+      if( !((Text) liChild).getWholeText().trim().equals("") ){
+         hasInline = true;
+   }  }
+   else if( 
+       (type != Node.COMMENT_NODE)
+       &&
+       (type != Node.PROCESSING_INSTRUCTION_NODE )
+   ){ 
+      hasInline = true;
+   }
+   liChild = liChild.getNextSibling();
+}
+>>>
+
+
+\<liChild == block?\><<<
+(type == Node.ELEMENT_NODE)
+&&
+(
+   liChild.getNodeName().equals("p")
+   ||
+   liChild.getNodeName().equals("ol")
+   ||
+   liChild.getNodeName().equals("ul")
+   ||
+   liChild.getNodeName().equals("div")
+   ||
+   liChild.getNodeName().equals("table")
+)
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Scripted Math |...|}
+%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\<void barsIntoFenced(dom)\><<<
+static void barsIntoFenced(Node dom) {
+   Node rightBarNode = null;
+   Node mrowNode = dom.getFirstChild();
+   Node mrowChild = mrowNode.getLastChild();
+   while( mrowChild != null ){
+      if(
+           mrowChild.getNodeName().equals("msub")
+           ||
+           mrowChild.getNodeName().equals("msup")
+           ||
+           mrowChild.getNodeName().equals("msubsup")
+      ){
+         Node firstChild = mrowChild.getFirstChild();
+         if( 
+             (firstChild.getChildNodes().getLength() == 1)
+             &&
+             firstChild.getTextContent().equals( "|" )
+         ){
+            rightBarNode = mrowChild;
+      }  }
+      else
+      if(
+         (rightBarNode != null)
+         &&
+         mrowChild.getNodeName().equals("mo")
+         &&
+         (mrowChild.getChildNodes().getLength() == 1)
+         &&
+         mrowChild.getTextContent().equals( "|" )
+      ){
+        if(mrowChild.getNextSibling() != rightBarNode){
+            `<set mfenced sub,sup`>
+        }
+        rightBarNode = null;
+      }
+      mrowChild = mrowChild.getPreviousSibling();
+}  }
+>>>
+
+
+
+
+
+
+\begin{verbatim}
+               A + |B|^2 + C
+<mrow> 
+  <mi>A</mi> 
+  <mo class="MathClass-bin">+</mo> 
+  <mo class="MathClass-rel">|</mo>      #
+  <mi>B</mi>                            #
+  <msup>                                #
+    <mrow>                              #
+      <mo class="MathClass-rel">|</mo>  #
+    </mrow>                             #
+    <mrow>                              #
+      <mn>2</mn>                        #
+    </mrow>                             #
+  </msup>                               #
+  <mo class="MathClass-bin">+</mo> 
+  <mi>C</mi> 
+</mrow> 
+\end{verbatim}
+
+
+\<set mfenced sub,sup\><<<
+rightBarNode.removeChild( rightBarNode.getFirstChild() );
+Node sub = rightBarNode.getFirstChild();
+Node mfenced = ((Document) dom).createElement( "mfenced" );
+rightBarNode.insertBefore( mfenced, sub );
+((Element) mfenced).setAttribute("open","|");
+((Element) mfenced).setAttribute("close","|");
+((Element) mfenced).setAttribute("separator","");
+Node node = mrowChild.getNextSibling();
+while( node != rightBarNode ){
+   Node next = node.getNextSibling();
+   mrowNode.removeChild( node );
+   mfenced.appendChild( node );
+   node = next;
+}
+mrowNode.removeChild( mrowChild );
+mrowChild = mrowNode.getLastChild();
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Digits into Numbers}
+%%%%%%%%%%%%%%%%%%
+
+\<void digitsIntoNumbers(dom)\><<<
+static void digitsIntoNumbers(Node dom){
+   Node mrowNode = dom.getFirstChild();
+   Node mrowChild = mrowNode.getFirstChild();
+   short state = `<init state`>;
+   Node fromNode = null, 
+          toNode = null;
+   while( mrowChild != null ){
+      switch( state ){
+         case `<init state`>:
+              if( mrowChild.getNodeName().equals("mn") ){
+                 state = `<mn state`>;
+                 fromNode = mrowChild;
+                 toNode = mrowChild;
+              }
+            break;
+         case `<mn state`>:
+              boolean bool = true;
+              if( mrowChild.getNodeName().equals("mn") ){
+                 toNode = mrowChild;
+                 bool = ( mrowChild.getNextSibling() == null );
+              }  
+              else
+              { `<handle scripted numbers`> }
+              if( bool )
+              { `<bool := just single digits?`>
+                if( bool ){
+                   `<num := merge mn's`>
+                   node.replaceChild( ((Document) dom).createTextNode(num),
+                                      node.getFirstChild() 
+                                    );
+                }
+                state = `<init state`>;
+                fromNode = null;
+                toNode = null;
+      }       } 
+      mrowChild = mrowChild.getNextSibling();
+}  }
+>>>
+
+
+\<init state\><<<
+0
+>>>
+
+\<mn state\><<<
+1
+>>>
+
+\<num := merge mn's\><<<
+Node next;
+String num = "";
+Node node = fromNode;
+while( node != toNode ){
+  num += node.getTextContent();
+  next = node.getNextSibling();
+  mrowNode.removeChild( node );
+  node = next;
+} 
+num += node.getTextContent();
+>>>
+
+\<bool := just single digits?\><<<
+for( Node node = fromNode; ; node = node.getNextSibling()){
+  String str = node.getTextContent();
+  if( str.length() > 1 ){ bool = false; break; }
+  if( !str.replaceAll("[0-9]","").equals("") ){ bool = false; break; }    
+  if( node == toNode ){ break; }
+} 
+>>>
+
+
+
+\<handle scripted numbers\><<<
+String s = null;
+Node base;
+if(
+    ( mrowChild.getNodeName().equals("msub")
+      ||
+      mrowChild.getNodeName().equals("msup")
+      ||
+      mrowChild.getNodeName().equals("msubsup")
+    )
+    &&
+    ((s = (base = mrowChild.getFirstChild())
+          . getTextContent()).length() == 1 )
+    &&
+    s.replaceAll("[0-9]","").equals("")
+){
+   `<bool := just single digits?`>
+   `<num := merge mn's`>
+   mrowNode.removeChild( node );
+   num += s;
+   Node mn = ((Document) dom).createElement("mn");
+   mn.appendChild( ((Document) dom).createTextNode(num) );
+   mrowChild.replaceChild( mn, base);
+
+   bool = false;
+   state = `<init state`>;
+   fromNode = null;
+   toNode = null;
+}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{mstyle}
+%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+\subsection{Mstyle as Parent of an Element}
+%%%%%%%%%%%%%
+
+Merge mstyle into its child.  For instance
+
+\begin{verbatim}
+<mstyle mathvariant="bold">
+   <mi>F</mi>
+</mstyle>
+\end{verbatim}
+
+into
+
+\begin{verbatim}
+<mi mathvariant="bold">F</mi>
+\end{verbatim}
+
+\<mstyle script\><<<
+<script element="mstyle" >
+   <set name="mstyle" >
+      `<open xslt script`>
+      `<mstyle templates`>
+      `<close xslt script`>
+   </set>
+   <xslt name="." xml="." xsl="mstyle" />
+</script> 
+>>>
+
+\<mstyle templates\><<<
+<xsl:template match=" m:mstyle [  
+                  @mathvariant  
+             and 
+                  child::m:*[ not(@mathvariant) ] 
+             and
+                  (count(child::m:*) = 1)
+] " > 
+  <xsl:element name="{name(child::m:*[1])}"> 
+    <xsl:attribute name="mathvariant" > 
+         <xsl:value-of select="@mathvariant" /> 
+    </xsl:attribute> 
+    <xsl:apply-templates select="child::m:*/@*" /> 
+    <xsl:apply-templates select=" 
+        child::m:*/*  
+        | child::m:*/text() 
+        | child::m:*/comment() 
+      "  
+    /> 
+  </xsl:element> 
+</xsl:template> 
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Mstyle as Parent of Text}
+%%%%%%%%%%%%%
+
+
+\begin{verbatim}
+<mi> 
+  <mstyle mathvariant="bold">div</mstyle> 
+</mi> 
+\end{verbatim}
+
+into
+
+\begin{verbatim}
+<mi mathvariant="bold">div</mi>
+\end{verbatim}
+
+\<math-mstyle script\><<<
+<set name="math-mstyle" >
+   `<open xslt script`>
+   `<math-mstyle templates`>
+   `<close xslt script`>
+</set>
+<xslt name="." xml="." xsl="math-mstyle" />
+>>>
+
+
+\<math-mstyle templates\><<<
+<xsl:template match=" m:* [  
+      not(self::m:math)
+    and
+      child::m:mstyle[ 
+           @mathvariant
+         and
+           child::text()
+         and
+           (count(child::m:*) = 0)    
+      ] 
+    and
+      (count(child::m:*) = 1)    
+    and
+      not(@mathvariant) 
+] " > 
+  <xsl:copy>
+     <xsl:apply-templates select="@*" /> 
+     <xsl:apply-templates select="m:mstyle/@*" /> 
+     <xsl:apply-templates select="m:mstyle/text()" /> 
+  </xsl:copy>
+</xsl:template> 
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Shared}
+%%%%%%%%%%%%%%%%%%
+
+
+
+\<open xslt script\><<<
+<![CDATA[ 
+   <xsl:stylesheet version="1.0"
+      xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+      xmlns:h="http://www.w3.org/1999/xhtml"
+      xmlns:m="http://www.w3.org/1998/Math/MathML"
+   >
+      <xsl:output omit-xml-declaration = "yes" method="xml" />
+>>>
+
+\<close xslt script\><<<
+      <xsl:template match="*|@*|text()|comment()" >
+        <xsl:copy>
+          <xsl:apply-templates select="*|@*|text()|comment()" />
+        </xsl:copy>
+      </xsl:template>
+   </xsl:stylesheet> 
+]]>
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% END END END END END END END END END END END END END END END END 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifdojava
+\AtEndDocument{\Needs{%
+    "pushd \XTPIPES || exit 1
+     ;  
+     jar cf tex4ht.jar *
+     ;
+     popd
+     ;
+     if [ ! -d \TEXMFTEXivBIN\space]; then exit 1; fi
+     ;
+     mv \XTPIPES tex4ht.jar \TEXMFTEXivBIN
+     ;
+     if [ ! -d \TEXMFTEXivXTPIPES\space]; then exit 1; fi
+     ;
+     cp \XTPIPES  xtpipes/lib/* 
+     \TEXMFTEXivXTPIPES
+     ;
+"}}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

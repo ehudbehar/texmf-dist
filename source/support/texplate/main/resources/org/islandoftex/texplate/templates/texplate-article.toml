@@ -1,0 +1,54 @@
+name = "article"
+description = """
+A simple template for the default article class, with support for new
+engines (with fontspec fallback), babel languages, geometry options,
+generic packages, and TikZ and corresponding libraries.
+"""
+authors = [ "Island of TeX" ]
+requirements = []
+document = '''
+\documentclass#if($options)[$options]#{end}{article}
+
+#if ($xetex || $luatex)
+\usepackage{fontspec}
+#else
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+#end
+#if ($geometry)
+
+\usepackage[$geometry]{geometry}
+#end
+#if ($babel)
+#if (!$geometry)
+
+#end
+\usepackage[$babel]{babel}
+#end
+#if ($packages)
+
+#foreach ($package in $packages)
+\usepackage{$package}
+#end
+#end
+#if ($tikz)
+
+\usepackage{tikz}
+#if ($libraries)
+#foreach ($library in $libraries)
+\usetikzlibrary{$library}
+#end
+#end
+#end
+
+\begin{document}
+
+\end{document}
+'''
+
+[handlers]
+xetex = "to-boolean"
+luatex = "to-boolean"
+tikz = "to-boolean"
+libraries = "to-csv-list"
+packages = "to-csv-list"

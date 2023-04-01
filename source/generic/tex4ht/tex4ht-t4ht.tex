@@ -1,0 +1,4521 @@
+% $Id: tex4ht-t4ht.tex 418 2018-07-03 17:37:07Z karl $
+% tex tex4ht-t4ht   or   ht tex tex4ht-t4ht
+%
+% Copyright 2009-2018 TeX Users Group
+% Copyright 1998-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+% bcc32 -DBCC32 t4ht.c
+% gcc -O2 -DKPATHSEA -I/usr/local/teTeX/include -L/usr/local/teTeX/lib -o t4ht t4ht.c -DHAVE_DIRENT_H -lkpathsea
+
+\input common.tex
+\input tex4ht.sty    
+
+\Preamble{xhtml,th4,sections+,xhtml}\EndPreamble    
+
+   \input ProTex.sty
+   \AlProTex{c,<<<>>>,`,title,list,_^,CodeLineNo}
+
+%\input tex4ht-cpright.tex
+
+\Comment{   
+}{}
+\def\CodeId#1#2{}
+
+
+\def\UnderLine#1{\ifHtml
+   \HCode{<strong>}#1\HCode{</strong>}\else\underbar{#1}\fi}
+\let\CModifyShowCode=\ModifyShowCode
+\let\CModifyOutputCode=\ModifyOutputCode
+\def\ModifyShowCode{\def\[##1({##1\UnderLine{(}}\def
+                        \;{\UnderLine{;}}\CModifyShowCode}
+   \catcode`\^=7  \catcode`\@=6  \catcode`\#=12 \catcode`\^^M=13\relax%
+\def\ModifyOutputCode{%
+\def\;{ SEP }%
+\def\[@@1(@@2)@@3;{@@1
+#ifdef ANSI
+#define SEP  ,
+(@@3)
+#undef  SEP  
+#else
+#define SEP  ;
+(@@2)@@3;
+#undef  SEP  
+#endif
+}%
+\CModifyOutputCode}%
+   \catcode`\^^M=5 \catcode`\@=12 \catcode`\#=6 \catcode`\^=13
+
+
+
+
+\let\'=\Verb
+\def\`{\expandafter\expandafter\expandafter\qts\Verb}
+\def\qts#1{`#1\aftergroup'}
+
+\def\FTP{http://www.cis.ohio-state.edu/\string~gurari/tpf/}
+
+\TocAt{Section,SubSection}
+\CutAt{Section}
+
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\LikeChapter{t4ht: postprocessor for tex4ht}
+
+The compilation of this file requires the packages
+\Link[\FTP ProTex.sty]{}{}Pro\TeX\EndLink{}
+and \Link[\FTP AlProTex.sty]{}{}AlPro\TeX\EndLink.
+
+\TableOfContents[Section,SubSection] 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Section{Outline}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{The Cases}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+The post-processor \`'tex4ht.c' prepares a \`'.lg' file in which it
+lists the pictures that need to be generated, and the entries
+encountered in \''\Needs{...}'.  The \`'.log' file contains the entries
+encountered in the \''\Needs-{...}'.  The t4ht program (used to be a
+Perl script?) treats as commands the entries that are enclosed between
+double-quote (\''"') characters, and the other entries as comments. It
+first works on the \`'.lg' file and then on the \`'.log' file.
+The main output is a new \`'.css'.
+
+
+\<main's body\><<<
+`<load env file`>
+lg_file = open_file(lg_name,LG_EXT);
+if( lg_file ) {
+   `<mark start lg file`>
+   `<rewind lg file`>  `<stop, if tex4ht.c err`>
+   `<rewind lg file`>  `<CopyTo files`>
+   `<rewind lg file`>  `<htfcss from lg`>
+   `<rewind lg file`>  `<font=(...) from lg`>
+   `<rewind lg file`>  `<identify the empty pictures`>
+   `<rewind lg file`>  `<process gif's`>
+   `<rewind lg file`>  `<process css`>
+   `<rewind lg file`>  `<post-process ext files`>
+   `<rewind lg file`>  `<post-process files`>
+   `<rewind lg file`>  `<mv lg/File to dir and chmod`>
+   `<rewind lg file`>  `<process user commands`>
+   (IGNORED) fclose(lg_file);    
+}
+>>>
+
+\<mv lg/File to dir and chmod\><<<
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {              
+   status = scan_str("File: ", TRUE, lg_file);
+   status = scan_until_end_str("", 1, status, lg_file);
+   status = status && !eq_str(match[1],tmp_name);
+   if( status ){
+                    FILE* file;
+     file = fopen(match[1], READ_TEXT_FLAGS);
+     if( file ){
+        (IGNORED) fclose(file);
+     } else { status = FALSE; }
+   }
+   if( status ){
+      if( dir ){                          
+         (void) execute_script(copy_script, match[1], 
+                               dir? dir :"",".","");
+      }
+      if( ch_mod ){
+         (void) execute_script(chmod_script, ch_mod,
+                               dir? dir:"",match[1], "");
+      }
+}  }
+>>>
+
+% Need to input tex4ht-cpright.tex at this point,
+% if not, it causes an error while expanding the
+% macros like `jobname.tex, `version, ...
+% Still greek to me. :(  CVR/2010/02/11
+% 
+\input tex4ht-cpright.tex
+
+
+\<t4ht.c\><<<
+/* t4ht.c (`version), generated from `jobname.tex
+   Copyright (C) 2009-2018 TeX Users Group
+   Copyright (C) `CopyYear.1998. Eitan M. Gurari
+`<TeX4ht copyright`> 
+*/
+`<t4ht.h`>
+`<defines`>
+`<vars`>
+`<header functions`>
+`<functions`>
+`[
+int `<CDECL`> main(argc, argv)
+       int  argc`;  
+       Q_CHAR **argv
+;{ `<main's vars`> 
+   `<resplit argv for windows`>
+   `<set signals`>
+   `<program signature`>
+   `<main's init`> 
+
+  `<scan job args`>
+   `<main's body`>  
+   return 0;
+}
+>>>
+
+
+\<program signature\><<<
+(IGNORED) printf("----------------------------\n");
+#ifndef KPATHSEA
+#ifdef PLATFORM
+   (IGNORED) printf("t4ht.c (`version %s)\n",PLATFORM);
+#else
+   (IGNORED) printf("t4ht.c (`version)\n");
+#endif
+#else
+#ifdef PLATFORM
+   (IGNORED) printf("t4ht.c (`version %s kpathsea)\n",PLATFORM);
+#else
+   (IGNORED) printf("t4ht.c (`version kpathsea)\n");
+#endif
+#endif
+
+`<handle quoted arguments`>
+{ int i;  
+  for(i=0; i<argc; i++){ 
+    (IGNORED) printf("%s%s ", (i>1)?"\n  " : "", argv[i]); }
+  (IGNORED) printf("\n");
+}
+>>>
+
+
+
+\SubSection{char, signed char, unsigned char (gcc man)}:
+
+
+ Each kind of machine has a default for what char should
+          be.  It is either like unsigned char by default or like
+          signed char by default.
+
+          Ideally, a portable program should  always  use  signed
+          char or unsigned char when it depends on the signedness
+          of an object.  But many programs have been  written  to
+          use plain char and expect it to be signed, or expect it
+          to be unsigned, depending on  the  machines  they  were
+          written  for.   This  option,  and its inverse, let you
+          make such a program work with the opposite default.
+
+          The type char is always a distinct type  from  each  of
+          signed char and unsigned char, even though its behavior
+          is always just like one of those two.
+
+
+
+
+\<definesNO\><<<
+#define Q_CHAR signed char
+#define U_CHAR unsigned char
+#define C_CHAR char
+#define Q_NULL (Q_CHAR *) 0
+#define U_NULL (U_CHAR *) 0
+#define C_NULL (C_CHAR *) 0
+>>>
+
+Pointers to strings must use  \`'C_CHAR', since we don't 
+know how string constants are treated there.
+
+
+\<defines\><<<
+#define Q_CHAR char
+#define U_CHAR char
+#define C_CHAR char
+#define Q_NULL (Q_CHAR *) 0
+#define U_NULL (U_CHAR *) 0
+#define C_NULL (C_CHAR *) 0
+>>>
+
+\SubSection{EOF Character}
+
+
+\<vars\><<<
+static int eoln_ch;
+>>>
+
+\Verbatim
+OBTW: when compiling t4ht.c, I get messages about the uselessness of comparing
+chars (which are unsigned, at least on a IRIX 6.5) to EOF which is defined as
+-1 in stdio.h).... and indeed it program loops endlessly.
+Adding the lines
+   #undef EOF
+   #define EOF 255
+after the last #include gets the effect that you probably want (or perhaps
+better would be to define a constant EOFCHAR or something.)
+\EndVerbatim
+
+The getc returns the next character as an unsigned char converted to int.
+This is so to allow all characters to be return as well as end-of-file
+indicators (-1 in stdio) and error indicator.
+
+
+
+
+%%%%%%%%%%%%%
+\Section{Stop on tex4ht.c Err}
+%%%%%%%%%%%%%
+
+
+
+\<stop, if tex4ht.c err\><<<
+if( check_tex4ht_c_err ){
+   eoln_ch = (int) 'x';
+   while( eoln_ch != EOF ) {              
+      status = scan_str("tex4ht.c error: ", TRUE, lg_file);
+      if( status ){
+          (IGNORED) fprintf(stderr,
+              "--- Error --- tex4ht.c ran into problems\n"
+           );
+           exit(EXIT_FAILURE);
+      }
+      status = scan_until_end_str("", 1, status, lg_file);
+}  }
+>>>
+
+
+
+
+\<vars\><<<
+static BOOL check_tex4ht_c_err = FALSE;
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Section{Platform-dependent Code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\SubSection{PreProcessor Directives}
+
+
+Symantec C++ for wid95:
+\''sc t4ht.c -mn -o+time -WA -3 -a8 -c -D_CONSOLE=1 -ot4ht.obj'
+
+
+\<defines\><<<
+#define IGNORED void
+>>>
+
+
+
+\<t4ht.h\><<<
+/* **********************************************
+    Compiler options                            *
+    (uncommented | command line)                *
+------------------------------------------------*
+       Classic C (CC)             default
+#define ANSI                      ansi-c, c++
+#define DOS_C
+#define HAVE_STRING_H             <string.h>
+#define HAVE_DIRENT_H             <dirent.h>
+#define HAVE_SYS_NDIR_H           <sys/ndir.h>
+#define HAVE_SYS_DIR_H            <sys/dir.h>
+#define HAVE_NDIR_H               <ndir.h>
+#define HAVE_IO_H                 <io.h>
+#define HAVE_UNISTD_H             <unistd.h>
+#define WIN32
+#define KPATHSEA             
+#define SYSTEM_FUNCTION_OK 
+#define CDECL                    ..........
+#define BCC32                    bordland c++
+
+*************************************************
+    Tex4ht variables                            *
+    (uncommented | command line)                *
+----------------------------------------------- */
+`<h-defines`>
+/* ******************************************** */
+`<define MSVC-1-52`>
+`<bordland: bcc32 -DBCC32 t4ht`>
+`<bordland: bcc -DBCC tex4ht`>
+`<DJGPP`>
+#ifdef DOS_C
+#define DOS
+#endif
+#ifdef DOS
+#define DOS_WIN32
+#ifndef HAVE_STRING_H
+#define HAVE_STRING_H
+#endif
+#endif
+#ifdef WIN32
+#define DOS_WIN32
+#endif
+`<h-defines DOS-WIN32`>
+`<h-defines KWIN32`>
+`<h-include`>
+`<h-defines 2`>
+>>>
+
+
+\<bordland: bcc32 -DBCC32 t4ht\><<<
+#ifdef BCC32
+#define WIN32 
+#define ANSI       
+#define HAVE_IO_H
+#define HAVE_STRING_H
+#define PLATFORM "ms-win32"
+#endif
+>>>
+
+% 
+
+\<bordland: bcc -DBCC tex4ht\><<<
+#ifdef BCC
+#define DOS_C
+#define ANSI       
+#define HAVE_IO_H
+#define PLATFORM "ms-dos"
+#endif
+>>>
+
+
+\<h-include\><<<
+#ifdef KPATHSEA
+#include <kpathsea/config.h>
+#endif
+#include <stdio.h>   `% EOF, FILE `%
+#include <stdlib.h>  `% EXIT_FAILURE `%
+>>>
+
+
+
+  Under ANSI C, all malloc stuff is declared in \`'<stdlib.h>' (which you
+also include), hence this non-standard header is redundant.
+
+
+
+\<defines\><<<
+#ifndef EXIT_FAILURE
+#define EXIT_FAILURE 1
+#endif
+>>>
+
+\<h-include\><<<
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+>>>
+
+
+
+
+\<h-defines DOS-WIN32\><<<
+#ifdef DOS_WIN32
+#define STRUCT_DIRENT
+#endif
+>>>
+
+
+\<h-include\><<<
+#ifdef HAVE_DIRENT_H
+`<needs dirent.h`>
+#else
+#ifndef STRUCT_DIRENT
+#define STRUCT_DIRECT
+#endif
+`<needs simulated dirent.h`>
+#endif 
+>>>
+
+
+
+\<needs dirent.h\><<<
+#include <dirent.h>
+>>>
+
+
+\<needs simulated dirent.h\><<<
+#ifdef HAVE_SYS_NDIR_H
+#include <sys/ndir.h>
+#endif
+#ifdef HAVE_SYS_DIR_H
+#include <sys/dir.h>
+#endif
+#ifdef HAVE_NDIR_H
+#include <ndir.h>
+#endif
+>>>
+
+
+REPLACE EXIT with somthing that DOS also accept.
+
+
+
+
+\<t4ht.h\><<<
+#ifdef DOS
+#define PROTOTYP
+#endif
+#ifdef ANSI
+#define PROTOTYP
+#endif
+#ifdef KWIN32
+#define PROTOTYP
+#endif
+>>>
+
+\<defines\><<<
+#ifdef PROTOTYP
+#define MYVOID void
+#define ARG_I(x) x
+#define ARG_II(x,y) x,y
+#define ARG_III(x,y,z) x,y,z
+#define ARG_IV(x,y,z,w) x,y,z,w
+#define ARG_V(x,y,z,w,u) x,y,z,w,u
+#else
+#define MYVOID 
+#define ARG_I(x) 
+#define ARG_II(x,y) 
+#define ARG_III(x,y,z) 
+#define ARG_IV(x,y,z,w) 
+#define ARG_V(x,y,z,w,u) 
+#endif
+>>>
+
+
+
+
+
+\SubSection{KPATHSEA}
+
+\<h-defines 2NO\><<<
+`<h-include before KPATHSEA`>
+#ifdef KPATHSEA
+#ifndef HAVE_STRCHR
+#define  strchr  index
+#endif
+#ifndef HAVE_STRRCHR
+#define  strrchr  rindex
+#endif
+#include <kpathsea/c-errno.h>
+#include <kpathsea/c-ctype.h>
+#include <kpathsea/c-fopen.h>
+#include <kpathsea/c-pathmx.h>
+#include <kpathsea/proginit.h>
+#include <kpathsea/tex-file.h>
+#include <kpathsea/tex-make.h>
+#include <kpathsea/variable.h>
+#include <signal.h>
+#if !defined(_AMIGA) && !defined(WIN32)
+#include <sys/time.h>
+#endif
+#include <fcntl.h>
+#include <setjmp.h>
+#endif `%/* KPATHSEA */`%
+`<h-include after KPATHSEA`>
+>>>
+
+\<h-defines 2\><<<
+`<h-include before KPATHSEA`>
+#ifdef KPATHSEA
+#include <kpathsea/c-errno.h>
+#include <kpathsea/c-ctype.h>
+#include <kpathsea/c-fopen.h>
+#include <kpathsea/c-pathmx.h>
+#include <kpathsea/proginit.h>
+#include <kpathsea/tex-file.h>
+#include <kpathsea/tex-make.h>
+#include <kpathsea/variable.h>
+#include <signal.h>
+#if !defined(_AMIGA) && !defined(WIN32)
+#include <sys/time.h>
+#endif
+#include <fcntl.h>
+#include <setjmp.h>
+#endif `%/* KPATHSEA */`%
+`<h-include after KPATHSEA`>
+>>>
+
+
+The \`'__cdecl' is defined in KPATHSEA: kpathsea/c-protos.h 
+is defined to nothing for compilers
+other than MS.
+
+\<t4ht.h\><<<
+#ifdef KPATHSEA
+#ifdef WIN32
+#undef CDECL
+#define CDECL                     __cdecl
+#else
+#define CDECL
+#endif
+#endif
+>>>
+
+\<h-defines KWIN32\><<<
+#ifdef KPATHSEA
+#ifdef WIN32
+#define KWIN32  
+#endif
+#endif
+>>>
+
+
+
+
+
+\SubSection{Compilers}
+
+
+\List{}
+\item {BCC32}  
+
+For Win 95.
+
+Options (\''bcc32' comamnd):
+
+\Verbatim
+Borland C++ 5.0 for Win32 Copyright (c) 1993, 1996 Borland International
+Syntax is: BCC32 [ options ] file[s]     * = default; -x- = turn switch x off
+  -3    * 80386 Instructions        -4      80486 Instructions
+  -Ax     Disable extensions        -B      Compile via assembly
+  -C      Allow nested comments     -Dxxx   Define macro
+  -Exxx   Alternate Assembler name  -Hxxx   Use pre-compiled headers
+  -Ixxx   Include files directory   -K      Default char is unsigned
+  -Lxxx   Libraries directory       -M      Generate link map
+  -N      Check stack overflow      -Ox     Optimizations
+  -P      Force C++ compile         -R      Produce browser info
+  -RT   * Generate RTTI             -S      Produce assembly output
+  -Txxx   Set assembler option      -Uxxx   Undefine macro
+  -Vx     Virtual table control     -X      Suppress autodep. output
+  -aN     Align on N bytes          -b    * Treat enums as integers
+  -c      Compile only              -d      Merge duplicate strings
+  -exxx   Executable file name      -fxx    Floating point options
+  -gN     Stop after N warnings     -iN     Max. identifier length
+  -jN     Stop after N errors       -k    * Standard stack frame
+  -lx     Set linker option         -nxxx   Output file directory
+  -oxxx   Object file name          -p      Pascal calls
+  -tWxxx  Create Windows app        -u    * Underscores on externs
+  -v      Source level debugging    -wxxx   Warning control
+  -xxxx   Exception handling        -y      Produce line number info
+  -zxxx   Set segment names
+\EndVerbatim
+
+
+\item {BCC}
+
+For DOS.
+
+\item {MSVC++}
+
+For DOS.
+
+\`'c:\msvc\bin\cl  -Ic:\msvc\include -DDOS  t4ht.c'
+
+In tex-live \`' cl  -D_X86_=1 -DWINVER=0x0400 -DWIN32 -D_WIN32 
+-DWIN32_LEAN_AND_MEAN -D_MT -D_DLL  -DKPATHSEA 
+-D_IMPORT -DANSI -I. -I.   -I.. -IG:\fptex\source\web2c-7.2  -c -W3 
+-DCRTAPI1=_cdecl -DCRTAPI2=_cdecl -nologo  -O2x -G5rs -Gy  
+-c /Fodynamic\t4ht.obj .\t4ht.c'
+
+The following are the available flags (\''c:\msvc\bin\cl -help').
+
+\Verbatim
+                         C COMPILER OPTIONS
+
+                            -MEMORY MODEL-
+/AS small model (default)               /AC compact model
+/AM medium model                        /AL large model
+/AH huge model                          /AT tiny model (.COM files)
+/A<string> (custom memory model)
+                            -OPTIMIZATION-
+/O enable optimization (same as /Ot)    /O1 minimize space
+/O2 maximize speed                      /Oa assume no aliasing
+/Ob<n> inline expansion (default n=0)   /Oc local common subexpression opt.
+/Od disable optimization (default)      /Oe enable registers allocation
+/Of[-] toggle p-code quoting            /Og global common subexpression opt.
+/Oi enable intrinsic functions          /Ol enable loop optimizations
+/On disable ``unsafe'' optimizations      /Oo[-] toggle post code-gen. opt.
+/Op[-] improve floating-pt consistency  /Oq enable maximum p-code optimization
+/Or gen. common exit code (CodeView)    /Os favor code size
+/Ot favor code speed                    /Ov[-] toggle p-code frame sorting
+/OV<n> control inlining by func. size   /Ow assume cross-function aliasing
+/Ox maximum opts. (/Ob1cegilnot /Gs)    /Oz enable ``unsafe'' optimizations
+                          -CODE GENERATION-
+/G0 8086 instructions (default)         /G1  186 instructions
+/G2  286 instructions                   /G3  386 instructions
+  (press <return> to continue)
+/GA protected-mode Win entry/exit code  /GD protected-mode Win entry/exit code
+/GE<x> customize Windows entry/exit     /Gq backwards compatibility with v. 6
+/Gc Pascal style calling conventions    /Gd C style calling conventions
+/Ge use stack-check calls               /Gf enable string pooling
+/Ge use stack-check calls               /Gf enable string pooling
+/Gs remove stack-check calls            /Gn remove p-code native entry points
+/Gp<num> specify p-code entry tables    /Gr _fastcall style calling convention
+/Gt[num] data size threshold            /GW real-mode Windows entry/exit code
+/Gw real-mode Windows entry/exit code   /Gx assume that data is near
+/Gx- assume that data is far            /Gy separate functions for linker
+/Zr check null pointers (/f only)
+                            -OUTPUT FILES-
+/Fa[file] name assembly listing file    /Fc[file] name source/object listing
+/Fd[file] name .PDB filename            /Fe<file> name executable filename
+/Fl[file] name object listing filename  /Fm[file] name map filename
+/Fo<file> name object filename          /Fr[file] name .SBR filename
+/Fp<file> name .PCH filename            /FR[file] name extended .SBR filename
+/Fs[file] name source listing filename
+                            -PREPROCESSOR-
+/C don't strip comments                 /D<name>[=|#text] define macro
+/E preprocess to stdout                 /EP same as /E but no #line
+/I<directory> add #include path         /P preprocess to file
+/U<name> remove predefined macro        /u remove all defined macros
+  (press <return> to continue)
+/X ignore "standard places"
+                              -LANGUAGE-
+/vd{0|1} disable/enable vtordisp        /vm<x> type of pointers to members
+/Z7 C 7 style CodeView information      /Za disable extensions (implies /Op)
+/Zd line number information             /Ze enable extensions (default)
+/Zg generate function prototypes        /Zi prepare for debugging (CodeView)
+/Zl omit default library name in .OBJ   /Zp[n] pack structs on n-byte boundary
+/Zs check syntax only
+                           -FLOATING POINT-
+/FPa calls with altmath                 /FPc calls with emulator
+/FPc87 calls with 8087 library          /FPi inline with emulator (default)
+/FPi87 inline with 8087
+                          -SOURCE LISTING-
+/Sl<columns> set line width             /Sp<lines> set page length
+/St<string> set title string            /Ss<string> set subtitle string
+                           -MISCELLANEOUS-
+/batch specify batch mode compilation   /Bm<num> set compiler's available mem.
+/c compile only, no link                /H<num> external name length
+/J default char type is unsigned        /f select fast compiler (default)
+/f- select optimizing compiler          /Yc create .PCH file
+/Yd put debug info in .PCH file         /Yu use .PCH file
+/YX automatic precompiled header        /nologo suppress copyright message
+  (press <return> to continue)
+/Mq compile for QuickWin                /ND<name> name data segment
+/NM<name> name code segment             /NQ<name> combine p-code temp segments
+/NT<name> name code segment             /NV<name> name far v-table segment
+/Tc<file> compile file without .c       /Tp<file> compile file without .cpp
+/V<string> set version string           /W<n> warning level (default n=1)
+/w disable all warnings                 /WX treat all warnings as errors
+/Zn turn off SBRPACK for .SBR files
+                            -MASM SUPPORT-
+/MA<MASM switch>                        /Ta<file> assemble file without .asm
+                              -LINKING-
+/F <hex_num> stack size (hex. bytes)    /Lr append 'r' to default lib in .OBJ
+/link [lib] give lib name to linker     /Ln do not link CRT.LIB
+/Ld select dynamically-linked library   /Lw select statically-linked library
+\EndVerbatim
+
+
+\EndList
+
+\SubSection{DJGPP}
+
+
+
+
+\Verbatim
+
+        * tex4ht.c [__DJGPP__] (ANSI, DOS_GIF_FILE): Define.
+        (WRITE_BIN_FLAGS, READ_BIN_FLAGS): Use binary mode with DJGPP.
+        (dos_file_names): New variable.
+        (sig_err): If got fatal signal other than SIGINT or SIGQUIT, don't
+        return to caller, since the program will be aborted otherwise.
+        (main) [KPATHSEA]: If input is from stdin which is not a console
+        device, switch it to binary mode.  Set dos_file_names to TRUE for
+        all DOS platforms, FALSE on Unix and WIN32, and compute at runtime
+        for DJGPP.  Simplify logic of finding the init file by pushing
+        HOME=C: into environment if $HOME isn't defined on DOSISH systems.
+\EndVerbatim
+
+
+
+\<DJGPP\><<<
+#ifdef __DJGPP__
+#define DOS_WIN32
+#define ANSI
+#endif
+>>>
+
+
+
+
+\<DJGPP signals\><<<
+#ifdef __DJGPP__
+  if (s != SIGINT && s != SIGQUIT)
+    exit(EXIT_FAILURE);
+#endif
+>>>
+
+
+
+
+\SubSection{Slashes n Directory Pathes}
+
+
+
+
+\<defines\><<<
+#if defined(DOS_WIN32) || defined(__DJGPP__)
+#define dir_path_slash(str) (is_forward_slash(str)? '/' : '\\')
+#else
+#define dir_path_slash(str)  '/' 
+#endif
+>>>
+
+
+
+\<header functions\><<<
+#if defined(DOS_WIN32) || defined(__DJGPP__)
+   static BOOL is_forward_slash( ARG_I(Q_CHAR *) );
+#endif
+>>>
+
+\<functions\><<<
+#if defined(DOS_WIN32) || defined(__DJGPP__)
+`[ 
+static BOOL is_forward_slash(str)
+                                    Q_CHAR * str
+;{   
+   while( *str ){  if( *(str++) == '/' ) { return TRUE; } }
+   return FALSE;
+}
+#endif
+>>>
+
+
+
+
+
+
+
+
+\Section{Command-Line Options}
+
+
+\SubSection{Available Options}
+
+\List{disc}
+\item  \`'.../'---Directory where files should be sent
+\item \`'-mXXX'---\`'chmod XXX' for files
+\item \`'-e...'---Name of invisible gif 
+\item \`'-d'---Directory for config files
+\item \`'-p'---Ignore pictures (but not pictorial symbols)
+\item \`'-i'---Debugging info
+\item     Other---Name of dvi file
+\EndList
+
+
+\Verbatim
+   dvips -mode ibmvga -D 110 -f foo.idv -pp 92  > tmp.ps
+   convert -crop 0x0 -density 110x110 -transparent '#FFFFFF' tmp.ps foo.gif
+   mv foo.gif /WWW/temp/.
+   cp foo.html /WWW/temp/.
+   chmod 644 /WWW/temp/foo.*
+\EndVerbatim
+
+
+\<command line options\><<<
+"\n--------------------------------------------------------------------\n"
+"t4ht [-f<dir char>]filename ...\n"
+"  -b     ignore -d -m -M for bitmaps\n"
+"  -c...  choose named segment in env file\n"
+"  -d...  directory for output files       (default:  current)\n"
+"  -e...  location of tex4ht.env\n"
+"  -i     debugging info\n"
+"  -g     ignore errors in system calls\n"
+"  -m...  chmod ... of new output files (reused bitmaps excluded)\n"
+"  -p     don't convert pictures           (default:  convert)\n"
+"  -r     replace bitmaps of all glyphs    (default:  reuse old ones)\n"
+"  -M...  chmod ... of all output files\n"
+"  -Q     quit, if tex4ht.c had problems\n"
+"  -S...  permission for system calls: *-always, filter\n"
+"  -X...  content for field %%3 in X scripts\n"
+"  -....  content for field %%2 in . scripts\n\n"
+"Example: \n"
+"   t4ht name -d/WWW/temp/ -etex4ht-32.env -m644\n"
+"--------------------------------------------------------------------\n"
+>>>
+
+
+If option \`'-e' is present, empty pictures are replaced
+with the named file (e.g., \`'empty.gif').
+
+
+
+
+
+\SubSection{Scanning the Options}
+
+
+
+
+\<vars\><<<
+static Q_CHAR *ch_mod = Q_NULL;
+static Q_CHAR *debug = Q_NULL;
+static Q_CHAR *Xfield = Q_NULL;
+static Q_CHAR *Dotfield = Q_NULL;
+static Q_CHAR *dir = Q_NULL;
+static Q_CHAR *lg_name  = Q_NULL, tmp_name[255], job_name[255];
+static Q_CHAR *nopict = Q_NULL;
+static Q_CHAR *bitmaps_no_dm = Q_NULL;
+static BOOL newchmod = FALSE;
+static Q_CHAR *noreuse = Q_NULL;
+>>>
+
+
+\<scan job args\><<<
+{      int i;
+       Q_CHAR *p, *q;
+  `<kpathsea arg 0`>
+  `<default args`>
+  if( argc == 1 ){ bad_arg; }
+  for(i=1; i<argc; i++){
+    if( *( p=argv[i] ) == '-' ){ `<scan flaged args`> }
+    else 
+    {  lg_name = argv[i];  }
+  }
+  if( lg_name == NULL ){ bad_arg; }
+  `<set tmp file name`> 
+  `<set job file name`> 
+}
+>>>
+
+
+\<handle quoted arguments\><<<
+{ int i, count = 0;
+ for(i=0; i<argc; i++){ 
+   Q_CHAR *p = argv[i];
+   count++;
+   if( (*p == '\'') || (*p == '\"') ){ 
+     int cnt;
+     int len = 0;
+     for( cnt=i; cnt < argc; cnt++ ){
+       len += (int) strlen((char *) argv[cnt]);
+       if( *(argv[cnt] + (int) strlen((char *) argv[cnt]) -1) == *p ){
+           Q_CHAR * arg = m_alloc(char, len + cnt - i + 1);
+           Q_CHAR * toArg = arg;
+           Q_CHAR *pp;
+           i--;
+           do { 
+             pp = argv[++i];
+             while( *pp != '\0' ){
+                if( *pp != *p ){ *(toArg++) = *pp; } 
+                pp++;
+             }
+             *(toArg++) = ' ';
+           } while ( i != cnt );
+           *(toArg-1) = '\0';
+           argv[count-1] = arg;
+           break;
+ } } } } 
+ argc = count;
+}
+>>>
+
+
+
+
+\<set tmp file name\><<<
+{                                 Q_CHAR   *p, *q;
+                                  FILE*    file;
+   (IGNORED) strcpy((char *) (char *) tmp_name, (char *) (char *) lg_name);
+   p = q = tmp_name + strlen((char *)  tmp_name );
+   while( p != tmp_name ){
+      if( *p == '.' ){
+          if( eq_str( p+1,LG_EXT ) ) { *p = '\0'; }
+          else {  
+            (IGNORED) strct( tmp_name, LG_EXT);
+            file =  fopen( tmp_name, READ_TEXT_FLAGS );
+            if( file ){
+              (IGNORED) fclose(file); *q = '\0';
+            } else {  *p = '\0'; }
+          } 
+          break;
+      }
+      p--;
+   }
+   (IGNORED) strct(tmp_name, ".tmp");
+}
+>>>
+
+
+\<set job file name\><<<
+(IGNORED) strcpy((char *)  job_name, (char *) tmp_name); 
+*(job_name + strlen((char *) job_name) - 4) = '\0';
+>>>
+
+
+
+\Verbatim
+I found that I couldn't compile t4ht.c with KPATHSEA defined, and then noticed
+that it doesn't include any of the kpathsea headers.  So I have patched t4ht.c
+to create two versions:  one with the necessary kpathsea headers and one
+without.  This is the output produced by 'diff'.  Let me know if you want to
+merge my changes into your t4ht.c, and/or if you notice any errors!  I have
+changed the second argument of 'kpse_set_program_name' from NULL (which would
+effectively mean argv[0]) to 'tex4ht', as that saves having to add a
+'T4HTINPUTS' (or 'T4HTKINPUTS') variable into the kpathsea configuration file
+'texmf.cnf' pointing to the same place for 'tex4ht.env' as the 'TEX4HTINPUTS'
+variable.
+
+For t4ht.c, the kpathsea library is only useful for locating the tex4ht.env
+configuration file.  But as it can be used for this purpose for tex4ht.c, it
+seems a pity not to enable it for its companion program too.
+
+> 94a99,102
+> > #ifdef KPATHSEA
+> > #include <kpathsea/progname.h>
+> > #include <kpathsea/tex-file.h>
+> > #endif
+> 943c951
+> <    kpse_set_program_name (argv[0], NULL);
+> ---
+> >    kpse_set_program_name (argv[0], "tex4ht");
+\EndVerbatim
+
+\<kpathsea arg 0\><<<
+#ifdef KPATHSEA
+   kpse_set_program_name (argv[0], "tex4ht");
+#endif
+>>>
+
+
+
+If \`'strlen((char *)  argv[i] ) == 2' the switch is followed by a
+space to be deleted when more input is awaited.
+
+
+\<scan flaged args\><<<
+if( (int) strlen((char *)  argv[i] ) == 2 ){
+   if( `<not a single char option?`> )  
+     { if( ++i == argc ) bad_arg; }
+   q = argv[i]; 
+} else q = p+2;
+switch( *(p+1) ){
+  case 'M':{ ch_mod = q;  newchmod = TRUE; break; }
+  case 'S':{ `<permission for system calls`> break; }
+  case 'X':{ Xfield = q;  break;}
+  case 'b':{ bitmaps_no_dm = q-1;  break;}
+  case 'c':{ `<env blocks selector`>  break;}
+  case 'd':{ dir = (*q=='~')? abs_addr(q,NULL) : q;  break; }
+  case 'e':{ `<get .env directory from com ln`> break; }
+  case 'f':{ `<get file name wo dir`> break; }
+  case 'i':{ debug = q-1;  break;}
+  case 'g':{ always_call_sys = TRUE;  break;}
+  case 'm':{ ch_mod = q;  break; }
+  case 'p':{ nopict = q-1;  break;}
+  case 'Q':{ check_tex4ht_c_err = TRUE;  break;}
+  case 'r':{ noreuse = q-1;  break;}
+  case '.':{ Dotfield = q;  break;}
+   default:{ bad_arg;  }
+}
+>>>
+
+
+\<not a single char option?\><<<
+   (*(p+1) != 'i')  
+&& (*(p+1) != 'p') 
+&& (*(p+1) != 'r')
+&& (*(p+1) != 'b') 
+&& (*(p+1) != 'g') 
+&& (*(p+1) != 'Q') 
+>>>
+
+
+
+The following is to allow for commands \`'htlatex
+-f/../source/foo.tex' which draw files from other directories for
+latex, but use the current directory for tex4ht.c (and t4ht.c). The
+character immediately after \`'-f' is a directory indicator character.
+
+
+\<get file name wo dir\><<<
+p = p + 2;
+lg_name = p + (int) strlen((char *)  p );
+while( *lg_name != *p ){ lg_name--; }
+lg_name++;
+>>>
+
+
+
+
+
+\<header functions\><<<
+static char *  abs_addr( ARG_II( U_CHAR *, U_CHAR *) );
+>>>
+
+\<functions\><<<
+`[
+static char *  abs_addr( dir, base) 
+                                                 U_CHAR  *dir`;
+                                                 U_CHAR  *base
+
+;{                                         U_CHAR  *p;
+   p = m_alloc(char, (int) strlen((char *)  dir ) +
+                     (base? (int) strlen((char *)  base ):0) +
+                     (int) strlen((char *)  HOME_DIR  ));
+   *p = '\0';    
+   if( (*(dir+1) == '~') && base ){  
+     if( *base == '~' ){  
+       (IGNORED) strct(p, HOME_DIR);   
+       (IGNORED) strct(p, base+1);   
+     } else {
+       (IGNORED) strct(p, base);   
+     } 
+     (IGNORED) strct(p, dir+2);   
+   } else {
+     (IGNORED) strct(p, HOME_DIR);   
+     (IGNORED) strct(p, dir+1);   
+   }
+   return p;
+}
+>>>
+
+\<vars\><<<
+U_CHAR *HOME_DIR;
+>>>
+
+\<main's init\><<<
+HOME_DIR = getenv("HOME");
+>>>
+
+
+
+
+\Section{Identify the Empty Pictures}
+
+
+Messages about figures that don't exist are treated as requests for
+empty figures. Typically, they shouldn't be present unless they are
+programmed into \''\setbox'-like commands. tex4ht-c identifies in the
+\''.lg' file the empty figures it finds.
+
+The messages in the ``.lg'' file look like
+\`'--- empty picture --- aa.idv[1] ---'.
+
+
+
+\<identify the empty pictures\><<<
+{                             struct empty_pic_struct *last;    
+   last = empty_pic = (struct empty_pic_struct *) 0;
+   while( TRUE ) {              
+      status = scan_str("--- empty picture --- ", TRUE, lg_file);
+      status = scan_until_str( ".idv[" , 1, status, lg_file);
+      status = scan_until_end_str("] ---", 1, status, lg_file);
+      if( status ){ `<add empty pic`> } 
+      if ( eoln_ch == EOF ){ break; }      
+   }
+   `<add empty pic`>
+   last->next = (struct empty_pic_struct *) 0;
+   last->n = 100000;    
+}
+>>>
+
+
+\<add empty pic\><<<
+if( last == (struct empty_pic_struct *) 0 ){
+   last = empty_pic = (struct empty_pic_struct *) 
+                   m_alloc(struct empty_pic_struct, (int) 1);   
+} else { 
+   last = last->next = (struct empty_pic_struct *) 
+                   m_alloc(struct empty_pic_struct, (int) 1);   
+}
+last->next = (struct empty_pic_struct *) 0;
+last->n = get_long_int(match[1]);    
+>>>
+
+
+\<main's vars\><<<
+struct empty_pic_struct *empty_pic;    
+>>>
+  
+\<defines\><<<
+struct empty_pic_struct{
+  long int n;
+  struct empty_pic_struct *next;
+};
+>>>
+
+
+
+The list of empty pictures is stored in \`'emptypic'.
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\Section{Process Gifs}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{The Scripts}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\<script for dvigif\><<<
+if( debug ){ (IGNORED) printf(".......'G' script\n"); }
+dvigif_script = add_script(dvigif_script);
+>>>
+
+
+\Verbatim
+--- needs --- aa.idv[80] ==> aa79x.gif ---
+--- characters ---
+--- needs --- aa.idv[81] ==> foo.gif ---
+\EndVerbatim
+
+
+\<process gif's\><<<
+{                               BOOL characters, skip;
+   characters = skip = FALSE;
+   while( TRUE ) {              
+      status = scan_until_str("--- ", 1, TRUE, lg_file);
+      status = scan_until_str( " ---" , 2, status, lg_file);
+      if( status ) {
+        if( eq_str(match[1],"--- ") ){
+           if( eq_str(match[2],"needs ---") ){
+                `<--- needs ---...`>
+           } else if( eq_str(match[2],"characters ---") ){
+              `<--- characters ---...`>
+           } else { `<--- ??? ---...`> }
+        } else { `<???--- needs ---...`> }
+      }
+      if ( eoln_ch == EOF ){ break; }      
+}  }
+>>>
+
+
+\<--- ??? ---...\><<<
+status = scan_until_end_str("", 1, status, lg_file);
+>>>
+
+\<???--- ??? ---...\><<<
+status = scan_until_end_str("", 1, status, lg_file);
+>>>
+
+
+\<--- characters ---...\><<<
+status = scan_until_end_str("", 1, status, lg_file);
+characters = eq_str(match[1],"");
+>>>
+
+
+\SubSection{Identifying the requests}
+
+
+
+\<--- needs ---...\><<<
+status = scan_until_str(" ", 1, status, lg_file);
+status = scan_until_str(".idv", 1, status, lg_file);
+status = scan_until_str("[", 2, status, lg_file);
+status = scan_until_str("] ==> ", 2, status, lg_file);
+status = scan_until_str(" ", 3, status, lg_file);
+   *(match[3] + (int) strlen((char *) match[3]) - 1) = '\0';
+status = scan_until_end_str("---", 4, status, lg_file);
+if( status ) {
+               `<dvi2gif vars`>
+               long int gif_i;
+               Q_CHAR *p;
+   gif_i = get_long_int(match[2]);
+   p = match[2];  
+   *(p + (int) strlen((char *) p) - 6) = '\0';
+   if( characters ){
+      `<translate symbol gifs`>
+   } else { `<translate non-symbol gifs`> }
+}
+>>>
+
+
+\SubSection{General Pictures}
+
+
+\`'--- needs --- aa.idv[80] ==> aa79x.gif ---'
+
+\<translate non-symbol gifs\><<<
+if( gif_i == `<empty picture`> ) {
+  `<insert empty picture`>
+} else { `<insert non-empty picture`> }
+>>>
+
+
+\<insert non-empty picture\><<<
+if( !nopict && !skip ){
+   `<dvi into gif`>
+}
+>>>
+
+
+\<insert empty picture\><<<
+if( !skip ){
+   (void) execute_script(empty_fig_script,
+                           (dir && !bitmaps_no_dm )? dir :"", match[3],"","");
+   if( ch_mod && !bitmaps_no_dm && !system_return ){
+     (void) execute_script(chmod_script, ch_mod, 
+                           dir?dir:"",match[3], "");
+   }
+}
+empty_pic = empty_pic->next; 
+>>>
+
+
+
+\<empty picture\><<<
+empty_pic->n
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Pictorial Symbols}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<translate symbol gifs\><<<
+                  Q_CHAR filename[255];
+                  FILE* file;
+(IGNORED) strcpy((char *) filename, "");
+if( dir && !bitmaps_no_dm ){ (IGNORED) strct(filename, dir); }
+(IGNORED) strct(filename, match[3]);
+file  = fopen(filename, READ_TEXT_FLAGS);  
+if( !file || noreuse ){
+   `<dvi symbols into gif`>
+} else { 
+   (IGNORED) fclose(file);  
+   if( newchmod )
+   { `<chmod for glyphs`> }
+   (IGNORED) printf("%s already in %s\n", match[3], 
+                           dir? dir : "current directory" );
+}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{The Conversion Code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<dvi into gif\><<<
+filtered_dvigif_script = filterGifScript(dvigif_script, match[3]);
+(void) execute_script(
+  filtered_dvigif_script,match[1],match[2],match[3],job_name);
+(void) free_script( filtered_dvigif_script );
+if( dir && !bitmaps_no_dm && !system_return ){
+  (void) execute_script(move_script,match[3],dir,".","");
+}
+if( ch_mod && !bitmaps_no_dm && !system_return ){
+  (void) execute_script(chmod_script, ch_mod, dir?dir:"",match[3], "");
+}
+>>>
+
+\<dvi symbols into gif\><<<
+filtered_dvigif_script = dvigif_glyp_script? 
+   filterGifScript(dvigif_glyp_script, match[3]):
+   filterGifScript(dvigif_script, match[3]);
+(void) execute_script(
+    filtered_dvigif_script,match[1],match[2],match[3],job_name);
+(void) free_script( filtered_dvigif_script );
+if( dir && !bitmaps_no_dm && !system_return ){
+  (void) execute_script(move_script,match[3],dir,".","");
+`<chmod for glyphs`>
+}
+>>>
+
+
+\<chmod for glyphs\><<<
+if( ch_mod && !bitmaps_no_dm && !system_return ){
+  (void) execute_script(chmod_script, ch_mod, dir?dir:"",match[3], "");
+}
+>>>
+
+
+\<dvi2gif vars\><<<
+struct script_struct 
+    * filtered_dvigif_script = NULL_SCRIPT;
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\<header functions\><<<
+static void execute_script( 
+  ARG_V(struct script_struct*,const Q_CHAR *,const Q_CHAR *,const Q_CHAR *,const Q_CHAR *) );
+>>>
+
+\<functions\><<<
+`[
+static void execute_script(script,match_1,match_2,match_3,match_4)  
+                    struct script_struct* script`;
+                    const Q_CHAR * match_1`;
+                    const Q_CHAR * match_2`;
+                    const Q_CHAR * match_3`;
+                    const Q_CHAR * match_4
+
+;{                               struct script_struct* temp;
+                                 Q_CHAR *p, *q;
+                                 const Q_CHAR *t;
+  `<texmf := ...`>
+   temp = script;  system_return = 0;
+   while( temp ){
+      `<command = temp-command`>
+      if( (command[0] != '\0') && !system_return ){
+         `<execute system command`> }
+      temp = temp->next;
+}  }
+>>>
+
+
+We went to \`'%%%', \`'%%1', ... instead of  \`'%%', \`'%1', ... 
+to accomodate some needds of dos.  Example (yet, where exactly the
+conflict is?):
+
+\Verbatim
+if exist %1.dvi goto yes_dvi
+goto end
+yes_dvi:
+DEL tmp.ps
+call dvips32  -f %1 -p %2 -l %2 -o tmp.ps  -mode ibmvga -D 110
+DEL %3
+call convert -crop 0x0 -density 110x110 -transparent '#FFFFFF' tmp.ps %3
+end:
+\EndVerbatim
+
+
+
+\<command = temp-command\><<<
+p = temp->command;
+q = command;
+while( *p != '\0' ){
+  *q = *(p++);
+  if( (*q == '%') && (*p == '%') 
+     && (    (*(p+1) == '%')  
+          || (*(p+1) == '~')  
+          || ( (*(p+1) >= '0') && (*(p+1) < '5') ) )
+  ){  p++;
+    switch( *(p++) ){
+      case '%':{  q++; break; }
+      case '0':{   t = job_name;
+            while( *t != '\0' ){ *(q++) = *(t++); }  break; }
+      case '1':{  t = match_1;
+            while( *t != '\0' ){ *(q++) = *(t++); }  break; }
+      case '2':{  t = match_2;
+            while( *t != '\0' ){ *(q++) = *(t++); }  break; }
+      case '3':{  t = match_3;
+            while( *t != '\0' ){ *(q++) = *(t++); }  break; }
+      case '4':{  t = match_4;
+            while( *t != '\0' ){ *(q++) = *(t++); }  break; }
+      case '~':{ `<q += texmf path`>          break; }
+      default: {  }
+  }} else { q++; }
+}
+*q = '\0';
+>>>
+
+The argument `\Verb=%%~=' is replaced with the value of
+\Verb=${TEXMFDIST}= under Kpathsea.  If such a value 
+is not available, the character `\Verb=~=' is used.   The variable
+offers the parent directory of where tex4ht resides, e.g.,
+\Verb=/usr/local/texlive/2018/texmf-dist=. We use TEXMFDIST in
+preference to SELFAUTOPARENT (as was done until June 2018), or
+TEXMFROOT, because in practice it works on both \TeX\ Live and MiK\TeX,
+while the others do not.
+
+\<texmf := ...\><<<
+#ifdef KPATHSEA   
+const char * texmf = kpse_var_value( "TEXMFDIST" );
+#endif
+>>>
+
+\<q += texmf path\><<<
+#ifdef KPATHSEA   
+   if( texmf ){
+      t = texmf;
+      while( *t != '\0' ){ *(q++) = *(t++); }
+   } else {
+      *(q++) = '~';
+   }
+#else
+   *(q++) = '~';
+#endif
+>>>
+
+
+
+
+\Verbatim
+
+>  > help tinkering with the code.  If you'll have a chance at some
+>  > point to pass on the kind of changes you are doing, I'll be interested
+>  > to hardwire them in the code as compile/run-time options.
+> for instance, I add -Pem to the dvips command line to access the EM
+> fonts instead of EC (faster)
+> 
+> i also change the name of "convert.exe" to "iconvert.exe" because it
+> conflicts with a native NT utility to convert file systems :-}
+
+\EndVerbatim
+
+\Verbatim
+dvips -mode $mf -D $density -f $_[0] -pp $_[1] > tmp.ps
+\EndVerbatim
+
+\<defines\><<<      
+#ifndef HTFDIR
+#define HTFDIR      ""
+#endif
+>>>
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Filter}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+Three cases for `G' and `F' scripts.
+
+\List{}
+\item
+{The first record doesn't start with a period}
+Use the script until its end or a period command
+\item
+{The first record starts with a period without an extension}
+Use the script until its end or a period command
+\item
+{The first record starts with a period with an extension}
+Use the script until its end or a period command, if the extension
+fits the output figure.
+
+\EndList
+
+
+\<header functions\><<<
+static struct script_struct  * filterGifScript(
+        ARG_II( struct script_struct  *, Q_CHAR *) );
+>>>
+
+\<functions\><<<
+`[
+static struct script_struct * filterGifScript( script, file) 
+                                   struct script_struct *script`;
+                                                   Q_CHAR *file
+;{                                         
+                   struct script_struct *filtered_script, *scr,
+                                                   *old_script,
+                                                   *new_script;
+                                         Q_CHAR *command, *ext;
+   filtered_script = NULL_SCRIPT;
+   if( script == NULL_SCRIPT )
+       return filtered_script;
+   old_script = script;
+   command = old_script->command;
+   if( *command != '.' ){
+      `<script until dot`> 
+   } else {
+      `<script from dot`> 
+   }   
+}
+>>>
+
+\<script until dot\><<<
+new_script = NULL_SCRIPT;
+while( old_script != NULL_SCRIPT ){
+   command = old_script->command;
+   if( *command == '.' ){ return filtered_script; }
+   scr = (struct script_struct *)
+            m_alloc(struct script_struct, (int) 1);   
+   scr->command = old_script->command;
+   scr->next = NULL_SCRIPT;
+   if( new_script == NULL_SCRIPT ){
+     filtered_script = new_script = scr;
+   } else {
+     new_script = new_script->next = scr;
+   }
+   old_script = old_script->next;
+}
+return filtered_script;
+>>>
+
+\<script from dot\><<<
+`<ext = file ext`>
+while( TRUE ){ 
+  if( old_script == NULL_SCRIPT ){
+     return NULL_SCRIPT;
+  }
+  command = old_script->command;
+  if(*command != '.') {
+    old_script = old_script->next;
+    continue;
+  }
+  old_script = old_script->next;
+  if( (*(command+1) == '\0') || eq_str(ext,command) ){
+    break;
+  }
+}
+`<script until dot`> 
+>>>
+
+
+\<ext = file ext\><<<
+ext = file;
+while( *ext != '\0' ){ ext++; }
+while( (*ext != '.') && (ext != file) ){ ext--; }
+>>>
+
+
+\<header functions\><<<
+void free_script(
+        ARG_I( struct script_struct  *) );
+>>>
+
+\<functions\><<<
+`[
+void free_script(script) 
+                                   struct script_struct *script
+;{                                         
+                                   struct script_struct *temp;
+  while( script != NULL_SCRIPT ){
+    temp = script;
+    script = script->next;
+    free( temp );
+  }
+}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Ignore/Noignore Commands}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<???--- ??? ---...\><<<
+status = scan_until_end_str("", 1, status, lg_file);
+>>>
+
+
+\Verbatim
+l. 10 --- needs --- ignore ---
+l. 11 --- needs --- end ignore ---
+\EndVerbatim
+
+
+We didn't check below the \`'l. dddd ' part.
+
+\<???--- needs ---...\><<<
+status = scan_until_end_str(" ignore ---", 2, status, lg_file);
+if( status ){
+  skip =  eq_str(match[2]," ignore ---") ? TRUE :
+            ( eq_str(match[2]," end ignore ---") ? FALSE : skip );
+}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\Section{CopyTo files}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+There are 6 supporting dvi variations of the 
+`CopyTo to-file op group'
+ dvi command:
+
+\List{}
+\item{From}    Start copying (at current address)
+\item{Until}   End copying   (at current address)
+\item{Skip}    Start skipping (from current address)
+\item{Cont}    End skipping (at current-address)
+\item{Addr integer-label} Associate current 
+      address with the integer-label of the given group
+\item{Set integer-label}   
+     Replace the `current address' in the following Skip/Cont (and
+     From/Until ?) commands with the address associated to the
+     integer-label of the given group  by an Addr command
+\EndList
+
+The code
+\Verbatim
+B0
+ \ht:special {t4ht@DCopyTo: \jobname-js.tex From bib }
+B1
+ \ht:special {t4ht@DCopyTo: \jobname-js.tex Skip bib }
+B2
+ \ht:special {t4ht@DCopyTo: \jobname-js.tex Addr1 bib }
+B3
+ \ht:special {t4ht@DCopyTo: \jobname-js.tex Addr2 bib }
+B4
+ \ht:special {t4ht@DCopyTo: \jobname-js.tex Set1 bib }
+ \ht:special {t4ht@DCopyTo: \jobname-js.tex Cont bib }
+ \ht:special {t4ht@DCopyTo: \jobname-js.tex Set2 bib }
+ \ht:special {t4ht@DCopyTo: \jobname-js.tex Skip bib }
+B5
+\ht:special {t4ht@DCopyTo: \jobname-js.tex Until bib }
+B6
+\EndVerbatim
+
+produces the string ` B1  B3 '.
+
+
+
+
+\<CopyTo files\><<<
+{     `<CopyTo vars`>
+   eoln_ch = (int) 'x';
+   while( eoln_ch != EOF ) {              
+      status = scan_str("CopyTo: ", TRUE, lg_file);
+      status = scan_until_str(" ", 1, status, lg_file);
+      status = scan_until_str(" ", 2, status, lg_file);
+      status = scan_until_str(" ", 3, status, lg_file);
+      status = scan_until_str(" ", 4, status, lg_file);
+      status = scan_until_end_str("", 5, status, lg_file);
+      if( status ){
+         if( debug ){
+            (IGNORED) printf("...CopyTo: %s%s%s%s%s...\n",
+                     match[1], match[2], match[3], match[4], match[5]);
+         }
+         rec_op = eq_str(match[2],"From ")?  From_op :
+                  ( eq_str(match[2],"Until ")? Until_op :
+                    ( eq_str(match[2],"Skip ")?  Skip_op :
+                      ( eq_str(match[2],"Cont ")?  Cont_op : No_op )));
+         if( rec_op == No_op ){ `<try Addr and Set ops`> }
+         if( rec_op == No_op ){
+            (IGNORED) fprintf(stderr,"--- warning --- ");
+            (IGNORED) fprintf(stderr,"CopyTo: %s%s%s%s%s?\n",
+                      match[1], match[2], match[3], match[4], match[5]);  
+         } else {
+            `<find file records`>
+            `<find to-from record`>
+            `<find group record`>
+            `<enter op record`>
+            `<act on op`>
+   }  }  }
+   `<release CopyTo resources`>
+}
+>>>
+
+
+\<try Addr and Set ops\><<<
+ch = match[2];
+if( (ch[0]=='S') && (ch[1]=='e') && (ch[2]=='t') ){
+  ch += 3; rec_op = Set_op;
+} else if( (ch[0]=='A') && (ch[1]=='d') && (ch[2]=='d') && (ch[3]=='r') ){
+  ch += 4; rec_op = Addr_op;
+}
+if( rec_op != No_op ){
+  addr = 0; while( (*ch>='0') && (*ch<='9') ){
+    addr = addr*10 + *ch - '0'; ch++;
+} }
+>>>
+
+\<release CopyTo resources\><<<
+for( p = opened_files; p != (struct files_rec*) 0; ){
+   (IGNORED) fclose(p->file);
+   free((void *)  p->name);  
+   `<free to-from records`>
+   p1= p;  p = p->right;    free((void *)  p1);  
+}
+>>>
+
+\<free to-from records\><<<
+for( p1 = p->down; p1 != (struct files_rec*) 0; ){
+   `<free group records`>
+   p2 = p1; p1 = p1->right;  free((void *)  p2);  
+}
+>>>
+
+\<free group records\><<<
+for( p2 = p1->down; p2 != (struct files_rec*) 0; ){
+   `<free op records`>
+   p3 = p2; p2 = p2->right;  free((void *)  p3);  
+}
+>>>
+
+\<free op records\><<<
+for( p3 = p2->down; p3 != (struct files_rec*) 0; ){
+  p4 = p3; p3 = p3->down; free((void *)  p4);  
+}
+>>>
+
+
+
+
+
+\<act on op\><<<
+if( rec_op == Until_op ){
+  for( p = to_rec->down;
+           p != (struct files_rec*) 0;  p = p->down ){
+    if( p->op == From_op ){ from_op = p; break; }
+  } 
+  if( p == (struct files_rec*) 0 ){
+    `<missing From for CopyTo`>
+  } else {
+    `<perform ops`>
+    `<remove ops`>
+  }  
+}
+>>>
+
+
+
+
+\<perform ops\><<<
+in_file = from_rec->file;
+out_file = to_rec->file;
+start_loc = from_op->loc;
+write_on = TRUE;
+(IGNORED) fseek(in_file, (long) start_loc, `<abs file addr`>);
+for( p= from_op;  p != to_rec; p = p->up ){
+  switch( p->op ){
+    case Until_op:{ `<Until op`> break; }
+    case  Skip_op:{ `<Skip op`>  break; }
+    case  Cont_op:{ `<Cont op`>  break; }
+    case   Set_op:{ `<Set op`>   break; }
+    default: {  }
+} }
+>>>
+
+
+\<Until op\><<<
+if( write_on ){
+   end_loc = p->loc;
+   for(; start_loc<end_loc; start_loc++) {
+      (IGNORED) putc( getc(in_file), out_file );
+}  }
+>>>
+
+
+\<Skip op\><<<
+if( write_on ){
+   end_loc = p->loc;
+   for(; start_loc<end_loc; start_loc++) {
+      (IGNORED) putc( getc(in_file), out_file );
+   } 
+}
+write_on = FALSE;
+>>>
+
+
+\<Cont op\><<<
+end_loc = p->loc;
+if( write_on ){
+   for(; start_loc<end_loc; start_loc++) {
+      (IGNORED) putc( getc(in_file), out_file );
+   } 
+} else { 
+   start_loc = end_loc;
+   (IGNORED) fseek(in_file, (long) end_loc, `<abs file addr`>); 
+}
+write_on = TRUE;
+>>>
+
+
+\<Set op\><<<
+addr = -1;
+for( p1 = from_op->up; p1 != to_rec;  p1 = p1->up ){  
+  if( (p1->op == Addr_op) && (p1->label == p->label) ){
+    addr = p1->loc; break;
+} }
+if( addr != -1 ){ (p->up)->loc = addr; }
+>>>
+
+
+\<remove ops\><<<
+to_rec->down = from_op->down;
+if( from_op->down != (struct files_rec*) 0){
+    (from_op->down)->up = to_rec;
+} 
+for( p = from_op; p != to_rec; ){
+  p1 = p;  p = p->up; free((void *)  p1);  
+}
+if( to_rec->down == (struct files_rec*) 0){
+  if( to_rec->left == (struct files_rec*) 0 ){
+    (to_rec->up)->down =  to_rec->right;
+  } else {
+    (to_rec->left)->right = to_rec->right;
+  }
+  if( to_rec->right != (struct files_rec*) 0 ){
+    (to_rec->right)->left = to_rec->left;
+  }
+  p1 = to_rec; to_rec = to_rec->up;  free((void *)  p1);
+}
+>>>
+
+\<missing From for CopyTo\><<<
+(IGNORED) fprintf(stderr,"%sMissing ``CopyTo From':\n", "--- warning --- ");
+for( p = to_rec->down; p != (struct files_rec*) 0;  p = p->down ){
+  (IGNORED) fprintf(stderr,"   %s %s%d %s\n", to_rec->name,
+          p->op == From_op ?  "From  " :
+             ( p->op == Until_op ?   "Until " :
+               ( p->op == Skip_op ?   "Skip  " :
+                 ( p->op == Cont_op?   "Cont " :
+                 ( p->op == Addr_op?   "Addr " :
+                 ( p->op == Set_op?   "Set " : "No_op " ))))),
+          p->loc, from_rec->name
+         );
+}
+>>>
+
+
+
+
+\<enter op record\><<<
+p = m_alloc(struct files_rec, 1);
+p->down = to_rec->down;  to_rec->down = p;
+p->up = to_rec;
+if( p->down != (struct files_rec*) 0 ){
+  (p->down)->up = p;
+}
+*(match[4] + (int) strlen((char *) match[4]) - 1) = '\0';
+p->loc = (int) get_long_int(match[4]);
+p->op  = rec_op;
+p->label = addr;
+>>>
+
+\<find group record\><<<
+if( to_rec->down == (struct files_rec*) 0 ){
+  `<add first group record`>
+} else {
+  to_rec = to_rec->down;
+  for( p = to_rec->right; p != (struct files_rec*) 0;  p = p->right ){
+    if( eq_str(to_rec->group,match[3]) ){ break; }
+    to_rec = p;
+  }
+  if( !eq_str(to_rec->group,match[3]) ){ 
+    `<add next group record`>
+} }
+>>>
+
+
+
+\<add first group record\><<<
+to_rec->down = p = m_alloc(struct files_rec, 1);  
+p->up = to_rec;
+p->right = p->left = p->down = (struct files_rec*) 0;
+p->name = to_rec->name;  
+p->file = to_rec->file;  
+p->from_rec = from_rec;  
+p->loc = -1;  
+p->op = No_op;
+p->group = m_alloc(char, (int) strlen((char *) match[3]) + 1);
+(IGNORED) strcpy((char *)  p->group, (char *) match[3] );
+to_rec = p;
+>>>
+
+\<add next group record\><<<
+to_rec->right = p = m_alloc(struct files_rec, 1);
+p->left = to_rec;
+p->right = p->down = (struct files_rec*) 0;
+p->up = to_rec->up;
+p->name = to_rec->name;  
+p->file = to_rec->file;  
+p->from_rec = from_rec;  
+p->loc = -1;  
+p->group = m_alloc(char, (int) strlen((char *) match[3]) + 1);
+(IGNORED) strcpy((char *)  p->group, (char *) match[3] );
+to_rec = p;
+>>>
+
+
+
+\<find to-from record\><<<
+if( to_rec->down == (struct files_rec*) 0 ){
+  `<add first to-from record`>
+} else {
+  to_rec = to_rec->down;
+  for( p = to_rec->right; p != (struct files_rec*) 0;  p = p->right ){
+    if( to_rec->from_rec == from_rec ){ break; }
+    to_rec = p;
+  }
+  if( to_rec->from_rec != from_rec ){ 
+    `<add next to-from record`>
+} }
+>>>
+
+\<add first to-from record\><<<
+to_rec->down = p = m_alloc(struct files_rec, 1);  
+p->up = to_rec;
+p->right = p->left = p->down = (struct files_rec*) 0;
+p->name = to_rec->name;  
+p->file = to_rec->file;  
+p->from_rec = from_rec;  
+p->loc = -1;  
+p->op = No_op;
+to_rec = p;
+>>>
+
+\<add next to-from record\><<<
+to_rec->right = p = m_alloc(struct files_rec, 1);
+p->left = to_rec;
+p->right = p->down = (struct files_rec*) 0;
+p->up = to_rec->up;
+p->name = to_rec->name;  
+p->file = to_rec->file;  
+p->from_rec = from_rec;  
+p->loc = -1;  
+to_rec = p;
+>>>
+
+
+\<find file records\><<<
+file_name = match[1];  
+*(file_name + (int) strlen((char *) file_name) - 1) = '\0';
+strcpy((char *) file_mode, WRITE_TEXT_FLAGS);
+for(i=1; i<=2; i++){
+  `<search CopyTo file`>
+  file_name = match[5];  
+  strcpy((char *) file_mode, `<CopyTo read flags`>);
+}
+>>>
+
+
+
+
+
+
+
+
+
+\<search CopyTo file\><<<
+for( p = opened_files; p != (struct files_rec*) 0;  p = p->right ){
+   if( eq_str(file_name,p->name) ) { break; }
+}
+if( p == (struct files_rec*) 0 ){
+  p = m_alloc(struct files_rec, 1);
+  p->right = opened_files;   opened_files = p;
+  p->down =  (struct files_rec*) 0;
+  strcpy((char *) p->file_mode, (char *) file_mode);
+  p->name = m_alloc(char, (int) strlen((char *) file_name) + 1);
+  (IGNORED) strcpy((char *)  p->name, (char *) file_name );
+  if( (p->file = fopen(file_name, file_mode)) == NULL )
+    { (IGNORED) warn_i_str(5,file_name); }
+} 
+to_rec = from_rec;  from_rec = p;
+>>>
+
+
+\<defines\><<<
+struct files_rec{
+  FILE* file;
+  char *name, *group, op;
+  Q_CHAR file_mode[5];
+  int loc, label;
+  struct files_rec  *from_rec, *right, *left, *down, *up;
+};
+#define No_op     0
+#define From_op   1
+#define Until_op  2
+#define Skip_op   3
+#define Cont_op   4
+#define Addr_op   5
+#define Set_op    6
+>>>
+
+\<CopyTo vars\><<<
+Q_CHAR *file_name, file_mode[5];
+int i, start_loc, end_loc, addr = 0;
+char rec_op, *ch;
+static struct files_rec *to_rec, *from_rec,
+   *opened_files = (struct files_rec *) 0,
+   *p, *p1, *p2, *p3, *p4, *from_op;
+FILE *in_file, *out_file;
+BOOL write_on;
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\Section{post-process ext files}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\<post-process ext files\><<<
+if( `<ext-script`> ){
+  eoln_ch = (int) 'x';
+  while( eoln_ch != EOF ) {
+     status = scan_str("File: ", TRUE, lg_file);
+     status = scan_until_str(".", 1, status, lg_file);
+     status = scan_until_end_str("", 2, status, lg_file);
+     if( status ){                  Q_CHAR *ext;
+                      struct script_struct *cur_script;
+        ext = match[1];
+        (IGNORED) strct( ext, match[2] );
+        ext += strlen((char *) ext);
+        while( *(--ext) != '.' ){ ; }
+        *ext = '\0'; ext++;
+        `<get script for ext`>
+        (void) execute_script(cur_script, 
+                 match[1], Dotfield? Dotfield : "", "", "");  
+        `<release script for ext`>
+} }  }
+>>>
+
+
+\<get script for ext\><<<
+{
+            struct script_struct *cur, *add, *temp;
+            Q_CHAR extPlus[256];                     
+  cur = `<ext-script`>;
+  add = cur_script = NULL_SCRIPT;
+  while( cur ){
+     `<ext = ext + choise`>
+     if( strpre(extPlus, cur->command) ){
+        `<temp = ext command`>
+        if( cur_script == NULL_SCRIPT ){
+           cur_script = add = temp;
+        } else {
+           add = add->next = temp;
+     }  }
+     cur = cur->next;
+} }  
+>>>
+
+
+
+\<ext = ext + choise\><<<
+(IGNORED) strcpy((char *) extPlus, (char *) ext);
+/* 
+   if ( envChoice ) {
+      (IGNORED) strct ( extPlus, envChoice );
+   }
+*/
+(IGNORED) strct ( extPlus, " " );
+>>>
+ 
+\<temp = ext command\><<<
+temp = (struct script_struct *)
+            m_alloc(struct script_struct, (int) 1);
+temp->command = m_alloc(char, (int) strlen((char *) cur->command) + 1);
+temp->next =  NULL_SCRIPT;
+(IGNORED) strcpy((char *) temp->command, 
+                 (char *) cur->command + (int) strlen((char *) extPlus) );
+>>>
+
+\<release script for ext\><<<
+while(  cur_script != (struct script_struct*) 0 ){
+                          struct script_struct *temp;
+  temp = cur_script; cur_script = cur_script->next; free((void *) temp);  
+}
+>>>
+
+
+\<header functions\><<<
+static BOOL strpre( ARG_II(char *,char *) );
+>>>
+
+\<functions\><<<
+`[
+static BOOL strpre(s1,s2)  
+                    char * s1`;
+                    char * s2
+;{                   int i;
+  for( i=0; i < (int) strlen((char *) s1); i++){
+    if( *(s1+i) != *(s2+i) ){ return FALSE; }
+  }
+  return TRUE;
+}
+>>>
+
+
+
+\<ext-script\><<<
+ext_script
+>>>
+
+
+
+\<defines\><<<
+struct env_c_rec{
+  Q_CHAR *option;
+  struct env_c_rec  *next;
+};
+>>>
+
+\<vars\><<<
+static struct env_c_rec *envChoice
+       = (struct env_c_rec*) 0;
+>>>
+
+
+\<env blocks selector\><<<
+struct env_c_rec *temp = (struct env_c_rec*)
+                   m_alloc(struct env_c_rec, (int) 1);
+temp->option = q;
+temp->next = envChoice;
+envChoice = temp;
+>>>
+
+\<env-skip = skip segment match[1]\><<<
+if( envChoice == (struct env_c_rec*) 0  ){
+  env_skip = !eq_str(match[1], "default" );
+} else {
+               struct env_c_rec *p;
+  env_skip = TRUE;
+  for( p=envChoice; p!=(struct env_c_rec*) 0 ; p = p->next ){
+    if( eq_str(match[1], p->option ) ){ env_skip = FALSE; }
+} }
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\Section{post-process files}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<post-process files\><<<
+if( `<file-script`> ){
+   eoln_ch = (int) 'x';
+   while( eoln_ch != EOF ) {
+      status = scan_str("File: ", TRUE, lg_file);
+      status = scan_until_str(".", 1, status, lg_file);
+      status = scan_until_end_str("", 2, status, lg_file);
+      if( status ){                         Q_CHAR *p;
+         p = match[1];
+         (IGNORED) strct( p, match[2] );
+         p += strlen((char *) p);
+         while( *(--p) != '.' ){ ; }
+         *p = '\0'; p++;
+         (void) execute_script(file_script, match[1],
+                             p, Xfield? Xfield : "", "");
+}  }  }
+>>>
+
+\<file-script\><<<
+file_script
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\Section{User Commands}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\`'l. 10 --- needs --- "ls *" ---'
+
+\<process user commands\><<<
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {              Q_CHAR *command, ch;
+                                       int n;
+                                       struct sys_call_rec *p;
+                                       BOOL flag;
+   status = scan_str("l. ", TRUE, lg_file);
+   status = scan_until_str(" --- needs --- \"", 1, status, lg_file);
+   status = scan_until_str("\" ---", 2, status, lg_file);
+   if( status ){
+      command = match[2];
+      *(command + (int) strlen((char *) command) - 5) = '\0'; 
+      `<flag = permission for system calls`>
+      if( flag ){
+        `<execute system command`>
+      } else { (IGNORED) printf(
+          "No permission for system call: %s\n", command); }
+}  }
+>>>
+
+
+\<env permissions for system calls\><<<
+{     struct sys_call_rec *q;
+  q = m_alloc(struct sys_call_rec, 1);
+  q->next = system_calls;
+  q->filter = match[1];
+              match[1] = (Q_CHAR *) malloc(70);  max_match[1] = 70;
+  system_calls = q;
+if( debug ){  
+   (IGNORED) printf(".......'S' script: '%s'\n", 
+                                q->filter); }
+}
+>>>
+
+\<permission for system calls\><<<
+{     struct sys_call_rec *q;
+  q = m_alloc(struct sys_call_rec, 1);
+  q->next = system_calls;
+  q->filter = p + 2;
+  system_calls = q;
+}
+>>>
+
+
+\<flag = permission for system calls\><<<
+flag = FALSE;
+p = system_calls;
+while( p ){                    
+  if( (n = (int) strlen((char *) p->filter)) == 1 ) {
+     if( *(p->filter) == '*' ){
+         flag = TRUE; break;
+     }
+  } 
+  if( strlen((char *) command) >= (unsigned int) n ) {
+      ch = command[n]; command[n] = '\0';
+      flag = flag || eq_str(p->filter,command);
+      command[n] = ch;
+  }
+  p = p->next;
+}
+>>>
+
+\<defines\><<<
+struct sys_call_rec{
+  Q_CHAR * filter;
+  struct sys_call_rec *next;
+};
+>>>
+
+
+\<vars\><<<
+static BOOL system_yes;
+static struct sys_call_rec *system_calls = (struct sys_call_rec *) 0;
+>>>
+
+
+
+
+
+
+
+
+From log files \`'l. # --- needs --- "command" ---'
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+\Section{CSS}
+%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Record HTFCSS Entries from the lg File}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+The htfcss records are stored in the following linked list, and used
+when the  font entries `Font("key","...","...","...")' are loaded
+(Section~'\Link{usehtfcc}{}\Ref{usehtfcc}\EndLink').
+
+\<vars\><<<
+static struct htf_struct *htf_rec = (struct htf_struct *) 0;
+>>>
+
+  
+\<defines\><<<
+struct htf_struct{
+  Q_CHAR *key,  *body, *media;
+  struct htf_struct *next;
+};
+>>>
+
+
+
+
+
+\<htfcss from lg\><<<
+{                     struct htf_struct *last_rec, *p;
+   last_rec = (struct htf_struct *) 0;
+   eoln_ch = (int) 'x';
+   while( eoln_ch != EOF ) {              
+      status = scan_str("htfcss: ", TRUE, lg_file);
+      status = scan_until_end_str("", 1, status, lg_file);
+      `<remove leading spaces`>
+      if( status ){            Q_CHAR *key, *body, *media;
+         media = body = key = match[1];  
+         `<process htfcss line`>
+   }  }
+}
+>>>
+
+\<remove leading spaces\><<<
+if( status ){
+            Q_CHAR *s, *t;
+            int i;
+   s = t = match[1];
+   for( i=0; *s == ' '; s++ ) { i++; }
+   if( i>0 ){
+      while( *s != 0 ){
+         *(t++) = *(s++);
+      }
+      *t = 0;
+}  }
+>>>
+
+
+?? How the case `append prev htfcss rec' can be reached ??
+
+\<process htfcss line\><<<
+while( *body && (*body != ' ') ){ body++; }
+if( *body == ' ' ){ media = body; *(body++) = '\0'; }
+`<extract media info`>
+if( *body ){  
+  if( *key ){ `<add new htfcss rec`> }
+#if 0 /* unreachable */
+  else if( last_rec ){ `<append prev htfcss rec`> }
+#endif /* 0, unreachable */
+}
+>>>
+
+\<extract media info\><<<
+if( (int) strlen((char *) body) > 6 ){
+   if(     (*(body) == '@')
+       &&  (*(body+1) == 'm')
+       &&  (*(body+2) == 'e')
+       &&  (*(body+3) == 'd')
+       &&  (*(body+4) == 'i')
+       &&  (*(body+5) == 'a') )
+     {
+    body += 6;
+    while( *body == ' ' ){ body++; }
+    media = body;
+    while( (*body != ' ') && (*body != '\0') ){ body++; }
+    if( *body == ' ' ){ *(body++) = '\0'; }
+    while( *body == ' ' ){ body++; }
+}  }
+>>>
+
+\<add new htfcss rec\><<<
+p = m_alloc(struct htf_struct, 1);
+p->next =  (struct htf_struct *) 0;
+p->key =   m_alloc(char, (int) strlen((char *) key) + 1);
+(IGNORED) strcpy((char *)  p->key, (char *) key );
+p->media =   m_alloc(char, (int) strlen((char *) media) + 1);
+(IGNORED) strcpy((char *)  p->media, (char *) media );
+p->body =   m_alloc(char, (int) strlen((char *) body) + 1);
+(IGNORED) strcpy((char *)  p->body, (char *) body );
+if( last_rec ){
+   last_rec->next = p;  last_rec = p;
+} else {
+   htf_rec = last_rec = p;
+}
+if( debug ){
+   (IGNORED) printf(".......%s...%s...%s\n", key, media, body);
+}
+>>>
+
+\<append prev htfcss rec\><<<
+last_rec->body = (Q_CHAR *)  r_alloc((void *) last_rec->body,
+      (size_t) strlen((char *) last_rec->body) 
+    + (size_t) strlen((char *) body) 
+    + 2);
+(IGNORED) strct(last_rec->body,"\n");
+(IGNORED) strct(last_rec->body,body);
+if( debug ){
+   (IGNORED) printf(".......%s\n", body);
+}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Font-Css-Plus Entries from The lg File}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The command \`'\Configure{htf-css}{cmmi}{font-style: italic;}'
+provides in the lg file an entry of the form 
+\`'Font_Css_Plus cmmi font-style: italic;'.
+
+\<font=(...) from lg\><<<
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {              
+   status = scan_str("Font_Css_Plus ", TRUE, lg_file);
+   status = scan_until_str(" ", 1, status, lg_file);
+   status = scan_until_end_str("", 2, status, lg_file);
+   if( status ){                          Q_CHAR *key;
+      key = match[1];  
+      *(key + (int) strlen((char *) key) - 1) = '\0';
+      `<store font style of lg`>
+} } 
+>>>
+
+
+
+\<store font style of lg\><<<
+if( (*key != '\0') && (*key != '\n') ) { 
+                            struct htf_struct *p;    
+   p = m_alloc(struct htf_struct, 1);
+   p->next =  htf_rec;  
+   htf_rec = p;
+   p->key =   m_alloc(char, (int) strlen((char *) key) + 1);
+   (IGNORED) strcpy((char *)  p->key, (char *) key );
+   p->body =   m_alloc(char, (int) strlen((char *) match[2]) + 1);
+   (IGNORED) strcpy((char *)  p->body, (char *) match[2] );
+   if( debug ){
+      (IGNORED) printf(".......%s...%s\n", key, match[2]);
+} }
+>>>
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Imported Css  File}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%Css: TD.caption{white-space: nowrap; }
+%Font("cmex","10","100")
+%Font("cmmi","10","100")
+%Font("cmmi","5","100")
+%Font("cmmi","7","100")
+%Font("cmr","10","100")
+%Font("cmr","5","100")
+%Font("cmr","7","100")
+%Font("cmsy","10","100")
+%Font("cmsy","7","100")
+%Font("cmti","10","100")
+%Font("cmtt","10","100")
+%Font_Class(1,""): <IMG SRC=""ALT=""CLASS="%s%s-%d--%x">
+%Font_Class(3,"mva"): <IMG SRC=""ALT=""CLASS="%s-%d--%x"ALIGN="MIDDLE">
+%Font_Class(6,"ul"): <SPAN CLASS="underline"></SPAN>
+%Font_Css("sc"): .small-caps{font-variant: small-caps; }
+% Font_Css("ul"): .underline{text-decoration:underline; }
+
+
+
+
+\<process css\><<<
+{
+                               Q_CHAR   css_name[255];
+                               FILE   *css_file, *tmp_file;
+                               BOOL   css_sty;
+   `<css-file = open file ...`>
+   if( css_file ){
+      (IGNORED) printf ("Entering %s\n", css_name);
+      tmp_file = fopen(tmp_name, WRITE_TEXT_FLAGS);
+      if( !tmp_file ) {
+         (IGNORED) warn_i_str(5,tmp_name);
+      } else { `<c: tex4ht.tmp := css file`> }
+      tmp_file = open_file(tmp_name, ".tmp");
+      css_file = fopen(css_name, WRITE_TEXT_FLAGS);
+      if( !tmp_file ) {
+         (IGNORED) warn_i_str(5,tmp_name);
+      } else if( !css_file ) {
+         (IGNORED) warn_i_str(5,css_name);
+      } else { 
+        `<c: css file = header of tex4ht.tmp`>
+        if( css_sty ){
+           `<css file = css.sty`>
+           `<css file = tail of tex4ht.tmp`>
+        }
+      }
+      (IGNORED) fclose(tmp_file);
+      (IGNORED) fclose(css_file);
+}  }
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Preliminary Processing of the CSS File}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<c: tex4ht.tmp := css file\><<<
+                   int ch;
+while( (ch = getc(css_file)) != EOF ) {
+  (IGNORED) putc( ch, tmp_file );        
+}
+(IGNORED) fclose(tmp_file);
+(IGNORED) fclose(css_file);
+>>>
+
+
+\<css-file = open file ...\><<<
+(IGNORED) strcpy((char *)  css_name, (char *) job_name);
+(IGNORED) strct(css_name, ".css");
+css_file = fopen(css_name, READ_TEXT_FLAGS);  
+>>>
+
+\SubSection{Cotributors to the Css File}
+
+Copy until insertion point:
+
+\`'/* css.sty */'
+
+\<c: css file = header of tex4ht.tmp\><<<
+css_sty = FALSE;
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {
+  status = scan_until_end_str("", 1, TRUE, tmp_file);
+  `<match[2] := compressed match[1]`>
+  if( eq_str(match[2], "/*css.sty*/") ){ css_sty = TRUE;  break; }
+  (IGNORED) fprintf(css_file, "%s\n", match[1]);
+}
+>>>
+
+\<vars\><<<
+static BOOL status;
+>>>
+
+
+
+\<match[2] := compressed match[1]\><<<
+{                          Q_CHAR *p, *q;
+                           int  n;
+  n = 0;  p = match[1];    q = match[2];  
+  while ( (*p != '\0') ){ 
+    if (n == 13) { *(q-10) = '\0';  break;}
+    if( *p != ' ' ){ *(q++) = *p; n++; }
+    p++;
+  }
+  *q = '\0';
+}
+>>>
+
+Contribution from lg File
+
+
+
+\<css file = css.sty\><<<
+(IGNORED) fprintf(css_file, "/* start css.sty */\n");
+`<rewind lg file`>  `<Font_css_base: ...`> 
+`<rewind lg file`>  `<process Font_Size: ...`> 
+`<rewind lg file`>  `<process Font(...)`> 
+`<rewind lg file`>  `<process Font_Css(...):...`> 
+`<rewind lg file`>  `<process Css:...`>
+(IGNORED) fprintf(css_file, "/* end css.sty */\n");
+>>>
+
+
+The \`'<process Css:...>' should be after the other two's to allow 
+the user to overide with \''\Css' commands the 
+other contributions.
+
+
+
+
+We want to remove the non-leading \`'/* css.sty */', just
+in case t4ht.perl is called consequtively more than once.
+
+\<css file = tail of tex4ht.tmp\><<<
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {
+  status = scan_until_end_str("", 1, TRUE, tmp_file);
+  `<match[2] := compressed match[1]`>
+  if( !eq_str(match[2], "/*css.sty*/") ){ 
+     (IGNORED) fprintf(css_file, "%s\n", match[1]);
+  }
+}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Contributions from /Css Commands}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\`'Css: P.noindent { text-indent: 0em }'
+
+\<process Css:...\><<<
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {              
+   status = scan_str("Css: ", TRUE, lg_file);
+   status = scan_until_end_str("", 1, status, lg_file);
+   if( status ){
+      (IGNORED) fprintf(css_file, "%s\n", match[1]);
+} } 
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Contributions From Font-Size}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\`'\Needs{"Font_Size: 12"}'
+
+
+
+\<process Font_Size: ...\><<<
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {              
+   status = scan_str("Font_Size: ", TRUE, lg_file);
+   status = scan_until_end_str("", 1, status, lg_file);
+   if( status ){
+      base_font_size = (int) get_long_int(match[1]);
+} } 
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Contributions to Fonts}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Link{}{usehtfcc}\EndLink\Tag{usehtfcc}{Contributions to Fonts}
+
+\`'Font("family_name", "font_size", "design_sz * 100 / 655360 / 10", "mag")'
+(e.g., \`'Font("cmr","10","10","100")',
+\`'Font("aptmri","8t",??,"100")',
+\`'Font("ecti","1095","10","100")')
+
+
+
+
+
+
+
+\<process Font(...)\><<<
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {              
+   status = scan_str("Font(\"", TRUE, lg_file);
+   status = scan_until_str("\",\"", 1, status, lg_file);
+   status = scan_until_str("\",\"", 2, status, lg_file);
+   status = scan_until_str("\",\"", 3, status, lg_file);
+   status = scan_until_end_str("\")", 4, status, lg_file);
+   if( status ){
+                      Q_CHAR *p;
+                      struct htf_struct *font_sty;
+                      int second;
+      p = match[1]; 
+      *(p + (int) strlen((char *) p) - 3) = '\0'; 
+      p = match[2]; 
+      *(p + (int) strlen((char *) p) - 3) = '\0'; 
+      p = match[3]; 
+      *(p + (int) strlen((char *) p) - 3) = '\0'; 
+      p = match[4]; 
+      *(p + (int) strlen((char *) p) - 2) = '\0'; 
+      `<get font size`>
+      `<get font style`>
+}  }   
+>>>
+
+
+
+
+
+\<get font style\><<<
+font_sty = htf_rec;
+while ( font_sty  ) {
+  if( eq_str(font_sty->key,match[1]) ){          
+      if( *(font_sty->media) == '\0'  ){
+         `<print font style css`> 
+         second = 100;
+      } else {
+         `<print media style`>
+      }
+  }
+  font_sty = font_sty->next;
+}
+if( second != 100 ){ `<print font style css`> }
+>>>
+
+
+
+
+\<get font size\><<<
+{                                                  Q_CHAR *p;
+   second =   (int) 
+              (  (int) get_long_int(match[3])
+               * (int) get_long_int(match[4])
+               / base_font_size
+              );
+   while( second > 700 ){  second /= 10; }
+   p = match[3];
+   while( *p != '\0' ){
+     if( (*p < '0') || (*p > '9') ){ second = 100; break; }
+     p++;
+   }  
+   `<inspect font-size argument`>
+}
+>>>
+
+The following case handles cases like that of \`'Font("ecti","1095","10","100")', where
+\Verb=base_font_size= is 11.
+
+\<inspect font-size argument\><<<
+if(  (int) (  (double) get_long_int(match[2])
+            / (int) get_long_int(match[4])
+            + 0.5
+           )
+      == base_font_size
+){
+   second = 100;
+};
+>>>
+
+
+
+
+
+
+
+
+\<Font_css_base: ...\><<<
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {              
+   status = scan_str("Font_css_base: ", TRUE, lg_file);
+   status = scan_until_str("Font_css_mag: ", 1, status, lg_file);
+   status = scan_until_end_str("", 2, status, lg_file);
+   if( status ){
+      Font_css_base = match[1];  
+      *(Font_css_base + (int) strlen((char *) Font_css_base) - 14) = '\0';
+      match[1] = (Q_CHAR *) malloc(70);  max_match[1] = 70;
+      Font_css_mag = match[2];
+      match[2] = (Q_CHAR *) malloc(70);  max_match[2] = 70;
+} } 
+>>>
+
+
+
+
+\<vars\><<<
+static char *Font_css_base = NULL,
+            *Font_css_mag = NULL;
+static int base_font_size = 10;
+>>>
+
+
+
+\<print font style css\><<<
+(IGNORED) fprintf(css_file, 
+   (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
+   match[1], match[2]);
+if( !eq_str(match[4],"100") ){ 
+   (IGNORED) fprintf(css_file,
+   (Font_css_mag == NULL)? "x-x-%s" : Font_css_mag,
+   match[4]);
+}
+(IGNORED) fprintf(css_file, "{");
+if( (second < 98) || (second > 102) ){
+   (IGNORED) fprintf(css_file, "font-size:%d%c;", second, '%');
+}
+if( font_sty  ) {
+   (IGNORED) fprintf(css_file, "%s", font_sty->body);
+}
+(IGNORED) fprintf(css_file, "}\n");
+>>>
+
+
+\<print media style\><<<
+(IGNORED) fprintf(css_file, "@media %s{", font_sty->media);
+(IGNORED) fprintf(css_file, 
+   (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
+   match[1], match[2]);
+if( !eq_str(match[4],"100") ){ 
+   (IGNORED) fprintf(css_file,
+   (Font_css_mag == NULL)? "x-x-%s" : Font_css_mag,
+   match[4]);
+}
+(IGNORED) fprintf(css_file, "{");
+if( font_sty  ) {
+   (IGNORED) fprintf(css_file, "%s", font_sty->body);
+}
+(IGNORED) fprintf(css_file, "}}\n");
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Font-Css Contributions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\`'Font_Css("4"): .small-caps{font-variant: small-caps; }'
+
+\<process Font_Css(...):...\><<<
+{            char  *font_class [256];
+             int last_class;
+   `<find usage`>
+   eoln_ch = (int) 'x';
+   while( eoln_ch != EOF ) {              
+      status = scan_str("Font_Css(\"", TRUE, lg_file);
+      status = scan_until_str("\"): ", 1, status, lg_file);
+      status = scan_until_end_str("", 2, status, lg_file);
+      if( status ){            int i;
+        for(i=0; i<last_class; i++){
+          if( eq_str(match[1],font_class[i]) ){
+             (IGNORED) fprintf(css_file, "%s\n", match[2]);
+             break;
+}  }  } } }
+>>>
+
+
+
+\<find usage\><<<
+last_class = 0;
+eoln_ch = (int) 'x';   
+while( eoln_ch != EOF ) {              
+   status = scan_str("Font_Class(", TRUE, lg_file);
+   status = scan_until_str(",\"", 1, status, lg_file);
+   status = scan_until_str("\"): ", 1, status, lg_file);
+   status = scan_until_end_str("", 2, status, lg_file);
+   if( status ){
+      font_class[last_class++] = match[1];  
+      match[1] = (Q_CHAR *) malloc(7);  max_match[1] = 7;
+}  }
+`<rewind lg file`>
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\Section{Load Env File}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Retrieve Info}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<load env file\><<<
+{                                FILE* file;
+                                 U_CHAR  env_loc[512];
+   env_loc[0] = '\0';
+   `<find tex4ht.env`>
+   if( file ){  
+      `<get info from env file`>
+      (IGNORED) fclose(file);
+}  }
+>>>
+
+
+%       (IGNORED) printf("Entering %s\n", env_loc[0]? &env_loc[0] 
+%                                                  :"tex4ht.env"); 
+
+
+
+\<get info from env file\><<<
+eoln_ch = (int) 'x';
+while( eoln_ch != EOF ) {                Q_CHAR ch;
+  ch = (char) (eoln_ch = getc(file));          
+  if( eoln_ch != (int) '\n' ){
+     status = scan_until_end_str("", 1, TRUE, file);
+     if( status ){
+       switch( ch ){
+         case 'A':{ `<script for chmod`>  break;}
+         case 'C':{ `<script for copy`>  break;}
+         case 'E':{ `<script for empty gifs`>  break;}
+         case 'F':{ `<script for dvigif of glyps`>   break;}
+         case 'G':{ `<script for dvigif`>   break;}
+         case 'M':{ `<script for move`>  break;}
+         case 'S':{ `<env permissions for system calls`>  break;}
+         case 'X':{ `<script for file`>  break;}
+         case '.':{ `<script for file ext`>  break;}
+         case '<':{ `<env selector`>  break;}
+         default:{ }
+} }  }  }
+>>>
+
+
+
+
+
+\<script for dvigif of glyps\><<<
+if( debug ){  
+      (IGNORED) printf(".......'F' script\n"); }
+dvigif_glyp_script = add_script(dvigif_glyp_script);
+>>>
+
+
+\<script for move\><<<
+if( debug ){  
+      (IGNORED) printf(".......'M' script\n"); }
+move_script = add_script(move_script);
+>>>
+
+
+\<script for copy\><<<
+if( debug ){  
+      (IGNORED) printf(".......'C' script\n"); }
+copy_script = add_script(copy_script);
+>>>
+
+
+
+
+
+\<script for file\><<<
+if( debug ){  
+      (IGNORED) printf(".......'X' script\n"); }
+`<file-script`> = add_script(`<file-script`>);
+>>>
+
+\<script for file ext\><<<
+if( debug ){  
+      (IGNORED) printf(".......'.' script\n"); }
+`<ext-script`> = add_script(`<ext-script`>);
+>>>
+
+
+
+
+\<script for chmod\><<<
+if( debug ){  
+      (IGNORED) printf(".......'A' script\n"); }
+chmod_script = add_script(chmod_script);
+>>>
+
+\<script for empty gifs\><<<
+if( debug ){  
+      (IGNORED) printf(".......'E' script\n"); }
+empty_fig_script = add_script(empty_fig_script);
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Utilities for Retrieving Info}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<env selector\><<<
+if( *(match[1]) != '/' ){
+                         U_CHAR *p;
+                         BOOL env_skip;
+  for( p = match[1]; 
+      (*p != '>') && (*p != '\n') && (*p != EOF ) ;
+      p++ ){}
+  if( *p == '>' ){ *p = '\0'; }
+  `<env-skip = skip segment match[1]`>
+  if( env_skip ){
+     `<skip env segment`>
+  } else {
+     if( debug ){
+        (IGNORED) printf(".......   <%s>\n", match[1]); 
+     }
+  }
+} else if( debug ){
+   (IGNORED) printf(".......   <%s\n", match[1]); 
+}
+>>>
+
+\<skip env segment\><<<
+                         U_CHAR cur_block[90];                         
+if( debug ){
+   (IGNORED) printf(".......   <%s>  skipping ...\n", match[1]); 
+}
+(IGNORED) strcpy((char *)  cur_block, (char *) match[1]);
+status = FALSE;
+while( !status && (eoln_ch != EOF) ){
+  status = scan_str("</", TRUE, file);
+  status = scan_until_str(">", 1, status, file);
+  status = scan_until_end_str("", 2, status, file);
+  if( status ){ 
+      *(match[1] + strlen((char *) match[1]) - 1) = '\0';
+      status = eq_str(match[1], cur_block); 
+      if( debug ){
+         (IGNORED) printf(".......   </%s>\n", match[1]);
+} }   }
+>>>
+
+
+
+\<header functions\><<<
+static struct script_struct * add_script( ARG_I(struct script_struct *) );
+>>>
+
+\<functions\><<<
+`[
+static struct script_struct * add_script(script) 
+                           struct script_struct * script
+;{ 
+   struct script_struct* temp, * q;
+   temp = (struct script_struct *) 
+                      m_alloc(struct script_struct, (int) 1);   
+   temp->command = match[1];
+   if( debug ){  
+      (IGNORED) printf(".......   %s\n", temp->command); }
+   temp->next = NULL_SCRIPT;
+   match[1] = (Q_CHAR *) malloc(70);
+   max_match[1] = 70;
+   if( script ){
+      q = script;
+      while( q->next ){ q = q->next; }
+      q->next = temp;
+   } else {
+      script = temp;
+   }
+   return script;
+}
+>>>
+
+
+
+
+
+
+
+
+  
+\<defines\><<<
+struct script_struct{
+  Q_CHAR *command;
+  struct script_struct *next;
+};
+>>>
+
+\<vars\><<<
+static struct script_struct 
+    * dvigif_script = NULL_SCRIPT,
+    * dvigif_glyp_script = NULL_SCRIPT,
+    * move_script = NULL_SCRIPT,
+    * empty_fig_script = NULL_SCRIPT,
+    * copy_script = NULL_SCRIPT,
+    * `<file-script`> = NULL_SCRIPT,
+    * `<ext-script`> = NULL_SCRIPT,
+    * chmod_script = NULL_SCRIPT;
+>>>
+
+\<defines\><<<
+#define NULL_SCRIPT (struct script_struct *) 0
+>>>
+
+
+
+
+
+
+
+
+%          case 'H':{ `<env-htf-sty = htfcss.env file`> break;}
+% 
+% \<env-htf-sty = htfcss.env file\><<<
+% env_htf_sty = match[1];
+% match[1] = (Q_CHAR *) malloc(70);
+% max_match[1] = 70;
+% if( debug ){  
+%    (IGNORED) printf(".......'H' script: '%s'\n",
+%                             env_htf_sty); }
+% >>>
+% 
+% \<vars\><<<
+% static Q_CHAR* env_htf_sty = Q_NULL;
+% >>>
+
+
+
+\Verbatim
+%   dvips -mode ibmvga -D 110 -f foo.idv -pp 92  > tmp.ps
+%   convert -crop 0x0 -density 110x110 -transparent '#FFFFFF' tmp.ps foo.gif
+Gdvips -mode ibmvga -D 110 -f %1 -pp %2  > tmp.ps
+Gconvert -crop 0x0 -density 110x110 -transparent '#FFFFFF' tmp.ps %3
+% t4ht -d%2 
+Mmv %1 %2%3
+Ccp %1 %2%3
+% t4ht -d%2 -m%1 
+Achmod %1 %2%3
+H/n/gold/5/gurari/tex4ht.dir/
+\EndVerbatim
+
+
+
+\SubSection{Open Directory}
+
+\<env file at work dir\><<<
+if( !file ) {  
+   if( debug ){  
+      (IGNORED) printf("tex4ht.env?\n");
+   }
+   file = f_open("tex4ht.env", READ_TEXT_FLAGS);
+   (IGNORED) strcpy((char *) &env_loc[0], "tex4ht.env");
+   if( debug && file ){  
+      (IGNORED) printf(".......Open: ./tex4ht.env\n"); }
+}
+>>>
+
+\<find tex4ht.env\><<<
+{         Q_CHAR  str[512],
+                                                      *TEX4HTENV;
+   `<env file from command switch`>
+   `<env file at work dir`>
+   `<env file .tex4ht`>
+   `<TEX4HTENV env`>
+   `<env file at root dir`>
+   `<ENVFILE env`>
+   if( !file ) { `<env file from prog loc`> }
+   `<kpathsea env file`>
+   if( !file ) warn_i_str( 5, `<warn 1`>);
+}
+>>>
+
+
+
+
+
+
+
+
+\<TEX4HTENV env\><<<
+if( !file ){                
+  TEX4HTENV = getenv("TEX4HTENV");
+  if( TEX4HTENV ){ 
+     if( debug ){  
+         (IGNORED) printf("%s?\n", TEX4HTENV); 
+     }
+     file = f_home_open(TEX4HTENV,READ_TEXT_FLAGS); 
+  }
+}
+>>>
+
+
+
+
+
+
+\<env file .tex4ht\><<<
+#ifndef DOS_WIN32
+   if( !file ) {
+       if( debug ){  
+          (IGNORED) printf(".tex4ht?\n"); 
+       }
+       file = f_open(".tex4ht", READ_TEXT_FLAGS);
+       (IGNORED) strcpy((char *) &env_loc[0], ".tex4ht");
+       if( debug && file ){  
+         (IGNORED) printf(".......Open: ./.tex4ht\n"); }
+   }
+#endif
+>>>
+
+\<ENVFILE env\><<<
+#ifdef ENVFILE
+   if( !file ) {
+      if( debug ){  
+          (IGNORED) printf("%s?\n", ENVFILE); 
+      }
+      file = f_home_open( ENVFILE,READ_TEXT_FLAGS);
+       (IGNORED) strcpy((char *) &env_loc[0], (char *) ENVFILE);
+       if( debug && file ){  
+         (IGNORED) printf(".......Open: %s\n", ENVFILE); }
+   }
+#endif
+>>>
+
+
+
+\<h-defines\><<<
+#ifndef ENVFILE
+
+#endif
+>>>
+
+
+
+\<warn 1\><<<
+#ifdef  DOS_WIN32
+   "tex4ht.env"
+#endif
+#ifndef  DOS_WIN32
+   "tex4ht.env | .tex4ht" 
+#endif
+>>>
+
+
+
+
+\<kpathsea env file\><<<
+
+#ifdef KPATHSEA
+if( !file )  {               U_CHAR * envfile;
+                             char *arch, *p, str[256];
+   `<arch = tail of SELFAUTOLOC`>
+   envfile = (char *) 0;
+   `<envfile = kpse-find-file architecture/tex4ht.env`>
+   if ( !envfile ){ `<envfile = kpse-find-file tex4ht.env`> }
+   if ( !envfile ){ `<envfile = kpathsea tex4ht.env`> } 
+   if ( envfile ){
+      file = kpse_open_file (envfile, kpse_program_text_format);
+      (IGNORED) printf("(%s)\n",  envfile);
+   }   
+   if( debug && file ){  
+      (IGNORED) printf(".......Open kpathsea %s\n", envfile); 
+   }
+}
+if( debug ){
+                       U_CHAR *p, *q;
+  `<trace T4HTINPUTS`>
+}
+#endif
+>>>
+
+%%%<--
+
+\<arch = tail of SELFAUTOLOC\><<<
+p = arch = (char *) kpse_var_value( "SELFAUTOLOC" );
+while( *p != '\0' ){
+   if( (*p ==   '/') || (*p == '\\') ){
+      arch = p;
+   }
+   p++;
+}
+>>>
+
+
+\<envfile = kpse-find-file architecture/tex4ht.env\><<<
+if( arch ){
+  (IGNORED) sprintf(str,"%s%ctex4ht.env", arch+1, *arch);
+  if( debug ){ 
+    (IGNORED) printf(
+      "kpse_open_file (\"%s\", kpse_program_text_format)?\n", str ); 
+  }
+  envfile= kpse_find_file (str, kpse_program_text_format, 0);
+}
+>>>
+
+
+\<envfile = kpse-find-file tex4ht.env\><<<
+if( debug ){ 
+  (IGNORED) printf(
+    "kpse_open_file (\"tex4ht.env\", kpse_program_text_format)?\n"); 
+}
+envfile= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
+>>>
+
+
+%   if( debug ){ 
+%      (IGNORED) printf( "kpse_open_file (\"tex4ht.env\", ...)?\n"); 
+%   }
+%   envfile= kpse_find_file ("tex4ht.env", kpse_program_text_format, 0);
+
+
+
+
+
+
+\<trace T4HTINPUTS\><<<
+p = (U_CHAR *) kpse_var_value( "T4HTINPUTS" );
+if( p ){
+   (IGNORED) printf("T4HTINPUTS = %s\n", p);
+}
+q = getenv("T4HTINPUTS");
+if( q ){  (IGNORED) printf(
+   "Environmet var T4HTINPUTS:  %s\n", q);
+}
+if( !p && !q ){
+   (IGNORED) printf( "Missing T4HTINPUTS for kpathsea\n" );
+}
+>>>
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{kpathsea vs kpse-find-file}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+The kpathsea utility might succeed where kpse-find-file fails.  Maybe due to:
+``Kpathsea's subdirectory searching has an
+     irremediable deficiency: If a directory D being searched for
+     subdirectories contains plain files and symbolic links to other
+     directories, but no true subdirectories, D will be considered a
+     leaf directory, i.e., the symbolic links will not be followed.'' 
+[\Link[http://www.tug.org/svn/texlive/trunk/Build/source/texk/kpathsea/kpathsea.info?view=markup]{}{}kpathsea.info\EndLink]
+
+
+
+
+\<envfile = kpathsea tex4ht.env\><<<
+if( system("kpsewhich --progname=tex4ht tex4ht.env > tex4ht.tmp") == 0 ){
+   `<fileaddr = read tex4ht.tmp`>
+   envfile= kpse_find_file (fileaddr, kpse_program_text_format, 0);
+}
+>>>
+
+
+
+Don't know how to avoid the use of intermediate file: popen(...) and
+fork() are not stadard utilities.  Also the redirection \Verb+>+ might
+need to be changed, e.g., to \Verb+>&+.
+
+\<fileaddr = read tex4ht.tmp\><<<
+char fileaddr [256];
+int loc = 0;
+FILE* file =  f_open("tex4ht.tmp", READ_TEXT_FLAGS);
+if( file ){
+  while( (fileaddr[loc] = getc(file)) >=0  ){
+    if( fileaddr[loc] == '\n' ){ fileaddr[loc] = '\0'; break; }
+    loc++;
+  }
+  (IGNORED) fclose(file);
+}  
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Root Directory}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<env file at root dir\><<<
+if( !file ){                
+  if( HOME_DIR ){ (IGNORED) sprintf(str,`<"s/tex4ht.env"`>, HOME_DIR);
+     if( debug ){  
+         (IGNORED) printf("%s?\n", str); 
+     }
+     file = f_open(str,READ_TEXT_FLAGS);     
+     (IGNORED) strcpy((char *) &env_loc[0], (char *) str);
+     if( debug && file ){  
+        (IGNORED) printf(".......Open: %s\n", str); }
+  }
+}
+#ifndef DOS_WIN32
+  if( !file ){        
+     if( HOME_DIR ){ 
+          (IGNORED) sprintf(str,"%s/.tex4ht", HOME_DIR);   
+          if( debug ){  
+             (IGNORED) printf("%s?\n", str); 
+          }
+          file = f_open(str,READ_TEXT_FLAGS);     
+          (IGNORED) strcpy((char *) &env_loc[0], (char *) str);
+          if( debug && file ){  
+             (IGNORED) printf(".......Open: %s\n", str); }
+      }
+  }
+#endif
+#if defined(DOS_WIN32) || defined(__MSDOS__)
+   if( !file ){                
+      if( debug ){  
+          (IGNORED) printf("C:/tex4ht.env?\n"); 
+      }
+      file = f_open("C:/tex4ht.env",READ_TEXT_FLAGS);     
+       (IGNORED) strcpy((char *) &env_loc[0], "C:/tex4ht.env");
+      if( debug && file ){  
+        (IGNORED) printf(".......Open: C:/tex4ht.env\n"); }
+   }
+#endif
+>>>
+
+\<"s/tex4ht.env"\><<<
+#if defined(DOS_WIN32) || defined(__DJGPP__)
+  is_forward_slash(HOME_DIR)?  "%s/tex4ht.env" :  "%s\\tex4ht.env"
+#else
+  "%s/tex4ht.env"
+#endif
+>>>
+
+
+
+
+
+
+
+
+
+
+
+\SubSection{Env File from Command Line}
+
+\<env file from command switch\><<<
+if( tex4ht_env_file ){
+   if( debug ){  
+      (IGNORED) printf("%s?\n", tex4ht_env_file); 
+   }
+   file = f_home_open( tex4ht_env_file, READ_TEXT_FLAGS );
+} else {
+   file = NULL;
+}
+if( tex4ht_env_file ){
+    (IGNORED) strcpy((char *) &env_loc[0], (char *) tex4ht_env_file);
+}
+if( debug && file ){  
+      (IGNORED) printf(".......Open: %s\n", tex4ht_env_file); }
+>>>
+
+\<env file from prog loc\><<<
+if( dos_env_file ){
+   if( debug ){  
+       (IGNORED) printf("%s?\n", dos_env_file); 
+   }
+   file =  f_open( dos_env_file, READ_TEXT_FLAGS ) ;
+   (IGNORED) strcpy((char *) &env_loc[0], (char *) dos_env_file);
+   if( debug && file ){  
+      (IGNORED) printf(".......Open: %s\n", dos_env_file); }
+}
+>>>
+
+
+
+Search along the path: command line file $\rightarrow$ work
+directory $\rightarrow$ home directory $\rightarrow$ system file.
+
+\<get .env directory from com ln\><<<
+tex4ht_env_file = q; 
+>>>
+
+% if( !access(p+2,F_OK) ) tex4ht_env_file = q; 
+% else warn_i_str(6,q);
+
+
+The function \`'int access(const char *pathname, int mode)', and the mode
+\`'F_OK' that tests for the existence of file, are defined in the
+following directory. The function returns 0 if ok and -1 on error .
+
+Where access comes from in dos?
+
+\<h-include before KPATHSEA\><<<
+#ifndef __DJGPP__         
+`<h-include near KPATHSEA`>
+#endif
+>>>
+
+
+
+The following is because \`'<unistd.h>
+defines F_OK in DJGPP'.
+
+\<h-include after KPATHSEA\><<<
+#ifdef __DJGPP__         
+`<h-include near KPATHSEA`>
+#endif
+>>>
+
+\<h-include near KPATHSEANO\><<<
+#ifndef F_OK
+#ifdef DOS_WIN32
+#define  F_OK 0               `% does file exist `%
+#endif
+#ifndef DOS_WIN32
+#define HAVE_UNISTD_H
+#endif
+#endif
+#ifdef HAVE_IO_H
+#include <io.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>    
+#endif
+>>>
+
+\<h-include near KPATHSEA\><<<
+#ifndef F_OK
+#ifdef DOS_WIN32
+#define  F_OK 0               `% does file exist `%
+#endif
+#ifndef KPATHSEA  
+#ifndef DOS_WIN32
+#define HAVE_UNISTD_H
+#endif
+#endif
+#endif
+#ifdef HAVE_IO_H
+#include <io.h>
+#endif
+#ifndef KPATHSEA  
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>    
+#endif
+#endif
+>>>
+
+
+
+\SubSection{Env File from Location of t4ht.c}
+
+\<main's vars\><<<
+Q_CHAR * tex4ht_env_file = (Q_CHAR *) 0;
+Q_CHAR * dos_env_file =
+#if defined(__MSDOS__)
+  `<get dos env file`>;
+#endif
+#if !defined(__MSDOS__)
+  (Q_CHAR *) 0;
+#endif
+
+>>>
+
+  Under DOS, argv[0] usually includes the full path to the program -
+even if it wasn't typed in. This can be used to find the program's own
+directory, and hence the configuration file. I've implemented this
+already as follows:
+
+\<get dos env file\><<<
+get_env_dir(argv[0])
+>>>
+
+\<functions\><<<
+#if defined(__MSDOS__)
+`<get tex4ht.env in dos`>
+#endif
+>>>
+
+\<get tex4ht.env in dos\><<<
+`[
+static char *get_env_dir(progname) 
+      Q_CHAR *progname
+
+;{    int  i;
+      Q_CHAR *p;
+  if(! progname || ! *progname)  return NULL;  `% Safety `%
+  i = (int) strlen((char *) progname);
+  while( (progname[--i] != (int) dir_path_slash(progname) )
+        && i > 0) ;                               `%Search for slash`%
+  if(i == 0)  return NULL;                        `%Not found? Give up`%
+  p = (Q_CHAR *) malloc(i+12);
+  if(p == NULL)  return NULL;     `%Space for new extention after dot`%
+  strncpy(p, progname, i+1);                         `%Copy up to slash`%
+  (IGNORED) strcpy((char *) &p[i+1],
+                   "tex4ht.env");                    `%Append new extention`%
+  return p;
+}
+>>>
+
+
+
+
+
+
+The 12 above is for accomodating \''tex4ht.env'.
+
+  Then, in main(), I changed:
+
+\`''char* tex4ht_env_file = (Q_CHAR *) 0;'
+
+  to:
+
+\`'char* tex4ht_env_file = get_env_dir(argv[0]);'
+
+  This works like a charm here, and allows me to use tex4ht from a
+different directory without typing a single commandline option.
+
+
+
+
+\Section{Open Files}
+
+
+\<header functions\><<<
+static FILE* f_open( ARG_II(const char*,const char*) );
+>>>
+
+\<functions\><<<
+`[
+static FILE* f_open( name, flags ) 
+                          const char*  name `;
+                          const char*  flags                           
+;{                        FILE* file;
+  if( (file = fopen(name,flags) ) != NULL ) {
+     (IGNORED)  printf("(%s)\n",name);
+  }
+  return file;
+}
+>>>
+
+
+
+
+
+\<header functions\><<<
+static FILE* f_home_open( ARG_II(const char*,const char*) );
+>>>
+
+\<functions\><<<
+`[
+static FILE* f_home_open( name, flags ) 
+                          const char*  name `;
+                          const char*  flags                           
+;{                        FILE* file;
+                          U_CHAR *str;
+  if( *name == '~' ){
+     if( HOME_DIR ){ 
+         str = m_alloc(char, strlen((char *) HOME_DIR)+strlen(name));
+         (IGNORED) sprintf(str,"%s%s", HOME_DIR, name+1);
+         file = f_open(str,flags);     
+         free((void *)  str);
+         return file;
+     } else { return NULL; }
+  } else {     return f_open( name, flags );   } 
+}
+>>>
+
+
+
+
+
+
+\SubSection{General}
+
+\<header functions\><<<
+static FILE* open_file( ARG_II(const C_CHAR *, const C_CHAR *) );
+>>>
+
+\<functions\><<<
+`[
+static FILE* open_file(name,ext)     
+                         const C_CHAR *name`; const C_CHAR *ext
+;{                       FILE* file;
+                         C_CHAR filename[255], *p;
+   if( eq_str( ext,LG_EXT ) ) { 
+      (IGNORED) strcpy((char *) filename, (char *) job_name); 
+      (IGNORED) strct(filename, ext); 
+   } else {
+      (IGNORED) strcpy((char *)  filename, name );   
+      p = filename;
+      while( TRUE ){
+        if( *p == '.' ){  break; }
+        if( *p == '\0' ){ (IGNORED) strcpy((char *) p, ext); break; }
+        p++;
+      }
+   }
+   file  = fopen(filename, READ_TEXT_FLAGS);  
+   if( !file ) {
+      (IGNORED) warn_i_str(5,filename);
+   } else { (IGNORED) printf ("Entering %s\n", filename); }
+
+   return file;
+}
+>>>
+
+
+We have here a little inconsistency with tex4ht.c. There the input file
+name is appended with the extension .dvi, allowing double extensions. 
+Here, if an extension is present, we remove it before putting .lg on
+top of the name. Should we fix that?
+
+
+
+
+\<defines\><<<
+#define LG_EXT ".lg"
+>>>
+
+
+
+
+
+% 
+% \SubSection{htfcss.env}
+% 
+% 
+% \<file = open htfcss.env\><<<
+% if( htf_cfg ){
+%    file  = open_file(htf_cfg, ".env");  
+% } else {                                  C_CHAR filename[255];
+%    file  = fopen("htfcss.env", READ_TEXT_FLAGS);            
+%    if ( !file && env_htf_sty ){
+%       (IGNORED) strcpy((char *) filename, (char *) env_htf_sty);
+%       (IGNORED) strct(filename, "htfcss.env");
+%       file = fopen(filename, READ_TEXT_FLAGS);
+%    }
+%    if ( !file ){
+%       (IGNORED) strcpy((char *) filename, (char *) HTFDIR );
+%       (IGNORED) strct(filename, "htfcss.env");
+%       file = fopen(filename, READ_TEXT_FLAGS);
+%    }  
+%    `<htfcss.env in KPATHSEA`>
+%    if( !file ) { (IGNORED) warn_i_str(5,"htfcss.env"); }
+%    else { (IGNORED) printf ("Entering htfcss.env\n"); }
+% }
+% >>>
+% 
+% 
+
+
+
+\<mark start lg file\><<<
+begin_lg_file = ftell(lg_file);
+>>>
+
+\<rewind lg file\><<<
+(IGNORED)  fseek(lg_file, begin_lg_file, `<abs file addr`>);
+>>>
+
+\<abs file addr\><<<
+0>>>
+
+
+
+
+\<vars\><<<
+static FILE* lg_file;
+static long  begin_lg_file;
+>>>
+
+
+
+
+
+\''open(file, ..._FLAGS)': All
+text files should be opened with "r" or "w"; all binary files with "rb"
+or "wb". This is the portable way and will work both under Unix and DOS;
+as Unix doesn't distinguish between text and binary files, its compilers
+will simply ignore the "b" part.
+
+  On the subject of the .lg file: you open the tex4ht.env file in binary
+mode ("rb"), which results in strange line endings in the .lg file
+(CR/CR/LF). Changing the mode to "r" fixes this.
+
+
+\<t4ht.h\><<<
+#if defined(DOS_WIN32) || defined(__MSDOS__)
+#define READ_BIN_FLAGS "rb"
+#define READ_TEXT_FLAGS "r"
+#define WRITE_BIN_FLAGS "wb"
+#ifdef WIN32
+#define WRITE_TEXT_FLAGS "wb"
+#else
+#define WRITE_TEXT_FLAGS "w"
+#endif
+#else
+#define READ_BIN_FLAGS "r"
+#define READ_TEXT_FLAGS "r"
+#define WRITE_BIN_FLAGS "w"
+#define WRITE_TEXT_FLAGS "w"
+#endif
+>>>
+
+
+
+\Verbatim
+I've been held up a bit by a
+bug in tex4ht.c that caused emTeX to complain that the created .idv file
+was corrupt:
+
+*** Fatal error 2106: corrupt DVI file (postamble not found)
+
+  I found the cause, though: you open it with mode "w", which is text
+mode. Changing this to "wb" solved the problem.
+\EndVerbatim
+
+
+
+
+
+
+
+
+
+\Section{Utilities}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Error and Warning Messages}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<signals messages: 2--4\><<<
+"Illegal storage address\n", `%2 segmentation`%
+"Floating-point\n",          `%3 `%
+"Interrupt with Cntr-C\n",   `%4 `% 
+>>>
+
+\<warn and err messages\><<<
+`<command line options`>,                            `%0`%
+"Insufficient memory\n",                                `%1`%
+`<signals messages: 2--4`>
+"Can't find/open file ``%s'\n",                         `%5`%
+>>>
+
+
+
+\<defines\><<<
+#define bad_arg            err_arg(0)
+#define bad_mem             err_i(1)
+>>>
+
+
+
+
+
+
+\<header functions\><<<
+static void err_i( ARG_I(int) );
+>>>
+
+\<functions\><<<
+`[
+static void err_i(n)      int  n
+
+;{  (IGNORED) fprintf(stderr,"--- error --- ");
+   (IGNORED) fprintf(stderr, "%s", warn_err_mssg[n]);
+   exit(EXIT_FAILURE);  
+}
+>>>
+
+
+
+\<header functions\><<<
+static void err_arg( ARG_I(int) );
+>>>
+
+\<functions\><<<
+`[
+static void err_arg(n)      int  n
+
+;{  (IGNORED) fprintf(stderr,"--- error --- ");
+   (IGNORED) fprintf(stderr, "%s", warn_err_mssg[n]);
+   exit(EXIT_FAILURE);  
+}
+>>>
+
+
+
+
+
+\<header functions\><<<
+static void warn_i_str( ARG_II(int,const Q_CHAR *) );
+>>>
+
+\<functions\><<<
+`[
+static void warn_i_str(n,str) 
+    int  n`;
+    const Q_CHAR *str
+
+;{  (IGNORED) fprintf(stderr,"--- warning --- ");
+   (IGNORED) fprintf(stderr,warn_err_mssg[n], str);
+}
+>>>
+
+
+% 
+% \<vars\><<<
+% static C_CHAR warning[] = "--- warning --- ";
+% >>>
+
+
+
+
+
+\<vars\><<<
+static const C_CHAR *warn_err_mssg[]={ `<warn and err messages`> "" };
+>>>
+
+\<resplit argv for windows\><<<
+#ifdef WIN32
+  /* See comments in tex4ht */
+  if (argc > 2) {
+    int  i, nargc;
+    char **nargv, **pnargv, **pargv;
+
+    nargv = (char **) xmalloc (2 * argc * sizeof (char *));
+    pnargv = nargv;
+    pargv = argv;
+    *pnargv++ = xstrdup (*pargv++);
+    *pnargv++ = xstrdup (*pargv++);
+    nargc = 2;
+
+    for (i=2; i < argc; i++) {
+      char *p, *q, *r;
+      p = q = *pargv++;
+      while (*p == ' ' || *p == '\t') {
+        p++;
+        q++;
+      }
+      while (*p != ' ' && *p != '\t' && *p) {
+        p++;
+        if (*p == '\0') {
+          *pnargv++ = xstrdup(q);
+          nargc++;
+        } else if (*p == ' ' || *p == '\t') {
+          r = p;
+          while (*p == ' ' || *p == '\t')
+            p++;
+          if (*p == '-' || *p == '\0') {
+            *r = '\0';
+            *pnargv++ = xstrdup(q);
+            nargc++;
+            q = p;
+          }
+        }
+      }
+    }
+ 
+    nargv[nargc] = NULL;
+    argv = nargv;
+    argc = nargc;
+  }
+#endif
+>>>
+
+
+
+\SubSection{Signals}
+
+\<h-include\><<<
+#include <signal.h>
+>>>
+
+\<header functions\><<<
+static void 
+`<CDECL`>
+sig_err(ARG_I(int));
+>>>
+
+
+
+
+\<functions\><<<
+`[
+static void
+`<CDECL`>
+sig_err(s)  int s
+;{
+  (void) signal(s,SIG_IGN);  `%ignore the signal`%
+  switch( s ){
+#ifdef SIGSEGV
+    case SIGSEGV: err_i(2); 
+#endif
+    case SIGFPE : err_i(3);  
+#if defined(SIGINT) && !defined(WIN32)
+    case SIGINT : err_i(4);
+#endif
+  } 
+  `<DJGPP signals`>
+}
+>>>
+
+
+
+
+Forgetting \`'_pascal' and \`'_cdecl' modifiers: Each C function may
+be either \`'_pascal' or \`'_cdecl'. This modifier defines how
+parameters are passed to it. Default for Smalltalk definition is
+\`'_cdecl'. Default for C functions depends on compiler settings, and
+you can use other types uncompatible with Smalltalk. In Windows API
+16-bit functions are \`'_pascal' and 32-bit \`'_cdecl'.
+ 
+
+
+\<CDECL\><<< 
+#ifdef CDECL
+CDECL
+#endif
+>>>
+ 
+
+
+
+\<set signals\><<<
+
+#ifdef SIGSEGV
+  (void) signal(SIGSEGV,sig_err);
+#endif
+  (void) signal(SIGFPE,sig_err);
+#ifdef KWIN32
+  `<KWIN32 signals`>
+#else 
+#ifdef SIGINT
+  (void) signal(SIGINT,sig_err);    `%Control-c, user interrupt`%
+#endif
+#endif
+>>>
+
+
+
+SIGFPE is handled by the C library, SIGSEGV too but not generated by
+the system, so it does nothing but is harmless 
+
+SetConsoleCtrlHandler is need to catch Ctrl+C and Ctrl+Break under
+Windows, SIGINT is not generated by the system.
+ 
+\<KWIN32 signals\><<<
+SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
+>>>
+
+
+
+SIGSEGV, SIGILL, SIGTERM not implemented in MS-DOS. They are supplied just for
+compatibility. Looks like that SIGINT is defined for windows but not for dos.
+\ifHtml[\HPage{more}\Verbatim
+    Eitan> I also wonder whether the WIN32 really needs to discard the
+    Eitan> following code fragment.
+
+signal() is supported through the standard libc, but is mostly
+ineffective. An example of the kind of code needed is attached.
+
+
+/* Interrupt handler. mt_exit() is a cleanup_and_exit function */
+#ifdef _WIN32
+BOOL sigint_handler(DWORD dwCtrlType)
+{
+  mt_exit(3);
+  return FALSE;      /* return value obligatory */
+}
+#else
+void sigint_handler (int sig)
+{
+  mt_exit(3);
+}
+#endif
+
+  /* Catch signals, so we clean up if the child is interrupted.
+     This emulates "trap 'whatever' 1 2 15".  */
+#ifdef _WIN32
+  SetConsoleCtrlHandler((PHANDLER_ROUTINE)sigint_handler, TRUE);
+#else
+# ifdef SIGINT
+  signal (SIGINT, sigint_handler);
+# endif
+# ifdef SIGHUP
+  signal (SIGHUP, sigint_handler);
+# endif
+# ifdef SIGTERM
+  signal (SIGTERM, sigint_handler);
+# endif
+#endif
+\EndVerbatim\EndHPage{}]\fi
+
+Msvc recommends not using printf, but we ignoring this recommendation
+here with the assumption that the recommendation relates to I/O
+interrupts that are not considered here.
+
+
+
+
+\<header functions\><<<
+#ifdef KWIN32
+static BOOL sigint_handler(ARG_I(DWORD));
+#endif
+>>>
+
+\<functions\><<<
+#ifdef KWIN32
+`[
+static BOOL sigint_handler(dwCtrlType)     DWORD dwCtrlType
+;{
+  err_i(32);
+  return FALSE;      `% return value obligatory `%
+}
+#endif
+>>>
+
+
+\SubSection{System Calls}
+
+
+
+\<vars\><<<
+static Q_CHAR command[255];
+static int system_return;
+>>>
+
+
+The library \`'<stdlib.h>' includes a function
+\`'int system(const char *cmdstring);'.   When cmdstring is NULL,
+the return value is 0 iff the platform does not support system calls.
+
+
+\<vars\><<<
+static BOOL system_yes;
+>>>
+
+\<main's init\><<<
+{                   C_CHAR   *yes = NULL;
+  system_yes = (`<system exist?`>);
+}
+>>>
+
+
+Solaris-? issues the command \`'-c: bad option(s)' if we check for the
+presence of the system function.
+
+
+
+\<system exist?\><<<
+#ifdef SYSTEM_FUNCTION_OK
+0
+#else
+system( yes ) != 0
+#endif
+>>>
+
+\<execute system command\><<<
+(IGNORED) call_sys(command);
+>>>
+
+
+
+
+\<header functions\><<<
+static void call_sys(ARG_I(Q_CHAR *));
+>>>
+
+
+
+
+\<functions\><<<
+`[
+static void call_sys(command)  Q_CHAR * command
+;{
+   if( *command ){
+      (IGNORED) printf("System call: %s\n", command);
+      system_return = system_yes?  (int) system(command) : -1;
+      (IGNORED) printf("%sSystem return: %d\n",
+            system_return? "--- Warning --- " : "", system_return );
+      if( always_call_sys ){ system_return = 0; }
+   }
+}
+>>>
+
+
+\<vars\><<<
+static BOOL always_call_sys = FALSE;
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Strings Concat and compare}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<defines\><<<
+#define eq_str(x,y) (!strcmp(x,y))
+>>>
+
+
+
+strcat should be in string.h, but c++ doesn't find it there.
+We use it just for concatenating an extension of 
+file name. Should have the interface
+\`'char *strcat( ARG_II(C_CHAR *, const Q_CHAR *) );'.
+
+\<header functions\><<<
+static void strct( ARG_II(C_CHAR *, const C_CHAR *) );
+>>>
+
+\<functions\><<<
+`[
+static void strct( str1, str2 ) 
+     C_CHAR * str1`;
+     const C_CHAR * str2
+
+;{   Q_CHAR * ch;
+   ch = str1 + (int) strlen((char *) str1);
+   (IGNORED) strcpy((char *)  ch, str2 );
+}
+>>>
+
+
+
+\SubSection{String into Int}
+
+\<header functions\><<<
+static long int get_long_int( ARG_I(Q_CHAR *) );
+>>>
+
+\<functions\><<<
+`[
+static long int get_long_int(str)     
+                         Q_CHAR   *str
+;{                  long int    i;
+                         Q_CHAR   *ch;
+   ch = str;   i = 0;
+   while( (*ch>= '0') && (*ch <='9') ){
+     i = 10*i + *(ch++) - '0';
+   }
+   return i;
+}
+>>>
+
+
+
+\SubSection{Dynamic Memory Alloc}
+
+
+\<defines\><<<
+#define m_alloc(typ,n) (typ *) malloc_chk((int) ((n) * sizeof(typ)))
+>>>
+
+
+
+\<header functions\><<<
+static void* malloc_chk(ARG_I(int));
+>>>
+
+\<functions\><<<
+`[
+static void* malloc_chk( n ) int n
+;{      void* p;
+   if((p = (void *) malloc( (size_t) n)) == NULL ) bad_mem;
+   return p;
+}
+>>>
+
+
+
+
+
+\<header functions\><<<
+static void* r_alloc(ARG_II(void *, size_t));
+>>>
+
+\<functions\><<<
+`[
+static void* r_alloc( q, n ) 
+      void   *q`;
+      size_t  n
+;{    void*   p;
+   if((p = (void *) realloc( q, (size_t) n)) == NULL) bad_mem;
+   return p;
+}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{myfseek}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ 
+ 
+The ftell() and fseek() are not consistent in ms-windows.  The ftell()
+accounts for \Verb=<cr>= and \Verb=<lf>= in the byte stream, where
+fseek() ignore the <cr> bytes.  A \Verb=READ_BIN_FLAGS= instead of
+\Verb=READ_TEXT_FLAGS= seems to solve the problem.
+
+\<CopyTo read flags\><<<
+READ_BIN_FLAGS
+>>>
+
+A possible alternative is to define a private fseek.
+
+
+ 
+% 
+% 
+% (IGNORED) myfseek(in_file, (long) end_loc, `<abs file addr`>);  
+% 
+% 
+% \<header functions\><<<
+% static BOOL scan_str( ARG_III(C_CHAR *, BOOL, FILE *) );
+% >>>
+% 
+% \<functions\><<<
+% `[
+% static BOOL  scan_str(str,flag,file)     
+%                          Q_CHAR   *str`;
+%                          BOOL   flag`;
+%                          FILE*  file
+% ;{                       Q_CHAR *p;
+% 
+% >>>
+% 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Pattern Recognition Functions}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+When  failure (false \''status') arises, the input line is consumed to
+its end. 
+The \''_until' functions place in ''match[i]' the string found.
+
+\<header functions\><<<
+static BOOL scan_until_end_str( ARG_IV(const C_CHAR *, int, BOOL, FILE *) );
+>>>
+
+\<functions\><<<
+`[
+static BOOL  scan_until_end_str(str,n,flag,file)     
+                         const C_CHAR   *str`;
+                         int    n`;
+                         BOOL   flag`;
+                         FILE*  file
+;{                       Q_CHAR   *p; 
+                         int i;             
+   if( !flag ) { return flag; }
+   p = match[n];  i = 0;
+   while( TRUE ){
+     if( (i+1) >= max_match[n] ){
+        max_match[n] += 10;
+        p = match[n] = (Q_CHAR *)
+                     r_alloc((void *) match[n], (size_t) max_match[n]);
+     }
+     p[i] = (char) (eoln_ch = getc(file));
+     if( (eoln_ch == (int) '\n') || (eoln_ch == EOF) ){  break; }
+     i++;
+   }
+   p[i] = '\0';
+   i -= (int) strlen(str);
+   if( i>= 0 ){  return eq_str(p+i,str);   }
+   return FALSE;
+}
+>>>
+
+
+
+\<vars\><<<
+static Q_CHAR* match[10];
+static int   max_match[10];
+>>>
+
+
+\<main's init\><<<
+{          int i;
+  for( i=0;  i<=9; i++){
+    match[i] = (Q_CHAR *) malloc(70);
+    max_match[i] = 70;
+  }
+}
+>>>
+
+
+\<header functions\><<<
+static BOOL scan_until_str( ARG_IV(const C_CHAR *, int, BOOL, FILE *) );
+>>>
+
+\<functions\><<<
+`[
+static BOOL  scan_until_str(str,n,flag,file)     
+                         const C_CHAR   *str`;
+                         int    n`;
+                         BOOL   flag`;
+                         FILE*  file
+;{                       Q_CHAR   *p, ch;              
+                         int i, j;             
+   if( !flag ) { return flag; }
+   p = match[n];  i = 0;
+   while( TRUE ){
+     ch =  (char) (eoln_ch = getc(file));
+     if( (eoln_ch == (int) '\n') || (eoln_ch == EOF) ){  return FALSE; }
+     if( (i+1) >= max_match[n] ){
+        max_match[n] += 10;
+        p = match[n] = (Q_CHAR *)
+                     r_alloc((void *) match[n], (size_t) max_match[n]);
+     }
+     p[i++] = ch;
+     j =  i - (int) strlen(str);
+     if( j>= 0 ){
+       p[i] = '\0';
+       if( eq_str(p+j,str) ) { return TRUE;  }
+     }
+   }
+}
+>>>
+
+
+
+
+
+
+\<header functions\><<<
+static BOOL scan_str( ARG_III(const C_CHAR *, BOOL, FILE *) );
+>>>
+
+\<functions\><<<
+`[
+static BOOL  scan_str(str,flag,file)     
+                         const C_CHAR   *str`;
+                         BOOL   flag`;
+                         FILE*  file
+;{                        const Q_CHAR *p;
+                         int temp_eoln_ch;              
+   if( !flag ) { return flag; }
+   p = str;
+   while( *p != '\0' ){
+     if( *(p++) != (temp_eoln_ch = getc(file)) ) {
+        while( (temp_eoln_ch != (int) '\n')
+            && (temp_eoln_ch != EOF) ){ temp_eoln_ch = getc(file); }
+        eoln_ch = temp_eoln_ch;  return FALSE;
+     }
+   }
+   return TRUE;
+}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\SubSection{Shorthands and Mnemonics}
+
+
+
+\<defines\><<<
+#ifndef TRUE
+#define TRUE 1
+#endif
+#ifndef FALSE
+#define FALSE 0
+#endif
+#ifndef BOOL
+#define BOOL int
+#endif
+>>>
+
+
+
+\<defines\><<<
+#define eq_str(x,y) (!strcmp(x,y))
+>>>
+
+
+
+%----------------------------------------------------
+
+\OutputCodE\<t4ht.c\>
+
+\bye
+
+
+

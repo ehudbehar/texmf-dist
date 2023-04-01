@@ -1,0 +1,848 @@
+% $Id: tex4ht-jats.tex 269 2020-03-03 23:06:07Z karl $
+% compile 3 times: latex tex4ht-jats
+%           or   xhlatex tex4ht-jats "html,3,sections+"
+%
+% Copyright 2009-2022 TeX Users Group
+% Copyright 2000-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+%%%%%%%%%%%%%%%%%% load style files %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifx \HTML\UnDef
+   \def\HTML{jats}                   
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}         
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common.tex}
+\input{tex4ht-cpright.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Preamble}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<jats\><<<
+% jats.4ht (|version), generated from |jobname.tex
+% Copyright 2022 TeX Users Group
+|<TeX4ht copywrite|>
+>>>
+
+  
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Basic information}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+JATS support in TeX4ht is based on HTML and MathML configurations. 
+Unsupported elements will be converted using make4ht DOM filters. 
+Filters will be used also for the document structure, as JATS wants some
+elements in the back (bibliography, etc.)
+
+Only basic structures will be configured by hand in this configuration 
+file.
+
+We support the Journal Archiving and Interchange Tag Library NISO JATS 
+Version 1.3. Documentation for tags is available at:
+
+\Link{https://jats.nlm.nih.gov/archiving/tag-library/1.3/chapter/getting-started.html}{}
+https://jats.nlm.nih.gov/archiving/tag-library/1.3/chapter/getting-started.html
+\EndLink
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Package configurations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Basic system}
+
+\<configure jats tex4ht\><<<
+\special{t4ht.xml}
+\Configure{ext}{xml}
+|<xml structure|>
+|<document structure|>
+|<xml:lang declarations|>
+|<basic hyperlinks|>
+|<basic pictures|>
+|<basic fonts|>
+|<basic jats mathml|>
+>>>
+
+\<configure jats latex\><<<
+|<latex fonts|>
+% We must override MathML's version of basic font commands.
+\AtBeginDocument{%
+|<mathml fonts|>
+}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Classes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<configure jats article\><<<
+|<article,report,book|>
+|<article,report|>
+>>>
+
+\<configure jats book\><<<
+|<article,report,book|>
+|<book,report|>
+>>>
+
+\<configure jats report\><<<
+|<article,report,book|>
+|<article,report|>
+|<book,report|>
+>>>
+
+Shared configurations for base LaTeX classes.
+
+\<article,report,book\><<<
+|<shared latex classes|>
+>>>
+
+Configurations that are shared only for article and report
+
+\<article,report\><<<
+|<shared article,report|>
+>>>
+
+\<book,report\><<<
+|<shared book,report|>
+>>>
+
+\section{Configurations for Koma Script}
+
+\<configure jats scrartcl\><<<
+|<scr article,report,book|>
+|<scr article,report|>
+>>>
+
+\<configure jats scrbook\><<<
+|<scr article,report,book|>
+|<scr report,book|>
+>>>
+
+\<configure jats scrreprt\><<<
+|<scr article,report,book|>
+|<scr article,report|>
+|<scr report,book|>
+>>>
+
+\<scr article,report,book\><<<
+|<shared latex classes|>
+>>>
+
+\<scr article,report\><<<
+|<shared article,report|>
+>>>
+
+\<scr report,book\><<<
+|<shared book,report|>
+>>>
+
+\section{Configurations for AMS classes}
+
+\<configure jats amsart\><<<
+|<ams art,proc,book|>
+|<ams art,proc|>
+>>>
+
+\<configure jats amsproc\><<<
+|<ams art,proc,book|>
+|<ams proc,book|>
+|<ams art,proc|>
+>>>
+
+\<configure jats amsbook\><<<
+|<ams art,proc,book|>
+|<ams proc,book|>
+>>>
+
+|<ams art,proc|><<<
+>>>
+
+\<ams proc,book\><<<
+|<latex numbered chapters|>
+>>>
+
+\<ams art,proc,book\><<<
+|<latex maketitle|>
+|<latex numbered sections|>
+|<latex floats|>
+|<abstract|>
+|<latex tables|>
+|<latex footnotes|>
+|<latex quotes|>
+|<latex lists|>
+>>>
+
+\section{Configurations for Memoir}
+
+\<configure jats memoir\><<<
+|<shared latex classes|>
+|<shared article,report|>
+|<shared book,report|>
+>>>
+
+\section{Shared class configurations}
+\<shared latex classes\><<<
+|<latex maketitle|>
+|<latex sections|>
+|<latex floats|>
+|<latex tables|>
+|<latex footnotes|>
+|<latex quotes|>
+|<latex lists|>
+>>>
+
+\<shared article,report\><<<
+|<abstract|>
+>>>
+
+\<shared book,report\><<<
+|<latex chapters|>
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Basic system configurations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<xml structure\><<<
+\Configure{VERSION}{\HCode{<?xml version="1.0" encoding="UTF-8"?>\Hnewline}}
+
+% select JATS version
+\NewConfigure{DtdVersion}{1}
+\Configure{DtdVersion}{1.3}
+
+\Configure{DOCTYPE}{\HCode{<!DOCTYPE article PUBLIC "-//NLM//DTD JATS (Z39.96) Journal Publishing DTD v\a:DtdVersion\space 20130915//EN" "http://jats.nlm.nih.gov/archiving/\a:DtdVersion/JATS-archivearticle1-mathml3.dtd">\Hnewline}}
+
+% XML configuratins
+\edef\html:xmlns{}
+\NewConfigure{xmlns}[2]{\concat:config\html:xmlns{xmlns:#1="#2"\Hnewline}}
+\Configure{xmlns}{xlink}{http://www.w3.org/1999/xlink}
+\Configure{xmlns}{mml}{http://www.w3.org/1998/Math/MathML}
+
+\Configure{HTML}{\HCode{<article dtd-version="\a:DtdVersion" \html:xmlns xml:lang="\Get:Language">\Hnewline}}{\HCode{\Hnewline</article>}}
+\Configure{@HEAD}{}
+\Configure{HEAD}{\HCode{<front>}}{\HCode{</front>}}
+% Add header structure
+% Journal info in <journal-meta>. It needs to be provided fully from the user configuration
+\NewConfigure{JournalMeta}{1}
+% basic article meta can be reconstructed from \title and \author
+% 
+% Title needs to be placed at the correct place by DOM filter
+\Configure{TITLE}{\HCode{<article-title>}}{\HCode{</article-title>}}
+\NewConfigure{ArticleMeta}{1}
+  \Configure{ArticleMeta}{
+  \HCode{<article-meta>}%
+    % title from \title command is placed by make4ht DOM filter. If you want more complex title, 
+    % use \Configure{TitleGroup}
+    \a:TitleGroup%
+    \JATS:Contributors%
+  \HCode{</article-meta>}%
+}
+% enable to configure contributors
+\def\JATS:Contributors{}
+\NewConfigure{Contributor}[1]{\concat:config\JATS:Contributors{#1}}
+\NewConfigure{TitleGroup}{1}
+
+% insert metas into document header
+\Configure{@HEAD}{\a:JournalMeta}
+\Configure{@HEAD}{\a:ArticleMeta}
+>>>
+
+
+\<xml:lang declarations\><<<
+\def\Declare:Language#1#2{%
+\expandafter\gdef\csname rfclang#1\endcsname{#2}%
+}
+\def\Get:Language{%
+\ifx\bbl@main@language\@undefined en-US%  
+\else%
+\expandafter\ifdefined\csname rfclang\bbl@main@language\endcsname \csname rfclang\bbl@main@language\endcsname\fi%
+\fi%
+}
+
+\Declare:Language{UKenglish}{en}
+\Declare:Language{USenglish}{en}
+\Declare:Language{latex}{en}
+\Declare:Language{acadian}{fr}
+\Declare:Language{albanian}{sq}
+\Declare:Language{american}{en}
+\Declare:Language{amharic}{am}
+\Declare:Language{arabic}{ar}
+\Declare:Language{armenian}{hy}
+\Declare:Language{australian}{en}
+\Declare:Language{austrian}{de}
+\Declare:Language{basque}{eu}
+\Declare:Language{bengali}{bn}
+\Declare:Language{brazilian}{pt}
+\Declare:Language{brazil}{pt}
+\Declare:Language{breton}{br}
+\Declare:Language{british}{en}
+\Declare:Language{bulgarian}{bg}
+\Declare:Language{canadian}{en}
+\Declare:Language{canadien}{fr}
+\Declare:Language{catalan}{ca}
+\Declare:Language{croatian}{hr}
+\Declare:Language{czech}{cs}
+\Declare:Language{danish}{da}
+\Declare:Language{divehi}{dv}
+\Declare:Language{dutch}{nl}
+\Declare:Language{english}{en}
+\Declare:Language{esperanto}{eo}
+\Declare:Language{estonian}{et}
+\Declare:Language{finnish}{f\/i}
+\Declare:Language{francais}{fr}
+\Declare:Language{french}{fr}
+\Declare:Language{galician}{gl}
+\Declare:Language{germanb}{de}
+\Declare:Language{german}{de}
+\Declare:Language{greek}{el}
+\Declare:Language{hebrew}{he}
+\Declare:Language{hindi}{hi}
+\Declare:Language{hungarian}{hu}
+\Declare:Language{icelandic}{is}
+\Declare:Language{interlingua}{ia}
+\Declare:Language{irish}{ga}
+\Declare:Language{italian}{it}
+\Declare:Language{kannada}{kn}
+\Declare:Language{khmer}{km}
+\Declare:Language{korean}{ko}
+\Declare:Language{lao}{lo}
+\Declare:Language{latin}{la}
+\Declare:Language{latvian}{lv}
+\Declare:Language{lithuanian}{lt}
+\Declare:Language{lowersorbian}{dsb}
+\Declare:Language{magyar}{hu}
+\Declare:Language{malayalam}{ml}
+\Declare:Language{marathi}{mr}
+\Declare:Language{naustrian}{de}
+\Declare:Language{newzealand}{en}
+\Declare:Language{ngerman}{de}
+\Declare:Language{norsk}{no}
+\Declare:Language{norwegiannynorsk}{nn}
+\Declare:Language{nynorsk}{no}
+\Declare:Language{occitan}{oc}
+\Declare:Language{oldchurchslavonic}{cu}
+\Declare:Language{persian}{fa}
+\Declare:Language{polish}{pl}
+\Declare:Language{polutonikogreek}{el}
+\Declare:Language{portuges}{pt}
+\Declare:Language{portuguese}{pt}
+\Declare:Language{romanian}{ro}
+\Declare:Language{romansh}{rm}
+\Declare:Language{russian}{ru}
+\Declare:Language{samin}{se}
+\Declare:Language{sanskrit}{sa}
+\Declare:Language{scottish}{gd}
+\Declare:Language{serbian}{sr}
+\Declare:Language{serbo-croatian}{sh}
+\Declare:Language{slovak}{sk}
+\Declare:Language{slovene}{sl}
+\Declare:Language{slovenian}{sl}
+\Declare:Language{spanish}{es}
+\Declare:Language{swedish}{sv}
+\Declare:Language{tamil}{ta}
+\Declare:Language{telugu}{te}
+\Declare:Language{thai}{th}
+\Declare:Language{tibetan}{bo}
+\Declare:Language{turkish}{tr}
+\Declare:Language{turkmen}{tk}
+\Declare:Language{ukrainian}{uk}
+\Declare:Language{uppersorbian}{hsb}
+\Declare:Language{urdu}{ur}
+\Declare:Language{vietnamese}{vi}
+\Declare:Language{welsh}{cy}
+>>>
+
+\<document structure\><<<
+\Configure{HtmlPar}
+  {\EndP\HCode{|<show input line no|><p \csname a:!P\endcsname>}}
+  {\EndP\HCode{|<show input line no|><p \csname a:!P\endcsname>}}
+  {\Tg</p>}%
+  {\Tg</p>}%
+>>>
+
+\<show input line no\><<<
+<!--l. \the\inputlineno-->%
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Hyperlinks}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<basic hyperlinks\><<<
+\Configure{Link}{xref}{rid=}{id=}{}   
+\LinkCommand\ExternalLink{ext-link,xlink:href,id}
+>>>
+
+
+\<url links\><<<
+\Configure{url}%
+     {\tmp:toks{#1}\ExternalLink[\noexpand\the\tmp:toks]{}{}{\let\UrlBigBreaks\empty
+                         \let\UrlBreaks\empty #1}\EndExternalLink}
+>>>
+
+\<hyperref links\><<<
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Pictures}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<basic pictures\><<<
+\Configure{IMG}
+  {\ht:special{t4ht=<graphic\Hnewline xlink:href="\a:imgdir}}
+  {\ht:special{t4ht=" xlink:title="}}
+  {" }
+  {\ht:special{t4ht=" }}
+  {\ht:special{t4ht=\xml:empty>}}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Math}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+MathML in JATS must use the mml: prefix
+
+\<basic jats mathml\><<<
+\Configure{mathml}{mml:}
+>>>
+
+Inline and display math should use different elements for their
+inclusion. We need to keep stack of the opened elements, as 
+math can be nested.
+
+For some reason, this configuration is called too early, resulting
+in compilation error. We thus use AtBeginDocument to postpone it.
+
+\<basic jats mathml\><<<
+\edef\math:type:inline{display="inline" }
+
+\ifdefined\AtBeginDocument
+\AtBeginDocument{
+  \Configure{DviMathML}{%
+    \ifx\a:@math\math:type:inline%
+    \PushStack\math:types{inline-formula}%
+    \HCode{<inline-formula>}%
+    \else%
+    \HCode{<disp-formula>}%
+    \PushStack\math:types{disp-formula}%
+    \fi%
+  }{\PopStack\math:types\:temp\HCode{</\:temp>}}%
+}%
+\fi
+
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Fonts}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+JATS doesn't support any attributes for fonts, so the information
+about font name and size is lost.
+
+\<basic fonts\><<<
+\Configure{htf}{0}{+}{<italic}{}{}{}{}{>}{</italic>}
+\Configure{htf}{4}{+}{<sc}{}{}{}{}{>}{</sc>}
+\Configure{htf}{6}{+}{<underline}{}{}{}{}{>}{</underline>}
+>>>
+
+\<latex fonts\><<<
+\Configure{underline}
+   {\HCode{<underline>}\:gobble}
+   {\HCode{</underline>}}
+
+\Configure{textsuperscript}
+  {\HCode{<sup>}}
+  {\HCode{</sup>}}
+
+\Configure{textsubscript}
+  {\HCode{<sub>}}
+  {\HCode{</sub>}}
+>>>
+
+The basic font commands are redefined in mathml.4ht, so we need to redefine them again 
+
+\<mathml fonts\><<<
+\Configure{texttt}
+   {\ifmathml\providemtextclass{\mml:class="texttt"
+         mathvariant="monospace" }\else\Protect\HCode{<monospace>}\NoFonts\fi}
+   {\ifmathml\else\EndNoFonts\Protect\HCode{</monospace>}\fi}%
+\Configure{textit}
+   {\ifmathml \providemtextclass{\mml:class="textit"
+         mathvariant="italic" }\else\Protect\HCode{<italic>}\NoFonts\fi}
+   {\ifmathml\else\EndNoFonts\Protect\HCode{</italic>}\fi}%
+\Configure{textrm}
+   {\ifmathml \providemtextclass{\mml:class="textrm"
+         mathvariant="normal" }\else\Protect\HCode{<roman>}\NoFonts\fi}
+   {\ifmathml\else\EndNoFonts\Protect\HCode{</roman>}\fi}%
+\Configure{textup}
+   {\ifmathml \providemtextclass{\mml:class="textup"
+         mathvariant="normal" }\else\Protect\HCode{<roman>}\NoFonts\fi}
+   {\ifmathml\else\EndNoFonts\Protect\HCode{</roman>}\fi}%
+\Configure{textsl}
+   {\ifmathml \providemtextclass{\mml:class="textsl"
+         mathvariant="italic" }\else\Protect\HCode{<italic>}\NoFonts\fi}
+   {\ifmathml\else\EndNoFonts\Protect\HCode{</italic>}\fi}%
+\Configure{textsf}
+   {\ifmathml \providemtextclass{\mml:class="textsf"
+         mathvariant="sans-serif" }\else\Protect\HCode{<sans-serif>}\NoFonts\fi}
+   {\ifmathml\else\EndNoFonts\Protect\HCode{</sans-serif>}\fi}%
+\Configure{textbf}
+   {\ifmathml \providemtextclass{\mml:class="textbf"
+         mathvariant="bold" }\else\Protect\HCode{<bold>}\NoFonts\fi}
+   {\ifmathml\else\EndNoFonts\Protect\HCode{</bold>}\fi}%
+\Configure{textsc}
+   {\ifmathml \providemtextclass{\mml:class="textsc"
+         mathvariant="normal" }\else\Protect\HCode{<sc>}\NoFonts\fi}
+   {\ifmathml\else\EndNoFonts\Protect\HCode{</sc>}\fi}%
+\Configure{emph}
+   {\ifmathml \providemtextclass{\mml:class="emph"
+         mathvariant="italic" }\else\Protect\HCode{<italic>}\NoFonts\fi}
+   {\ifmathml\else\EndNoFonts\Protect\HCode{</italic>}\fi}%
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Document structure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Maketitle}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+JATS expects specific elements in the document metadata. We produce some custom
+elements, which are expected to be removed in the make4ht post-processing. Contents
+of maketitle should be moved to the metadata block and removed from the document 
+body.
+
+\<latex maketitle\><<<
+\Configure{maketitle}
+   {\ifvmode \IgnorePar\fi \EndP |<title for TITLE|>%
+    \HCode{<maketitle>}}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</maketitle>}}
+   {\NoFonts\IgnorePar\HCode{<article-title>}\IgnorePar}
+   {\HCode{</article-title>}\IgnoreIndent\EndNoFonts}
+>>>
+
+This macro is used to print zeropaded days and months in the ISO date attribute
+
+\<latex maketitle\><<<
+\def\date:zeropad#1{\ifnum #1<10 0\fi#1}
+>>>
+
+
+\<latex maketitle\><<<
+\Configure{thanks author date and} 
+   {\ifvmode \IgnorePar\fi\EndP \HCode{<aff>}}
+   {\ifvmode \IgnorePar\fi\EndP \HCode{</aff>}}
+   {\ifvmode \IgnorePar\fi\EndP \HCode{<contrib contrib-type="author"><name><string-name>}}
+   {\ifvmode \IgnorePar\fi\EndP \HCode{</string-name></name></contrib>}}
+   {\ifvmode \IgnorePar\fi\EndP \HCode{<date iso-8601-date="\the\year-\date:zeropad{\the\month}-\date:zeropad{\the\day}"><string-date>}}
+   {\ifvmode \IgnorePar\fi\EndP \HCode{</string-date></date>}}
+   {\HCode{</string-name></name></contrib><contrib contrib-type="author"><name><string-name>}}
+   {\HCode{}}
+
+\Configure{thank}
+{\HCode{<affref rid="\the\c@footnote">}} 
+{\HCode{</affref>}}
+{\HCode{<aff id="\the\c@footnote"><affmark>}}
+{\HCode{</affmark>}} {\HCode{</aff>}}
+>>>
+
+\<title for TITLE\><<<
+{\Configure{maketitle}{}{}{}{}%
+% \let\thanks|=\:gobble
+\def\TeX{TeX}%
+\def\mbox{\hbox}%
+\def\gobble:font##1##2{##2}\:TITLE: \no:fonts
+\def\footnotemark[##1]{}%
+\def\:hashintitle{\protect\symbol{35}}
+\let\#\:hashintitle
+\NoFonts\Tag{TITLE+}{\@title}\EndNoFonts}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Sections}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<latex chapters\><<<
+|<latex numbered chapters|>
+|<latex unnumbered chapters|>
+>>>
+
+
+\<latex numbered chapters\><<<
+\Configure{chapter}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\TitleMark\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+
+\ConfigureMark{chapter}
+   {\if@mainmatter
+       \HCode{<label>}\chaptername\ \thechapter\HCode{</label>}\fi}
+
+
+\Configure{appendix}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\TitleMark\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+
+\ConfigureMark{appendix}{\HCode{<label>}%
+   \appendixname\ \thechapter\HCode{</label>}}
+>>>
+
+\<latex unnumbered chapters\><<<
+\Configure{likechapter}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+>>>
+
+\<latex sections\><<<
+|<latex numbered sections|>
+|<latex unnumbered sections|>
+>>>
+
+\<latex numbered sections\><<<
+\Configure{section}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\TitleMark\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+
+\ConfigureMark{section}
+   {\ifnum \c:secnumdepth>\c@secnumdepth \expandafter\:gobble
+    \else
+       \HCode{<label>}\@seccntformat{section}%
+       \HCode{</label>}\fi }
+
+
+\Configure{subsection}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\TitleMark\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+
+\ConfigureMark{subsection}
+   {\ifnum \c:secnumdepth>\c@secnumdepth \expandafter\:gobble
+    \else
+       \HCode{<label>}\@seccntformat{section}%
+       \HCode{</label>}\fi }
+
+
+\Configure{subsubsection}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\TitleMark\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+
+\ConfigureMark{subsubsection}
+   {\ifnum \c:secnumdepth>\c@secnumdepth \expandafter\:gobble
+    \else
+       \HCode{<label>}\@seccntformat{section}%
+       \HCode{</label>}\fi }
+
+
+\Configure{paragraph}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+
+>>>
+
+\<latex unnumbered sections\><<<
+\Configure{likesection}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+
+\Configure{likesubsection}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+
+\Configure{likesubsubsection}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+
+\Configure{likeparagraph}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{<sec>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\IgnorePar\HCode{</sec>\Hnewline}}
+   {\HCode{<title>}\space\HtmlParOff}
+   {\HCode{</title>}\HtmlParOn \ShowPar\par}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Abstracts}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<abstract\><<<
+\ConfigureEnv{abstract}
+{\ifvmode\IgnorePar\fi\EndP\HCode{<abstract>\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\HCode{</abstract>}\par}{}{}
+
+\Configure{abstracttitle}{\ifvmode\IgnorePar\fi\EndP\HCode{<label>}\HtmlParOff\NoFonts}
+   {\HCode{</label>}\EndNoFonts\HtmlParOn\par}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Floats}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<latex floats\><<<
+
+\Configure{float}
+   {\ifOption{refcaption}{}{\csname par\endcsname\ShowPar \leavevmode}}
+     {\IgnorePar\EndP\HCode{<fig>}}
+   {\ifvmode \IgnorePar \fi\EndP
+     \HCode{</fig>}\csname par\endcsname\ShowPar}
+
+\ConfigureEnv{figure}
+{\IgnorePar\EndP\HCode{<fig>\Hnewline}%
+    \bgroup \Configure{float}{\ShowPar}{}{}%    
+   }
+   {\egroup
+   \IgnorePar\EndP\HCode{</fig>}|<try env inline par|>\par}
+   {}{}
+
+
+\Configure{caption}{\IgnorePar\EndP\HCode{<label>}}
+   {: } {\HCode{</label><caption>}\noindent\ShowPar}
+   {\HCode{</caption>}\HCode{<!--tex4ht:label?:
+   \cur:th\:currentlabel\space-->}%
+}
+>>>
+%%%%%%%%%%%%%%%%%%%
+\section{Tables}
+%%%%%%%%%%%%%%%%%%%
+
+\<latex tables\><<<
+\ConfigureEnv{table}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{<table-wrap position="float">}
+   \Configure{float}{}{}{}{}
+   }
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</table-wrap>}\par\ShowPar}
+   {}{}
+
+\ConfigureEnv{tabular}
+     {\Configure{noalign}%
+{\f:tabular\d:tabular \HCode{<tr><td colspan="\ar:cnt">}}
+{\HCode{</td></tr>}\pend:def\TableNo{0}\c:tabular\e:tabular}%
+%
+\IgnorePar\ifvmode\else\HCode{<!--tex4ht:inline-->}\fi
+\EndP\PushStack\Col:Marg\AllColMargins
+}
+{\PopStack\Col:Marg\AllColMargins\ShowPar
+\Configure{noalign}{}{}%
+%
+\ShowPar
+%
+}{}{}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Footnotes}
+%%%%%%%%%%%%%%%%%%%%%
+
+\<latex footnotes\><<<
+\Configure{footnotemark}{\bgroup\NoFonts\HCode{<fn symbol="}\Configure{textsuperscript}{}{}}{\HCode{">}\EndNoFonts\egroup}
+% suppress footnote number in footnotext, it was already used in footnotemark
+\Configure{footnotetext}{\NoFonts\ShowPar\setbox0=\vbox\bgroup}
+{\egroup\EndNoFonts\SaveEndP\par\ShowPar\normalsize}% force new paragraph and normal font size
+{\EndP\RecallEndP\HCode{</fn>}}%
+>>>
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Quotes}
+%%%%%%%%%%%%%%%%%%%%
+
+\<latex quotes\><<<
+\ConfigureEnv{quote}
+   {}{}
+   {\ifvmode\IgnorePar\fi\EndP%
+    \HCode{<disp-quote>}}
+   {\IgnorePar\EndP\HCode{</disp-quote>}\ShowPar\ShowIndent}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Lists}
+%%%%%%%%%%%%%%%%%%%%
+
+List utilities, copied from the HTML configuration. We need to
+keep track of the 
+
+\<save end:itm\><<<
+\PushMacro\end:itm
+>>>
+
+
+\<recall end:itm\><<<
+\PopMacro\end:itm \global\let\end:itm \end:itm 
+>>>
+
+\<list par\><<<
+\par\ShowPar
+>>>
+
+JATS list have a similar structure, so we can use a custom macro that
+takes just the environment name and list-type attribute:
+
+\<latex lists\><<<
+\def\ConfigJatsList#1#2{%
+\ConfigureList{#1}%
+   {\ifvmode\IgnorePar\fi\EndP\EndP\HCode{<list list-type="#2">}%
+       |<save end:itm|>\global\let\end:itm=\empty}
+   {|<recall end:itm|>\EndP\HCode{</list-item></list>}}
+   {\end:itm\global\def\end:itm{\EndP\Tg</list-item>}\DeleteMark}
+   {\HCode{<list-item>}|<list par|>}
+ }
+
+\ConfigJatsList{itemize}{bulleted}
+\ConfigJatsList{enumerate}{order}
+>>>
+
+Description lists have a little bit different structure, so we need to configure
+them separatelly.
+
+\<latex lists\><<<
+\ConfigureList{description}%
+   {\ifvmode\IgnorePar\fi\EndP\HCode{<def-list>}%
+      |<save end:itm|>\global\let\end:itm=\empty}
+   {|<recall end:itm|>\EndP\HCode{</def></def-item></def-list>}\ShowPar}
+   {\end:itm \global\def\end:itm{\EndP\HCode{</def></def-item>}}\HCode{<def-item><term>}\NoFonts\HtmlParOff}
+   {\EndNoFonts\HCode{</term><def>}\HtmlParOn|<list par|>}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Packages}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<configure jats url\><<<
+|<url links|>
+>>>
+
+\<configure jats hyperref\><<<
+|<hyperref links|>
+>>>
+
+\endinput

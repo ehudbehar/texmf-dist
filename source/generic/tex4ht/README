@@ -1,0 +1,23 @@
+$Id: README 924 2021-05-02 22:55:22Z karl $
+This file is public domain.  Originally written 2010, Karl Berry.
+
+Sources for TeX4ht, https://tug.org/tex4ht.
+
+Eitan Gurari (the original author of tex4ht) devised his own literate
+programming system, which supports multiple output files from a single
+source (https://ctan.org/pkg/protex). The files here are such "literate"
+source files. They are processed with (ht)(la)tex, as given by commands
+at the top of each file and in the Makefile.
+
+The extra-bin subdirectory contains do-nothing scripts named xmllint
+and vcss, which are called for validation via tex4ht-env.tex.  (Of
+course they won't be used unless ./extra-bin is early enough in PATH.)
+The real xmllint can take a long time to run, and fails to find the
+DTD on the tex4ht-docbook*.html output.
+
+The Makefile has commands to build the derived files (e.g., *.4ht) from
+the *.tex sources, compare them against an installed system, etc.  Much
+work remains to be done to make it a clean build, but it's a start.
+
+Bug reports and patches are most welcome. See https://tug.org/tex4ht
+for contact and other information.

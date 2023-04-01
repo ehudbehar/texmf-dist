@@ -1,0 +1,2375 @@
+% \iffalse meta-comment
+%
+% File: expkv.dtx Copyright (C) 2020-2023 Jonathan P. Spratte
+%
+% This work  may be  distributed and/or  modified under  the conditions  of the
+% LaTeX Project Public License (LPPL),  either version 1.3c  of this license or
+% (at your option) any later version.  The latest version of this license is in
+% the file:
+%
+%   http://www.latex-project.org/lppl.txt
+%
+% ------------------------------------------------------------------------------
+%
+%<*driver>^^A>>=
+\def\expkvDocNoGenerate{}
+\input expkv-bundle.ins
+\generate{\file{expkv.sty}{\from{expkv.dtx}{pkg}}}
+\generate{\file{expkv.tex}{\from{expkv.dtx}{tex}}}
+\generate{\file{t-expkv.tex}{\from{expkv.dtx}{ctx}}}
+\endbatchfile
+%</driver>^^A=<<
+% \fi
+%
+% \section{\expkv}
+%^^A the LaTeX package >>=
+% \subsection{The \LaTeX\ Package}
+% First we set up the \LaTeX\ package. That one doesn't really do much except
+% |\input|ting the generic code and identifying itself as a package. Additional
+% an |all| option is declared to load all the sub modules in one go.
+% \gobbledocstriptag
+%<*pkg>
+%    \begin{macrocode}
+\def\ekv@tmp
+  {%
+    \ProvidesFile{expkv.tex}%
+      [\ekvDate\space v\ekvVersion\space an expandable key=val implementation]%
+  }
+\input{expkv.tex}
+\ProvidesPackage{expkv}%
+  [\ekvDate\space v\ekvVersion\space an expandable key=val implementation]
+\let\ekv@tmp\@empty
+\DeclareOption{all}
+  {%
+    \def\ekv@tmp
+      {\RequirePackage{expkv-pop,expkv-cs,expkv-def,expkv-opt}}%
+  }
+\ProcessOptions\relax
+\ekv@tmp
+%    \end{macrocode}
+% \gobbledocstriptag
+%</pkg>
+%^^A=<<
+%^^A the ConTeXt module >>=
+% \subsection{The \ConTeXt\ module}
+% This is pretty straight forward, we just have to change the error throwing
+% mechanism for \ConTeXt\ (the approach taken for plain and \LaTeX\ breaks in
+% \ConTeXt, effectively breaking \ConTeXt, dropping you in an interactive \TeX\
+% session with almost no means of escape).
+% \gobbledocstriptag
+%<*ctx>
+%    \begin{macrocode}
+\writestatus{loading}{ConTeXt User Module / expkv}
+\unprotect
+\input expkv.tex
+\long\def\ekv@err@collect#1\par#2%
+  {\directlua{tex.error[[\detokenize{#2} Error: #1]]}}
+\writestatus{loading}
+  {ConTeXt User Module / expkv / Version \ekvVersion\space loaded}
+\protect\endinput
+%    \end{macrocode}
+% \gobbledocstriptag
+%</ctx>
+%^^A=<<
+%^^A main file >>=
+% \subsection{The Generic Code}
+% The rest of this implementation will be the generic code.
+% \gobbledocstriptag
+%<*tex>
+%
+% We make sure that it's only input once:
+%    \begin{macrocode}
+\expandafter\ifx\csname ekvVersion\endcsname\relax
+\else
+  \expandafter\endinput
+\fi
+%    \end{macrocode}
+%
+% Check whether \eTeX\ and |\expanded| are available -- \expkv\ requires \eTeX.
+%    \begin{macrocode}
+\begingroup
+  \edef\ekvtmpa{\string\expanded}
+  \edef\ekvtmpb{\meaning\expanded}
+  \expandafter
+\endgroup
+\ifx\ekvtmpa\ekvtmpb
+  \expandafter\let\csname ekv@expanded\endcsname\expanded
+  \expandafter\let\csname ekv@unexpanded\endcsname\unexpanded
+\else
+  \begingroup
+    \edef\ekvtmpa{\string\expanded}
+    \edef\ekvtmpb{\meaning\normalexpanded}
+    \expandafter
+  \endgroup
+  \ifx\ekvtmpa\ekvtmpb
+    \expandafter\let\csname ekv@expanded\endcsname\normalexpanded
+    \expandafter\let\csname ekv@unexpanded\endcsname\normalunexpanded
+  \else
+    \errmessage
+      {expkv Error: e-TeX and the \noexpand\expanded primitive required}%
+    \expandafter\endinput
+  \fi
+\fi
+%    \end{macrocode}
+%
+% \begin{macro}{\ekvVersion,\ekvDate}
+% We're on our first input, so lets store the version and date in a macro.
+%    \begin{macrocode}
+\def\ekvVersion{2.0}
+\def\ekvDate{2023-01-23}
+%    \end{macrocode}
+% \end{macro}
+%
+% If the \LaTeX\ format is loaded we want to be a good file and report back who
+% we are, for this the package will have defined |\ekv@tmp| to use
+% |\ProvidesFile|, else this will expand to a |\relax| and do no harm.
+%    \begin{macrocode}
+\csname ekv@tmp\endcsname
+%    \end{macrocode}
+%
+% Store the category code of |@| to later be able to reset it and change it to
+% 11 for now.
+%    \begin{macrocode}
+\expandafter\chardef\csname ekv@tmp\endcsname=\catcode`\@
+\catcode`\@=11
+%    \end{macrocode}
+% |\ekv@tmp| might later be reused to gobble any prefixes which might be
+% provided to |\ekvdef| and similar in case the names are invalid, we just
+% temporarily use it here as means to store the current category code of |@| to
+% restore it at the end of the file, we never care for the actual definition of
+% it.
+%
+% \begin{macro}[internal]{\ekv@if@lastnamedcs}
+% If the primitive |\lastnamedcs| is available, we can be a bit faster than
+% without it. So we test for this and save the test's result in this macro.
+%    \begin{macrocode}
+\begingroup
+  \edef\ekv@tmpa{\string \lastnamedcs}
+  \edef\ekv@tmpb{\meaning\lastnamedcs}
+  \ifx\ekv@tmpa\ekv@tmpb
+    \def\ekv@if@lastnamedcs{\long\def\ekv@if@lastnamedcs##1##2{##1}}
+  \else
+    \def\ekv@if@lastnamedcs{\long\def\ekv@if@lastnamedcs##1##2{##2}}
+  \fi
+  \expandafter
+\endgroup
+\ekv@if@lastnamedcs
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@empty}
+% Sometimes we have to introduce a token to prevent accidental brace stripping.
+% This token would then need to be removed by |\@gobble| or similar. Instead we
+% can use |\ekv@empty| which will just expand to nothing, that is faster than
+% gobbling an argument.
+%    \begin{macrocode}
+\def\ekv@empty{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {
+%     \@gobble,\@gobbletwo,\@gobblethree,
+%     \@firstofone,\@firstoftwo,\@secondoftwo,
+%     \ekv@fi@gobble,\ekv@fi@firstofone,\ekv@fi@firstoftwo,\ekv@fi@secondoftwo,
+%     \ekv@gobble@mark,\ekv@gobbleto@stop,\ekv@gobble@from@mark@to@stop
+%   }
+% Since branching tests are often more versatile than |\if...\else...\fi|
+% constructs, we define helpers that are branching pretty fast. Also here are
+% some other utility functions that just grab some tokens. The ones that are
+% also contained in \LaTeX\ don't use the |ekv| prefix. Not all of the ones
+% defined here are really needed by \expkv\ but are provided because packages
+% like \expkvd\ or \expkvo\ need them (and I don't want to define them in each
+% package which might need them).
+%    \begin{macrocode}
+\long\def\@gobble#1{}
+\long\def\@gobbletwo#1#2{}
+\long\def\@gobblethree#1#2#3{}
+\long\def\@firstofone#1{#1}
+\long\def\@firstoftwo#1#2{#1}
+\long\def\@secondoftwo#1#2{#2}
+\long\def\ekv@fi@gobble\fi\@firstofone#1{\fi}
+\long\def\ekv@fi@firstofone\fi\@gobble#1{\fi#1}
+\long\def\ekv@fi@firstoftwo\fi\@secondoftwo#1#2{\fi#1}
+\long\def\ekv@fi@secondoftwo\fi\@firstoftwo#1#2{\fi#2}
+\def\ekv@gobble@mark\ekv@mark{}
+\long\def\ekv@gobbleto@stop#1\ekv@stop{}
+\long\def\ekv@gobble@from@mark@to@stop\ekv@mark#1\ekv@stop{}
+%    \end{macrocode}
+% \end{macro}
+% As you can see |\ekv@gobbleto@stop| uses a special marker |\ekv@stop|. The
+% package will use three such markers, the one you've seen already, |\ekv@mark|
+% and |\ekv@nil|. Contrarily to how for instance \pkg{expl3} does things, we
+% don't define them, as we don't need them to have an actual meaning. This has
+% the advantage that if they somehow get expanded -- which should never happen
+% if things work out -- they'll throw an error directly.
+%
+% \begin{macro}[internal]
+%   {
+%     \ekv@ifempty,\ekv@ifempty@,\ekv@ifempty@true,\ekv@ifempty@false,
+%     \ekv@ifempty@true@F,\ekv@ifempty@true@F@gobble,
+%     \ekv@ifempty@true@F@gobbletwo
+%   }
+% We can test for a lot of things building on an if-empty test, so lets define a
+% really fast one. Since some tests might have reversed logic (true if something
+% is not empty) we also set up macros for the reversed branches.
+%    \begin{macrocode}
+\long\def\ekv@ifempty#1%
+  {%
+    \ekv@ifempty@\ekv@ifempty@A#1\ekv@ifempty@B\ekv@ifempty@true
+      \ekv@ifempty@A\ekv@ifempty@B\@secondoftwo
+  }
+\long\def\ekv@ifempty@#1\ekv@ifempty@A\ekv@ifempty@B{}
+\long\def\ekv@ifempty@true\ekv@ifempty@A\ekv@ifempty@B\@secondoftwo#1#2{#1}
+\long\def\ekv@ifempty@false\ekv@ifempty@A\ekv@ifempty@B\@firstoftwo#1#2{#2}
+\long\def\ekv@ifempty@true@F\ekv@ifempty@A\ekv@ifempty@B\@firstofone#1{}
+\long\def\ekv@ifempty@true@F@gobble\ekv@ifempty@A\ekv@ifempty@B\@firstofone#1#2%
+  {}
+\long\def\ekv@ifempty@true@F@gobbletwo
+    \ekv@ifempty@A\ekv@ifempty@B\@firstofone#1#2#3%
+  {}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {\ekv@ifblank,\ekv@ifblank@,\ekv@ifblank@false,\ekv@ifblank@gobbletrue}
+% The obvious test that can be based on an if-empty is if-blank, meaning a test
+% checking whether the argument is empty or consists only of spaces. But instead
+% of building atop |\ekv@ifempty| our version will utilise the fact that the
+% argument in none of our usages can contain |\ekv@stop| (due to the way we
+% check for end-of-list), and hence we can use an even faster check. This here
+% works due to the fact that \TeX\ will read at least one token (or a group) for
+% an undelimited parameter which might be the end marker of the delimited next
+% parameter. So if |#1| to |\ekv@ifblank| is indeed blank, |#1| of
+% |\ekv@ifblank@| will be the placed |\ekv@stop| and |#2| will be anything until
+% the next |\ekv@stop|. The wrapper |\ekv@ifblank| will not be used by \expkv\
+% for speed reasons but \expkvo\ uses it. Also, not only a |TF| variant is
+% provided but also a rather strange one that assumes that only the |F| branch
+% is provided and that this branch consists only of a single token.
+%    \begin{macrocode}
+\long\def\ekv@ifblank#1%
+  {\ekv@ifblank@#1\ekv@stop\ekv@ifblank@false\ekv@stop\@firstoftwo}
+\long\def\ekv@ifblank@\ekv@mark#1#2\ekv@stop{}
+\long\def\ekv@ifblank@false\ekv@stop\@firstoftwo#1#2{#2}
+\def\ekv@ifblank@gobbletrue\ekv@stop#1{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@ifdefined}
+% We'll need to check whether something is defined quite frequently, so why not
+% define a macro that does this. The following test is expandable and pretty
+% fast. The version with |\lastnamedcs| is the fastest version to test for an
+% undefined macro I know of (that considers both undefined macros and those with
+% the meaning |\relax|).
+%    \begin{macrocode}
+\ekv@if@lastnamedcs
+  {%
+    \long\def\ekv@ifdefined#1{\ifcsname#1\endcsname\ekv@ifdef@\fi\@secondoftwo}
+    \def\ekv@ifdef@\fi\@secondoftwo
+      {%
+        \fi
+        \expandafter\ifx\lastnamedcs\relax
+          \ekv@fi@secondoftwo
+        \fi
+        \@firstoftwo
+      }
+  }
+  {%
+    \long\def\ekv@ifdefined#1%
+      {%
+        \ifcsname#1\endcsname\ekv@ifdef@\fi\ekv@ifdef@false#1\endcsname\relax
+          \ekv@fi@secondoftwo
+        \fi
+        \@firstoftwo
+      }
+    \def\ekv@ifdef@\fi\ekv@ifdef@false{\fi\expandafter\ifx\csname}
+    \long\def\ekv@ifdef@false
+        #1\endcsname\relax\ekv@fi@secondoftwo\fi\@firstoftwo#2#3%
+      {#3}
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@strip,\ekv@strip@a,\ekv@strip@b,\ekv@strip@c}
+% We borrow some ideas of \pkg{expl3}'s \pkg{l3tl} to strip spaces
+% from keys and values. This |\ekv@strip| also strips one level of outer braces
+% \emph{after} stripping spaces, so an input of | {abc} | becomes |abc| after
+% stripping. It should be used with |#1| prefixed by |\ekv@mark|. Also this
+% implementation at most strips \emph{one} space from both sides (which should
+% be fine most of the time, since \TeX\ reads consecutive spaces as a single one
+% during tokenisation).
+%    \begin{macrocode}
+\def\ekv@strip#1%
+  {%
+    \long\def\ekv@strip##1%
+      {%
+        \ekv@strip@a
+          ##1\ekv@nil
+          \ekv@mark#1%
+          #1\ekv@nil
+      }%
+    \long\def\ekv@strip@a##1\ekv@mark#1{\ekv@strip@b##1\ekv@mark}%
+  }
+\ekv@strip{ }
+\long\def\ekv@strip@b#1 \ekv@nil{\ekv@strip@c#1\ekv@nil}
+\long\def\ekv@strip@c\ekv@mark#1\ekv@nil\ekv@mark#2\ekv@nil#3{#3{#1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {\ekv@strip@key,\ekv@strip@key@a,\ekv@strip@key@b,\ekv@strip@key@c}
+%   Same idea and code as |\ekv@strip|, but the second argument to
+%   |\ekv@strip@key| must be a single token and the result of the stripping will
+%   be |\detokenize|d.
+%    \begin{macrocode}
+\def\ekv@strip@key#1%
+  {%
+    \long\def\ekv@strip@key##1{\ekv@strip@key@a##1\ekv@nil\ekv@mark#1#1\ekv@nil}
+    \long\def\ekv@strip@key@a##1\ekv@mark#1{\ekv@strip@key@b##1\ekv@mark}
+  }
+\ekv@strip@key{ }
+\long\def\ekv@strip@key@b#1 \ekv@nil{\ekv@strip@key@c#1\ekv@nil}
+\long\def\ekv@strip@key@c\ekv@mark#1\ekv@nil\ekv@mark#2\ekv@nil#3%
+  {\expandafter#3\detokenize{#1}\ekv@mark{#1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {
+%     \ekv@exparg,\ekv@exparg@,
+%     \ekv@expandedarg,\ekv@fexparg,\ekv@expandafter
+%     \ekv@expargtwice,\ekv@expargtwice@,\ekv@zero
+%   }
+% To reduce some code doublets while gaining some speed (and also as convenience
+% for other packages in the family), it is often useful to expand the first
+% token in a definition once. Let's define a wrapper for this. And while we're
+% at it, also define a helper for |f|-~and |e|-expansion as well.
+%
+% Also, to end a |\romannumeral| expansion, we want to use |\z@|, which is
+% contained in both plain \TeX\ and \LaTeX, but we use a private name for it to
+% make it easier to spot and hence easier to manage.
+%    \begin{macrocode}
+\let\ekv@zero\z@
+\long\def\ekv@exparg#1#2%
+  {\ekv@expanded{\ekv@unexpanded{#1}\expandafter}\expandafter{#2}}
+\long\def\ekv@expandafter#1{\ekv@expanded{\ekv@unexpanded{#1}\expandafter}}
+\long\def\ekv@exparg@#1#2{#2{#1}}%
+\long\def\ekv@expandedarg#1#2{\ekv@expanded{\ekv@unexpanded{#1}{#2}}}
+\long\def\ekv@fexparg#1#2%
+  {%
+    \ekv@expanded{\ekv@unexpanded{#1}\expandafter}\expandafter
+      {\romannumeral`\^^@#2}%
+  }
+\long\def\ekv@expargtwice#1#2{\expandafter\ekv@expargtwice@\expandafter{#2}{#1}}
+\def\ekv@expargtwice@{\expandafter\ekv@exparg@\expandafter}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvcsvloop}
+% \begin{macro}[internal]{\ekv@csv@loop@active,\ekv@csv@loop@active@end}
+%   An |\ekvcsvloop| will just loop over a csv list in a simple manner. First we
+%   split at active commas (gives better performance this way), next we have to
+%   check whether we're at the end of the list (checking for |\ekv@stop|). If
+%   not we go on splitting at commas of category other.
+%    \begin{macrocode}
+\begingroup
+\def\ekvcsvloop#1{%
+\endgroup
+\long\def\ekvcsvloop##1##2%
+  {\ekv@csv@loop@active{##1}\ekv@mark##2#1\ekv@stop#1}
+%    \end{macrocode}
+%   This does the same as |\ekv@csv@loop| but for active commas.
+%    \begin{macrocode}
+\long\def\ekv@csv@loop@active##1##2#1%
+  {%
+    \ekv@gobble@from@mark@to@stop##2\ekv@csv@loop@active@end\ekv@stop
+    \ekv@csv@loop{##1}##2,\ekv@stop,%
+  }%
+\long\def\ekv@csv@loop@active@end
+    \ekv@stop
+    \ekv@csv@loop##1\ekv@mark\ekv@stop,\ekv@stop,%
+  {}%
+}
+%    \end{macrocode}
+%   Do the definitions with the weird catcode.
+%    \begin{macrocode}
+\catcode`\,=13
+\ekvcsvloop,
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@csv@loop,\ekv@csv@loop@do,\ekv@csv@loop@end}
+%   We use temporary macros and an |\expandafter| chain to preexpand
+%   |\ekv@strip| here. After splitting at other commas we check again for end
+%   the end of the sublist, check for blank elements which should be ignored,
+%   and else strip spaces and execute the user code (protecting it from further
+%   expanding with |\unexpanded|).
+%    \begin{macrocode}
+\def\ekv@csv@loop#1%
+  {%
+    \long\def\ekv@csv@loop##1##2,%
+      {%
+        \ekv@gobble@from@mark@to@stop##2\ekv@csv@loop@end\ekv@stop
+        \ekv@ifblank@##2\ekv@stop\ekv@ifblank@gobbletrue
+          \ekv@stop\ekv@csv@loop@blank
+        #1\ekv@csv@loop@do{##1}%
+      }%
+  }
+\expandafter\ekv@csv@loop\expandafter{\ekv@strip{#2}}
+\long\def\ekv@csv@loop@do#1#2{\ekv@unexpanded{#2{#1}}\ekv@csv@loop{#2}\ekv@mark}
+\def\ekv@csv@loop@end#1%
+  {%
+    \long\def\ekv@csv@loop@end
+        \ekv@stop
+        \ekv@ifblank@\ekv@mark\ekv@stop\ekv@stop\ekv@ifblank@gobbletrue
+        \ekv@stop\ekv@csv@loop@blank
+        #1\ekv@csv@loop@do##1%
+      {\ekv@csv@loop@active{##1}\ekv@mark}%
+  }
+\expandafter\ekv@csv@loop@end\expandafter{\ekv@strip{\ekv@mark\ekv@stop}}
+\long\expandafter\def\expandafter\ekv@csv@loop@blank
+    \ekv@strip{\ekv@mark#1}\ekv@csv@loop@do#2%
+  {\ekv@csv@loop{#2}\ekv@mark}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekv@name,\ekv@name@set,\ekv@name@key}
+% The keys will all follow the same naming scheme, so we define it here.
+%    \begin{macrocode}
+\def\ekv@name@set#1{ekv#1(}
+\long\def\ekv@name@key#1{#1)}
+\edef\ekv@name
+  {%
+    \ekv@unexpanded\expandafter{\ekv@name@set{#1}}%
+    \ekv@unexpanded\expandafter{\ekv@name@key{\detokenize{#2}}}%
+  }
+\long\ekv@exparg{\def\ekv@name#1#2}{\ekv@name}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@undefined@set}
+% We can misuse the macro name we use to expandably store the set-name in a
+% single token -- since this increases performance drastically, especially for
+% long set-names -- to throw a more meaningful error message in case a set isn't
+% defined. The name of |\ekv@undefined@set| is a little bit misleading, as it is
+% called in either case inside of |\csname|, but the result will be a control
+% sequence with meaning |\relax| if the set is undefined, hence will break the
+% |\csname| building the key-macro which will throw the error message.
+%    \begin{macrocode}
+\def\ekv@undefined@set#1{! expkv Error: Set `#1' undefined.}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@checkvalid}
+% We place some restrictions on the allowed names, though, namely sets and
+% keys are not allowed to be empty -- blanks are fine (meaning \mbox{set-
+% or} key-names consisting of spaces). The |\def\ekv@tmp| gobbles any \TeX\
+% prefixes which would otherwise throw errors. This will, however, break the
+% package if an |\outer| has been gobbled this way. I consider that good,
+% because keys shouldn't be defined |\outer| anyways.
+%    \begin{macrocode}
+\edef\ekv@checkvalid
+  {%
+    \ekv@unexpanded\expandafter{\ekv@ifempty{#1}}%
+    \ekv@unexpanded
+      {{%
+        \def\ekv@tmp{}%
+        \ekv@errm{empty set name not allowed}%
+      }}%
+      {%
+        \ekv@unexpanded\expandafter{\ekv@ifempty{#2}}%
+        \ekv@unexpanded
+          {%
+            {%
+              \def\ekv@tmp{}%
+              \ekv@errm{empty key name not allowed}%
+            }%
+            \@secondoftwo
+          }%
+      }%
+    \ekv@unexpanded{\@gobble}%
+  }
+\ekv@exparg{\protected\def\ekv@checkvalid#1#2}{\ekv@checkvalid}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvifdefined,\ekvifdefinedNoVal}
+% And provide user-level macros to test whether a key is defined.
+%    \begin{macrocode}
+\ekv@expargtwice{\long\def\ekvifdefined#1#2}%
+  {\expandafter\ekv@ifdefined\expandafter{\ekv@name{#1}{#2}}}
+\ekv@expargtwice{\long\def\ekvifdefinedNoVal#1#2}%
+  {\expandafter\ekv@ifdefined\expandafter{\ekv@name{#1}{#2}N}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}
+%   {
+%     \ekvdef,\ekvdefNoVal,\ekvlet,\ekvletNoVal,\ekvletkv,\ekvletkvNoVal,
+%     \ekvdefunknown,\ekvdefunknownNoVal,\ekvletunknown,\ekvletunknownNoVal
+%   }
+% Set up the key defining macros |\ekvdef| etc. We use temporary macros to set
+% these up with a few expansions already done.
+%    \begin{macrocode}
+\def\ekvdef#1#2#3#4#5#6%
+  {%
+    \protected\long\def\ekvdef##1##2##3%
+      {#1{\expandafter\def\csname#2\endcsname####1{##3}#4}}%
+    \protected\long\def\ekvdefNoVal##1##2##3%
+      {#1{\expandafter\def\csname#2N\endcsname{##3}#4}}%
+    \protected\long\def\ekvlet##1##2##3%
+      {#1{\expandafter\let\csname#2\endcsname##3#4}}%
+    \protected\long\def\ekvletNoVal##1##2##3%
+      {#1{\expandafter\let\csname#2N\endcsname##3#4}}%
+    \ekv@expargtwice{\protected\long\def\ekv@defunknown##1##2##3##4}%
+      {%
+        \romannumeral
+        \ekv@exparg
+          {\ekv@zero\ekv@checkvalid{##3}.}%
+          {%
+            \expandafter\expandafter\expandafter
+            \def\expandafter\csname\ekv@name{##3}{}u##1\endcsname##2{##4}%
+            #6%
+          }%
+      }%
+    \ekv@expargtwice{\protected\long\def\ekv@letunknown##1##2##3}%
+      {%
+        \romannumeral
+        \ekv@exparg
+          {\ekv@zero\ekv@checkvalid{##2}.}%
+          {%
+            \expandafter\expandafter\expandafter
+            \let\expandafter\csname\ekv@name{##2}{}u##1\endcsname##3%
+            #5%
+          }%
+      }%
+    \protected\long\def\ekvletkv##1##2##3##4%
+      {%
+        #1%
+          {%
+            \expandafter\let\csname#2\expandafter\endcsname
+            \csname#3\endcsname
+            #4%
+          }%
+      }%
+    \protected\long\def\ekvletkvNoVal##1##2##3##4%
+      {%
+        #1%
+          {%
+            \expandafter\let\csname#2N\expandafter\endcsname
+            \csname#3N\endcsname
+            #4%
+          }%
+      }%
+  }
+\edef\ekvdefNoVal
+  {%
+    {\ekv@unexpanded\expandafter{\ekv@checkvalid{#1}{#2}}}%
+    {\ekv@unexpanded\expandafter{\ekv@name{#1}{#2}}}%
+    {\ekv@unexpanded\expandafter{\ekv@name{#3}{#4}}}%
+    {%
+      \ekv@unexpanded{\expandafter\ekv@defsetmacro\csname}%
+      \ekv@unexpanded\expandafter{\ekv@undefined@set{#1}\endcsname{#1}}%
+    }%
+    {%
+      \ekv@unexpanded{\expandafter\ekv@defsetmacro\csname}%
+      \ekv@unexpanded\expandafter{\ekv@undefined@set{#2}\endcsname{#2}}%
+    }%
+    {%
+      \ekv@unexpanded{\expandafter\ekv@defsetmacro\csname}%
+      \ekv@unexpanded\expandafter{\ekv@undefined@set{#3}\endcsname{#3}}%
+    }%
+  }
+\expandafter\ekvdef\ekvdefNoVal
+\ekv@exparg{\protected\long\def\ekvdefunknown#1#2}%
+  {\ekv@defunknown{}{##1##2##3}{#1}{#2}}
+\ekv@exparg{\protected\long\def\ekvdefunknownNoVal#1#2}%
+  {\ekv@defunknown{N}{##1##2}{#1}{#2}}
+\ekv@exparg{\protected\long\def\ekvletunknown#1#2}%
+  {\ekv@letunknown{}{#1}{#2}}
+\ekv@exparg{\protected\long\def\ekvletunknownNoVal#1#2}%
+  {\ekv@letunknown{N}{#1}{#2}}
+\let\ekv@defunknown\ekv@undefined
+\let\ekv@letunknown\ekv@undefined
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvredirectunknown,\ekvredirectunknownNoVal}
+% \begin{macro}[internal]
+%   {
+%     \ekv@defredirectunknown,\ekv@redirectunknown@aux,
+%     \ekv@redirectunknownNoVal@aux
+%   }
+%   The redirection macros prepare the unknown function by looping over the
+%   provided list of sets and leaving a |\ekv@redirect@kv| or |\ekv@redirect@k|
+%   for each set. Only the first of these internals will receive the \key\ and
+%   \val\ as arguments.
+%    \begin{macrocode}
+\protected\def\ekv@defredirectunknown#1#2#3#4#5#6%
+  {%
+    \begingroup
+    \edef\ekv@tmp
+      {%
+        \ekvcsvloop#1{#6}%
+        \ekv@unexpanded{#2}%
+        {\ekvcsvloop{}{#5,#6}}%
+      }%
+    \ekv@expargtwice
+      {\endgroup\long#3{#5}}%
+      {\expandafter#4\ekv@tmp\ekv@stop}%
+  }
+\ekv@exparg{\protected\def\ekvredirectunknown#1#2}%
+  {%
+    \ekv@defredirectunknown
+      \ekv@redirect@kv
+      \ekv@err@redirect@kv@notfound
+      \ekvdefunknown
+      \ekv@redirectunknown@aux
+      {#1}{#2}%
+  }
+\ekv@exparg{\protected\def\ekvredirectunknownNoVal#1#2}%
+  {%
+    \ekv@defredirectunknown
+      \ekv@redirect@k
+      \ekv@err@redirect@k@notfound
+      \ekvdefunknownNoVal
+      \ekv@redirectunknownNoVal@aux
+      {#1}{#2}%
+  }
+\def\ekv@redirectunknown@aux#1{#1{##1}{##2}}
+\def\ekv@redirectunknownNoVal@aux#1{#1{##1}}
+\let\ekv@defredirectunknown\ekv@undefined
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {
+%     \ekv@redirect@k,\ekv@redirect@k@a,\ekv@redirect@k@a@,
+%     \ekv@redirect@k@b,\ekv@redirect@k@c,\ekv@redirect@k@d,
+%     \ekv@redirect@kv,\ekv@redirect@kv@a,\ekv@redirect@kv@a@,
+%     \ekv@redirect@kv@b,\ekv@redirect@kv@c,\ekv@redirect@kv@d
+%   }
+%   The redirect code works by some simple loop over all the sets, which we
+%   already preprocessed in |\ekv@defredirectunknown|. For some optimisation we
+%   blow this up a bit code wise, essentially, all this does is |\ekvifdefined|
+%   or |\ekvifdefinedNoVal| in each set, if there is a match gobble the
+%   remainder of the specified sets and execute the key macro, else go on with
+%   the next set (to which the \key\ and \val\ are forwarded).
+%
+%   First we set up some code which is different depending on |\lastnamedcs|
+%   being available or not. All this is stored in a temporary macro to have
+%   pre-expanded |\ekv@name| constellations ready.
+%    \begin{macrocode}
+\def\ekv@redirect@k#1#2#3#4%
+  {%
+    \ekv@if@lastnamedcs
+      {%
+        \def\ekv@redirect@k##1##2##3%
+          {%
+            \ifcsname#1\endcsname\ekv@redirect@k@a\fi
+            ##3{##1}%
+          }%
+        \def\ekv@redirect@k@a\fi{\fi\expandafter\ekv@redirect@k@b\lastnamedcs}%
+        \long\def\ekv@redirect@kv##1##2##3##4%
+          {%
+            \ifcsname#2\endcsname\ekv@redirect@kv@a\fi\@gobble{##1}%
+            ##4{##1}{##2}%
+          }%
+        \def\ekv@redirect@kv@a\fi\@gobble
+          {\fi\expandafter\ekv@redirect@kv@b\lastnamedcs}%
+      }
+      {%
+        \def\ekv@redirect@k##1##2##3%
+          {%
+            \ifcsname#1\endcsname\ekv@redirect@k@a\fi\ekv@redirect@k@a@
+              #1\endcsname
+            ##3{##1}%
+          }%
+        \def\ekv@redirect@k@a@#3\endcsname{}%
+        \def\ekv@redirect@k@a\fi\ekv@redirect@k@a@
+          {\fi\expandafter\ekv@redirect@k@b\csname}%
+        \long\def\ekv@redirect@kv##1##2##3##4%
+          {%
+            \ifcsname#2\endcsname\ekv@redirect@kv@a\fi\ekv@redirect@kv@a@
+              #2\endcsname{##1}%
+            ##4{##1}{##2}%
+          }%
+        \long\def\ekv@redirect@kv@a@#4\endcsname##3{}%
+        \def\ekv@redirect@kv@a\fi\ekv@redirect@kv@a@
+          {\fi\expandafter\ekv@redirect@kv@b\csname}%
+      }%
+  }
+%    \end{macrocode}
+%   The key name given to this loop will already be |\detokenize|d by |\ekvset|,
+%   so we can safely remove the |\detokenize| here for some performance gain.
+%    \begin{macrocode}
+\def\ekv@redirect@kv#1\detokenize#2#3\ekv@stop{\ekv@unexpanded{#1#2#3}}
+\edef\ekv@redirect@kv
+  {%
+    {\expandafter\ekv@redirect@kv\ekv@name{#2}{#1}N\ekv@stop}%
+    {\expandafter\ekv@redirect@kv\ekv@name{#3}{#2}\ekv@stop}%
+    {\expandafter\ekv@redirect@kv\ekv@name{#1}{#2}N\ekv@stop}%
+    {\expandafter\ekv@redirect@kv\ekv@name{#1}{#2}\ekv@stop}%
+  }
+%    \end{macrocode}
+%   Everything is ready to make the real definitions.
+%    \begin{macrocode}
+\expandafter\ekv@redirect@k\ekv@redirect@kv
+%    \end{macrocode}
+%   The remaining macros here are independent on |\lastnamedcs|, starting from
+%   the |@b| we know that there is a hash table entry, and get the macro as a
+%   parameter. We still have to test whether the macro is |\relax|, depending on
+%   the result of that test we have to either remove the remainder of the
+%   current test, or the remainder of the set list and invoke the macro.
+%    \begin{macrocode}
+\def\ekv@redirect@k@b#1%
+  {\ifx\relax#1\ekv@redirect@k@c\fi\ekv@redirect@k@d#1}
+\def\ekv@redirect@k@c\fi\ekv@redirect@k@d#1{\fi}
+\def\ekv@redirect@k@d#1#2\ekv@stop{#1}
+\def\ekv@redirect@kv@b#1%
+  {\ifx\relax#1\ekv@redirect@kv@c\fi\ekv@redirect@kv@d#1}
+\long\def\ekv@redirect@kv@c\fi\ekv@redirect@kv@d#1#2{\fi}
+\long\def\ekv@redirect@kv@d#1#2#3\ekv@stop{#1{#2}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@defsetmacro}
+%   In order to enhance the speed the set name given to |\ekvset| will be turned
+%   into a control sequence pretty early, so we have to define that control
+%   sequence.
+%    \begin{macrocode}
+\edef\ekv@defsetmacro
+  {%
+    \ekv@unexpanded{\ifx#1\relax\edef#1##1}%
+      {%
+        \ekv@unexpanded\expandafter{\ekv@name@set{#2}}%
+        \ekv@unexpanded\expandafter{\ekv@name@key{##1}}%
+      }%
+    \ekv@unexpanded{\fi}%
+  }
+\ekv@exparg{\protected\def\ekv@defsetmacro#1#2}{\ekv@defsetmacro}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvifdefinedset}
+%    \begin{macrocode}
+\ekv@expargtwice{\def\ekvifdefinedset#1}%
+  {\expandafter\ekv@ifdefined\expandafter{\ekv@undefined@set{#1}}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@ifexp}
+%   We want to be able to include expansion control. This is started by a
+%   specific structure, namely if the stuff to the left of the equals sign
+%   contains a colon followed by a space followed by at least one non-space
+%   token. There is an additional rule namely the contents in front of the
+%   \verb*|: | marker mustn't contain spaces outside of braces, but
+%   unfortunately we can test this only after we did the real split and not as
+%   part of a fast test. The temporary meaning we set up here will get
+%   \tkn{:}{13}\vissp{ } and \tkn{:}{11}\vissp{ } as |#1| and |#2|.
+%
+%   The real definition will take three arguments (two curried), namely the
+%   un-|\detokenize|d name as |#1|, what should be done if the \expnotation\
+%   should start as |#2|, and what should be done if no \expnotation\ is found
+%   as |#3|.
+%    \begin{macrocode}
+\def\ekv@ifexp#1#2%
+  {%
+%    \end{macrocode}
+%   In the following explanations I use \tkn{:}{12}, \tkn{:}{13}, and
+%   \tkn{:}{11}, but I always mean that token followed by a space.
+% \begin{macro}[internal]{\ekv@ifexp@split@o@or@other}
+%   \tkn{:}{12} splitter also used to test for \tkn{:}{13} and \tkn{:}{11}
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@split@o@or@other
+        ##1: ##2\ekv@stop##3%
+        ##4#1##5\ekv@stop##6%
+        ##7#2##8\ekv@stop##9%
+      {##9##6##3##1\ekv@stop##2}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]{\ekv@ifexp@split@a@or@l}
+%   \tkn{:}{13} splitter also used to test for \tkn{:}{11}
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@split@a@or@l
+        ##1#1##2\ekv@stop##3%
+        ##4#2##5\ekv@stop##6%
+      {##6##3##1\ekv@stop##2}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]
+%   {\ekv@ifexp@split@a,\ekv@ifexp@split@l}
+%   \tkn{:}{13} splitter
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@split@a##1#1##2\ekv@stop##3%
+      {##3##1\ekv@stop##2}%
+%    \end{macrocode}
+%   \tkn{:}{11} splitter
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@split@l##1#2##2\ekv@stop##3%
+      {##3##1\ekv@stop##2}%
+%    \end{macrocode}
+% \end{macro}
+%   To get good performance in the most common case (standard category codes
+%   apply) we try to split on \tkn{:}{12}, due to the way this split works there
+%   are a few possible outcomes:
+%   \begin{enumerate}
+%     \item |\ekv@ifexp@none| is the first token if no colon was
+%       found at all
+%     \item |\ekv@ifexp@o| is the first token if only \tkn{:}{12}
+%       were part of \key
+%     \item |\ekv@ifexp@a| is put in front of either of the two
+%       aforementioned cases if there was at least one \tkn{:}{13} (in that case
+%       we don't yet know which was the first colon)
+%     \item |\ekv@ifexp@o| is put in front of any of the
+%       aforementioned cases if there was at least one \tkn{:}{11} (in which
+%       case we also don't know yet which was the first colon)
+%   \end{enumerate}
+%    \begin{macrocode}
+    \long\def\ekv@ifexp##1%
+      {%
+        \ekv@ifexp@split@o@or@other
+          ##1\ekv@nil\ekv@stop\ekv@ifexp@o
+          : \ekv@stop\ekv@ifexp@none
+          ##1\ekv@stop\ekv@ifexp@a#1\ekv@stop{}%
+          ##1\ekv@stop\ekv@ifexp@l#2\ekv@stop{}%
+      }%
+%    \end{macrocode}
+% \begin{macro}[internal]
+%   {\ekv@ifexp@o,\ekv@ifexp@none}
+%   If any of the next two are called we already know the outcome and can
+%   directly expand to it.
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@o##1\ekv@stop
+      {\ekv@ifexp@done{##1}\ekv@mark}%
+    \long\def\ekv@ifexp@none
+        ##1\ekv@nil\ekv@stop\ekv@ifexp@o\ekv@stop
+        ##2##3%
+      {##3}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]
+%   {\ekv@ifexp@a,\ekv@ifexp@a@i,\ekv@ifexp@a@ii}
+%   If this is called we know that there was no \tkn{:}{13}, if the first token
+%   now is |\ekv@ifexp@none| there was no \tkn{:}{12} as well
+%    \begin{macrocode}
+    \def\ekv@ifexp@a##1%
+      {%
+        \ekv@ifexp@a@i
+          ##1\ekv@ifexp@a@ii
+          \ekv@ifexp@none\ekv@ifexp@a@or@o
+      }%
+    \def\ekv@ifexp@a@i##1\ekv@ifexp@none{}%
+%    \end{macrocode}
+%   Easy route, no \tkn{:}{12}, simply grab and pack
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@a@ii
+        \ekv@ifexp@none\ekv@ifexp@a@or@o
+        ##1#1##2\ekv@stop\ekv@ifexp@o\ekv@stop
+      {\ekv@ifexp@done{##1}\ekv@mark##2}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]
+%   {
+%     \ekv@ifexp@a@or@o,
+%     \ekv@ifexp@a@not@o,\ekv@ifexp@a@not@o@,
+%     \ekv@ifexp@o@not@a
+%   }
+%   other route, there is a \tkn{:}{12}, re-split at \tkn{:}{13}
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@a@or@o##1\ekv@stop
+      {%
+        \ekv@ifexp@split@a
+          ##1\ekv@nil\ekv@stop\ekv@ifexp@a@not@o
+          #1\ekv@stop\ekv@ifexp@o@not@a
+      }%
+%    \end{macrocode}
+%   \tkn{:}{13} came earlier than \tkn{:}{12}
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@a@not@o##1\ekv@stop
+      {\ekv@ifexp@a@not@o@{##1}\ekv@mark}
+    \long\def\ekv@ifexp@a@not@o@
+        ##1##2\ekv@nil#1\ekv@stop\ekv@ifexp@o@not@a
+      {\ekv@ifexp@done{##1}##2: }%
+%    \end{macrocode}
+%   \tkn{:}{12} came earlier than \tkn{:}{13}
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@o@not@a
+        ##1\ekv@nil\ekv@stop\ekv@ifexp@a@not@o\ekv@stop
+      {\ekv@ifexp@done{##1}\ekv@mark}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]{\ekv@ifexp@l,\ekv@ifexp@l@i,\ekv@ifexp@l@ii}
+%   Now this is the most complicated case, if |\ekv@ifexp@l| is
+%   called there are a few possibilities:
+%   \begin{enumerate}
+%     \item |#1| is |\ekv@ifexp@none|: easiest route, only
+%       \tkn{:}{11} was there
+%     \item |#1| is |\ekv@ifexp@o|: complicated route, there was a
+%      \tkn{:}{11} and a \tkn{:}{12}
+%     \item |#1| is |\ekv@ifexp@a| and after that comes
+%      |\ekv@ifexp@none|: more complicated, there was a
+%      \tkn{:}{11} and a \tkn{:}{13}
+%     \item |#1| is |\ekv@ifexp@a| and after that comes
+%      |\ekv@ifexp@o|: cursed route, there were \tkn{:}{11},
+%      \tkn{:}{12}, and \tkn{:}{13}
+%   \end{enumerate}
+%    \begin{macrocode}
+    \def\ekv@ifexp@l##1%
+      {%
+        \ekv@ifexp@l@i
+          ##1\ekv@ifexp@l@ii
+          \ekv@ifexp@none{}%
+          ##1\ekv@ifexp@l@or@o
+          \ekv@ifexp@o
+        \ekv@ifexp@l@or@a
+      }%
+    \def\ekv@ifexp@l@i
+        ##1\ekv@ifexp@none##2%
+        ##3\ekv@ifexp@o
+      {##2}%
+%    \end{macrocode}
+%   easiest route, just \tkn{:}{11}
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@l@ii
+        \ekv@ifexp@l@or@a##1#2##2\ekv@stop
+        \ekv@ifexp@o\ekv@stop#2\ekv@stop##3%
+      {\ekv@ifexp@done{##1}\ekv@mark##2}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]
+%   {
+%     \ekv@ifexp@l@or@o,
+%     \ekv@ifexp@l@not@o,\ekv@ifexp@l@not@o@,
+%     \ekv@ifexp@o@not@l
+%   }
+%   slightly harder, \tkn{:}{11} or \tkn{:}{12}, re-split at \tkn{:}{11}
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@l@or@o
+        \ekv@ifexp@o\ekv@ifexp@l@or@a
+        ##1\ekv@stop
+      {%
+        \ekv@ifexp@split@l
+          ##1\ekv@nil\ekv@stop\ekv@ifexp@l@not@o
+          #2\ekv@stop\ekv@ifexp@o@not@l
+      }%
+%    \end{macrocode}
+%   \tkn{:}{11} came earlier than \tkn{:}{12}
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@l@not@o##1\ekv@stop
+      {\ekv@ifexp@l@not@o@{##1}\ekv@mark}
+    \long\def\ekv@ifexp@l@not@o@
+        ##1##2\ekv@nil#2\ekv@stop\ekv@ifexp@o@not@l
+        ##3#2\ekv@stop##4%
+      {\ekv@ifexp@done{##1}##2: ##3}%
+%    \end{macrocode}
+%   \tkn{:}{12} came earlier than \tkn{:}{11}
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@o@not@l
+        ##1\ekv@nil\ekv@stop\ekv@ifexp@l@not@o\ekv@stop
+        ##2#2\ekv@stop##3%
+      {\ekv@ifexp@done{##1}\ekv@mark##2}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]
+%   {
+%     \ekv@ifexp@l@or@a,
+%     \ekv@ifexp@l@or@a@not@o,
+%     \ekv@ifexp@l@not@a,\ekv@ifexp@l@not@a@,
+%     \ekv@ifexp@a@not@l
+%   }
+%   \tkn{:}{13} was in the mix with \tkn{:}{11}, we need to see whether there
+%   was a \tkn{:}{12} as well
+%    \begin{macrocode}
+    \def\ekv@ifexp@l@or@a##1%
+      {%
+%    \end{macrocode}
+%   don't get confused by the name, this gobbles until |@none|
+%    \begin{macrocode}
+        \ekv@ifexp@a@i
+          ##1\ekv@ifexp@l@or@a@not@o
+          \ekv@ifexp@none
+        \ekv@ifexp@l@or@a@or@o
+      }%
+%    \end{macrocode}
+%   phew, no \tkn{:}{12} in the mix, we split at \tkn{:}{13} and see whether an
+%   earlier \tkn{:}{11} is found
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@l@or@a@not@o
+        \ekv@ifexp@none\ekv@ifexp@l@or@a@or@o
+        ##1#1%
+      {%
+        \ekv@ifexp@split@l
+          ##1\ekv@nil\ekv@stop\ekv@ifexp@l@not@a
+          #2\ekv@stop\ekv@ifexp@a@not@l
+      }%
+    \long\def\ekv@ifexp@l@not@a##1\ekv@stop
+      {\ekv@ifexp@l@not@a@{##1}\ekv@mark}%
+    \long\def\ekv@ifexp@l@not@a@
+        ##1##2\ekv@nil#2\ekv@stop\ekv@ifexp@a@not@l
+        ##3\ekv@stop\ekv@ifexp@o\ekv@stop#2\ekv@stop##4%
+      {\ekv@ifexp@done{##1}##2#1##3}%
+    \long\def\ekv@ifexp@a@not@l
+        ##1\ekv@nil\ekv@stop\ekv@ifexp@l@not@a\ekv@stop
+        ##2\ekv@stop\ekv@ifexp@o\ekv@stop#2\ekv@stop##3%
+      {\ekv@ifexp@done{##1}\ekv@mark##2}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]
+%   {
+%     \ekv@ifexp@l@or@a@or@o,\ekv@ifexp@l@or@a@or@o@i,\ekv@ifexp@l@or@a@or@o@ii,
+%     \ekv@ifexp@l@or@a@or@o@iii,\ekv@ifexp@l@or@a@or@o@iv,
+%     \ekv@ifexp@o@not@l@or@a,
+%     \ekv@ifexp@a@not@l@or@o,\ekv@ifexp@a@not@l@or@o@
+%   }
+%   ooh no, the ugliest path, we got ourself a \tkn{:}{11}, a \tkn{:}{12}, and a
+%   \tkn{:}{13}, first grab everything left after splitting the first
+%   \tkn{:}{12} and try a \tkn{:}{13} split
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@l@or@a@or@o##1\ekv@stop
+      {%
+        \ekv@ifexp@split@a@or@l
+          ##1\ekv@nil\ekv@stop\ekv@ifexp@a@not@l@or@o
+          #1\ekv@stop\ekv@ifexp@o@not@l@or@a
+          ##1\ekv@stop\ekv@ifexp@l@or@a@or@o@i#2\ekv@stop{}%
+      }%
+%    \end{macrocode}
+%   \tkn{:}{12} splitting was correct
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@o@not@l@or@a
+        ##1\ekv@nil\ekv@stop\ekv@ifexp@a@not@l@or@o\ekv@stop
+        ##2#2\ekv@stop##3%
+      {\ekv@ifexp@done{##1}\ekv@mark##2}%
+%    \end{macrocode}
+%   \tkn{:}{13} split is correct, \tkn{:}{12} has to be reverted
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@a@not@l@or@o##1\ekv@stop
+      {\ekv@ifexp@a@not@l@or@o@{##1}\ekv@mark}
+    \long\def\ekv@ifexp@a@not@l@or@o@
+        ##1##2\ekv@nil##3#2\ekv@stop##4%
+      {\ekv@ifexp@done{##1}##2: ##3}%
+%    \end{macrocode}
+%   there is still a \tkn{:}{11} left, we need to take care of \tkn{:}{13} as
+%   well, but \tkn{:}{12} was wrong
+%    \begin{macrocode}
+    \def\ekv@ifexp@l@or@a@or@o@i##1%
+      {%
+        \ekv@ifexp@l@or@a@or@o@ii
+          ##1\ekv@ifexp@l@or@a@or@o@iii
+          \ekv@ifexp@o@not@l@or@a
+        \ekv@ifexp@why
+      }%
+    \def\ekv@ifexp@l@or@a@or@o@ii
+        ##1\ekv@ifexp@o@not@l@or@a
+      {}%
+%    \end{macrocode}
+%   at least it's not absolutely the worst, \tkn{:}{11} is correct, revert the
+%   \tkn{:}{12} split
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@l@or@a@or@o@iii
+        \ekv@ifexp@o@not@l@or@a\ekv@ifexp@why
+        ##1#2%
+      {\ekv@ifexp@l@or@a@or@o@iv{##1}\ekv@mark}%
+    \long\def\ekv@ifexp@l@or@a@or@o@iv
+        ##1##2\ekv@nil\ekv@stop\ekv@ifexp@a@not@l@or@o\ekv@stop
+        #2\ekv@stop##3##4#2\ekv@stop##5%
+      {\ekv@ifexp@done{##1}##2: ##4}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]
+%   {
+%     \ekv@ifexp@why,
+%     \ekv@ifexp@why@l,\ekv@ifexp@why@l@i,\ekv@ifexp@why@l@ii,
+%     \ekv@ifexp@why@a
+%   }
+%   why have you forsaken me? We know \tkn{:}{12} was wrong, but now we have
+%   something that might be correctly split at \tkn{:}{13}, but might as well be
+%   not
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@why##1\ekv@stop
+      {%
+        \ekv@ifexp@split@l
+          ##1\ekv@nil\ekv@stop\ekv@ifexp@why@l
+          #2\ekv@stop\ekv@ifexp@why@a
+      }%
+%    \end{macrocode}
+%   \tkn{:}{11} is correct, rebuild stuff undoing the wrong \tkn{:}{13} split
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@why@l##1\ekv@stop
+      {\ekv@ifexp@why@l@i{##1}\ekv@mark}
+    \long\def\ekv@ifexp@why@l@i
+        ##1##2\ekv@nil#2\ekv@stop\ekv@ifexp@why@a
+      {\ekv@ifexp@why@l@ii{##1}##2#1}
+%    \end{macrocode}
+%   and undoing the wrong \tkn{:}{12} split
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@why@l@ii
+        ##1##2\ekv@nil#2\ekv@stop##3##4#2\ekv@stop##5%
+      {\ekv@ifexp@done{##1}##2: ##4}%
+%    \end{macrocode}
+%   \tkn{:}{13} is correct, we know there is a \tkn{:}{11} hiding somewhere, so
+%   we don't need to protect against brace strip using a two-step grab here,
+%   just undoing the wrong \tkn{:}{12} split is enough
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@why@a
+        ##1\ekv@nil\ekv@stop\ekv@ifexp@why@l\ekv@stop
+        ##2\ekv@nil#2\ekv@stop##3##4#2\ekv@stop##5%
+      {\ekv@ifexp@done{##1}\ekv@mark##2: ##4}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]
+%   {
+%     \ekv@ifexp@done,\ekv@ifexp@done@,
+%     \ekv@ifexp@done@test,
+%     \ekv@ifexp@panic
+%   }
+%   once the colon split is done we need to check that there are no spaces in
+%   the now split of part, if there are \emph{panic} (we did all of this for
+%   nothing), else we're finally completely done with the splitting business.
+%    \begin{macrocode}
+    \ekv@exparg{\long\def\ekv@ifexp@done##1##2\ekv@nil}%
+      {%
+        \@firstofone
+          {\ekv@ifexp@done@test##1\ekv@nil\ekv@ifexp@panic} \ekv@nil{}%
+          ##2\ekv@stop\ekv@ifexp@done@{##1}{##2}\ekv@stop\@secondoftwo
+      }
+    \long\def\ekv@ifexp@done@test##1 ##2\ekv@nil##3##4##5##6\ekv@stop{##3}
+    \ekv@exparg{\long\def\ekv@ifexp@done@##1##2\ekv@stop\@secondoftwo##3}%
+      {\ekv@strip{##2}{##3{##1}}}%
+%    \end{macrocode}
+%   Panic in this case means give up on expansion parsing, instead the normal
+%   action that would've been done if the expansion mark isn't found is
+%   executed.
+%    \begin{macrocode}
+    \long\def\ekv@ifexp@panic##1\@secondoftwo##2##3{##3}
+  }
+%    \end{macrocode}
+% \end{macro}
+%   We set up the strange category codes for colons and do the real definition
+%   after the temporary one.
+%    \begin{macrocode}
+\begingroup
+  \catcode`\~=13
+  \lccode`\~=`\:
+  \catcode`\z=11
+  \lccode`\z=`\:
+\lowercase{\endgroup
+\ekv@ifexp{~ }{z }}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvset}
+% Set up |\ekvset|, which should not be affected by active commas and equal
+% signs. The equal signs are a bit harder to cope with and we'll do that later,
+% but the active commas can be handled by just doing two comma-splitting loops
+% one at actives one at others. That's why we define |\ekvset| here with a
+% temporary meaning just to set up the things with two different category codes.
+% |#1| will be a \texttt{,\textsubscript{13}} and |#2| will be a
+% \texttt{=\textsubscript{13}}.
+%    \begin{macrocode}
+\begingroup
+\def\ekvset#1#2{%
+\endgroup
+\ekv@exparg{\long\def\ekvset##1##2}%
+  {%
+    \expandafter\expandafter\expandafter
+    \ekv@set\expandafter\csname\ekv@undefined@set{##1}\endcsname
+      \ekv@mark##2#1\ekv@stop#1{}%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@set}
+% |\ekv@set| will split the \kv\ list at active commas. Then it has to check
+% whether there were unprotected other commas and resplit there.
+%    \begin{macrocode}
+\long\def\ekv@set##1##2#1%
+  {%
+%    \end{macrocode}
+% Test whether we're at the end, if so invoke |\ekv@endset|,
+%    \begin{macrocode}
+    \ekv@gobble@from@mark@to@stop##2\ekv@endset\ekv@stop
+%    \end{macrocode}
+% else go on with other commas.
+%    \begin{macrocode}
+    \ekv@set@other##1##2,\ekv@stop,%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@endset}
+% |\ekv@endset| is a hungry little macro. It will eat everything that remains
+% of |\ekv@set| and unbrace the sneaked stuff.
+%    \begin{macrocode}
+\long\def\ekv@endset\ekv@stop\ekv@set@other##1\ekv@mark\ekv@stop,\ekv@stop,##2%
+  {##2}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@eq@other@or@active,\ekv@eq@active}
+%   Splitting at equal signs will be done in a way that checks whether there is
+%   an equal sign and splits at the same time. This gets quite messy and the
+%   code might look complicated, but this is pretty fast (faster than first
+%   checking for an equal sign and splitting if one is found). The splitting
+%   code will be adapted for |\ekvset| and |\ekvparse| to get the most speed,
+%   but some of these macros don't require such adaptions.
+%   |\ekv@eq@other@or@active| and |\ekv@eq@active| will split the argument at
+%   the first equal sign. |\ekv@eq@active| will insert the macro which comes
+%   after the first following |\ekv@mark|, while |\ekv@eq@other@or@active| will
+%   also check for an active equals sign or none.
+%   Usage should look like this:
+%   \begin{syntaxexample*}
+%     |\ekv@eq@other@or@active|
+%       \indent|#1\ekv@nil\ekv@mark|\meta{code for \tkn{=}{12}}
+%       \indent\tkn{=}{12}|\ekv@mark|\meta{code for no equals sign}
+%       \indent|#1\ekv@mark|\meta{code for \tkn{=}{13} or mixed}
+%       \indent\tkn{=}{13}|\ekv@mark{}|
+%     |\ekv@eq@active|
+%       \indent|#1\ekv@nil\ekv@mark|\meta{code for \tkn{=}{13}}
+%       \indent\tkn{=}{13}|\ekv@mark|\meta{code for no \tkn{=}{13}}
+%   \end{syntaxexample*}
+%   To prevent accidental brace stripping |#1| should be handed in with a
+%   leading |\ekv@mark|, also that's what the |\ekv@nil| after the first |#1| is
+%   used for. In |\ekv@eq@other@or@active| four cases are distinguished:
+%   \begin{enumerate}
+%     \item
+%       Only equals signs of category 12 are found, then \meta{code for
+%       \tkn{=}{12}} will be inserted.
+%     \item
+%       No equals sign is found, then \meta{code for no equals sign} will be
+%       inserted.
+%     \item
+%       Only equals signs of category 13 are found, then \meta{code for
+%       \tkn{=}{13} or mixed} will be inserted, directly followed by
+%       \meta{code for no equals sign}.
+%     \item
+%       Equals signs of categories 12 and 13 are found, then \meta{code for
+%       \tkn{=}{13} or mixed} directly followed by \meta{code for \tkn{=}{12}}
+%       will be inserted.
+%   \end{enumerate}
+%   This allows for fast branching based on \TeX's argument grabbing rules and
+%   we don't have to split after the branching if the equal sign was there.
+%    \begin{macrocode}
+\long\def\ekv@eq@other@or@active
+    ##1=##2\ekv@mark##3%
+    ##4#2##5\ekv@mark##6%
+  {##6##3##1\ekv@stop\ekv@mark##2}
+\long\def\ekv@eq@other##1=##2\ekv@mark##3{##3##1\ekv@stop\ekv@mark##2}
+\long\def\ekv@eq@active##1#2##2\ekv@mark##3{##3##1\ekv@stop\ekv@mark##2}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@set@other,\ekv@set@next@other}
+%   The macro |\ekv@set@other| is guaranteed to get only single \kv\ pairs.
+%    \begin{macrocode}
+\long\def\ekv@set@other##1##2,%
+  {%
+%    \end{macrocode}
+%   First we test whether we're done.
+%    \begin{macrocode}
+    \ekv@gobble@from@mark@to@stop##2\ekv@endset@other\ekv@stop
+%    \end{macrocode}
+%   If not we split at the equal sign of category other.
+%    \begin{macrocode}
+    \ekv@eq@other@or@active
+      ##2\ekv@nil\ekv@mark\ekv@set@eq@other
+      =\ekv@mark\ekv@set@noeq
+      ##2\ekv@mark\ekv@set@eq@active
+      #2\ekv@mark{}%
+%    \end{macrocode}
+%   And put the set name after the splitting.
+%    \begin{macrocode}
+    ##1%
+    \ekv@mark
+  }
+%    \end{macrocode}
+%   The second macro is used as a shortcut to gobble two arguments and do the
+%   same as a following |\ekv@set@other|.
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@set@next@other##1##2\ekv@set@other##3##4,}%
+  {\ekv@set@other{##3}{##4},}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@endset@other}
+%   Breaking the current inner loop for \tkn{,}{12} is done by gobbling all the
+%   remaining tokens and grabbing the next split at an active comma
+%   (incorporating the next |\ekv@set| call).
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@endset@other
+    \ekv@stop\ekv@eq@other@or@active
+    \ekv@mark\ekv@stop\ekv@nil\ekv@mark\ekv@set@eq@other
+    =\ekv@mark\ekv@set@noeq
+    \ekv@mark\ekv@stop\ekv@mark\ekv@set@eq@active#2\ekv@mark##1%
+    ##2##3#1}%
+  {\ekv@set{##2}{##3}#1}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@set@eq@other}
+%   If this gets called we know that there is no \tkn{=}{13}, hence are done
+%   with the splitting business. This doesn't even need much clean up, we can
+%   just strip the \key-name and forward it to |\ekv@set@pair|.
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@set@eq@other##1\ekv@stop}%
+  {\ekv@strip@key{##1}\ekv@set@pair}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@set@if@noeq}
+%   In the case that there was at least one \tkn{=}{13} we need a way to know
+%   whether there also was a \tkn{=}{12}. This here can be used to check this by
+%   only looking for |\ekv@set@noeq|.
+%    \begin{macrocode}
+\def\ekv@set@if@noeq##1\ekv@set@noeq{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@set@eq@active,\ekv@set@eq@active@}
+%   The first token after this will either be |\ekv@set@noeq| or
+%   |\ekv@set@eq@other|. We test this and branch accordingly.
+%    \begin{macrocode}
+\def\ekv@set@eq@active##1%
+  {\ekv@set@if@noeq##1\ekv@set@eq@active@\ekv@set@noeq\ekv@set@eq@mixed}
+%    \end{macrocode}
+%   Since we know that there was no \tkn{=}{12} when the next macro is called we
+%   can simply do the correct split without any checks and forward to
+%   |\ekv@set@pair|.
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@set@eq@active@
+    \ekv@set@noeq\ekv@set@eq@mixed
+    ##1#2##2\ekv@mark
+    \ekv@set@eq@other\ekv@stop\ekv@mark#2\ekv@mark##3}%
+  {\ekv@strip@key{##1}\ekv@set@pair\ekv@mark##2}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {\ekv@set@eq@mixed,\ekv@set@eq@mixed@o,\ekv@set@mixed@a}
+%   In the mixed case we grab until the first split of \tkn{=}{12} already done,
+%   and resplit at \tkn{=}{13} using the conditonal splitter described earlier.
+%    \begin{macrocode}
+\long\def\ekv@set@eq@mixed##1\ekv@stop
+  {%
+    \ekv@eq@active##1\ekv@nil\ekv@mark\ekv@set@eq@mixed@a
+      #2\ekv@mark\ekv@set@eq@mixed@o
+  }
+%    \end{macrocode}
+%   If there actually was no \tkn{=}{13} before the first \tkn{=}{12} everything
+%   was fine. We pick up our first split and remove the gibberish left by the
+%   conditional splitter.
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@set@eq@mixed@o
+    ##1\ekv@nil\ekv@mark\ekv@set@eq@mixed@a\ekv@stop\ekv@mark
+    ##2\ekv@nil#2\ekv@mark##3}%
+  {\ekv@strip@key{##1}\ekv@set@pair##2\ekv@nil}
+%    \end{macrocode}
+%   |\ekv@set@eq@mixed@a| will trigger if before the first \tkn{=}{12} there was
+%   already a \tkn{=}{13}. So we use the new split and revert the erroneous
+%   split at \tkn{=}{12}.
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@set@eq@mixed@a
+    ##1\ekv@stop
+    ##2\ekv@nil#2\ekv@mark\ekv@set@eq@mixed@o\ekv@mark
+    ##3#2\ekv@mark##4}%
+  {\ekv@strip@key{##1}\ekv@set@pair##2=##3}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@set@noeq,\ekv@set@was@blank}
+%   If there was no equals sign the current element might in fact be blank.
+%   Blank elements are ignored, hence we need to check for that, else we can
+%   call |\ekv@set@key|.
+%    \begin{macrocode}
+\ekv@expandedarg
+  {%
+    \long\def\ekv@set@noeq
+      ##1\ekv@nil\ekv@mark\ekv@set@eq@other\ekv@stop\ekv@mark
+  }%
+  {%
+    \ekv@unexpanded
+      {%
+        \ekv@ifblank@##1\ekv@stop\ekv@ifblank@gobbletrue
+          \ekv@stop\ekv@set@was@blank
+      }%
+    \ekv@unexpanded\expandafter{\ekv@strip@key{##1}\ekv@set@key}%
+  }
+%    \end{macrocode}
+%   If in fact the element was blank we remove the |\ekv@set@key| call and
+%   instead do the next iteration of |\ekv@set@other|.
+%    \begin{macrocode}
+\ekv@exparg{\long\expandafter\def\expandafter\ekv@set@was@blank
+    \ekv@strip@key{\ekv@mark##1}\ekv@set@key
+    ##2##3,}%
+  {\ekv@set@other{##2}{##3},}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvbreak,\ekvbreakPreSneak,\ekvbreakPostSneak}
+% Provide macros that can completely stop the parsing of |\ekvset|, who knows
+% what it'll be useful for.
+%    \begin{macrocode}
+\long\def\ekvbreak##1##2\ekv@stop#1##3{##1}
+\long\def\ekvbreakPreSneak ##1##2\ekv@stop#1##3{##1##3}
+\long\def\ekvbreakPostSneak##1##2\ekv@stop#1##3{##3##1}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvsneak,\ekvsneakPre}
+% One last thing we want to do for |\ekvset| is to provide macros that just
+% smuggle stuff after |\ekvset|'s effects.
+%    \begin{macrocode}
+\long\def\ekvsneak##1##2\ekv@stop#1##3{##2\ekv@stop#1{##3##1}}
+\long\def\ekvsneakPre##1##2\ekv@stop#1##3{##2\ekv@stop#1{##1##3}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvparse}
+% Additionally to the |\ekvset| macro we also want to provide an |\ekvparse|
+% macro, that has the same scope as |\keyval_parse:NNn| from \pkg{expl3}.
+% This is pretty analogue to the |\ekvset| implementation, we just put an
+% |\unexpanded| here and there instead of other macros to stop the |\expanded|
+% on our output. The |\unexpanded\expanded{{...}}| ensures that the material
+% is in an alignment safe group at all time, and that it doesn't expand any
+% further in an |\edef| or |\expanded| context.
+%    \begin{macrocode}
+\long\def\ekvparse##1##2##3%
+  {%
+    \ekv@unexpanded\ekv@expanded
+      {{\ekv@parse{##1}{##2}\ekv@mark##3#1\ekv@stop#1}}%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@parse}
+%    \begin{macrocode}
+\long\def\ekv@parse##1##2##3#1%
+  {%
+    \ekv@gobble@from@mark@to@stop##3\ekv@endparse\ekv@stop
+    \ekv@parse@other{##1}{##2}##3,\ekv@stop,%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@endparse}
+%    \begin{macrocode}
+\long\def\ekv@endparse\ekv@stop\ekv@parse@other##1\ekv@mark\ekv@stop,\ekv@stop,%
+  {}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@parse@other}
+%    \begin{macrocode}
+\long\def\ekv@parse@other##1##2##3,%
+  {%
+    \ekv@gobble@from@mark@to@stop##3\ekv@endparse@other\ekv@stop
+    \ekv@eq@other@or@active
+      ##3\ekv@nil\ekv@mark\ekv@parse@eq@other
+      =\ekv@mark\ekv@parse@noeq
+      ##3\ekv@mark\ekv@parse@eq@active#2\ekv@mark{}%
+    {##1}{##2}%
+    \ekv@mark
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@endparse@other}
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@endparse@other
+    \ekv@stop\ekv@eq@other@or@active
+    \ekv@mark\ekv@stop\ekv@nil\ekv@mark\ekv@parse@eq@other
+    =\ekv@mark\ekv@parse@noeq
+    \ekv@mark\ekv@stop\ekv@mark\ekv@parse@eq@active#2\ekv@mark##1%
+    ##2##3##4#1}%
+  {\ekv@parse{##2}{##3}{##4}#1}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@parse@eq@other}
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@parse@eq@other##1\ekv@stop}%
+  {\ekv@strip{##1}\ekv@parse@pair}%
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@parse@if@noeq}
+%    \begin{macrocode}
+\def\ekv@parse@if@noeq##1\ekv@parse@noeq{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@parse@eq@active,\ekv@parse@eq@active@}
+%    \begin{macrocode}
+\def\ekv@parse@eq@active##1%
+  {%
+    \ekv@parse@if@noeq##1\ekv@parse@eq@active@\ekv@parse@noeq
+    \ekv@parse@eq@mixed
+  }
+\ekv@exparg{\long\def\ekv@parse@eq@active@
+    \ekv@parse@noeq\ekv@parse@eq@mixed
+    ##1#2##2\ekv@mark
+    \ekv@parse@eq@other\ekv@stop\ekv@mark#2\ekv@mark##3}%
+  {\ekv@strip{##1}\ekv@parse@pair\ekv@mark##2}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {\ekv@parse@eq@mixed,\ekv@parse@eq@mixed@o,\ekv@parse@eq@mixed@a}
+%    \begin{macrocode}
+\long\def\ekv@parse@eq@mixed##1\ekv@stop
+  {%
+    \ekv@eq@active##1\ekv@nil\ekv@mark\ekv@parse@eq@mixed@a
+      #2\ekv@mark\ekv@parse@eq@mixed@o
+  }
+\ekv@exparg{\long\def\ekv@parse@eq@mixed@a
+    ##1\ekv@stop
+    ##2\ekv@nil#2\ekv@mark\ekv@parse@eq@mixed@o\ekv@mark
+    ##3#2\ekv@mark##4}%
+  {\ekv@strip{##1}\ekv@parse@pair##2=##3}
+\ekv@exparg{\long\def\ekv@parse@eq@mixed@o
+    ##1\ekv@nil\ekv@mark\ekv@parse@eq@mixed@a\ekv@stop\ekv@mark
+    ##2\ekv@nil#2\ekv@mark##3}%
+  {\ekv@strip{##1}\ekv@parse@pair##2\ekv@nil}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@parse@noeq,\ekv@parse@was@blank}
+%    \begin{macrocode}
+\ekv@expandedarg
+  {%
+    \long\def\ekv@parse@noeq
+      ##1\ekv@nil\ekv@mark\ekv@parse@eq@other\ekv@stop\ekv@mark
+  }%
+  {%
+    \ekv@unexpanded
+      {%
+        \ekv@ifblank@##1\ekv@stop\ekv@ifblank@gobbletrue
+          \ekv@stop\ekv@parse@was@blank
+      }%
+    \ekv@unexpanded\expandafter{\ekv@strip{##1}\ekv@parse@key}%
+  }
+\ekv@exparg{\long\expandafter\def\expandafter\ekv@parse@was@blank
+    \ekv@strip{\ekv@mark##1}\ekv@parse@key
+    ##2##3##4,}%
+  {\ekv@parse@other{##2}{##3}{##4},}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@parse@pair,\ekv@parse@pair@}
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@parse@pair##1##2\ekv@nil}%
+  {\ekv@strip{##2}\ekv@parse@pair@{##1}}
+\ekv@exparg{\long\def\ekv@parse@pair@##1##2##3##4}%
+  {%
+    \ekv@ifexp{##2}%
+      {\ekv@expansion@parse@pair{##1}{##4}}%
+      {\ekv@unexpanded{##4{##2}{##1}}}%
+    \ekv@parse@other{##3}{##4}%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@parse@key}
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@parse@key##1##2}%
+  {%
+    \ekv@ifexp{##1}%
+      {\ekv@expansion@parse@key{##2}}%
+      {\ekv@unexpanded{##2{##1}}}%
+    \ekv@parse@other{##2}%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% Finally really setting things up with |\ekvset|'s temporary meaning:
+%    \begin{macrocode}
+}
+\catcode`\,=13
+\catcode`\==13
+\ekvset,=
+%    \end{macrocode}
+%
+% \begin{macro}{\ekvsetSneaked}
+% This macro can be defined just by expanding |\ekvsneak| once after expanding
+% |\ekvset|. To expand everything as much as possible early on we use a
+% temporary definition.
+%    \begin{macrocode}
+\edef\ekvsetSneaked
+  {%
+    \ekv@unexpanded{\ekvsneak{#2}}%
+    \ekv@unexpanded\expandafter{\ekvset{#1}{#3}}%
+  }
+\ekv@expargtwice{\long\def\ekvsetSneaked#1#2#3}{\ekvsetSneaked}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvchangeset}
+% Provide a macro that is able to switch out the current \set\ in |\ekvset|.
+% This operation allows something similar to \pkg{pgfkeys}'s
+% \texttt{\meta{key}/.cd} mechanism. However this operation can be more
+% expensive than |/.cd| as we can't just redefine some token to reflect this,
+% but have to switch out the set expandably, so this works similar to the
+% |\ekvsneak| macros reading and reinserting things, but it only has to read and
+% reinsert the remainder of the current key's replacement code.
+%    \begin{macrocode}
+\ekv@exparg{\def\ekvchangeset#1}%
+  {%
+    \expandafter\expandafter\expandafter
+    \ekv@changeset\expandafter\csname\ekv@undefined@set{#1}\endcsname\ekv@empty
+  }
+%    \end{macrocode}
+% \begin{macro}[internal]{\ekv@changeset}
+% This macro does the real change-out of |\ekvchangeset|. |#2| will have a
+% leading |\ekv@empty| so that braces aren't stripped accidentally, but that
+% will not hurt and just expand to nothing in one step.
+%    \begin{macrocode}
+\long\def\ekv@changeset#1#2\ekv@set@other#3{#2\ekv@set@other#1}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ekvmorekv}
+%   |\ekvmorekv| injects additional keys for consideration without needing a
+%   nested |\ekvset|. The issue we're facing here is that we can only inject
+%   after the next |\ekv@set@other| to not destroy the order of things, but in
+%   theory the argument to |\ekvmorekv| could contain an active comma. Now we
+%   have two options:
+%   \begin{enumerate}
+%     \item reread all keys until the end of the current |\ekv@set@other| loop
+%       to change the commas there to an active one and insert |\ekv@set|
+%       instead
+%     \item loop over the argument of |\ekvmorekv| to remove all top-level
+%       active commas and replace them with ones of category 12.
+%   \end{enumerate}
+%   The following implements the second approach. We use a temporary definition
+%   of |\ekvmorekv| to get us |#1| for active commas. For the comma replacement
+%   we set up a small loop. The |\ekv@empty| at the end of |\ekvmorekv|'s
+%   definition protects against accidental brace loss in user code.
+%    \begin{macrocode}
+\def\ekvmorekv#1%
+  {%
+    \long\def\ekvmorekv##1%
+      {%
+        \expandafter\ekv@morekv\ekv@expanded
+          {{\ekv@morekv@loop\ekv@empty##1\ekv@stop\ekv@morekv@done#1}}%
+        \ekv@empty
+      }%
+%    \end{macrocode}
+% \begin{macro}[internal]{\ekv@parse@more,\ekv@parse@more@}
+%   For the expansion control we also need a way to support reinsertion in
+%   |\ekvparse|. Since there no user code is executed this is an internal macro.
+%   It works in the same way but the argument order exchange is different. Also,
+%   since this is only used internally, we know it is safe to omit the trailing
+%   |\ekv@empty|.
+%    \begin{macrocode}
+    \long\def\ekv@parse@more##1\@gobble##2%
+      {%
+        \expandafter\ekv@parse@more@\ekv@expanded
+          {{\ekv@morekv@loop\ekv@empty##1\ekv@stop\ekv@morekv@done#1}}%
+      }%
+    \long\def\ekv@parse@more@##1\ekv@parse@other##2##3\ekv@mark
+      {\ekv@parse@other{##2}{##3}\ekv@mark##1,}%
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]{\ekv@morekv}
+%   This is just a simple change of argument order, injecting the new comma
+%   separated list after the current |\ekv@set@other| call.
+%    \begin{macrocode}
+    \long\def\ekv@morekv##1##2\ekv@set@other##3\ekv@mark
+      {##2\ekv@set@other##3\ekv@mark##1,}
+%    \end{macrocode}
+% \end{macro}
+% \begin{macro}[internal]
+%   {\ekv@morekv@loop,\ekv@morekv@done,\ekv@morekv@wrap}
+%   And here is the heavy lifting of the comma replacement. Each list element
+%   until the next active comma is read and left as an argument for
+%   |\ekv@morekv@wrap|, that will remove the leading |\ekv@empty|. The trick for
+%   a fast end of the loop is that |\ekv@morekv@wrap| will read until the next
+%   |\ekv@stop|, of which an additional one is put before |\ekv@morekv@done| so
+%   that |wrap| will wrap the real end of the list and then |done| removes the
+%   excess code.
+%    \begin{macrocode}
+    \long\def\ekv@morekv@loop##1#1%
+      {\ekv@morekv@wrap##1\ekv@stop,\ekv@morekv@loop\ekv@empty}%
+    \long\def\ekv@morekv@wrap##1\ekv@stop{\ekv@unexpanded\expandafter{##1}}%
+    \def\ekv@morekv@done\ekv@stop,\ekv@morekv@loop\ekv@empty{}%
+  }
+\begingroup\catcode`\,=13 \@firstofone{\endgroup\ekvmorekv,}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+%
+% \begin{macro}[internal]
+%   {
+%     \ekv@def@expansion@rule,\ekv@def@expansion@rule@ea,
+%     \ekv@expansion@rule@,\ekv@expansion@csname
+%   }
+%   All expansion rules share the same basic structure, they do their expansion
+%   step and then call |\ekv@expansion@rule@| (this could be done faster by
+%   letting each rule build the macro for the next rule in |\csname|, but that
+%   would require a more complex argument grabbing structure of the rules, and
+%   we'd need to use |\expanded{\unexpanded{\csname ...\endcsname}\expandafter}|
+%   or similar to not do the expansion steps of the \val\ inside of |\csname|).
+%   As a result of this the \val\ needs to be grabbed twice per expansion step.
+%    \begin{macrocode}
+\protected\def\ekv@def@expansion@rule#1#2#3#4%
+  {%
+    \long\expandafter\def\csname ekv@expansion@rule@#1\endcsname##1#2%
+      {#3\ekv@expansion@rule@#4}%
+  }
+\protected\def\ekv@def@expansion@rule@ea#1#2%
+  {\ekv@def@expansion@rule{#1}{#2}\expandafter}
+%    \end{macrocode}
+%   Rules follow this naming scheme. Note that for an undefined rule an error is
+%   thrown and the result of the |\csname| is |\ekv@expansion@rule@|.
+%    \begin{macrocode}
+\long\def\ekv@expansion@csname#1\ekv@stop
+  {%
+    ekv@expansion@rule@%
+    \ifcsname ekv@expansion@rule@#1\endcsname
+      #1%
+    \else
+      \ekv@err@undefined@expansion{#1}%
+    \fi
+  }
+%    \end{macrocode}
+%   This auxiliary macro simply builds the next rule, it is used to start an
+%   expansion chain, as well as for each defined or undefined rule.
+%    \begin{macrocode}
+\long\def\ekv@expansion@rule@#1#2%
+  {\csname\expandafter\ekv@expansion@csname\string#2\ekv@stop\endcsname{#1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@expansion@rule@\ekv@mark}
+%   The expansion chain is ended by an internal rule that behaves very different
+%   from the others. It'll test whether the |r|-rule was used (in which case the
+%   third argument will not be empty, and also execute that reinsertion) or grab
+%   the code for the next step after the expansion.
+%    \begin{macrocode}
+\ekv@exparg
+  {%
+    \long\expandafter
+    \def\csname ekv@expansion@rule@\string\ekv@mark\endcsname
+      #1\ekv@stop#2#3#4#5%
+  }%
+  {%
+    \romannumeral\ekv@exparg{\expandafter\ekv@zero\ekv@ifempty{#3}{#5{#2}{#1}}}%
+      {\ekv@ifempty{#2}{#4{#1}}{\ekv@err@val@no@reinsert{#2}}}%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {
+%     \ekv@expansion@rule@o,\ekv@expansion@rule@e,\ekv@expansion@rule@c,
+%     \ekv@expansion@rule@f,\ekv@expansion@rule@V,\ekv@expansion@rule@v,
+%     \ekv@expansion@rule@s,\ekv@expansion@rule@b,\ekv@expansion@rule@\r,
+%     \ekv@expansion@rule@g,\ekv@expansion@rule@p,\ekv@expansion@rule@P,
+%     \ekv@expansion@rule@r,\ekv@expansion@rule@R
+%   }
+%   All the expansion rules are executed inside a |\csname| construct, so they
+%   have to issue an |\endcsname| after the intended expansion took place. I
+%   guess the code is pretty straight forward here.
+%    \begin{macrocode}
+\ekv@def@expansion@rule@ea{o}{}{\expandafter{#1}}
+\ekv@def@expansion@rule@ea{e}{}{\ekv@expanded{{#1}}}
+\ekv@def@expansion@rule@ea{c}{}{\csname#1\endcsname}
+\ekv@def@expansion@rule@ea{f}{}{\expandafter{\romannumeral`\^^@#1}}
+\ekv@exparg{\ekv@def@expansion@rule{s}{}}{\ekv@strip{\ekv@mark#1}}{}
+\ekv@def@expansion@rule{b}{}{}{{{#1}}}
+\ekv@def@expansion@rule{\string\r}{#2\ekv@stop#3#4}{}{{#1}#2\ekv@stop{#3}{#4r}}
+\ekv@def@expansion@rule@ea{g}{}{\expandafter{\@gobble#1}}
+\ekv@def@expansion@rule{p}{#2}{}{{#2#1}}
+\ekv@def@expansion@rule{P}{#2}{}{{#1#2}}
+%    \end{macrocode}
+%   The |V| and |v| rules are a bit more complicated. They use some auxiliaries
+%   but otherwise should be more or less obvious as well. The |v| one uses some
+%   expansion to get a more meaningful error message in case the resulting
+%   control sequence would be undefined (without actually using |\csname|, to
+%   not accidentally define anything as |\relax|).
+%    \begin{macrocode}
+\long\def\ekv@expansion@rule@V#1%
+  {%
+    \ifx\relax#1\ekv@err@erroneous@variable{#1}\ekv@expansion@@clean@V\fi
+    \ekv@expansion@@V{#1}%
+  }
+\ekv@expandedarg{\long\def\ekv@expansion@rule@v#1}%
+  {%
+    \ekv@unexpanded{\ekv@ifdefined{#1}%
+      {\expandafter\ekv@expansion@@V\csname#1\endcsname}}%
+      {%
+        \ekv@unexpanded{\expandafter\ekv@err@erroneous@variable\ekv@expanded}%
+          {{\expandafter\@gobble\string\\#1}}%
+        \ekv@unexpanded{\ekv@expansion@rule@}{}%
+      }%
+  }
+\ekv@exparg{\long\def\ekv@expansion@rule@r#1#2\ekv@stop#3#4}%
+  {\ekv@expansion@rule@v{#1}#2\ekv@stop{#3}{#4r}}
+\ekv@exparg{\long\def\ekv@expansion@rule@R#1#2\ekv@stop#3#4}%
+  {\ekv@expansion@rule@V{#1}#2\ekv@stop{#3}{#4r}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@expansion@@V,\ekv@expansion@@clean@V}
+%   The actual |V| evaluation is pretty much the same as in \pkg{expl3}, but we
+%   need to put braces around the expansion result, hence branch slightly
+%   differently. In general, a macro will temporarily have the meaning of
+%   |\relax| if hit by |\noexpand| and hence the \cs[no-index]{ifx} test will
+%   result in false (as the meaning isn't the same now), so we can tell
+%   whether it would expand directly. Else we assume this is a register type and
+%   use |\the|.
+%    \begin{macrocode}
+\long\def\ekv@expansion@@V#1%
+  {%
+    \expandafter\ifx\noexpand#1#1%
+      \ekv@fi@firstoftwo
+    \fi
+    \@secondoftwo
+    {\expandafter\ekv@expansion@rule@\expandafter{\the#1}}%
+    {\expandafter\ekv@expansion@rule@\expandafter{#1}}%
+  }
+\long\def\ekv@expansion@@clean@V\fi\ekv@expansion@@V#1%
+  {\fi\ekv@expansion@rule@{}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {\ekv@expansion@rule@\key,\ekv@expansion@rule@\ekv@key@after}
+%   The |\key|-rule works by calling a nested expansion chain with swapped \key\
+%   and \val. Instead of |\ekv@mark| marking the end of the expansion chain
+%   we use a different final step called |\ekv@key@after|, that simply checks
+%   whether an |r|-rule was executed (\emph{error}) and ends the current
+%   expansion step in the outer chain.
+%    \begin{macrocode}
+\ekv@def@expansion@rule{\string\key}{#2#3\ekv@stop#4}%
+  {}{{#4}#2\ekv@key@after\ekv@stop{#1}{}{#3}}
+\ekv@exparg{\ekv@def@expansion@rule{\string\ekv@key@after}{\ekv@stop#2#3#4}}%
+  {\ekv@ifempty{#3}{}\ekv@err@key@no@reinsert}
+  {{#2}#4\ekv@stop{#1}}
+%    \end{macrocode}
+% \end{macro}
+%
+%
+% \begin{macro}[internal]
+%   {
+%     \ekv@set@pair,\ekv@set@pair@,
+%     \ekv@set@pair@relax,\ekv@set@pair@undefined,
+%     \ekv@set@pair@u,\ekv@set@pair@u@relax,\ekv@set@pair@no@u
+%   }
+%   |\ekv@set@pair| gets invoked with the space and brace stripped key-name as
+%   its first, the value as the second (delimited by |\ekv@nil|), and the set
+%   name as the third argument. It provides tests for the key-macros and
+%   everything to be able to throw meaningful error messages if it isn't
+%   defined. We have two routes here, one if |\lastnamedcs| is defined and one
+%   if it isn't. The big difference is that if it is we can omit a |\csname| and
+%   instead just expand |\lastnamedcs| once to get the control sequence.
+%   If the macro is defined the value will be space and brace stripped and the
+%   key-macro called. Else branch into the error handling provided by
+%   |\ekv@set@pair@undefined|.
+%    \begin{macrocode}
+\ekv@if@lastnamedcs
+  {%
+    \long\def\ekv@set@pair#1\ekv@mark#2#3\ekv@nil#4%
+      {%
+        \ifcsname#4{#1}\endcsname\expandafter\ekv@set@pair@\lastnamedcs\fi
+        \ekv@set@pair@undefined{#3}{#1}{#2}%
+        \ekv@set@other#4%
+      }
+    \ekv@exparg{\long\def\ekv@set@pair@undefined#1#2#3\ekv@set@other#4}%
+      {%
+        \romannumeral
+        \ekv@exparg
+          {\expandafter\ekv@zero\ekv@ifexp{#3}}%
+          {\ekv@strip{#1}\ekv@expansion@set@pair}%
+          {%
+            \ifcsname#4{}u\endcsname\expandafter\ekv@set@pair@u\lastnamedcs\fi
+            \ekv@set@pair@no@u{#1}{#2}{#3}%
+          }%
+        \ekv@set@other#4%
+      }
+  }
+  {%
+    \long\def\ekv@set@pair#1\ekv@mark#2#3\ekv@nil#4%
+      {%
+        \ifcsname#4{#1}\endcsname
+          \expandafter\ekv@set@pair@\csname#4{#1}\endcsname
+        \fi
+        \ekv@set@pair@undefined{#3}{#1}{#2}%
+        \ekv@set@other#4%
+      }
+    \ekv@exparg{\long\def\ekv@set@pair@undefined#1#2#3\ekv@set@other#4}%
+      {%
+        \romannumeral
+        \ekv@exparg
+          {\expandafter\ekv@zero\ekv@ifexp{#3}}%
+          {\ekv@strip{#1}\ekv@expansion@set@pair}%
+          {%
+            \ifcsname#4{}u\endcsname
+              \expandafter\ekv@set@pair@u\csname#4{}u\endcsname
+            \fi
+            \ekv@set@pair@no@u{#1}{#2}{#3}%
+          }%
+        \ekv@set@other#4%
+      }
+  }
+\ekv@expandedarg{\long\def\ekv@set@pair@#1\fi\ekv@set@pair@undefined#2}%
+  {%
+    \ekv@unexpanded{\fi\ifx#1\relax\ekv@set@pair@relax\fi}%
+    \ekv@unexpanded\expandafter{\ekv@strip{#2}#1\ekv@set@next@other}%
+  }
+\ekv@expandafter{\long\def\ekv@set@pair@relax\fi}%
+    \ekv@strip{#1}#2\ekv@set@next@other
+  {\fi\ekv@set@pair@undefined{#1}}
+\ekv@expandedarg{\long\def\ekv@set@pair@u#1\fi\ekv@set@pair@no@u#2}%
+  {%
+    \ekv@unexpanded
+      {%
+        \fi
+        \ifx\relax#1%
+          \ekv@set@pair@u@relax
+        \fi
+      }%
+    \ekv@unexpanded\expandafter{\ekv@strip{#2}#1}%
+  }
+\ekv@expandafter{\long\def\ekv@set@pair@u@relax\fi}\ekv@strip{\ekv@mark#1}#2%
+  {\fi\ekv@set@pair@no@u.}
+\long\def\ekv@set@pair@no@u#1#2#3\ekv@set@other#4%
+  {%
+    \ekv@ifdefined{#4{#2}N}%
+      \ekv@err@noarg
+      \ekv@err@unknown
+        #4{#2}{#3}%
+    \ekv@set@other#4%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {
+%     \ekv@set@key,\ekv@set@key@,
+%     \ekv@set@key@relax,\ekv@set@key@undefined,
+%     \ekv@set@key@u,\ekv@set@key@u@relax,\ekv@set@key@no@u
+%   }
+% Analogous to |\ekv@set@pair|, |\ekv@set@key| builds the \Nkey-macro and
+% provides an error-branch. It'll test whether the key-macro is defined and if
+% so call it, else there might be some \expnotation, or errors are thrown.
+%    \begin{macrocode}
+\ekv@if@lastnamedcs
+  {%
+    \long\def\ekv@set@key#1\ekv@mark#2#3%
+      {%
+        \ifcsname#3{#1}N\endcsname\expandafter\ekv@set@key@\lastnamedcs\fi
+        \ekv@set@key@undefined{#1}{#2}%
+        \ekv@set@other#3%
+      }
+    \ekv@exparg{\long\def\ekv@set@key@undefined#1#2\ekv@set@other#3}%
+      {%
+        \ekv@ifexp{#2}%
+          \ekv@expansion@set@key
+          {%
+            \ifcsname#3{}uN\endcsname\expandafter\ekv@set@key@u\lastnamedcs\fi
+            \ekv@set@key@no@u{#1}{#2}%
+          }%
+        \ekv@set@other#3%
+      }
+  }
+  {%
+    \long\def\ekv@set@key#1\ekv@mark#2#3%
+      {%
+        \ifcsname#3{#1}N\endcsname
+          \expandafter\ekv@set@key@\csname#3{#1}N\endcsname
+        \fi
+        \ekv@set@key@undefined{#1}{#2}%
+        \ekv@set@other#3%
+      }
+    \ekv@exparg{\long\def\ekv@set@key@undefined#1#2\ekv@set@other#3}%
+      {%
+        \ekv@ifexp{#2}%
+          \ekv@expansion@set@key
+          {%
+            \ifcsname#3{}uN\endcsname
+              \expandafter\ekv@set@key@u\csname#3{}uN\endcsname
+            \fi
+            \ekv@set@key@no@u{#1}{#2}%
+          }%
+        \ekv@set@other#3%
+      }
+  }
+\long\def\ekv@set@key@#1\fi\ekv@set@key@undefined
+  {\fi\ifx#1\relax\ekv@set@key@relax\fi#1\ekv@set@next@other}
+\long\def\ekv@set@key@relax\fi#1\ekv@set@next@other{\fi\ekv@set@key@undefined}
+\long\def\ekv@set@key@u#1\fi\ekv@set@key@no@u
+  {\fi\ifx\relax#1\ekv@set@key@u@relax\fi#1}
+\def\ekv@set@key@u@relax\fi#1{\fi\ekv@set@key@no@u}
+\long\def\ekv@set@key@no@u#1#2\ekv@set@other#3%
+  {%
+    \ekv@ifdefined{#3{#1}}%
+      \ekv@err@reqval
+      \ekv@err@unknown
+        #3{#1}{#2}%
+    \ekv@set@other#3%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {
+%     \ekv@expansion@set@key,\ekv@expansion@set@key@,
+%     \ekv@expansion@set@pair,\ekv@expansion@set@pair@
+%   }
+%   These macros just pick up the pieces of the \expansion\ prefix as separate
+%   arguments. The \val\ for the \expansion-rules is left empty. Once expansion
+%   is done we loop back to |\ekv@set@key|, that'll pick up the processed \key\
+%   and set it if it's now defined. The same trick is used for a \kv\ pair.
+%    \begin{macrocode}
+\long\def\ekv@expansion@set@key#1#2#3%
+  {%
+    \ekv@expansion@rule@{#2}#1\ekv@mark\ekv@stop{}{}\ekvmorekv
+    \ekv@expansion@set@key@
+  }
+\long\def\ekv@expansion@set@key@#1#2\ekv@set@other#3%
+  {\expandafter\ekv@set@key\detokenize{#2}\ekv@mark{#2}#3}
+\long\def\ekv@expansion@set@pair#1#2#3#4%
+  {%
+    \ekv@expansion@rule@{#1}#2\ekv@mark\ekv@stop{#3}{}\ekvmorekv
+    \ekv@expansion@set@pair@
+  }
+\long\def\ekv@expansion@set@pair@#1#2\ekv@set@other#3%
+  {\expandafter\ekv@set@pair\detokenize{#1}\ekv@mark{#1}\ekv@mark{#2}\ekv@nil#3}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {
+%     \ekv@expansion@parse@key,\ekv@expansion@parse@key@,
+%     \ekv@expansion@parse@pair,\ekv@expansion@parse@pair@
+%   }
+%   In |\ekvparse| we don't need to resort to looping back into |\ekv@parse@key|
+%   or the like, we can simply leave the result via |\ekv@unexpanded|.
+%    \begin{macrocode}
+\long\def\ekv@expansion@parse@key#1#2#3#4%
+  {%
+    \ekv@expansion@rule@{#3}#2\ekv@mark\ekv@stop{}{}\ekv@parse@more
+    \ekv@expansion@parse@key@\@gobble{#1}%
+  }
+\long\def\ekv@expansion@parse@key@#1#2\@gobble#3{\ekv@unexpanded{#3{#2}}}
+\long\def\ekv@expansion@parse@pair#1#2#3#4#5%
+  {%
+    \ekv@expansion@rule@{#1}#3\ekv@mark\ekv@stop{#4}{}\ekv@parse@more
+    \ekv@expansion@parse@pair@\@gobble{#2}%
+  }
+\long\def\ekv@expansion@parse@pair@#1#2\@gobble#3{\ekv@unexpanded{#3{#1}{#2}}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvsetdef}
+%   Provide a macro to define a shorthand to use |\ekvset| on a specified \set.
+%   To gain the maximum speed |\ekvset| is expanded twice by
+%   |\ekv@exparg| so that during runtime the macro storing the set name
+%   is already built and one |\expandafter| doesn't have to be used.
+%    \begin{macrocode}
+\ekv@expargtwice{\protected\def\ekvsetdef#1#2}%
+  {%
+    \romannumeral
+    \ekv@exparg{\ekv@zero\ekv@exparg{\def#1##1}}%
+      {\ekvset{#2}{##1}}%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvsetSneakeddef,\ekvsetdefSneaked}
+% And do the same for |\ekvsetSneaked| in the two possible ways, with a fixed
+% sneaked argument and with a flexible one.
+%    \begin{macrocode}
+\ekv@expargtwice{\protected\def\ekvsetSneakeddef#1#2}%
+  {%
+    \romannumeral
+    \ekv@exparg{\ekv@zero\ekv@exparg{\long\def#1##1##2}}%
+      {\ekvsetSneaked{#2}{##1}{##2}}%
+  }
+\ekv@expargtwice{\protected\def\ekvsetdefSneaked#1#2#3}%
+  {%
+    \romannumeral
+    \ekv@exparg{\ekv@zero\ekv@exparg{\long\def#1##1}}%
+      {\ekvsetSneaked{#2}{#3}{##1}}%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@alignsafe,\ekv@endalignsafe}
+%   These macros protect the usage of ampersands inside of alignment contexts.
+%    \begin{macrocode}
+\begingroup
+\catcode`\^^@=2
+\@firstofone{\endgroup
+  \def\ekv@alignsafe{\romannumeral\iffalse{\fi`^^@ }
+}
+\def\ekv@endalignsafe{\ifnum`{=\ekv@zero}\fi}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvoptarg,\ekvoptargTF}
+% Provide macros to expandably collect an optional argument in brackets. The
+% macros here are pretty simple in nature compared to \pkg{xparse}'s
+% possibilities (they don't care for nested bracket levels).
+%
+% We start with a temporary definition to pre-expand |\ekv@alignsafe| (will be
+% |#1|) and |\ekv@endalignsafe| (will be |#2|). As |\ekv@alignsafe| starts with
+% a |\romannumeral| we use that to also control the number of steps needed
+% instead of adding another |\romannumeral|. For this we have to remove the
+% space token from the end of |\ekv@alignsafe|'s definition.
+%    \begin{macrocode}
+\begingroup
+\def\ekvoptarg#1#2{%
+\endgroup
+%    \end{macrocode}
+% The real definition starts an expansion context and afterwards grabs the
+% arguments. |#1| will be the next step, |#2| the default value, and |#3| might
+% be an opening bracket, or the mandatory argument. We check for the opening
+% bracket, if it is found grab the optional argument, else leave |#1{#2}| in the
+% input stream after ending the expansion context.
+%    \begin{macrocode}
+\def\ekvoptarg{#1\ekv@optarg@a}
+\long\def\ekv@optarg@a##1##2##3%
+  {%
+    \ekv@optarg@if\ekv@mark##3\ekv@mark\ekv@optarg@b\ekv@mark[\ekv@mark
+    #2%
+    \@firstofone{ ##1}{##2}{##3}%
+  }%
+%    \end{macrocode}
+% The other variant of this will do roughly the same. Here, |#1| will be the
+% next step if an optional argument is found, |#2| the next step else, and |#3|
+% might be the opening bracket or mandatory argument.
+%    \begin{macrocode}
+\def\ekvoptargTF{#1\ekv@optargTF@a}
+\long\def\ekv@optargTF@a##1##2##3%
+  {%
+    \ekv@optarg@if\ekv@mark##3\ekv@mark\ekv@optargTF@b{##1}\ekv@mark[\ekv@mark
+    #2%
+    \@firstofone{ ##2}{##3}%
+  }
+%    \end{macrocode}
+% The two macros to grab the optional argument have to remove the remainder of
+% the test and the wrong next step as well as grabbing the argument.
+%    \begin{macrocode}
+\long\def\ekv@optarg@b\ekv@mark[\ekv@mark\ifnum`##1\fi\@firstofone##2##3##4##5]%
+  {#2##2{##5}}
+\long\def\ekv@optargTF@b
+    ##1\ekv@mark[\ekv@mark\ifnum`##2\fi\@firstofone##3##4##5]%
+  {#2 ##1{##5}}
+}
+%    \end{macrocode}
+% Do the definitions and add the test macro. We use |\ekv@strip| to remove the
+% trailing space from the definition of |\ekv@alignsafe|.
+%    \begin{macrocode}
+\ekv@exparg
+  {%
+    \expandafter\ekv@strip\expandafter
+      {\expandafter\ekv@mark\ekv@alignsafe}%
+      \ekvoptarg
+  }%
+  \ekv@endalignsafe
+\long\def\ekv@optarg@if#1\ekv@mark[\ekv@mark{}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@ifstar}
+%   Internal helper to get an expandable |ifstar| implementation. This is pretty
+%   straight forward.
+%    \begin{macrocode}
+\long\def\ekv@ifstar#1#2#3%
+  {%
+    \if*\string#3%
+      \ekv@fi@firstoftwo
+    \fi
+    \@secondoftwo
+      {#1}%
+      {#2{#3}}%
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\ekvcompile}
+%   The idea of key-compilation is to preparse some list into a form that sets
+%   that list very fast (but is frozen), in our case this means we do everything
+%   except expanding the key's code. There are two levels of expansion possible,
+%   either expand until the key-macro or expand the key-macro once as well (the
+%   latter might break if the key-macros take additional arguments). The
+%   following supports both by using a starred form.
+%    \begin{macrocode}
+\protected\long\def\ekvcompile
+  {%
+    \ekv@alignsafe
+    \ekv@ifstar{\ekv@compile{}}{\ekv@compile{\expandafter\expandafter}}%
+  }
+%    \end{macrocode}
+% \begin{macro}[internal]
+%   {\ekv@compile,\ekv@compile@,\ekv@compile@key,\ekv@compile@pair}
+%   |\ekvparse| starts with an |\unexpanded| that we don't need. Hence we use a
+%   temporary definition to remove that. Else this is pretty straight forward.
+%   There is a minor indirection (the parsing step of |\ekv@compile|) which is
+%   necessary to grab any argument specification.
+%    \begin{macrocode}
+\def\ekv@compile#1#2#3#{\ekv@compile@{#1}{#2#3}}
+\def\ekv@compile@#1#2#3{#2#3}
+\ekv@exparg{\protected\long\def\ekv@compile@#1#2#3#4}%
+  {%
+    \expandafter\ekv@expanded\expandafter
+      {%
+        \romannumeral\ekv@expargtwice{\ekv@zero\def\ekv@unexpanded{#2}}%
+          {%
+            \expandafter\ekv@compile@
+            \ekvparse
+              {\ekv@compile@key{#1}{#3}}%
+              {\ekv@compile@pair{#1}{#3}}%
+              {#4}%
+          }%
+      }%
+    \ekv@endalignsafe
+  }
+%    \end{macrocode}
+%   The compilation step just checks whether the keys are defined and leaves
+%   their code (maybe expanded once).
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@compile@key#1#2#3}%
+  {%
+    \ekvifdefinedNoVal{#2}{#3}%
+      {\ekv@unexpanded#1\expandafter{\csname\ekv@name{#2}{#3}N\endcsname}}%
+      {%
+        \ekv@ifdefined{\ekv@name{#2}{}uN}
+          {%
+            \ekv@unexpanded#1\expandafter
+              {%
+                \csname\ekv@name{#2}{}uN\expandafter\endcsname
+                  \expandafter{\detokenize{#3}}{#3}%
+              }%
+          }%
+          {%
+            \ekvifdefined{#2}{#3}%
+              {\ekv@err{missing value for `#3' in set `#2'}}%
+              {\ekv@err{unknown key `#3' in set `#2'}}%
+          }%
+      }%
+  }
+\ekv@exparg{\long\def\ekv@compile@pair#1#2#3#4}%
+  {%
+    \ekvifdefined{#2}{#3}%
+      {\ekv@unexpanded#1\expandafter{\csname\ekv@name{#2}{#3}\endcsname{#4}}}%
+      {%
+        \ekv@ifdefined{\ekv@name{#2}{}u}%
+          {%
+            \ekv@unexpanded#1\expandafter
+              {%
+                \csname\ekv@name{#2}{}u\ekv@expanded{\endcsname
+                  {\ekv@unexpanded{#4}}{\detokenize{#3}}}{#3}%
+              }%
+          }%
+          {%
+            \ekvifdefinedNoVal{#2}{#3}%
+              {\ekv@err{unwanted value for `#3' in set `#2'}}%
+              {\ekv@err{unknown key `#3' in set `#2'}}%
+          }%
+      }%
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ekverr}
+% \begin{macro}[internal]{\ekv@err@collect,\ekv@err@cleanup}
+% Since |\ekvset| is fully expandable as long as the code of the keys is (which
+% is unlikely) we want to somehow throw expandable errors, in our case via
+% a runaway argument (to my knowledge the first version of this method was
+% implemented by Jean-François Burnol, many thanks to him). The first step is to
+% ensure that the second argument (which might contain user input) doesn't
+% contain tokens we use as delimiters (in this case |\par|), this will be done
+% by the front facing macro |\ekverr|. But first we set some other things up.
+%
+% We use a temporary definition for |\ekverr| to get multiple consecutive
+% spaces. Then we set up the macro that will collect the error and the macro
+% that will throw the error. The latter will have an unreasonable long name.
+% This way we can convey more information. Though the information in the macro
+% name is static and has to be somewhat general to fit every occurence. The
+% important bit is that the long named macro has a delimited argument and is
+% short which will throw the error at the |\par| at the end of
+% |\ekv@err@collect|. This macro has the drawback that it will only print nicely
+% if the |\newlinechar| is |^^J|.
+%    \begin{macrocode}
+\def\ekv@err@cleanup\par{}
+\def\ekv@err@collect#1%
+  {%
+    \def\ekv@err@collect##1\par##2%
+      {%
+        \expandafter
+        \ekv@err@cleanup
+        #1! ##2 Error: ##1\par
+      }%
+    \def#1##1\thanks@jfbu{}%
+  }
+\def\ekverr{ }
+\expandafter\ekv@err@collect\csname <an-expandable-macro>^^J%
+  completed due to above exception. \ekverr If the error^^J%
+  summary is \ekverr not comprehensible \ekverr see the package^^J%
+  documentation.^^J%
+  I will try to recover now. \ekverr If you're in inter-^^J%
+  active mode hit <return> \ekverr at the ? prompt and I^^J%
+  continue hoping recovery\endcsname
+%    \end{macrocode}
+%    \begin{macrocode}
+\long\def\ekverr#1#2{\expandafter\ekv@err@collect\detokenize{#2}\par{#1}}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}[internal]{\ekv@err,\ekv@errm}
+% We define shorthands to throw errors in \expkv.
+%    \begin{macrocode}
+\ekv@exparg{\long\def\ekv@err#1}{\ekverr{expkv}{#1}}
+\protected\long\def\ekv@errm#1{\errmessage{expkv Error: #1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[internal]
+%   {
+%     \ekv@err@common,\ekv@err@common@,
+%     \ekv@err@unknown,\ekv@err@noarg,\ekv@err@reqval,
+%     \ekv@err@undefined@expansion
+%   }
+% Now we can use |\ekv@err| to set up some error messages so that we can later
+% use those instead of the full strings.
+%    \begin{macrocode}
+\long\def\ekv@err@common #1#2{\expandafter\ekv@err@common@\string#2{#1}}
+\ekv@exparg{\long\def\ekv@err@common@#1`#2' #3.#4#5}%
+  {\ekv@err{#4 `#5' in set `#2'}}
+\ekv@exparg{\long\def\ekv@err@unknown#1#2}{\ekv@err@common{unknown key}{#1}}
+\ekv@exparg{\long\def\ekv@err@noarg#1#2}
+  {\ekv@err@common{unwanted value for}{#1}}
+\ekv@exparg{\long\def\ekv@err@reqval#1#2}%
+  {\ekv@err@common{missing value for}{#1}}
+\ekv@exparg{\long\def\ekv@err@redirect@kv@notfound#1#2#3\ekv@stop}%
+  {\ekv@err{no key `#2' in sets #3}}
+\ekv@exparg{\def\ekv@err@redirect@k@notfound#1#2\ekv@stop}%
+  {\ekv@err{no NoVal key `#1' in sets #2}}
+\ekv@exparg{\def\ekv@err@undefined@expansion#1\fi}%
+  {\expandafter\fi\ekv@err{Undefined expansion rule `#1'}}%
+\ekv@exparg{\def\ekv@err@erroneous@variable#1}%
+  {\ekv@err{Erroneous variable `#1' used}}
+\ekv@exparg{\def\ekv@err@key@no@reinsert}%
+  {\ekv@err{Reinsertion in \key expansion forbidden}}
+\ekv@exparg{\def\ekv@err@val@no@reinsert#1}%
+  {\ekv@err{Reinsertion with key `#1' forbidden}}
+%    \end{macrocode}
+% \end{macro}
+%
+% Now everything that's left is to reset the category code of |@|.
+%    \begin{macrocode}
+\catcode`\@=\ekv@tmp
+%    \end{macrocode}
+%
+% \gobbledocstriptag
+%</tex>
+%^^A=<<

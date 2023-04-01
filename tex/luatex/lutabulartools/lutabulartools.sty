@@ -1,0 +1,303 @@
+% Kale Ewasiuk (kalekje@gmail.com)
+% 2022-11-29
+% Copyright (C) 2021-2022 Kale Ewasiuk
+%
+% Permission is hereby granted, free of charge, to any person obtaining a copy
+% of this software and associated documentation files (the "Software"), to deal
+% in the Software without restriction, including without limitation the rights
+% to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+% copies of the Software, and to permit persons to whom the Software is
+% furnished to do so, subject to the following conditions:
+%
+% The above copyright notice and this permission notice shall be included in
+% all copies or substantial portions of the Software.
+%
+% THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF
+% ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+% TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+% PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT
+% SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR
+% ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN
+% ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+% OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+% OR OTHER DEALINGS IN THE SOFTWARE.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{lutabulartools}[2022-11-29]
+
+\RequirePackage{booktabs}
+\RequirePackage{multirow}
+\RequirePackage{makecell}
+\RequirePackage{xparse}
+\RequirePackage{array}
+\RequirePackage{xcolor}
+\RequirePackage{colortbl}
+\RequirePackage{luacode}
+\RequirePackage{penlight} % NEEDED, extras option must be used so penlight should be loaded before this...
+
+\luadirect{lutabt = require('lutabulartools')}
+
+\newcommand{\lttdebugON}{\luadirect{lutabt.debug = true}}
+\newcommand{\lttdebugOFF}{\luadirect{lutabt.debug = true}}
+\newcommand{\lttdebugprt}{\luadirect{__lutabt__debugprtall()}}
+
+\newcolumntype{\lttltrim}{}
+\newcolumntype{\lttrtrim}{}
+
+
+%%% midrule every X rows
+
+% NO LONGER NEEDED  %%% this was used for @{\midruleX} in colspec, but I made a better way
+%\def\midruleX{\aftergroup\aftergroup\aftergroup\midruleX@aux}
+%\def\midruleX@aux{\luadirect{lutabt.mrX.midruleX('')}}  %
+%%%
+
+\NewDocumentCommand{\midruleX}{s O{N} m}{%
+  \MakeluastringCommands[N]{#2}%
+  \luadirect{lutabt.mrX.set_midruleX(\plluastringA{#3}, \luastring{#1})}%
+}
+\NewDocumentCommand{\resetmidruleX}{O{0}}{\luadirect{lutabt.mrX.reset_midruleX(\luastring{#1})}}
+
+
+\NewDocumentCommand{\settabular}{s m}{\luadirect{lutabt.set_tabular(\luastring{#2})}} %
+
+\def\ltt@resetrownum{\luadirect{lutabt.reset_rows()}}
+\def\ltt@resetrownumhard{\luadirect{lutabt.row_num = 0}}
+\def\ltt@autotoprule{\luadirect{lutabt.process_auto_topbot_rule('top')}}
+\def\ltt@autobotrule{\luadirect{lutabt.process_auto_topbot_rule('bottom')}}
+\def\ltt@storeautotbandfalse{\luadirect{
+  lutabt.auto_topbot_old = lutabt.auto_topbot
+  lutabt.auto_topbot = false}}
+\def\ltt@restoreautotb{\luadirect{lutabt.auto_topbot = lutabt.auto_topbot_old}}
+\def\ltt@inctablelevel{\luadirect{lutabt.tablelevel = lutabt.tablelevel + 1}}
+\def\ltt@dectablelevel{\luadirect{lutabt.tablelevel = lutabt.tablelevel - 1}}
+\def\ltt@midruleXoff{\luadirect{lutabt.mrX.off()}}
+\def\ltt@actlevelreset{\luadirect{lutabt.actlvl = 1}}
+
+\apptocmd{\@arraycr}{\luadirect{lutabt.process_auto_rules()}}{}{}
+
+
+
+\NewDocumentCommand{\midrulesat}{m}{\luadirect{lutabt.add_auto_midrules(\luastring{#1})}}
+
+
+%%%%
+
+%%% gray midrule and gray cmidrule
+\aboverulesep=0.0ex
+\belowrulesep=0.5ex
+\providecommand{\gmidrule}{\arrayrulecolor{lightgray}\specialrule{\lightrulewidth}{0.5\aboverulesep}{0.5\belowrulesep}\arrayrulecolor{black}}
+\cmidrulewidth=\lightrulewidth
+
+%%% use gcmidrule for a gray "c" midrule
+% Copy \cmidrule from
+%  http://mirrors.ctan.org/macros/latex/contrib/booktabs/booktabs.dtx
+% and modify it for insertion of \arrayrulecolor{lightgray} at the start,
+% and \arrayrulecolor{black} at the end
+
+\def\oldgcmidrule{\arrayrulecolor{lightgray}% Switch colour to lightgray
+    \noalign{\ifnum0=`}\fi
+    \@ifnextchar[{\@gcmidrule}{\@gcmidrule[\cmidrulewidth]}}
+\def\@gcmidrule[#1]{\@ifnextchar({\@@gcmidrule[#1]}{\@@gcmidrule[#1]()}}
+\def\@@gcmidrule[#1](#2)#3{\@@@gcmidrule[#3]{#1}{#2}}
+\def\@@@gcmidrule[#1-#2]#3#4{\global\@cmidla#1\relax
+    \global\advance\@cmidla\m@ne
+    \ifnum\@cmidla>0\global\let\@gtempa\@cmidrulea\else
+    \global\let\@gtempa\@cmidruleb\fi
+    \global\@cmidlb#2\relax
+    \global\advance\@cmidlb-\@cmidla
+    \global\@thisrulewidth=#3
+    \@setrulekerning{#4}
+    \ifnum\@lastruleclass=\z@\vskip 0.5\aboverulesep\fi
+    \ifnum0=`{\fi}\@gtempa
+    \noalign{\ifnum0=`}\fi\futurenonspacelet\@tempa\@xgcmidrule}
+\def\@xgcmidrule{%
+   \ifx\@tempa\gcmidrule
+       \vskip-\@thisrulewidth
+       \global\@lastruleclass=\@ne
+   \else \ifx\@tempa\morecmidrules
+       \vskip \cmidrulesep
+       \global\@lastruleclass=\@ne\else
+       \vskip 0.5\belowrulesep
+       \global\@lastruleclass=\z@
+   \fi\fi
+   \ifnum0=`{\fi}
+  \arrayrulecolor{black}}% Switch colour back to black
+
+
+%%%
+
+\let\oldcmidrule\cmidrule % improve cmidrule. Can reference column number from back with a +, eg, {3+-2+} means third to second last
+\RenewExpandableDocumentCommand{\cmidrule}{ O{} D(){} m }{%
+    \luadirect{lutabt.make1cmidrule( \luastringN{#1},
+                            \luastring{#2},
+                            \luastring{#3},
+                            'oldcmidrule')
+    }%
+}
+
+\NewExpandableDocumentCommand{\cmidrules}{ O{} D(){} m }{%  supports comma in {}
+    \luadirect{lutabt.makecmidrules( \luastringN{#1},
+                            \luastring{#2},
+                            \luastring{#3},
+                            'cmidrule')
+    }%
+}
+
+\NewExpandableDocumentCommand{\gcmidrule}{ O{} D(){} m }{%
+    \luadirect{lutabt.make1cmidrule( \luastringN{#1},
+                                \luastring{#2},
+                                \luastring{#3},
+                                'oldgcmidrule')
+    }%
+}
+
+\NewExpandableDocumentCommand{\gcmidrules}{ O{} D(){} m }{%  supports comma in {}, rl can be passed as well
+    \luadirect{lutabt.makecmidrules( \luastringN{#1},
+                                    \luastring{#2},
+                                    \luastring{#3},
+                                    'gcmidrule')
+    }%
+}
+
+
+
+
+
+
+\apptocmd{\LTXtable}{\ltt@actlevelreset\ltt@resetrownumhard\luadirect{lutabt.tablelevel=0}}{}{}
+
+
+\let\oldtabular\tabular
+\let\oldendtabular\endtabular
+\RenewExpandableDocumentCommand{\tabular}{ O{l} m }{%
+  \luadirect{lutabt.set_col_spec(\luastringN{#2})}%
+  \oldtabular[#1]{\lttltrim#2\lttrtrim}\ltt@inctablelevel\ltt@resetrownum\ltt@autotoprule%
+}
+\def\endtabular{\ltt@autobotrule\ltt@midruleXoff\ltt@dectablelevel\oldendtabular}
+
+
+\expandafter\let\expandafter\oldtabulars\csname tabular*\endcsname
+\expandafter\let\expandafter\endoldtabulars\csname endtabular*\endcsname
+\RenewDocumentEnvironment{tabular*}{ m O{l} m }{%
+  \luadirect{lutabt.set_col_spec(\luastringN{#3})}%
+  \begin{oldtabulars}{#1}[#2]{\lttltrim#3\lttrtrim}\ltt@inctablelevel\ltt@resetrownum\ltt@autotoprule%
+}{%
+  \ltt@autobotrule\ltt@midruleXoff\ltt@dectablelevel\end{oldtabulars}%
+}
+%%% NOTE tabularx uses tabular*, NO NEED TO CHANGE TABULARX!
+
+
+\let\oldlongtable\longtable
+\RenewExpandableDocumentCommand{\longtable}{ O{l} m }{%
+  \ltt@storeautotbandfalse%
+  \luadirect{lutabt.set_col_spec(\luastringN{#2})}%
+  \oldlongtable[#1]{\lttltrim#2\lttrtrim}\ltt@inctablelevel\ltt@resetrownum%
+}
+\let\oldendlongtable\endlongtable
+\def\endlongtable{\ltt@restoreautotb\ltt@midruleXoff\ltt@dectablelevel\oldendlongtable}% restore status of auto topbot rule
+
+
+%s0,spec,mcspec,pre,content
+% Magic Cell
+\NewExpandableDocumentCommand{\MC}{ s O{} O{} D<>{} D(){x} m }{%
+% Magic cell *wraps with {} but automatically checks for SI column,
+                    % [column spec] [mult-column spec override]  <pre-cell stuff> (add rule)  {cell content}
+\luadirect{lutabt.MagicCell(
+    \luastring{#1},
+    \luastring{#2},
+    \luastringN{#3},
+    \luastringN{#4},
+    \luastringN{#6},
+    \luastring{#5}
+)}}
+
+
+\NewDocumentCommand{\setMCrepl}{m m}{\luadirect{
+  lutabt.col_replaces.#1 = '#2'
+}}
+\NewDocumentCommand{\setMChordef}{ m m}{\luadirect{
+  lutabt.col_hor_repl.#1 = '#2'
+}}
+\NewDocumentCommand{\setMCverdef}{ m m}{\luadirect{
+  lutabt.col_ver_repl.#1 = '#2'
+}}
+\NewDocumentCommand{\addMCsicol}{ m }{\luadirect{
+  lutabt.SI_cols[\string##lutabt.SI_cols+1] = '#1'
+}}
+
+\NewDocumentCommand{\forcecolspec}{ m }{\luadirect{
+  lutabt.col_spec = (\luastring{#1}):totable()
+}}
+
+
+
+\ProcessOptions
+
+
+
+
+
+
+
+%%%  OLD STUFF,
+%% before I had a fall-back for counting columns (just calculate current column on last column once)
+%%   and kept track of row numbers. I felt that this wasn't needed, so I've removed.
+%\newcommand{\TabColNum}{\luadirect{tex.print(lutabt.get_TabColNum())}} % prints the current column number of tabular
+%\newcommand{\NumTabCols}{\luadirect{tex.print(lutabt.NumTabCols)}} % prints the total num columns of tabular
+%\newcounter{RowNumCnt}
+%\setcounter{RowNumCnt}{1}
+%  \setcounter{RowNumCnt}{1}%
+%  \luadirect{lutabt.NumTabColsMX = 0}% fall back if calc doesnt work for some reason
+%  \setcounter{RowNumCnt}{1}%
+%  \luadirect{lutabt.NumTabColsMX = 0}% fall back if calc doesnt work for some reason
+%\DeclareOption{notrimx}{
+%  \global\newcolumntype{\lttltrim}{!{\stepcounter{RowNumCnt}}}
+%%  \global\newcolumntype{\lttrtrim}{!{\luadirect{lutabt.get_TabColNum()}}}
+%}
+%\DeclareOption{trimx}{
+%  \newcolumntype{\lttltrim}{@{\stepcounter{RowNumCnt}}}
+%%  \newcolumntype{\lttrtrim}{@{\luadirect{lutabt.get_TabColNum()}}}
+%}
+
+
+%% adapted from
+% https://tex.stackexchange.com/questions/182953/add-midrule-every-5-lines-automatically
+%% https://tex.stackexchange.com/questions/145084/what-is-the-function-of-noalign
+%
+%\def\midruleXstep{5}
+%\def\midruleXrule{\gmidrule}
+%
+%\newcounter{midruleX}
+%\newcommand*{\midruleXa}{%
+%  \aftergroup\aftergroup\aftergroup\midruleXaux
+%}
+%
+%\newif\ifmidruleX
+%
+%\newcommand*{\midruleXaux}{%
+%  \noalign{%
+%    \stepcounter{midruleX}%
+%    \ifnum\value{midruleX}=\midruleXstep %
+%      \global\midruleXtrue
+%      \resetmidruleX%
+%    \else
+%      \global\midruleXfalse
+%    \fi
+%  }
+%  \ifmidruleX\midruleXrule\fi
+%}
+
+%\newcommand*{\resetmidruleX}{\setcounter{midruleX}{0}}  %
+%\resetmidruleX
+
+%\NewDocumentCommand{\resetmidruleXonNP}{O{0}}{\luadirect{lutabt.reset_midruleX_on_newpage(\luastring{#1})}}
+
+%
+%\NewDocumentCommand{\IfmidruleX}{m m}{%  if a midruleX was placed, do #1, if not, do #2
+%  \ifnum\the\value{midruleX}=0
+%      #1
+%    \else
+%      #2
+%  \fi%
+%}

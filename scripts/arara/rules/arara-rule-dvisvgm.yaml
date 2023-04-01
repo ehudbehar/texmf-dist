@@ -1,0 +1,57 @@
+!config
+# Arara, the cool TeX automation tool
+# Copyright (c) 2022, Island of TeX
+# All rights reserved.
+#
+# This rule is part of arara.
+identifier: dvisvgm
+name: DVISVGM
+authors:
+- samcarter
+- Pablo González
+commands:
+- name: The dvisvgm program
+  command: >
+    @{
+        base = getBasename(reference.fileName).
+               concat('.').concat(entry[0]);
+        return getCommand('dvisvgm', getOrNull(entry, 1), pages,
+               options, base);
+    }
+arguments:
+- identifier: pages
+  flag: >
+    @{
+        if (isList(parameters.pages)) {
+            q = [];
+            foreach (p : parameters.pages) q.add(p.toString());
+            return [ '--page='.concat(String.join(',', q)) ];
+        }
+        else {
+          throwError('I was expecting a list of pages.');
+        }
+    }
+- identifier: entry
+  flag: >
+    @{
+        formats = [ 'dvi' : [ 'dvi' ], 'xdv' : [ 'xdv' ],
+                    'pdf' : [ 'pdf', '--pdf' ],
+                    'eps' : [ 'eps', '--eps' ] ];
+        if (formats.keySet().contains(parameters.entry)) {
+            return formats.get(parameters.entry);
+        }
+        else {
+            throwError('The valid formats are: ' + formats.keySet());
+        }
+    }
+  default: dvi
+- identifier: options
+  flag: >
+    @{
+        if (isList(parameters.options)) {
+            return parameters.options;
+        }
+        else {
+            throwError('I was expecting a list of options.');
+        }
+    }

@@ -1,0 +1,91 @@
+% luamodulartables
+% version 1.0
+% Authors: Chetan Shirore and Ajit Kumar
+% Licensed under LaTeX Project Public License v1.3c or later. The complete license text is available at http://www.latex-project.org/lppl.txt.
+
+\ProvidesPackage{luamodulartables}[1.0]
+\RequirePackage{xkeyval}
+\RequirePackage{luacode}
+\begin{luacode*}
+function modulomult(n,label, headline, midline)
+  label = label or '$\\times$'
+  headline = headline or ''
+  midline = midline or ''
+  local str2 = label
+    for i = 0, n - 1 do
+        str2 = str2 .. " & " .. "$" .. tostring(i) .."$"
+    end
+    str2 = str2 .. "\\\\ " .. headline
+    local tbl = {}
+    for i = 0, n - 1 do
+        k = 1
+        tbl[k] = "$" ..  tostring(i) .."$"
+        k = k + 1
+        for j = 0, n - 1 do
+            tbl[k] = "$" ..  tostring((i * j) % n) .."$"
+            k = k + 1
+        end
+        if i ~= n - 1  then
+            str2 = str2 .. table.concat(tbl, " & ") .. "\\\\ " .. midline
+        else
+          str2 = str2 .. table.concat(tbl, " & ")
+        end
+    end
+    return (str2)
+end
+
+function moduloadd(n,label, headline, midline)
+  label = label or '$+$'
+  headline = headline or ''
+  midline = midline or ''
+  local str3 =label
+    for i = 0, n - 1 do
+        str3 = str3 .. " & " .. "$" .. tostring(i) .."$"
+    end
+    str3 = str3 .. "\\\\ " .. headline
+    local tbl = {}
+    for i = 0, n - 1 do
+        k = 1
+        tbl[k] = "$" ..  tostring(i) .."$"
+        k = k + 1
+        for j = 0, n - 1 do
+            tbl[k] = "$" ..  tostring((i + j) % n) .."$"
+            k = k + 1
+        end
+        if i ~= n - 1  then
+            str3 = str3 .. table.concat(tbl, " & ") .. "\\\\ " .. midline
+        else
+          str3 = str3 .. table.concat(tbl, " & ")
+        end
+    end
+    return (str3)
+end
+
+\end{luacode*}
+
+% ========= KEY DEFINITIONS =========
+\define@key{luamodular}{multlabel}
+{\edef\luamod@multlabel{\luastringN{#1}}}
+\define@key{luamodular}{addlabel}
+{\edef\luamod@addlabel{\luastringN{#1}}}
+\define@key{luamodular}{headline}
+{\edef\luamod@headline{\luastringN{#1}}}
+\define@key{luamodular}{midline}
+{\edef\luamod@midline{\luastringN{#1}}}
+% ========= KEY DEFAULTS =========
+\setkeys{luamodular}{multlabel=$\times$}%
+\setkeys{luamodular}{addlabel=$+$}%
+\setkeys{luamodular}{headline = }%
+\setkeys{luamodular}{midline = }%
+% ========= Defining Command =========
+\newcommand{\luaModularMult}[2][]{%
+  \setkeys{luamodular}{#1}
+  \directlua{tex.sprint(modulomult(#2,\luamod@multlabel,
+\luamod@headline,\luamod@midline))}}%
+
+\newcommand{\luaModularAdd}[2][]{%
+  \setkeys{luamodular}{#1}
+  \directlua{tex.sprint(moduloadd(#2,\luamod@addlabel,
+\luamod@headline,\luamod@midline))}}%
+%
+\endinput

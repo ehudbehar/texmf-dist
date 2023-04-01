@@ -1,0 +1,598 @@
+% \iffalse
+%<*driver>
+\def\nameofplainTeX{plain}
+\ifx\fmtname\nameofplainTeX\else
+    \expandafter\begingroup
+\fi
+\input docstrip %
+\askforoverwritefalse
+\preamble
+
+MIT License
+
+Copyright (c) 2021-2022 Magnus Lie Hetland
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+\endpreamble
+% stop docstrip adding \endinput
+\postamble
+\endpostamble
+\generate{\file{abspos.sty}{\from{abspos.dtx}{package}}}
+\ifx\fmtname\nameofplainTeX
+    \expandafter\endbatchfile
+\else
+    \expandafter\endgroup
+\fi
+%</driver>
+%
+%<*driver|package>
+\RequirePackage{expl3}
+%<driver|package>
+%
+%<*driver>
+\documentclass[full]{l3doc}
+\usepackage{graphicx}
+\usepackage[export]{adjustbox}
+\usepackage{tcolorbox}
+\tcbuselibrary{listings,skins}
+\usepackage{xcoffins}
+\usepackage{abspos}
+
+\lstdefinestyle{tcblatex}{language={[LaTeX]TeX},
+    columns=fullflexible,
+    keepspaces=true,
+    breaklines=true,
+    breakatwhitespace=true,
+    basicstyle=\ttfamily\small\color{black!80},
+    extendedchars=true,
+    nolol,
+    inputencoding=\kvtcb@listingencoding,
+    literate={~}{\textcolor{gray}{\raisebox{-.75ex}{\textasciitilde}}}{1},
+    commentstyle=\color{gray},
+}
+
+\DeclareTCBInputListing \Example { m } {
+    listing only,
+    listing file=demo#1,
+    tile,
+    finish={
+        \draw (frame.north west) + (-\marginparsep,0pt)
+            node[line width=0pt, inner sep=0pt, anchor=north east]
+            {\includegraphics[page=#1, frame, width=\marginparwidth]{demo}}
+        ;
+    }
+}
+
+\ExplSyntaxOn
+\cs_set:Npn \__codedoc_macro_end_style:n #1 {}
+\ExplSyntaxOff
+
+\begin{document}
+    \DocInput{\jobname.dtx}
+\end{document}
+%</driver>
+%
+%<*package>
+\ProvidesExplPackage {abspos} {2022-09-22} {0.1}
+    {Absolute placement with coffins}
+%</package>
+% \fi
+%
+% \title{The \pkg{abspos} package\\ Absolute placement with coffins}
+% \author{Magnus Lie Hetland}
+%
+% \maketitle
+%
+% \begin{documentation}
+%
+% \noindent
+% The \pkg{abspos} package lets you place contents at an absolute position,
+% anchored at some specified part of the content, similar to how \pkg{tikz}
+% nodes work, though without using the two-pass strategy of \pkg{tikz}. It also
+% avoids messing with the order of \pkg{beamer} overlays, which is what happens
+% when one uses the \pkg{textpos} package with the \pkg{overlay}
+% option.\footnote{Another possible solution is to use the \pkg{pst-abspos}
+% package, which relies on \pkg{pstricks}.} The solution used is quite
+% straightforward, combining \emph{coffins} (using \pkg{l3coffins}) with the
+% placement mechanisms of \pkg{atbegshi}.
+%
+% The main command of the package is |\absput|, which is somewhat similar to the
+% |\put| command of the \LaTeX\@ |picture| environment.
+% By default, it places its contents in the middle of the page, so
+% |\absput{Hello}| will put the word ``Hello'' front and center. Variations
+% are then possible using an optional argument consisting of keys and key--value
+% pairs, as shown in the following.
+%
+% \Example{1}
+%
+% \noindent
+% Supplying a |width| creates a vertical box. If the surrounding text is set,
+% for example, using \cs{raggedright} (as is common in \pkg{beamer}), the
+% contents of the \cs{absput} command will be, too. So if you want your text
+% justified, you can use something like the \cs{justifying} command from
+% \pkg{ragged2e}.
+%
+% \Example{2}
+%
+% \noindent
+% The options can also be set globally (or within a group) using
+% \cs{absposset}. For example, if you with to scale everything you place by a
+% certain amount, you could do that as in the following.
+%
+% \Example{3}
+%
+% \noindent
+% By default, the contents are placed \emph{in front} of the current page, but
+% this can be modified by supplying your own ``page coffin'' (an \pkg{l3coffins}
+% or \pkg{xcoffins} coffin) and typesetting that with, e.g., \pkg{atbegshi}. If,
+% for example, you wish to place something in the background of every slide of a
+% \pkg{beamer} presentation, you could do that by adding the following to the
+% preamble.\footnote{Note that because it will end up behind even the slide
+% itself, you need to remove the background color, by setting |bg| to nothing,
+% as in the example code. If you want it behind the content, but still have a
+% background color, you would need to add that yourself, with a colored box or
+% filled \pkg{tikz} rectangle, possibly also using the \cs{absput} command.}
+%
+% ^^A Can't use tcblisting, because it uses \lstinputlisting, which doesn't
+% ^^A respect `gobble`
+% \begin{tcolorbox}[tile]
+% \begin{lstlisting}[gobble=2, style=tcblatex]
+% \setbeamercolor{background canvas}{bg=} % So the coffin isn't obscured
+%
+% \NewCoffin \MyPageCoffin
+% \AtBeginShipout{
+%     \AtBeginShipoutUpperLeft{
+%         \TypesetCoffin \MyPageCoffin [t,l] (0pt,0pt)
+%     }
+% }
+% \end{lstlisting}
+% \end{tcolorbox}
+%
+% \noindent
+% Now simply add a \cs{absput} command at the beginning of the document, before
+% your first |frame| (after |\begin{document}|), using |pg=\MyPageCoffin| to
+% specify which coffin to use for rendering and positioning contents. This gives
+% you a coordinate system starting at the top left corner of the page. If you
+% wish to anchor your positioned elements elsewhere, you'll need to resize your
+% page coffin (see p.~\pageref{p:reset}).
+%
+% \section*{Reference}
+%
+% \begin{function}{\absposset}
+% \begin{syntax}
+%   \cs{absposset} \marg{options}
+% \end{syntax}
+% Sets the options, as described under \cs{absput}, to the value they should
+% have within the current group (or globally, if not inside a group).
+% \end{function}
+%
+% \begin{function}{\absput}
+% \begin{syntax}
+%   \cs{absput} \oarg{options} \marg{contents}
+% \end{syntax}
+% Places \meta{contents} at some position (possibly scaled or rotated) as
+% dictated by the optional \meta{options}, supplied as keys and key--value
+% pairs. The \emph{defaults} are used as values if only the keys are given, and
+% the \emph{initial values} are used if the options are not specified. The
+% available options are as follows.
+% \end{function}
+% \begin{itemize}
+%
+%     \item |angle=|\meta{angle}: The angle to which the coffin is rotated
+%     before being positioned.
+%
+%     No default. Initial value |0|.
+%
+%     \item |h=|\meta{h-anchor}: The horizontal anchor to use for positioning.
+%     This corresponds to a \pkg{l3coffins} (or \pkg{xcoffins}) \emph{pole}. The
+%     available anchors are |l| for left, |hc| for center and |r| for right.
+%     These are also available as separate valueless keys, so if you supply
+%     \cs{absput} with the key |l|, that is equivalent to using |h=l|, etc.
+%
+%     There are also two-letter shortcuts defined for setting the horizontal and
+%     vertical anchors simultaneously, with the vertical one first. For example,
+%     |tl| is equivalent to |v=t,h=l|. In these double shortcuts, the prefixes
+%     |h| and |v| have been stripped from the center anchors, so that bottom
+%     center is |bc|, for example, and not |bhc|.
+%
+%     No default. Initial value |hc|, which centers the coffin horizontally at
+%     \meta{x-coord}.
+%
+%     \item |pg=|\meta{page-coffin}: Supplies the coffin to use as the
+%     page, or ``canvas,'' for placing the contents.
+%
+%     No default. The initial value is an internal canvas that is rendered in
+%     front of the current page (on shipout), and then cleared.
+%
+%     \item |pg-h|=\meta{page-h-anchor}: Similar to |h|, except that it applies
+%     to the canvas (set by |pg|). Shortcuts (like |pg-l| for |pg-h=l|) are
+%     defined for the default anchors (|l|, |hc|, |r|).
+%
+%     Double shortcuts are defined for |pg-h| and |pg-v| in a similar manner to
+%     those defined for |h| and |v|, so that |pg-tl| is equivalent to
+%     |pg-v=t,pg-h=l|.
+%
+%     No default. Initial value |hc|.
+%
+%     \item |pg-v|=\meta{page-v-anchor}: Similar to |v|, except that it applies
+%     to the canvas (set by |pg|). Shortcuts (like |pg-t| for |pg-v=t|) are
+%     defined for the default anchors (|t|, |vc|, |b|, |T|, |B|, |H|).
+%
+%     Combined shortcuts such as |pg-tl| and |pg-br|, etc., are also defined.
+%     See the descriptions of |h| and |pg-h| for more.
+%
+%     No default. Initial value |vc|.
+%
+%     \item |scale=|\meta{scale}: The factor by which the coffin is scaled.
+%
+%     No default. If |scale| is not used, no scaling is performed.
+%
+%     \item |v=|\meta{v-anchor}: The vertical anchor to use for positioning (see
+%     |h|). The available anchors are |t| for top, |vc| for center, |b| for
+%     bottom and |H| for baseline. These are also available as separate
+%     valueless keys, so if you supply \cs{absput} with the key |t|, that is
+%     equivalent to using |v=t|, etc.
+%
+%     Note that if the |width| key is set, a vertial coffin is used, which makes
+%     the additional anchors (or poles) |T| (baseline of the first line, or
+%     other material at the top) and |B| (baseline for the last line, or other
+%     material at the bottom).
+%
+%     Combined shortcuts such as |tl| and |br|, etc., are also defined. See the
+%     description of |h| for more.
+%
+%     No default. Initial value |vc|, which centers the coffin vertically at
+%     \meta{y-coord}.
+%
+%     \item |width=|\meta{width}: Set the width constraining the contents,
+%     before scaling. If this is set, the contents are set in vertical mode;
+%     otherwise, they are set in horizontal mode.
+%
+%     No default and no initial value.
+%
+%     \item |x=|\meta{x-coord}: The $x$ coordinate, measured from the current
+%     horizontal page anchor, set by |pg-h|.
+%
+%     No default. Initial value |0pt|.
+%
+%     \item |y=|\meta{y-coord}: The $y$ coordinate, measured from the current
+%     vertical page anchor, set by |pg-v|.
+%
+%     No default. Initial value |0pt|.
+% \end{itemize}
+%
+% \begin{function}{\absputcoffin}
+% \begin{syntax}
+%   \cs{absputcoffin} \oarg{options} \meta{coffin}
+% \end{syntax}
+% Places \meta{coffin} at some position (possibly scaled or rotated), just like
+% \cs{absput}. The difference is that a coffin is provided directly, rather than
+% constructed by typesetting some supplied contents. This means that the |width|
+% key is not used, though it is permitted for consistency (and ease of reusing
+% option lists).
+% \end{function}
+%
+% \end{documentation}
+%
+% \begin{implementation}
+%
+% \section*{Implementation}
+%
+%    \begin{macrocode}
+%<*package>
+%<@@=apos>
+%    \end{macrocode}
+%
+% \noindent
+% First, we need to import the necessary packages. We're using \pkg{expl3} to
+% set up the package, so we get \pkg{l3coffins} for free (and cannot import it
+% directly, anyway). If \pkg{abspos} is used with \pkg{beamer}, then
+% \pkg{atbegshi} is already included. Elsewhere, though, it will not be, so we
+% require it here.
+%
+%    \begin{macrocode}
+\RequirePackage{atbegshi}
+%    \end{macrocode}
+%
+% \noindent
+% We make sure we have the variants we need of some existing commands:
+%
+%    \begin{macrocode}
+\cs_generate_variant:Nn \tl_if_novalue:nTF       { VTF }
+\cs_generate_variant:Nn \tl_if_novalue:nF        { VF }
+\cs_generate_variant:Nn \coffin_gattach:NnnNnnnn { NooNoonn }
+%    \end{macrocode}
+%
+% \begin{variable}{\g_apos_shipout_coffin}
+%
+% This variable is normally used to store the contents to be placed on the
+% current page. It accumulates the contents from every call to \cs{absput} until
+% the page is about to be typeset (shipped out), at which point
+% \cs{g_apos_shipout_coffin} is typeset in front.
+%
+%    \begin{macrocode}
+\coffin_new:N \g_apos_shipout_coffin
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{macro}{\apos_reset_shipout_coffin:}\label{p:reset}
+% Used to initialize, and later reinitialize, the shipout coffin, to simply be
+% an empty coffin with the width and height of the current page.
+%    \begin{macrocode}
+\cs_new:Npn \apos_reset_shipout_coffin: {
+    \hcoffin_gset:Nn \g_apos_shipout_coffin {
+        \phantom{\rule{\paperwidth}{\paperheight}}
+    }
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \noindent
+% The following hook ensures that that \cs{g_apos_shipout_coffin} is typeset in
+% front of the page as it is being shipped out (anchored top left), and then
+% cleared, ready to accumulate contents for the next page. The \pkg{atbegshi}
+% command used wraps its contents in a |picture| environment, which we don't
+% really need, but it seems to be more trouble than it's worth to get rid of it.
+%
+%    \begin{macrocode}
+\apos_reset_shipout_coffin:
+\AtBeginShipout{
+    \AtBeginShipoutUpperLeftForeground{
+        \coffin_typeset:Nnnnn \g_apos_shipout_coffin {t} {l} {0pt} {0pt}
+        \apos_reset_shipout_coffin:
+    }
+}
+%    \end{macrocode}
+%
+% \begin{variable}{\g_apos_canvas_coffin}
+%
+% This variable is used as part of the |pg| key, and is initially set equal to
+% \cs{g_apos_shipout_coffin}, so that whatever is rendered to the canvas (i.e.,
+% \cs{g_apos_canvas_coffin}) is placed on top of the page contents on shipout,
+% and then cleared. If a different behavior is desired, another coffin can can
+% be supplied instead. Rather than constructing a coffin, we just set up a token
+% list, which initially will be aliased to the actual coffin
+% \cs{g_apos_shipout_coffin} as part of the key handling.
+%    \begin{macrocode}
+\tl_new:N \g_apos_canvas_coffin
+%    \end{macrocode}
+% \end{variable}
+% \begin{macro}{\apos_reset_overlay:}
+% This is a utility to reset \pkg{beamer} overlay specifications at the end of
+% our coffin contents. The idea is that if we use, say, \cs{pause} inside
+% \cs{absput}, then everything after the \cs{pause} command will be paused,
+% including material \emph{outside} \cs{absput}. To restrict such commands to the
+% contents provided to \cs{absput}, we use \cs{onslide<1->} after typesetting the
+% contents in our coffin. This is only useful (or possible) when using
+% \pkg{beamer}, so otherwise, we just alias \cs{ap_reset_overlay:} to
+% \cs{relax}, i.e., don't do anything.
+%    \begin{macrocode}
+\tl_new:N \apos_reset_overlay:
+\@ifclassloaded{beamer}
+    { \tl_gset:Nn    \apos_reset_overlay: { \onslide<1-> } }
+    { \tl_gset_eq:NN \apos_reset_overlay:   \relax         }
+%    \end{macrocode}
+% \end{macro}
+%
+% \noindent
+% We now define the various keys used to configure \cs{absput}, as described
+% in the reference.
+%
+%    \begin{macrocode}
+\keys_define:nn { abspos } {
+
+    angle .tl_set:N          = \l_apos_angle_tl,
+    angle .initial:V         = \c_novalue_tl,
+    angle .value_required:n  = true,
+
+    h     .tl_set:N          = \l_apos_hanchor_tl,
+    h     .initial:n         = hc,
+    h     .value_required:n  = true,
+
+    pg    .code:n            = { \tl_set_eq:NN \g_apos_canvas_coffin #1 },
+    pg    .initial:n         = \g_apos_shipout_coffin,
+    pg    .value_required:n  = true,
+
+    pg-h  .tl_set:N          = \l_apos_on_hanchor_tl,
+    pg-h  .initial:n         = hc,
+    pg-h  .value_required:n  = true,
+
+    pg-v  .tl_set:N          = \l_apos_on_vanchor_tl,
+    pg-v  .initial:n         = vc,
+    pg-v  .value_required:n  = true,
+
+    scale .tl_set:N          = \l_apos_scale_tl,
+    scale .initial:V         = \c_novalue_tl,
+    scale .value_required:n  = true,
+
+    v     .tl_set:N          = \l_apos_vanchor_tl,
+    v     .initial:n         = vc,
+    v     .value_required:n  = true,
+
+    width .tl_set:N          = \l_apos_width_tl,
+    width .initial:V         = \c_novalue_tl,
+    width .value_required:n  = true,
+
+    x     .tl_set:N          = \l_apos_x_tl,
+    x     .initial:n         = { 0pt },
+    x     .value_required:n  = true,
+
+    y     .tl_set:N          = \l_apos_y_tl,
+    y     .initial:n         = { 0pt },
+    y     .value_required:n  = true,
+
+}
+
+\clist_const:Nn \@@_hanchors_clist {l,hc,r}
+\clist_const:Nn \@@_vanchors_clist {t,vc,b,H,T,B}
+
+\cs_new:Npn \@@_define_shortcuts:nnn #1 #2 #3 {
+    \keys_define:nn { abspos } {
+
+    #1    .meta:n            = { #2 },
+    #1    .value_forbidden:n = true,
+
+    pg-#1 .meta:n            = { #3 },
+    pg-#1 .value_forbidden:n = true,
+
+    }
+}
+
+\cs_generate_variant:Nn \@@_define_shortcuts:nnn { Vnn }
+
+\clist_map_inline:Nn \@@_hanchors_clist {
+
+    \@@_define_shortcuts:nnn { #1 } { h = #1 } { pg-h = #1 }
+
+}
+
+\clist_map_inline:Nn \@@_vanchors_clist {
+
+    \@@_define_shortcuts:nnn { #1 } { v = #1 } { pg-v = #1 }
+
+}
+
+\clist_map_inline:Nn \@@_vanchors_clist {
+    \clist_map_inline:Nn \@@_hanchors_clist {
+
+        \tl_clear:N \g_tmpa_tl
+
+        \tl_if_eq:nnTF { #1 } { vc }
+            { \tl_put_right:Nn \g_tmpa_tl { c } }
+            { \tl_put_right:Nn \g_tmpa_tl { #1 } }
+
+        \tl_if_eq:nnTF { ##1 } { hc }
+            { \tl_put_right:Nn \g_tmpa_tl { c } }
+            { \tl_put_right:Nn \g_tmpa_tl { ##1 } }
+
+        \@@_define_shortcuts:Vnn
+            \g_tmpa_tl { v = #1, h = ##1 } { pg-v = #1, pg-h = ##1 }
+
+    }
+}
+%    \end{macrocode}
+% In order to let the user set options outside the actual use of \cs{absput} and
+% \cs{absputcoffin}, we introduce a wrapper:
+%    \begin{macrocode}
+\NewDocumentCommand \absposset { +m } {
+    \keys_set:nn { abspos } { #1 }
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\absput}
+% This is the main command of the package. It takes a key--value list as its
+% first optional argument, followed by the contents that are to be placed.
+%    \begin{macrocode}
+\NewDocumentCommand \absput { +O{ } +m } {
+    \group_begin:
+%    \end{macrocode}
+% First we handle the keys, updating variables holding coordinates, etc.
+%    \begin{macrocode}
+    \keys_set:nn { abspos } { #1 }
+%    \end{macrocode}
+% Then the contents are typeset, with some additions, into a temporary coffin.
+% The additions are that whitespace is stripped around the contents, and that we
+% reset any overlay counters (in case they are modified by \cs{onslide} or
+% \cs{pause}, or the like). If we're not using \pkg{beamer}, this last part is a
+% no-op.
+%
+% If |width| has been set, the contents is set in vertical mode (using the given
+% width); otherwise, it is set in horizontal mode.
+%    \begin{macrocode}
+    \tl_set:Nn \l_tmpa_tl {
+        \ignorespaces #2 \unskip
+        \apos_reset_overlay:
+    }
+    \tl_if_novalue:VTF \l_apos_width_tl {
+        \hcoffin_set:Nn \l_tmpa_coffin \l_tmpa_tl
+    } {
+        \vcoffin_set:Nnn \l_tmpa_coffin \l_apos_width_tl \l_tmpa_tl
+    }
+%    \end{macrocode}
+% Finally, actually place the typeset coffin on the canvas coffin.
+%    \begin{macrocode}
+    \@@_absput_coffin:N \l_tmpa_coffin
+    \group_end:
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\absputcoffin}
+%    A thin wrapper around the internal \cs{@@_absput_coffin:N}. The only extra
+%    work done here is setting the keys.
+%    \begin{macrocode}
+\NewDocumentCommand \absputcoffin { +O{ } m } {
+    \group_begin:
+    \keys_set:nn { abspos } { #1 }
+    \@@_absput_coffin:N #2
+    \group_end:
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@@_absput_coffin:N}
+% An internal macro for placing a given coffin, using the options currently in
+% effect (i.e., as configured by \cs{keys_set:nn} in some outer group). Used by
+% \cs{absput} and \cs{absputcoffin}.
+%    \begin{macrocode}
+\cs_new:Npn \@@_absput_coffin:N #1 {
+%    \end{macrocode}
+% If a scale has been provided, we scale the temporary coffin (with the same
+% factor in both directions).
+%    \begin{macrocode}
+    \tl_if_novalue:VF \l_apos_scale_tl {
+        \coffin_scale:Nnn #1 \l_apos_scale_tl \l_apos_scale_tl
+    }
+%    \end{macrocode}
+% If an angle has been provided, we rotate the temporary coffin.
+%    \begin{macrocode}
+    \tl_if_novalue:VF \l_apos_angle_tl {
+        \coffin_rotate:Nn #1 \l_apos_angle_tl
+    }
+%    \end{macrocode}
+% We now join the temporary coffin to our canvas coffin, so it will be rendered
+% at the correct position at shipout.
+%    \begin{macrocode}
+    \coffin_gattach:NooNoonn
+        \g_apos_canvas_coffin
+            {\l_apos_on_hanchor_tl} {\l_apos_on_vanchor_tl}
+        #1
+            {\l_apos_hanchor_tl} {\l_apos_vanchor_tl}
+            {\l_apos_x_tl} {\l_apos_y_tl}
+%    \end{macrocode}
+%
+% \noindent
+% Ideally, what we just did should have been enough. However, until
+% October~2021, the \cs{coffin_gattach:} command was not actually
+% global,\footnote{\url{https://tex.stackexchange.com/questions/618198}} so
+% to have our modification take effect outside the current group also for older
+% versions of \pkg{l3coffins}, we perform a final (normally redundant) global
+% self-assignment before ending the \cs{absput} command.
+%
+%    \begin{macrocode}
+    \coffin_gset_eq:NN \g_apos_canvas_coffin \g_apos_canvas_coffin
+}
+%    \end{macrocode}
+% \end{macro}
+%    \begin{macrocode}
+%</package>
+%    \end{macrocode}
+%
+% \end{implementation}

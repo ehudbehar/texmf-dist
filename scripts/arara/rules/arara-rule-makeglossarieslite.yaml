@@ -1,0 +1,28 @@
+!config
+# Arara, the cool TeX automation tool
+# Copyright (c) 2022, Island of TeX
+# All rights reserved.
+#
+# This rule is part of arara.
+identifier: makeglossarieslite
+name: MakeGlossariesLite
+authors:
+- Island of TeX
+commands:
+- name: The MakeGlossariesLite software
+  command: >
+    @{
+       return  getCommand('makeglossaries-lite', options,
+                          getBasename(reference.fileName));
+    }
+arguments:
+- identifier: options
+  flag: >
+    @{
+        if (isList(parameters.options)) {
+            return parameters.options;
+        }
+        else {
+            throwError('I was expecting a list of options.');
+        }
+    }

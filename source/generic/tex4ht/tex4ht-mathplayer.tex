@@ -1,0 +1,306 @@
+% $Id: tex4ht-mathplayer.tex 65 2010-11-17 19:16:45Z karl $
+% compile 3 times: latex tex4ht-mathplayer
+%            or   xhlatex tex4ht-mathplayer "html,3,sections+"
+%
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) 1997-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+%%%%%%%%%%%%%%%%%% load style files %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifx \HTML\UnDef
+   \def\HTML{mathplayer}                   
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}         
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common}
+\input{tex4ht-cpright}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Preamble}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<mathplayer\><<<
+% mathplayer.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) |CopyYear.2002. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Start Here}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%
+\section{Header}
+%%%%%%%%%%%%%%%%
+
+\<configure mathplayer Preamble\><<<
+\edef\Preamble{\Preamble,xht}
+\Configure{ext}{xht}
+>>>
+
+% \Configure{mathml}{m:}
+
+
+\<dtd lang\><<<
+\expandafter
+\ifx \csname a:dtd-lang\endcsname\relax EN\else
+  \csname a:dtd-lang\endcsname
+\fi
+>>>
+
+\<configure mathplayer tex4ht\><<<
+\Configure{DOCTYPE}
+       {\HCode{<!DOCTYPE html PUBLIC
+                "-//W3C//DTD XHTML 1.1 plus MathML 2.0//|<dtd lang|>"\Hnewline
+                "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd"\Hnewline
+                 [\Hnewline
+                     <!ENTITY \% MATHML.prefixed "INCLUDE">\Hnewline
+                     <!ENTITY \% MATHML.prefix "m">\Hnewline
+                 ]\Hnewline
+                >\Hnewline }}
+\Configure{@BODY}
+   {\ifvmode \EndP\fi \IgnorePar\HCode{<script type="text/javascript">\Hnewline<!--\Hnewline
+           |<check for ie 5.5 and mathplayer|>\Hnewline-->\Hnewline
+           </script>\Hnewline
+   }\par\ShowPar}
+   \Configure{@HTML}
+     {xmlns:m="http://www.w3.org/1998/Math/MathML"\Hnewline
+%      xmlns:dsi="http://www.dessci.com/mathml" \Hnewline
+     }
+%\let\dsi:=\empty
+>>>
+
+
+application/xhtml+xml
+
+
+
+\<check for ie 5.5 and mathplayer\><<<
+if(   navigator.appName=="Microsoft Internet Explorer"   \Hnewline
+   && navigator.platform=="Win32"                        \Hnewline
+){                                                       \Hnewline
+  if( parseFloat(navigator.appVersion.substr(            \Hnewline
+       navigator.appVersion.indexOf("MSIE ")+5))>="5.5"  \Hnewline
+  ){
+    try {                                                  \Hnewline
+      var oMP = new ActiveXObject("MathPlayer.Factory.1"); \Hnewline
+    }                                                      \Hnewline
+    catch(e) { alert("Can't find Design Science's MathPalyer" +  \Hnewline
+          "(http://www.dessci.com/webmath/mathplayer)");} \Hnewline
+  } else {                                                \Hnewline
+    alert("Requires MSIE version 5.5 or later");          \Hnewline
+} }                                                       \Hnewline
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Wrapping in Tables}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+The attribute \verb+nowrap="nowrap"+ in table cells prevents
+Mathplayer from displaying them its own way, and one gets minimal
+cells, overlapped: it ought to be avoided altogether.
+
+\<configure mathplayer tex4ht\><<<
+\Configure{halignTD} {}{}
+   {<}{\ifmathml \HCode{ columnalign="left"}\else
+        \HCode{ style="text-align:left" }\fi}
+   {-}{\ifmathml \HCode{ columnalign="center"}\else
+        \HCode{ style="text-align:center" }\fi}
+   {>}{\ifmathml \HCode{ columnalign="right"}\else
+        \HCode{ style="text-align:right" }\fi}
+   {^}{\ifmathml \HCode{ rowalign="top"}\else
+        \HCode{ style="vertical-align:top" }\fi}
+   {=}{\ifmathml \HCode{ rowalign="baseline"}\else
+        \HCode{ style="vertical-align:baseline" }\fi}
+   {||}{\ifmathml \HCode{ rowalign="center"}\else
+        \HCode{ style="vertical-align:middle" }\fi}
+   {_}{\ifmathml \HCode{ rowalign="bottom"}\else
+        \HCode{ style="vertical-align:bottom" }\fi}
+   {p}{\ifmathml \HCode{ columnalign="left"}\else
+        \HCode{ style="text-align:left"}\fi}
+   {}
+>>>
+
+
+
+
+
+
+
+% %%%%%%%%%%%%%%%%%%%%%
+% \section{Cross References}
+% %%%%%%%%%%%%%%%%%%%%%
+
+% 
+
+% 
+
+% \<configure mathplayer tex4htNO\><<<
+% \LinkCommand\mtxt:link{\a:mathml maction,%
+%    actiontype="link" \dsi: href, id, 
+%    class="label"|<mtext ref decoration|>,,}
+% \LinkCommand\msp:link{\a:mathml maction,%
+%    actiontype="link" \dsi: href, id,
+%    class="label"|<mstyle ref decoration|>,,}
+% \def\Link{\ifmathml
+%      \ifmtext |<end mtext|>\HCode{</\a:mathml mtext>}%
+%               \expandafter\expandafter\expandafter\mtxt:link
+%      \else    \expandafter\expandafter\expandafter\msp:link\fi
+%    \else \expandafter\M:Link\fi}
+% \def\EndLink{\ifmathml 
+%      \ifmtext    |<end mtext|>|<end mtext ref decoration|>%
+%        \Endmtxt:link \HCode{<\a:mathml mtext\Hnewline 
+%                    class="endlabel">}|<start mtext|>%
+%      \else  \HCode{|<end mstyle ref decoration|></\a:mathml
+%                                maction><!--endlabel-->}\fi
+%    \else \expandafter\M:EndLink\fi}
+% >>>
+
+% 
+
+% 
+
+% 
+
+% 
+
+% 
+
+% 
+% \<mtext ref decorationNO\><<<
+% ><\a:mathml mtext  mathbackground="yellow"%
+% >>>
+
+% \<end mtext ref decorationNO\><<<
+% \HCode{</\a:mathml mtext>}%
+% >>>
+
+% \<mstyle ref decorationNO\><<<
+% ><\a:mathml mstyle  mathbackground="yellow"%
+% >>>
+
+% \<end mstyle ref decorationNO\><<<
+% </\a:mathml mstyle>%
+% >>>
+
+% 
+% \begin{verbatim}
+%  JUST BACKGROUND (one could add colour, and it would be fine to include the
+%  labels, if any)
+%  <m:mstyle \a:mathml mathbackground="yellow"> <m:maction
+%   actiontype="link" \dsi: href="#x1-2r1"  class="label"><m:mrow
+%  ><m:mn>1</m:mn><!--tex4ht:ref: equ1 --></m:mrow></m:maction></m:mstyle >
+
+%  HIGHLIGHT ON MOUSEOVER
+%  <m:maction
+%   actiontype="highlight" \dsi: color="pink" ><m:maction
+%   actiontype="link" \dsi: href="#x1-2r1"  class="label"><m:mtext
+%  background="yellow" >1<!--tex4ht:ref:
+%  equ1 --></m:mtext></m:maction></m:maction>
+
+%  TOOLTIP CLUE ON MOUSEOVER
+%  <m:mrow>
+%  <m:maction actiontype="tooltip" ><m:maction
+%   actiontype="link" \dsi: href="#x1-2r1"  class="label"><m:mrow ><m:mn
+%  background="yellow" >1</m:mn></m:mrow></m:maction>
+%  <m:mtext>click to jump!</m:mtext>
+%  <!--tex4ht:ref: equ1 --></m:maction><!--endlabel--></m:mrow>
+
+% * <m:mtext m:mathbackground="yellow" > disables background colour in all
+%   the (math-)links - this one coming from a typo in mathplayer.4ht, inserting
+%   m: before mathbackground;
+
+%   m: also problematic on actiontype
+% \end{verbatim}
+
+% \<start mtext\><<<
+% \ht:special{t4ht@,&\#x00A0;}%
+% >>>
+% \<end mtext\><<<
+% \ht:special{t4ht@,}%
+% >>>
+
+% 
+
+% The area of the clickable links can be enlarged with a cpde similar to
+% the following one.
+
+% \begin{verbatim}
+%   \let\svLink=\Link
+%   \let\svEndLink=\EndLink
+%   \Odef\Link[#1]#2#3{%
+%      \svLink[#1]{#2}{#3}%
+%      \ifmathml\ifmtext\else \HCode{<m:mpadded width="4">}\fi\fi}
+%   \def\EndLink{%
+%      \ifmathml\ifmtext\else \HCode{</m:mpadded>}\fi\fi
+%      \svEndLink}
+% \end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Namespace Prefixes}
+%%%%%%%%%%%%%%%%%%
+
+\<configure mathplayer tex4ht\><<<
+\:CheckOption{xht} \if:Option
+\else \:CheckOption{xml} \if:Option
+\else
+\Configure{DviMath}
+   {\a:DviMathML \mathmltrue
+      \ifOption{mml-fonts}{}{|%\mml:htfsym|%\NoFonts}%
+      \IgnoreRule \HCode{<!--l.
+      \the\inputlineno-->}\HCode{<\a:mathml math\Hnewline}%
+         |<disable a:mathml for math attr|>%
+         \HCode{\csname a:math-xmlns\endcsname \Hnewline \a:@math>}%
+      |<end disable a:mathml for math attr|>\a:math
+      |<sv dvimath par|>\IgnorePar}
+   {\Tg</\a:mathml math>\EndIgnoreRule
+    \ifOption{mml-fonts}{}{|%\ext:htfsym|%\EndNoFonts}%
+    \mathmlfalse \b:DviMathML |<recall dvimath par|>}
+\fi\fi
+>>>
+
+
+\<recall dvimath par\><<<
+\sv:ignore
+>>>
+
+\<sv dvimath par\><<<
+\edef\sv:ignore{\if:nopar  
+    \noexpand\IgnorePar\else \noexpand\ShowPar\fi}%
+>>>
+
+\<disable a:mathml for math attr\><<<
+\let\sva:mathml=\a:mathml \let\a:mathml=\empty
+>>>
+
+\<end disable a:mathml for math attr\><<<
+\let\a:mathml=\sva:mathml 
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Color}
+%%%%%%%%%%%%%%%%%%
+
+\<configure mathplayer color\><<<
+\let\a:txt:textcolor\a:textcolor
+\let\b:txt:textcolor\b:textcolor
+\Configure{textcolor}
+   {\ifmathml 
+      \Configure{color}%
+         {\Configure{SetHColor}
+              {\HCode{<m:mstyle color="\HColor">}}}%
+    \else \a:txt:textcolor \fi
+   }
+   {\ifmathml \HCode{</m:mstyle>}\else \b:txt:textcolor \fi}
+>>>
+
+
+\endinput

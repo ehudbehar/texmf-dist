@@ -1,0 +1,162 @@
+% luacomplex package
+% version 1.2 Date: 14-Feb-2023
+% Licensed under LaTeX Project Public License v1.3c or later. The complete license text is available at http://www.latex-project.org/lppl.txt.
+% Authors: Chetan Shirore and Ajit Kumar
+
+\ProvidesPackage{luacomplex}[1.2]
+\RequirePackage{xkeyval}
+\RequirePackage{amsmath}
+\RequirePackage{luacode}
+\RequirePackage{luamaths}
+\begin{luacode*}
+complex = {} -- global complex numbers registry
+M = {}         -- the module
+local mt = {} --metatable for complex numbers
+setmetatable(_ENV, {__index = complex})
+   function new (r, i)
+       local cp = {}
+        cp = {r=r, i=i}
+        return setmetatable(cp,mt)
+      end
+      M.new = new        -- add 'new' to the module
+      -- create constant 'i'
+      M.i = new(0, 1)
+
+      function M.add (c1, c2)
+        return new(c1.r + c2.r, c1.i + c2.i)
+      end
+
+      function M.sub (c1, c2)
+        return new(c1.r - c2.r, c1.i - c2.i)
+      end
+
+      function M.mul (c1, c2)
+        return new(c1.r*c2.r - c1.i*c2.i, c1.r*c2.i + c1.i*c2.r)
+      end
+
+    function M.inv (c)
+        local n = c.r^2 + c.i^2
+        return new(c.r/n, -c.i/n)
+      end
+
+      function M.div (c1, c2)
+        return M.mul(c1, M.inv(c2))
+      end
+
+      function M.re (c)
+        return new(c.r,0)
+      end
+
+      function M.im (c)
+        return new(c.i,0)
+      end
+
+      function M.mod (c)
+        local n = c.r^2 + c.i^2
+        return new(n,0)
+      end
+	  
+	  function M.prinarg(c)
+        local arg
+        if c.r > 0 then
+        arg = math.atan(c.i/c.r)
+        elseif c.r < 0 and c.i >= 0 then
+        arg = math.atan(c.i/c.r) + math.pi
+        elseif c.r < 0 and c.i < 0 then
+        arg = math.atan(c.i/c.r) - math.pi
+        elseif c.r == 0 and c.i > 0 then
+        arg =  math.pi / 2
+        elseif c.r == 0 and c.i <  0 then
+        arg =  - math.pi / 2
+        else 
+        error("Principal argument not defined.")
+        end
+        return arg
+	  end
+
+    function M.op (...)
+        return ...
+      end
+
+      function M.tostring (c,imgunit)
+	  imgunit = "\\imgUnit"
+        if c.i ==0 then
+        return string.format("%g", c.r)
+        elseif c.i> 0 and c.i==1 then
+        return string.format("%g+"..imgunit, c.r)
+        elseif c.i> 0 and c.i~=1 then
+        return string.format("%g+%g"..imgunit, c.r, c.i)
+        else
+        return string.format("%g%g"..imgunit, c.r, c.i) --to avoid +-
+        end
+      end
+      
+    --Setting Metatable operations.
+    mt.__add = M.add
+    mt.__mul = M.mul
+    mt.__sub = M.sub
+    mt.__tostring = M.tostring
+\end{luacode*}
+\newcommand\cpxNew[2]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.new(#2)
+    }%
+}
+\newcommand\cpxPrint[1]{%
+    \directlua{tex.sprint(tostring(complex[\luastringN{#1}]))}%
+}
+\newcommand\cpxAdd[3]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.add(complex[\luastringN{#2}],complex[\luastringN{#3}])
+    }%
+}
+\newcommand\cpxSub[3]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.sub(complex[\luastringN{#2}],complex[\luastringN{#3}])
+    }%
+}
+\newcommand\cpxMul[3]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.mul(complex[\luastringN{#2}],complex[\luastringN{#3}])
+    }%
+}
+\newcommand\cpxDiv[3]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.div(complex[\luastringN{#2}],complex[\luastringN{#3}])
+    }%
+}
+\newcommand\cpxInv[2]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.inv(complex[\luastringN{#2}])
+    }%
+}
+\newcommand\cpxRe[2]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.re(complex[\luastringN{#2}])
+    }%
+}
+\newcommand\cpxIm[2]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.im(complex[\luastringN{#2}])
+    }%
+}
+\newcommand\cpxMod[2]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.mod(complex[\luastringN{#2}])
+    }%
+}
+
+\newcommand\cpxPrinArg[2]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.prinarg(complex[\luastringN{#2}])
+    }%
+}
+
+\newcommand\cpxOp[2]{%
+    \directlua{%
+        complex[\luastringN{#1}] = M.op(#2)
+    }%
+}
+
+\newcommand{\imgUnit}{i}
+\endinput

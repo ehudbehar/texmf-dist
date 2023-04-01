@@ -1,0 +1,225 @@
+% \iffalse meta-comment
+%
+%% Copyright (C) 2020--2021 by Marcel Krueger
+%%
+%% This file may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either
+%% version 1.3 of this license or (at your option) any later
+%% version. The latest version of this license is in:
+%%
+%% http://www.latex-project.org/lppl.txt
+%%
+%% and version 1.3 or later is part of all distributions of
+%% LaTeX version 2005/12/01 or later.
+%
+%<*batch>
+%<*gobble>
+\ifx\jobname\relax\let\documentclass\undefined\fi
+\ifx\documentclass\undefined
+\csname fi\endcsname
+%</gobble>
+\input docstrip.tex
+\keepsilent
+\generate{%
+  \file{inputnormalization.sty}{\from{inputnormalization.dtx}{package}}
+  \file{inputnormalization.tex}{\from{inputnormalization.dtx}{tex-package}}}
+\endbatchfile
+%</batch>
+%<*gobble>
+\fi
+\expandafter\ifx\csname @currname\endcsname\empty
+\csname fi\endcsname
+%</gobble>
+%<*driver>
+\RequirePackage{inputnormalization}
+\documentclass{article}
+\usepackage{csquotes,doc,metalogo,hyperref,luacolor,tikzducks,pict2e}
+\RecordChanges
+\MakeShortVerb\|
+\begin{document}
+\DocInput{inputnormalization.dtx}
+\PrintIndex
+\PrintChanges
+\end{document}
+%</driver>
+%<*gobble>
+\fi
+%</gobble>
+% \fi
+%
+% \GetFileInfo{inputnormalization.sty}
+% \title{The inputnormalization package\thanks{This document
+%        corresponds to inputnormalization~\fileversion, dated~\filedate.}}
+% \author{Marcel Kr\"uger \\
+%         \href{mailto:tex@2krueger.de}{tex@2krueger.de}}
+%
+% \maketitle
+% Add support for normalising input files for LuaTeX and provide a common interface for \LuaTeX\ and \XeTeX.
+%
+% \section{Motivation}
+% Modern \TeX\ engines like \XeTeX\ or \LuaTeX\ natively accept Unicode input.
+% Unicode is a rather special encoding since many characters can be encoded in
+% different ways which are officially considered equivalent. This can sometimes
+% lead to surprising behavior since many parts of \TeX\ are not aware of this
+% equivalences and therefore treats different encodings as different strings.
+% This can show itself during rendering when some the same text might appear
+% in different ways depending on the input, but it might also show itself in
+% macro or option names: When e.g.\ non-English macro names are in use, the
+% different encodings of the same name can name different macros, leading to
+% hard to understand and solve errors.
+%
+% Unicode defines a mechanism to solve such issues: It defines the normalization
+% forms NFC and NFD. When text is normalized to one of these forms, then two
+% equivalent strings are always encoded in the same way, leading to unique names
+% and consistent rendering.
+%
+% This package provides a uniform way to enable input normalization to either
+% of these forms in both \XeTeX\ and \LuaTeX.
+%
+% \section{Usage}
+% Just loading the package is enough to enable NFC normalization. This is the
+% right option for almost all users:
+%
+% \begin{verbatim}
+% \documentclass{article}
+% \usepackage{inputnormalization}
+% \begin{document}
+% Everything here gets normalized before it's processed by \TeX.
+% \end{document}
+% \end{verbatim}
+%
+% If you are a plain \LuaTeX/\XeTeX\ user, you can use
+%
+% \begin{verbatim}
+% \input inputnormalization
+% Everything here gets normalized before it's processed by \TeX.
+% \bye
+% \end{verbatim}
+% instead.
+%
+% \section{Advanced usage}
+% In addition to enabling NFC normalization by default, the package makes
+% \verb|\Uinputnormalization| available as a cross engine version of
+% \verb|\XeTeXinputnormalization| to make the normalization controllable.
+% See the \XeTeX\ documentation for detailed usage. E.g.\ you could write
+% \begin{verbatim}
+% \documentclass{article}
+% \usepackage{inputnormalization}
+% \begin{document}
+% Everything here gets normalized to NFC before it's processed by \TeX.
+%
+% \Uinputnormalization=0
+% Now normalization is disabled.
+%
+% \Uinputnormalization=2
+% Here we normalize to NFD instead.
+% \end{document}
+% \end{verbatim}
+%
+% \paragraph{Warning:} It is almost never a good idea to use different kinds
+% of normalization in the same document, therefore you should set one kind of
+% normalization directly after loading the package and not modify it afterwards.
+%
+% Additionally NFC works much better in a \TeX\ context than NFD, so you should
+% not set this at all unless you know exactly what you are doing.
+%
+% \StopEventually{}
+% \section{The implementation}
+% \changes{0.0.1}{2020-05-17}{Initial release}
+% \iffalse
+%<*package|tex-package>
+% \fi
+%    \begin{macrocode}
+%<*package>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage
+  {inputnormalization}
+  [2021/07/05 v0.2 Unicode input normalization]
+%</package>
+%    \end{macrocode}
+% Only \LuaTeX\ and \XeTeX\ are supported.
+% For other engines we show an error.
+%    \begin{macrocode}
+\ifx\directlua\undefined
+\ifx\XeTeXinputnormalization\undefined
+%    \end{macrocode}
+% \iffalse
+%<*gobble>
+\iffalse
+%</gobble>
+% \fi \fi
+%    \begin{macrocode}
+%<*tex-package>
+  \begingroup
+    \ifx\PackageError\undefined
+      \def\PackageError#1#2#3{\errhelp{#3}\errmessage{#1: #2}}
+    \fi
+%</tex-package>
+%    \end{macrocode}
+% \iffalse \iffalse
+%<*gobble>
+\fi
+%</gobble>
+% \fi
+%    \begin{macrocode}
+\PackageError{inputnormalization}{LuaTeX or XeTeX required}%
+    {inputnormalization requires LuaTeX or XeTeX.
+     Maybe you forgot to switch the engine in your editor?}
+%    \end{macrocode}
+% \iffalse
+%<*gobble>
+\iffalse
+%</gobble>
+% \fi \fi
+%    \begin{macrocode}
+%<*tex-package>
+  \endgroup
+%</tex-package>
+%    \end{macrocode}
+% \iffalse \iffalse
+%<*gobble>
+\fi
+%</gobble>
+% \fi
+%    \begin{macrocode}
+\else
+%    \end{macrocode}
+% First deal with \XeTeX: Define |\Uinputnormalization| as an alias for |\XeTeXinputnormalization|.
+% Make sure that \texttt{ltluatex} is loaded.
+%    \begin{macrocode}
+  \let\Uinputnormalization\XeTeXinputnormalization
+\fi
+\else
+%    \end{macrocode}
+% In \LuaTeX\ we emulate |\Uinputnormalization| using a |process_input_buffer| callback.
+% First ensure that |ltluatex| is loaded to have proper callback handling:
+%    \begin{macrocode}
+  \ifx\newluafunction\@undefined
+    \input ltluatex
+  \fi
+%    \end{macrocode}
+% We need a integer register to control the normalization and then the actual implementation of the callback.
+% Nothing particularly interesting is happening here, the actual normalization is handled by \texttt{lua-uni-algos}.
+%    \begin{macrocode}
+  \newcount\Uinputnormalization
+  \directlua{
+    local getcount = tex.getcount
+    local function ident(buf) return buf end
+    local uni_normalize = require'lua-uni-normalize'
+    local normalize = {[0] = ident, uni_normalize.NFC, uni_normalize.NFD}
+    luatexbase.add_to_callback('process_input_buffer', function(buf)
+      return normalize[getcount(\the\allocationnumber)](buf)
+    end, 'inputnormalization')
+  }
+\fi
+%    \end{macrocode}
+% \changes{0.2}{2021-07-05}{Enable NFC by default}
+% Finally we enable NFC normalization as a reasonable default:
+%    \begin{macrocode}
+\Uinputnormalization=1
+\endinput
+%    \end{macrocode}
+% \iffalse
+%</package|tex-package>
+% \fi
+% \Finale

@@ -1,0 +1,224 @@
+
+%% This is the style file for the manuals of the minim format and related 
+%% packages.
+
+\ifdefined \manual
+    \expandafter\endinput\fi
+
+\input minim
+%\decompressedpdf
+
+\pdfalevel 3a
+\overfullrule = 0pt
+
+% 1 page layout
+
+\pdfvariable horigin 0pt
+\pdfvariable vorigin 0pt
+\frenchspacing
+
+\uselanguage{ukenglish}
+\hyphenation {
+    mark-tab-le-cell
+    }
+
+\parindent 0pt
+\baselineskip 12pt plus 1pt
+\parskip      8pt plus 4pt minus 1pt
+
+\abovedisplayskip 3pt plus 2pt
+\belowdisplayskip 4pt plus 2pt
+
+\hsize 12cm
+\vsize 56\baselineskip
+
+\voffset = \dimexpr (\pageheight-\vsize)/2\relax
+\hoffset = \dimexpr (\pagewidth-\hsize)/2\relax
+
+% 1 fonts
+
+\input luaotfload.sty
+\font\tenrm {Latin Modern Roman:script=latn;protrusion=default;} at 10pt
+\font\tenbf {Latin Modern Roman/B:script=latn;} at 10pt
+\font\tenit {Latin Modern Roman/I:script=latn;} at 10pt
+\font\tentt {Latin Modern Mono:script=latn;+smcp;} at 10pt
+\font\title {Latin Modern Roman/B:script=latn;} at 12pt
+\font\Title {Latin Modern Roman/B:script=latn;} at 16pt
+
+\font\altmath   {Tex Gyre Pagella Math:mode=base;script=math;ssty=0;} at 10pt
+\font\altmaths  {Tex Gyre Pagella Math:mode=base;script=math;ssty=1;} at  7pt
+\font\altmathss {Tex Gyre Pagella Math:mode=base;script=math;ssty=2;} at  5pt
+\textfont         1 = \altmath
+\scriptfont       1 = \altmaths
+\scriptscriptfont 1 = \altmathss
+
+\font\tenmath   {Latin Modern Math:mode=base;script=math;ssty=0;} at 10pt
+\font\tenmaths  {Latin Modern Math:mode=base;script=math;ssty=1;} at  7pt
+\font\tenmathss {Latin Modern Math:mode=base;script=math;ssty=2;} at  5pt
+\textfont         0 = \tenmath
+\scriptfont       0 = \tenmaths
+\scriptscriptfont 0 = \tenmathss
+
+\expandglyphsinfont \tenrm 40 25 5
+\protrudechars=2 \adjustspacing=2
+\tenrm
+
+\mathfam{blackboard, `\mscra-`\mscrz} 1
+
+% 1 code typesetting
+
+\chardef\thecolourstack = \pdffeedback colorstackinit page {0 g 0 G}
+\def\pushcolour#1{\pdfextension colorstack \thecolourstack push {#1}}
+\def\popcolour{\pdfextension colorstack \thecolourstack pop\relax}
+\def\red#1{\pushcolour{0.75 0 0 rg}{#1}\popcolour}
+
+\def\emph#1{{\tenit #1\/}}
+
+\newattributeclass Code
+    attr Layout Placement /Block
+    attr CSS-2.00 display (block)
+
+\def\breakablespace{\penalty0~}
+\catcode`\⟦=\active
+\def⟦{\quitvmode\begingroup\catcode`\∥=0\relax
+    \markparagraphsfalse
+    \def\do##1{\catcode`##1=12}\dospecials
+    \catcode`\%=\active \letcharcode`\%=\verbatimcomment
+    \catcode`\ =\active \letcharcode`\ =\breakablespace
+    \def\par{\ifhmode\tentt\endgraf\else\vskip\baselineskip\fi}%
+    \everypar{\stopelement{Code}%
+        \startelement class Code {Code}}%
+    \parskip0pt\tentt \obeylines
+    \nextif*{\verbatim\ignore}{\expandafter\ignore\verbatim}}
+\def\verbatim#1⟧{\red{\markelement{Code}{#1}}\endgroup}
+\def\verbatimcomment{\tenit\Uchar`\%}
+
+% 1 the minim symbol
+
+\newbox\notehead
+\newmetapostinstance \mnmMP
+\runmetapost \mnmMP {
+beginfig(1)
+    w:=1/27; pickup pencircle scaled 1/9;
+    path c; c :=
+        (-3/5,-1/6 ) {down}..
+        (-1/5,-1/2 ) {right}..
+        ( 3/5, 1/6 ) {up}..
+        ( 1/5, 1/2 ) {left}.. cycle;
+    filldraw c withcolor .75 red;
+    path p; p :=
+        (-0.383-w,-0.323-w) ..tension 1.35.. (-0.094-w, 0.094+w) ..tension 1.5..
+        ( 0.383+w, 0.323+w) ..tension 1.35.. ( 0.094+w,-0.094-w) ..tension 1.5.. cycle ;
+    p := (-1,-1) -- (1,-1) -- (1,1) -- p -- (1,1) -- (-1,1) -- cycle ;
+    clip currentpicture to p;
+    draw (3/5, 1/6) -- (3/5, 5/2) withcolor .75 red;
+    setbounds currentpicture to c;
+    currentpicture := currentpicture scaled 8pt ;
+endfig;}
+\boxnextmpimage \mnmMP \notehead
+\setbox\notehead=\hbox{\markartifact{Layout}{\box\notehead}}
+\closemetapostinstance \mnmMP
+
+% 1 document structure
+
+% page artifacts
+\edef\tmp{\markartifact{Pagination /Subtype/Footer}{\the\footline}}
+\footline\expandafter{\tmp}
+\def\footnoterule{\markartifact{Layout}{\kern-3\p@
+  \hrule width 2truein \kern 2.6\p@}} % the \hrule is .4pt high
+
+% \startlist \item x. ... \stoplist
+\def\listskip{\vskip 3pt plus 2pt\vskip-\parskip}
+\def\startlist{\smallskip\startelement{L}}
+\def\stoplist{\stopelement{L}\smallskip}
+\def\item#1.{\listskip
+    \nextpartag{LI}\hangindent2em\quitvmode
+    \hbox to 2em{\hss\startelement{Lbl}#1.~~}%
+    \startelement{LBody}\ignorespaces}
+
+% \chapter Title \par
+\addstructuretype Sect Chapter
+\protected\def\chapter#1 \par{%
+    \vfil\break
+    \ensurestopelement{Section}%
+    \startelement{Chapter}%
+    \outline open {#1}%
+    \addtotoc{\chapter{#1}{\lastdestinationname}}%
+    \nextpartag{H}\quitvmode
+    \red{\Title#1\hfill\copy\notehead}\bigskip\nobreak}
+
+% \section Title \par
+\addstructuretype Sect Section
+\protected\def\section#1 \par{%
+    \bigskip\penalty-50\relax
+    \startelement{Section}%
+    \outline closed {#1}%
+    \addtotoc{\section{#1}{\lastdestinationname}}%
+    \nextpartag{H}\quitvmode
+    \red{\title#1}%
+    \par\nobreak}
+
+% table of contents
+\newtoks\toc \newif\iftoc \toctrue
+\def\addtotoc#1{%
+    \iftoc \edef\toctmp{#1}%
+    \write\auxfile\expandafter
+        {\expandafter\toksapp\expandafter\toc
+            \expandafter{\toctmp{\the\count0}}}\fi\toctrue}
+
+% an auxiliary file
+\newread \auxfile
+\immediate\openin\auxfile = \jobname.aux
+\ifeof\auxfile
+    \def\next{}\else
+    \def\next{\input \jobname.aux}\fi
+\immediate\closein\auxfile \next
+\newwrite \auxfile
+\immediate\openout\auxfile = \jobname.aux
+
+\autotagformulas
+
+\def\mailname{minim}
+\def\maketitle{%
+    \setembeddedfilesmoddate {\getmetadata date}
+    \begingroup
+    \def\outline##1##{\ignore}
+    \tocfalse \chapter \getmetadata title
+        \hfill \tenrm version \getmetadata version
+    \par\endgroup
+    \marktableaslist \halign {\strut
+        \qquad##\quad&##\hfil\cr
+    author&\getmetadata author\cr
+    contact&{\def\tmp{@}\def\TMP{.}%
+        \mailname\tmp elrenkema\TMP nl}\cr}
+    \smallskip}
+
+% 1 Chapters and full manuals
+
+\def\licencesection{\section Licence
+
+\embedfile global file {EUPL-1.2-EN.txt}
+    desc {Licence for this package (EUPL).}
+    name LICENCE mimetype text/plain
+    relation Unspecified uncompressed
+
+This package may be distributed under the terms of the European Union Public 
+Licence (EUPL) version 1.2 or later. An english version of this licence has 
+been included as an attachment to this file; copies in other languages can be 
+obtained at
+\stopformulatagging$$\hbox
+{\hyperlink url {https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12}%
+https://joinup.ec.europa.eu/collection/eupl/eupl-text-eupl-12\endlink}$$\startformulatagging}
+
+% for identifying which file we are typesetting
+\edef\thejobname{\expandafter\scantextokens\expandafter{\jobname}}
+\newif \ifchapter
+\def\manual#1{\def\tmp{#1}\ifx\thejobname\tmp
+    \chapterfalse\else\chaptertrue\fi}
+\def\endmanual{\ifchapter\expandafter\endinput\else
+    \licencesection\expandafter\bye\fi}
+
+%  introduction
+
+\endinput
+

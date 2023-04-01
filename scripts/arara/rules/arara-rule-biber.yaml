@@ -1,0 +1,39 @@
+!config
+# Arara, the cool TeX automation tool
+# Copyright (c) 2022, Island of TeX
+# All rights reserved.
+#
+# This rule is part of arara.
+identifier: biber
+name: Biber
+authors:
+- Island of TeX
+commands:
+- name: The Biber reference management software
+  command: >
+    @{
+        if (isTrue(tool[0])) {
+            return getCommand('biber', '--tool', options);
+        }
+        else {
+            return getCommand('biber', options,
+                              getBasename(reference.fileName));
+        }
+    }
+arguments:
+- identifier: tool
+  flag: >
+    @{
+        return parameters.tool;
+    }
+  default: false
+- identifier: options
+  flag: >
+    @{
+        if (isList(parameters.options)) {
+            return parameters.options;
+        }
+        else {
+            throwError('I was expecting a list of options.');
+        }
+    }

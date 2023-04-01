@@ -1,0 +1,1576 @@
+% \iffalse meta-comment
+%
+% File: aalok.dtx
+% LaTeX class aalok v0.6
+% Copyright © 2021 निरंजन
+%
+% This program is free software: you can redistribute it
+% and/or modify it under the terms of the GNU General Public
+% License as published by the Free Software Foundation,
+% either version 3 of the License, or (at your option) any
+% later version.
+%
+% This program is distributed in the hope that it will be
+% useful, but WITHOUT ANY WARRANTY; without even the implied
+% warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
+% PURPOSE. See the GNU General Public License for more
+% details.
+%
+% You should have received a copy of the GNU General Public
+% License along with this program. If not, see
+% <https://www.gnu.org/licenses/>.
+%
+% हे काम आलोक नित्यमुक्त परवाना तसेच ग्नू पब्लिक परवान्याच्या अटींचे पालन करून वितरित केले जाऊ
+% शकते तसेच सुधारले जाऊ शकते.
+% 
+% ह्या परवान्यांची नवीनतम आवृत्ती पुढील दुव्यांवर पाहता येऊ शकते.
+% 
+% https://gitlab.com/aalok/nityamukta-parwana
+% https://www.gnu.org/licenses/gpl-3.0.txt
+% 
+% ह्या लाटेक्-वर्गाची लाटेक्-प्रकल्पाच्या नियमांनुसार देखरेख केली जात आहे.
+% 
+% ह्या लाटेक्-वर्गाचा लेखक व पालक निरंजन आहे.
+% 
+% ह्या कामात aalok.dtx, aalok.ins तसेच त्यांपासून निर्माण केलेली
+% aalok.cls ही धारिका समाविष्ट आहे.
+% ---------------------------------------------------------------------------
+% लाटेक्-वर्ग:      आलोक
+% लेखक:         निरंजन
+% आवृत्ती:         ०.६
+% वर्णन:          आलोक मराठी नियतकालिकाच्या अक्षरजुळणीकरिता लाटेक्-वर्ग.
+% संग्राहिका:       https://git.gnu.org.ua/aalok.git/
+% अडचणी:        https://puszcza.gnu.org.ua/bugs/?group=aalok
+% परवाना:         आलोक नित्यमुक्त परवाना. आवृत्ती १.०+
+%               ग्नू पब्लिक परवाना. आवृत्ती ३.०+
+%               ग्नू फ्री डॉक्युमेन्टेशन परवाना. आवृत्ती १.३+
+%               दुवे:
+%               https://gitlab.com/aalok/nityamukta-parwana
+%               https://www.gnu.org/licenses/gpl
+%               https://www.gnu.org/licenses/fdl-1.3
+% --------------------------------------------------------------------------
+% \fi
+% \iffalse
+%<*internal>
+\iffalse
+%</internal>
+%<*readme>
+Note: This README file contains information about LaTeX
+      class aalok in languages Marathi & English. As
+      this package/class is targeted more towards the
+      speakers of language Marathi the description is
+      initially given in that (those) language(s), but for
+      general readers an English description is provided at
+      the end.
+--------------------------------------------------------------------------
+लाटेक्-वर्ग:         आलोक
+लेखक:            निरंजन
+आवृत्ती:            ०.६ (१६ डिसेंबर, २०२१)
+वर्णन:             आलोक मराठी नियतकालिकाच्या अक्षरजुळणीकरिता लाटेक्-वर्ग.
+संग्राहिका:          https://git.gnu.org.ua/aalok.git/
+अडचणी:           https://puszcza.gnu.org.ua/bugs/?group=aalok
+परवाना:           आज्ञालेखांकरिता आलोक नित्यमुक्त परवाना (आवृत्ती १.०+) आणि ग्नू पब्लिक परवाना
+                (आवृत्ती ३.०+) व केवळ हस्तपुस्तिकेकरिता ग्नू फ्री डॉक्युमेन्टेशन परवाना (१.३+)
+                दुवे:
+                https://varnamudra.com/aalok/parwana
+                https://www.gnu.org/licenses/gpl-3.0.txt
+                https://www.gnu.org/licenses/fdl-1.3.html
+--------------------------------------------------------------------------
+Class:          aalok
+Author:         निरंजन
+Version:        0.6 (16 December, 2021)
+Description:    LaTeX class for typesetting Aalok Marathi
+                Journal.
+                Repository:     https://git.gnu.org.ua/aalok.git/
+Bug tracker:    https://puszcza.gnu.org.ua/bugs/?group=aalok
+License:        `आलोक' copyleft license v1.0+ and GPL v3.0+ for the code.
+                GFDL v1.3+ only for the documentation
+                Links:
+                https://varnamudra.com/aalok/parwana
+                https://www.gnu.org/licenses/gpl-3.0.txt
+                https://www.gnu.org/licenses/fdl-1.3.html
+--------------------------------------------------------------------------
+%</readme>
+%<*internal>
+\fi
+%</internal>
+%<*driver|class>
+\def\aalokName{aalok}
+\def\aalokVersion{०.६}
+\def\aalokDate{२०२१/१२/१६}
+%</driver|class>
+%<*driver>
+\documentclass{l3doc}
+\usepackage{xcolor}
+\colorlet{आलोकपिवळा}{yellow!90!black}
+\colorlet{आलोकनिळा}{blue!60!black}
+\colorlet{आलोकशेंदरी}{orange!80!black}
+\colorlet{आलोकहिरवा}{green!50!black}
+\usepackage{fontspec}
+\setmainfont[%
+  Renderer=Harfbuzz,%
+  Script=Devanagari,%
+  Language=Marathi,%
+]{Shobhika}
+\renewcommand{\glossaryname}{परिभाषाकोश}
+\renewcommand{\abstractname}{सारांश}
+\renewcommand{\contentsname}{अनुक्रमणिका}
+\usepackage{setspace}
+\setstretch{1.5}
+\sloppy
+\hyphenpenalty=10000
+\exhyphenpenalty=1000
+\ExplSyntaxOn
+\cs_set_protected:Npn \__codedoc_meta:n #1
+{%
+  {%
+    \color{आलोकशेंदरी}%
+    \tl_set:Nn \l__codedoc_tmpa_tl {#1}%
+    \tl_map_inline:nn
+    { { 3 } { 4 } { 7 } { 8 } { 11 } { 12 } { 13 } }%
+    {%
+      \tl_set_rescan:Nnn \l__codedoc_tmpb_tl
+      { \char_set_catcode:nn { `_ } {##1} } { _ }%
+      \tl_replace_all:Non \l__codedoc_tmpa_tl \l__codedoc_tmpb_tl
+      { \__codedoc_ensuremath_sb:n }%
+    }%
+    \exp_args:NV \__codedoc_meta_original:n \l__codedoc_tmpa_tl
+  }%
+}%
+\cs_set_protected:Npn \__codedoc_syntax_end:
+{
+\end{minipage}
+\end{tabular}
+\arrayrulecolor{आलोकशेंदरी}
+\hbox_gset_end:
+\bool_if:NF \l__codedoc_in_function_bool
+{
+  \begin{quote}
+    \mode_leave_vertical:
+    \box_use_drop:N \g__codedoc_syntax_box
+  \end{quote}
+}
+}
+\ExplSyntaxOff
+% सॅम कार्टर ह्यांचे मनःपूर्वक आभार (https://topanswers.xyz/tex?q=1517#a1767)
+\usepackage{fontawesome5}
+\usepackage{hyperref}
+\hypersetup{%
+  unicode,%
+  pdftitle={।। आलोक ।। (लाटेक्-वर्ग - आवृत्ती ०.६)},%
+  pdfauthor={निरंजन},%
+  pdfsubject={आलोक मराठी नियतकालिकाच्या अक्षरजुळणीकरिता लाटेक्-वर्ग.},%
+  pdfkeywords={आलोक मराठी नियतकालिक},%
+  colorlinks,%
+  linkcolor=आलोकशेंदरी,%
+  citecolor=आलोकहिरवा,%
+  urlcolor=आलोकनिळा%
+}%
+\usepackage{expl3}
+\IfFileExists{l3pdf.sty}{\usepackage{l3pdf}}{}
+\ExplSyntaxOn
+\pdf_version_gset:n{2.0}
+\ExplSyntaxOff
+\usepackage{devanagaridigits}
+\makeatletter
+\def\@arabic#1{\expandafter\devanagaridigits\expandafter{\number#1}}
+\renewcommand{\theCodelineNo}{{\scriptsize\arabic{CodelineNo}}\quad}
+\makeatother
+\setmonofont[
+Renderer=Harfbuzz,
+Script=Devanagari,
+Color=आलोकनिळा
+]{Mukta}
+\begin{document}
+\DocInput{\aalokName.dtx}
+\end{document}
+%</driver> 
+% \fi
+% \title{।। आलोक ।।}
+% \author{निरंजन}
+% \date{^^A
+%   आवृत्ती \aalokVersion\ --- \aalokDate\\[1ex]
+%   {^^A
+%     \small\textcolor{आलोकशेंदरी}{\faIcon{link}}\quad
+%     \url{https://ctan.org/pkg/aalok}^^A
+%   }\\^^A
+%   {
+%     \small\textcolor{आलोकशेंदरी}{\faIcon{bug}}\quad
+%     \url{https://puszcza.gnu.org.ua/bugs/?group=aalok}^^A
+%   }^^A
+% }^^A
+%   \maketitle
+%   \begin{abstract}
+%     आलोक नियतकालिकाच्या अक्षरजुळणीकरिता हा लाटेक्-वर्ग लिहिण्यात आला आहे. आलोकची
+%     सामग्री मुक्तपणे उपलब्ध करून देताना, ह्या वर्गाची आज्ञावलीदेखील मुक्त असावी ह्या हेतूने हा
+%     वर्ग सीटॅन ह्या संकेतस्थळावर सादर करण्यात आला आहे.
+%   \end{abstract}
+%   \tableofcontents
+% \clearpage
+% \hspace{0pt}
+% \vfill
+% \section{परवाना}
+% {%
+% \setlength{\parindent}{0pt}
+% प्रतिमुद्राधिकार © २०२१ निरंजन.
+% 
+% ह्या सामग्रीच्या वितरणाचे व प्रतिमुद्रणाचे अधिकार आलोक नित्यमुक्त परवान्यासह मुक्त करण्यात येत
+% आहेत. ह्या सामग्रीची यथामूल अथवा परिवर्तित प्रतिमुद्रणे व्यावसायिक अथवा अव्यावसायिक
+% स्वरूपात वितरित करण्यास प्रतिमुद्राधिकारधारक संमती देत आहे, परंतु असे करताना वितरकाने
+% प्रतिमुद्राधिकारांचा योग्य श्रेयनिर्देश करणे व सामग्री परिवर्तित असल्यास ती ह्याच अटींसह
+% वितरित करणे बंधनकारक आहे. ही सामग्री जशी आहे तशी पुरवण्यात येत आहे, पुरवणारा/पुरवणारी
+% हिच्याबाबत कोणतीही हमी देत नाही. ह्या (व ह्यावर आधारित) सामग्रीचे अमुक्त वितरण
+% बेकायदेशीर मानले जाईल. आलोक नित्यमुक्त परवान्याचा संपूर्ण मसुदा पुढील दुव्यावर वाचता
+% येईल.
+%
+% \url{https://gitlab.com/aalok/nityamukta-parwana}
+% 
+% \rule{\linewidth}{0.5mm}
+%
+% \fontfamily{lmr}\selectfont
+% Copyright © 2021 Niranjan.
+%
+% Permission is granted to copy, distribute and/or modify this document
+% under the terms of the GNU Free Documentation License, Version 1.3
+% or any later version published by the Free Software Foundation;
+% with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+% A copy of the license is included in the section entitled ``GNU
+% Free Documentation License''.
+%
+% \url{https://www.gnu.org/licenses/fdl}
+% }%
+%
+% \vfill
+%   \begin{documentation}
+%   \arrayrulecolor{आलोकशेंदरी}
+%   \section{प्राचले}
+%   \begin{function}{खासगीवितरण}
+%     हे प्राचल वापरल्यास आलोकच्या खासगीवितरणाचे अंक घडवले जातात.
+%   \end{function}
+%   \begin{function}{सुटालेख}
+%     हे प्राचल वापरल्यास आलोकच्या अंकातील लेख स्वतंत्ररित्या छापले जातात.
+%   \end{function}
+%   \begin{function}{छापील}
+%     हे प्राचल वापरल्यास आलोकची छापील आवृत्ती तयार होते.
+%   \end{function}
+%   \begin{function}{रेगे}
+%     हे प्राचल वापरल्यास २४ जानेवारी ही तारीख मूलभूत मानली जाते, तसेच प्रकाशनमाहितीच्या
+%     पानावर प्रा.\ मे.\ पुं.\ रेग्यांचे नाव येते.
+%   \end{function}
+%   \begin{function}{राजवाडे}
+%     हे प्राचल वापरल्यास २४ जून ही तारीख मूलभूत मानली जाते, तसेच प्रकाशनमाहितीच्या पानावर
+%     इतिहासाचार्य वि.\ का.\ राजवाड्यांचे नाव येते.
+%   \end{function}
+%   \section{आज्ञा}
+%   ह्या लाटेक् वर्गात पुढील आज्ञांचा समावेश होतो.
+%   \begin{function}{\पुष्प}
+%     \begin{syntax}
+%       \cs{पुष्प}\marg{पुष्पक्रमांक}
+%     \end{syntax}
+%     आलोक नियतकालिकाचे हे कितवे पुष्प आहे हे ह्या आज्ञेने स्पष्ट केले जाते. मुखपृष्ठ व इतर अनेक
+%     ठिकाणी ही माहिती छापली जाते.
+%   \end{function}
+%   \begin{function}{\आकडीपुष्प}
+%     \begin{syntax}
+%       \cs{आकडीपुष्प}\marg{पुष्पक्रमांक आकडी}
+%     \end{syntax}
+%     ह्या आज्ञेत पुष्पक्रमांक आकडी लिहावा. सामग्रीचा संदर्भ कसा द्यावा ह्याविषयीच्या
+%     सूचनेकरिता ही माहिती लागते.
+%   \end{function}
+%   \begin{function}{\तिथी}
+%     \begin{syntax}
+%       \cs{तिथी}\marg{प्रकाशनाची तिथी}
+%     \end{syntax}
+%     आलोक नियतकालिकाचे प्रकाशनाची तिथी विविध ठिकाणी छापण्याकरिता ही आज्ञा वापरली
+%     जाते.
+%   \end{function}
+%   \begin{function}{\आवृत्ती}
+%     \begin{syntax}
+%       \cs{आवृत्ती}\marg{आवृत्तिक्रमांक अक्षरांत}
+%     \end{syntax}
+%     आलोक नियतकालिकाच्या विशिष्ट अंकाची ही कितवी आवृत्ती आहे हे ह्या आज्ञेने स्पष्ट केले
+%     जाते.
+%   \end{function}
+%   \begin{function}{\प्रकाशनवर्ष}
+%     \begin{syntax}
+%       \cs{प्रकाशनवर्ष}\marg{प्रकाशनवर्ष}
+%     \end{syntax}
+%     आलोक नियतकालिकाच्या प्रस्तुत अंकाचे प्रकाशनवर्ष कोणते आहे हे ह्या आज्ञेने स्पष्ट केले जाते.
+%   \end{function}
+%   \begin{function}{\जयंती}
+%     \begin{syntax}
+%       \cs{जयंती}\marg{कितवी जयंती}
+%     \end{syntax}
+%     आलोक नियतकालिकाचे प्रकाशन प्रा.\ मे.\ पुं.\ रेगे व इतिहासाचार्य वि.\ का.\ राजवाडे
+%     ह्यांच्या जयंतीप्रीत्यर्थ होते. त्यांची कितवी जयंती आहे हे दरवेळी प्रकाशनमाहितीच्या
+%     पानावरील माहिती ह्या आज्ञेमुळे स्पष्ट केली जाते.
+%   \end{function}
+%   \begin{function}{\दिनांक}
+%     \begin{syntax}
+%       \cs{दिनांक}\marg{प्रकाशनाचा दिनांक}
+%     \end{syntax}
+%     आलोक नियतकालिकाच्या प्रकाशनाचा दिनांक विविध ठिकाणी छापण्याकरिता ही आज्ञा
+%     वापरली जाते, परंतु ही आज्ञा \verb|रेगे| अथवा \verb|राजवाडे| ही प्राचले वापरल्यास
+%     आपोआपच भरली जाते, त्यामुळे हिचा प्रयोग सहसा करावा लागत नाही.
+%   \end{function}
+%   \begin{function}{\आकडीदिनांक}
+%     \begin{syntax}
+%       \cs{आकडीदिनांक}\marg{प्रकाशनाचा दिनांक (आकडी)}
+%     \end{syntax}
+%     सुट्या लेखांमध्ये संदर्भ कसा द्यावा ह्याविषयीच्या सूचनेकरिता आकडी दिनांकाची आवश्यकता
+%     पडते. त्यासाठी ह्या आज्ञेचा प्रयोग केवळ सुट्या लेखांमध्येच आवश्यक ठरतो.
+%   \end{function}
+%   \begin{function}{\लेख}
+%     \begin{syntax}
+%       \cs{लेख}\marg{लेखाचे शीर्षक}
+%     \end{syntax}
+%     ह्या आज्ञेच्या कार्यघटकात लेखाचे शीर्षक लिहावे.
+%   \end{function}
+%   \begin{function}{\अभ्यासक}
+%     \begin{syntax}
+%       \cs{अभ्यासक}\marg{अभ्यासकाचे नाव}
+%     \end{syntax}
+%     ह्या आज्ञेच्या कार्यघटकात लेखकाचे नाव लिहावे.
+%   \end{function}
+%   \begin{function}{\इपत्ता}
+%     \begin{syntax}
+%       \cs{इपत्ता}\marg{इपत्ता}\marg{दृश्यरूपातील इपत्ता}
+%     \end{syntax}
+%     ज्या इपत्त्यांमध्ये लॅटिन आकडे असतात, ते दिसण्याकरिता लाटेक्-मधील गणित-क्षेत्राचा वापर
+%     करावा लागतो.  उदा.\ \verb|\इपत्ता{abcd123@example.com}{abcd\(123\)@gmail.com}|
+%     ह्याकरिता ह्या आज्ञेस दोन कार्यघटक आहेत. ज्यांच्या इपत्त्यात आकडे नाहीत, त्यांनी दोन्ही
+%     कार्यघटकांत तोच इपत्ता लिहावा. उदा.\
+%     \verb|\इपत्ता{abcd@example.com}{abcd@gmail.com}|
+%   \end{function}
+%   \begin{function}{\orcid}
+%     \begin{syntax}
+%       \cs{orcid}\marg{orcid क्रमांक}
+%     \end{syntax}
+%     ह्या आज्ञेच्या कार्यघटकात लेखकांनी त्यांचा ORCID क्रमांक लिहिणे अभिप्रेत आहे.
+%   \end{function}
+%   \begin{function}{\शीर्षक}
+%     \begin{syntax}
+%       \cs{शीर्षक}
+%     \end{syntax}
+%     ही आज्ञा टाकल्यास आलोकची शीर्षकसामग्री छापली जाते.
+%   \end{function}
+%   \begin{function}{\अनुक्रमणिका}
+%     \begin{syntax}
+%       \cs{अनुक्रमणिका}
+%     \end{syntax}
+%     ह्या आज्ञेसह सुट्या लेखांत व अंकातील लेखांस अनुक्रमणिका पुरवली जाते.
+%   \end{function}
+% \end{documentation}
+% \begin{implementation}
+%   \section{लाटेक्-वर्गाची घडण}
+%    \begin{macrocode}
+%<*class>      
+%    \end{macrocode}
+%    \begin{macrocode}
+\ProvidesClass{aalok}[2021/12/16 v0.6
+आलोक लाटेक् आ. ०.६]
+%    \end{macrocode}
+% वरील आज्ञेसह पायाभूत माहिती पुरवण्यात आली.
+%    \begin{macrocode}
+\let\पुष्पसंख्या\@empty
+\def\पुष्प#1{%
+  \def\पुष्पसंख्या{#1}%
+}%
+\let\कोणतादिनांक\@empty
+\def\दिनांक#1{%
+  \def\कोणतादिनांक{#1}%
+}%
+\let\पुष्पसंख्याआकडी\@empty
+\def\आकडीपुष्प#1{%
+  \def\पुष्पसंख्याआकडी{#1}
+}%
+\let\दिनांकआकडी\@empty
+\def\आकडीदिनांक#1{%
+  \def\दिनांकआकडी{#1}
+}%
+\let\कोणतीतिथी\@empty
+\def\तिथी#1{%
+  \def\कोणतीतिथी{#1}%
+}%
+\let\कितवीआवृत्ती\@empty
+\def\आवृत्ती#1{%
+  \def\कितवीआवृत्ती{#1}%
+}%
+\let\कोणतेप्रकाशनवर्ष\@empty
+\def\प्रकाशनवर्ष#1{%
+  \def\कोणतेप्रकाशनवर्ष{#1}%
+}%
+\let\विद्वान\@empty
+\def\प्रीत्यर्थ#1{%
+  \def\विद्वान{#1}%
+}%
+\let\कितवीजयंती\@empty
+\def\जयंती#1{%
+  \def\कितवीजयंती{#1}%
+}%
+\let\आकडीमूल्यकिती\@empty
+\let\अक्षरीमूल्यकिती\@empty
+\def\मूल्य#1#2{%
+  \def\आकडीमूल्यकिती{#1}%
+  \def\अक्षरीमूल्यकिती{#2}%
+}%
+\let\लेखाचेनाव\@empty
+\def\लेख#1{%
+  \def\लेखाचेनाव{#1}%
+}%
+\let\अभ्यासकाचेनाव\@empty
+\def\अभ्यासक#1{%
+  \def\अभ्यासकाचेनाव{#1}%
+}%
+\let\अभ्यासकाचाइपत्तादुवा\@empty
+\let\अभ्यासकाचाइपत्तापाठ्य\@empty
+\def\इपत्ता#1#2{%
+  \def\अभ्यासकाचाइपत्तादुवा{#1}%
+  \def\अभ्यासकाचाइपत्तापाठ्य{#2}%
+}%
+\let\orcidno\@empty
+\def\orcid#1{%
+  \def\orcidno{#1}%
+}%
+%    \end{macrocode}
+% वरील आज्ञांसह विविध ठिकाणी लागणारी माहिती पुरवण्यासाठी सोप्या आज्ञा घडवण्यात आल्या आहेत.
+%    \begin{macrocode}
+\newif\ifखासगीवितरण
+\DeclareOption{खासगीवितरण}{\खासगीवितरणtrue}
+\newif\ifछापील
+\DeclareOption{छापील}{\छापीलtrue}
+\newif\ifसुटालेख
+\newif\ifस्थान
+\DeclareOption{सुटालेख}{\सुटालेखtrue\स्थानtrue}
+\DeclareOption{रेगे}{%	
+  \दिनांक{२४ जानेवारी}%	
+  \प्रीत्यर्थ{प्रा.\ मे.\ पुं.\ रेगे}%	
+}%	
+\DeclareOption{राजवाडे}{%	
+  \दिनांक{२४ जून}%	
+  \प्रीत्यर्थ{वि.\ का.\ राजवाडे}%	
+}%
+\ProcessOptions
+%    \end{macrocode}
+% वरील आज्ञांसह \verb|छापील|, \verb|सुटालेख| व \verb|खासगीवितरण| ही प्राचले व त्यांची
+% सोपाधिके घडवली.
+%    \begin{macrocode}
+\ifसुटालेख
+\LoadClass[12pt]{article}
+\else
+\ifछापील
+\LoadClass[openright,extrafontsizes,twocolumn]{memoir}
+\else
+\LoadClass[extrafontsizes,twocolumn,oneside]{memoir}
+\fi
+\fi
+%    \end{macrocode}
+% \verb|छापील| हे प्राचल वापरल्यास \verb|memoir| लाटेक्-वर्गासह छापील आवृत्तीसाठी आवश्यक
+% असणारी प्राचले वापरणे व ते न वापरल्यास डिजिटल आवृत्तीसाठीची प्राचले वापरणे वरील आज्ञांनी साधले.
+%    \begin{macrocode}
+\RequirePackage{expl3}
+\IfFileExists{l3pdf.sty}{\RequirePackage{l3pdf}}{}
+\ExplSyntaxOn
+\pdf_version_gset:n{2.0}
+\ExplSyntaxOff
+%    \end{macrocode}
+% आलोक नित्यमुक्त परवान्यातील अटीनुसार पीडीएफ् ह्या दस्तऐवजातील प्रकाराची १.७+ आवृत्ती
+% वापरणे बंधनकारक आहे. त्यामुळे वरील आज्ञांसह लाटेक्-च्या मूलभूत १.५ ह्या आवृत्तीऐवजी २.० ही
+% नवीनतम आवृत्ती वापरण्यात आली आहे. उलरिके फिशर ह्यांनी नोंदवलेल्या
+% \href{https://gitlab.com/aalok/nityamukta-parwana/-/issues/8}{तक्रारीनुसार}\footnote{नजरचुकीने
+% आलोक लाटेक्-वर्गाऐवजी आलोक नित्यमुक्त परवान्याच्या गिटपृष्ठावर ही तक्रार नोंदवली गेली, परंतु
+% आम्ही ह्या तक्रारीची नोंद नंतर आलोक लाटेक्-वर्गाच्या पृष्ठावरदेखील घेतली आहे. पाहा:
+% \url{https://gitlab.com/aalok/aalok-latex/-/issues/2}}
+% l3pdf हा आज्ञासंच टेक्-वितरणाचा भाग नाही व त्याच्या सर्व आज्ञा मूळ टेक्-आज्ञावलीतच समाविष्ट
+% केल्या आहेत, त्यामुळे त्या आज्ञासंचाचा वापर आवृत्ती ०.३पासून सोपाधिकासह करण्यात आला आहे. जर
+% आज्ञासंचाची धारिका टेक्-वितरणात असेल, तरच हा आज्ञासंच वापरला जाईल, अन्यथा टेक्-चालकासह
+% धारिका आपसूक चालवली जाईल.
+%    \begin{macrocode}
+\RequirePackage{expex}
+\RequirePackage{xcolor}
+\RequirePackage{marathi}
+\RequirePackage{microtype}
+\RequirePackage{fontawesome5}
+\RequirePackage{diagbox}
+\RequirePackage{fancyhdr}
+\RequirePackage{float}
+\RequirePackage{paracol}
+\RequirePackage[most]{tcolorbox}
+\RequirePackage{tikz}
+\RequirePackage{graphicx}
+\RequirePackage{mdframed}
+\RequirePackage{etoolbox}
+%    \end{macrocode}
+% वरील आज्ञांसह काही आवश्यक आज्ञासंच वापरले आहेत.
+%    \begin{macrocode}
+\newtoggle{स्थान}
+\newtoggle{छापील}
+\ifसुटालेख
+\toggletrue{स्थान}
+\else
+\fi
+%    \end{macrocode}
+% \url{https://tex.stackexchange.com/a/5896/174620} वरील आज्ञांसह काही आवश्यक आज्ञासंच वापरले आहेत.
+%    \begin{macrocode}
+\RequirePackage{xcolor}
+\colorlet{लाल}{black!50!red}
+\colorlet{निळादुवा}{blue!50!black}
+\colorlet{निळा}{blue!20!black}
+\colorlet{सोनेरी}{yellow!90!white}
+\definecolor{कागद}{HTML}{FFF8DC}
+%    \end{macrocode}
+% आलोकच्या निर्मितीत लागणारे विविध रंग \verb|xcolor| ह्या आज्ञासंचासह वरील आज्ञांनी
+% घडवण्यात आले. कागदासाठी वापरण्यात आलेला रंग
+% \url{https://tex.stackexchange.com/a/219609/174620} ह्या उत्तराच्या सौजन्याने
+% वापरला.
+%    \begin{macrocode}
+\AtEndPreamble{%
+  \RequirePackage[%
+  unicode,%
+  colorlinks,%
+  \ifछापील
+  linkcolor={black},%
+  citecolor={black},%
+  urlcolor={black},%
+  \else
+  linkcolor={लाल},%
+  citecolor={निळादुवा},%
+  urlcolor={निळादुवा},%
+  \fi
+  \ifसुटालेख
+  pdftitle={\लेखाचेनाव},%
+  pdfauthor={\अभ्यासकाचेनाव},%
+  \else
+  pdftitle={आलोक (पुष्प \पुष्पसंख्या, \कोणतादिनांक)},%
+  pdfauthor={आलोक मराठी नियतकालिक},%
+  \fi
+  pdfsubject={शास्त्रचर्चेस वाहिलेले पहिले मुक्त मराठी नियतकालिक.},%
+  pdfkeywords={वर्णमुद्रा प्रकाशन},%
+  pdfproducer={आलोक मराठी नियतकालिक},%
+  pdfcreator={हायपर्रेफ-सह झीलाटेक्}%
+  ]%
+  {hyperref}%
+  \renewcommand{\tableautorefname}{कोष्टक}%
+  \renewcommand{\appendixautorefname}{परिशिष्ट}%
+  \renewcommand{\figureautorefname}{आकृती}%
+}%
+%    \end{macrocode}
+% लाटेक्-फलिताकरिता पायाभूत माहिती \verb|हायपर्रेफ| ह्या आज्ञासंचासह पुरवता येते, परंतु
+% त्याकरिता हा आज्ञासंच सगळ्यात शेवटी वापरणे आवश्यक आहे. म्हणून ह्या आज्ञावलीसह सर्वात शेवटचा
+% आज्ञासंच \verb|हायपर्रेफ| वापरला जाईल अशी सोय करण्यात आली आहे. ह्यामुळे वापरकर्त्यांनी
+% \verb|हायपर्रेफ| ह्या आज्ञासंचानंतर वापरण्यात येणारे आज्ञासंच (उदा.\
+% \href{https://ctan.org/pkg/cleveref}{\verb|क्लेव्हरेफ|})
+% \verb|\AtBeginDocument{\usepackage{cleveref}}| अशा प्रकारे वापरावेत. जेणेकरून
+% कोणतीही अडचण उद्भवणार नाही. तसेच ह्या आज्ञासंचासह अंतर्गत संदर्भांना दिली जाणारी काही
+% नावे वरील आज्ञांसह देण्यात आली आहेत.
+%    \begin{macrocode}
+\RequirePackage[%
+style=authoryear,%
+sorting=none,%
+backend=biber,%
+]%
+{biblatex}%
+\addbibresource{सामग्री/संदर्भ.bib}
+\DeclareNumChars{०१२३४५६७८९}
+\DeclareCiteCommand{\citetitleyear}
+{%
+  \boolfalse{citetracker}%
+  \boolfalse{pagetracker}%
+}%
+{%
+  \ifciteindex
+  {%
+    \indexfield{indextitle}%
+  }%
+  {}%
+  \printfield[citetitle]{labeltitle}%
+  \setunit{\addspace}%
+  \printtext[parens]{%
+    \usebibmacro{prenote}%
+    \printfield{year}\printfield{extrayear}%
+    \usebibmacro{postnote}%
+  }%
+}%
+{\multicitedelim}%
+{}%
+%    \end{macrocode}
+% वरील आज्ञांसह संदर्भांसाठी \verb|बिबलाटेक्| हा आज्ञासंच वापरला व \verb|सामग्री/संदर्भ.bib|
+% हा पत्ता कायमस्वरूपी पुरवला गेला. संदर्भ देताना पुस्तकाचे नाव व प्रकाशनवर्ष एकत्र देण्याकरिता
+% एक नवी आज्ञादेखील ह्यात घडवली आहे. त्याकरिता
+% \url{https://tex.stackexchange.com/a/284229/174620} ह्या उत्तराची मदत झाली.
+%    \begin{macrocode}
+\definecolor{orcidcolor}{HTML}{a6ce39}
+\newcommand{\orcidlogo}{%
+  \ifछापील
+  \faIcon{orcid}
+  \else
+  \textcolor{orcidcolor}{\faIcon{orcid}}
+  \fi
+}%
+%    \end{macrocode}
+% आलोक नियतकालिकातील लेखकांना ORCID वर नोंदणी करणे बंधनकारक आहे. आलोकच्या अंकात ORCID
+% क्रमांकांचा समावेश करण्यासाठी वरील आज्ञा समाविष्ट केल्या.
+%    \begin{macrocode}
+\दुसराटंक{\गोटू}{Gotu}
+\दुसराटंक{\यशोमुद्रा}{Yashomudra-Italic.ttf}[Path=सामग्री/टंक/यशोमुद्रा/]
+\दुसराटंक{\मुक्त}{Mukta-Regular.ttf}[Path=सामग्री/टंक/मुक्त/]
+%    \end{macrocode}
+% आलोकच्या मुखपृष्ठावर वापरला गेलेला गोटू हा टंक, अनुक्रमणिकेतील तिरक्या अक्षरांसाठी लागणारा
+% यशोमुद्रा हा टंक व नित्यमुक्त परवान्याच्या संहितेत लागणारा मुक्त हा टंक वरील आज्ञांसह पुरवण्यात
+% आला आहे.
+%    \begin{macrocode}
+\ifसुटालेख
+\else
+\RequirePackage{tocloft}
+\setlength\cftpartnumwidth{3em}
+\setlength\cftchapternumwidth{2em}
+\fi
+%    \end{macrocode}
+% वरील आज्ञांसह अनुक्रमणिकेतील खंड, प्रकरण व त्यांचे क्रमांक ह्यांच्या अंतरात वाढ करण्यात आली आहे.
+%    \begin{macrocode}
+\setlength{\columnsep}{0.5cm}
+%    \end{macrocode}
+% दोन स्तंभांमधील अंतर वाढवण्यासाठी ह्या आज्ञेचा वापर करण्यात आला आहे.
+%    \begin{macrocode}
+\tcbuselibrary{breakable}
+\ifछापील
+\tcbset{%
+  colframe=black,%
+  colback=white,%
+  fonttitle=\bfseries\Large,%
+  colupper=white!10!black,%
+  breakable,%
+  boxrule=0.5pt%
+}%
+\else
+\tcbset{%
+  colframe=black,%
+  colback=कागद,%
+  fonttitle=\bfseries\Large,%
+  colupper=white!10!black,%
+  breakable,%
+  boxrule=0.5pt%
+}%
+\fi
+%    \end{macrocode}
+% अवांतर माहिती अथवा काही ठळक मुद्दे लिहिण्याकरिता \verb|tcolorbox| ह्या आज्ञासंचासह
+% पुढील प्राचलांचा वापर करून एक दृश्यरूप निश्चित केले गेले आहे.
+%    \begin{macrocode}
+\addto\captionsmarathi{%
+  \renewcommand\glossaryname{परिभाषासूची}%
+  \renewcommand\appendixname{परिशिष्ट}%
+  \ifसुटालेख
+  \else
+  \renewcommand\chaptername{पुष्पदल}%
+  \renewcommand\appendixpagename{परिशिष्ट}%
+  \fi
+}%
+%    \end{macrocode}
+% आलोकच्या अंकांना पुष्प म्हटले जाते, त्यामुळे त्यांतील लेखांना पुष्पदलाचे रूपक वापरले आहे. ते वरील
+% आज्ञेने पुरवले जाते. तसेच आणखी काही भाषांतरे वरील आज्ञांसह पुरवली आहेत.
+%    \begin{macrocode}
+\RequirePackage{minitoc}
+\renewcommand{\mtctitle}{विषयसूची}
+\ifसुटालेख
+\else
+\dominitoc
+\fi
+\newcommand{\अनुक्रमणिका}{%
+  \ifसुटालेख
+  \tableofcontents
+  \else
+  \minitoc
+  \fi
+}%
+%    \end{macrocode}
+% \verb|minitoc| हा आज्ञासंच प्रकरणांतर्गत अनुक्रमणिका तयार करण्यासाठी वापरला
+% जातो. त्या अनुक्रमणिकेस विषयसूची असे नाव वरील आज्ञेसह दिले आहे.
+%    \begin{macrocode}
+\newcommand{\संदर्भसूची}{%
+  {\LARGE\section*{संदर्भसूची}}%
+  \printbibliography[heading=none]%
+}%
+%    \end{macrocode}
+% संदर्भसूची चालू पानावरच येण्याकरिता ही आज्ञा घडवण्यात आली आहे.
+%    \begin{macrocode}
+\def\parsecomma#1,#2\endparsecomma{\def\page@x{#1}\def\page@y{#2}}
+\tikzdeclarecoordinatesystem{पृष्ठ}{%
+  \parsecomma#1\endparsecomma
+  \pgfpointanchor{current page}{north east}%
+  \pgf@xc=\pgf@x%
+  \pgf@yc=\pgf@y%
+  \pgfpointanchor{current page}{south west}%
+  \pgf@xb=\pgf@x%
+  \pgf@yb=\pgf@y%
+  \pgfmathparse{(\pgf@xc-\pgf@xb)/2.*\page@x+(\pgf@xc+\pgf@xb)/2.}%
+  \expandafter\pgf@x\expandafter=\pgfmathresult pt%
+  \pgfmathparse{(\pgf@yc-\pgf@yb)/2.*\page@y+(\pgf@yc+\pgf@yb)/2.}%
+  \expandafter\pgf@y\expandafter=\pgfmathresult pt%
+}%
+%    \end{macrocode}
+% वरील आज्ञांसह \verb|tikzpicture| ह्या क्षेत्रासह मजकूर पानावर हवा तिथे छापता
+% येतो. हे साधण्याकरिता \url{https://tex.stackexchange.com/a/89592/174620} ह्या
+% उत्तराची मदत झाली.
+%    \begin{macrocode}
+\ifसुटालेख
+\pagestyle{fancy}
+\renewcommand{\footrulewidth}{\headrulewidth}
+\lhead{\raisebox{0.2cm}{\लेखाचेनाव}}
+\rhead{\raisebox{0.2cm}{\अभ्यासकाचेनाव, \कोणतेप्रकाशनवर्ष}}
+\lfoot{{\गोटू ।। आलोक ।।}}
+\cfoot{\thepage}
+\rfoot{{\गोटू पुष्प \पुष्पसंख्या}}
+\else
+\makepagestyle{शीर्षके}
+\makeheadrule{शीर्षके}{\textwidth}{0.5pt}    
+\makefootrule{शीर्षके}{\textwidth}{0.5pt}{0pt}
+\ifछापील
+\makeevenhead{शीर्षके}{\raisebox{0.2cm}{\rightmark}}
+{}
+{\raisebox{0.2cm}{\leftmark}}
+\makeoddhead{शीर्षके}{\raisebox{0.2cm}{\leftmark}}
+{}
+{\raisebox{0.2cm}{\rightmark}}%
+\makeevenfoot{शीर्षके}%
+{\raisebox{-0.2cm}{\गोटू पुष्प \पुष्पसंख्या}}%
+{\raisebox{-0.2cm}{\thepage}}%
+{\raisebox{-0.2cm}{\गोटू ।। आलोक ।।}}
+\makeoddfoot{शीर्षके}%
+{\raisebox{-0.2cm}{\गोटू ।। आलोक ।।}}%
+{\raisebox{-0.2cm}{\thepage}}%
+{\raisebox{-0.2cm}{\गोटू पुष्प \पुष्पसंख्या}}
+\else
+\makeoddhead{शीर्षके}
+{\raisebox{0.2cm}{\leftmark}}
+{}%
+{\raisebox{0.2cm}{\rightmark}}
+\makeoddfoot{शीर्षके}%
+{\raisebox{-0.2cm}{\गोटू ।। आलोक ।।}}%
+{\raisebox{-0.2cm}{\thepage}}%
+{\raisebox{-0.2cm}{\गोटू पुष्प \पुष्पसंख्या}}
+\makepsmarks{शीर्षके}{%
+  \createmark{chapter}{left}{shownumber}{\@chapapp\space}{.\ }
+  \createmark{section}{right}{shownumber}{}{.\ }
+  \createplainmark{toc}{both}{\contentsname}
+  \createplainmark{lof}{both}{\listfigurename}
+  \createplainmark{lot}{both}{\listtablename}
+  \createplainmark{bib}{both}{\bibname}
+  \createplainmark{index}{both}{\indexname}
+  \createplainmark{glossary}{both}{\glossaryname}
+}%
+\fi
+\fi
+%    \end{macrocode}
+% वरील आज्ञांसह |शीर्षके| ही पृष्ठमांडणीची नवीन शैली घडवण्यात आली. ही तयार करण्याकरिता
+% सॅमकार्टर ह्यांच्या
+% \url{https://topanswers.xyz/transcript?room=1565&id=83664#c83664} ह्या
+% उत्तराची मदत झाली.
+%    \begin{macrocode}
+\newcommand{\शीर्षक}
+{%
+  \frontmatter
+  \onecolumn
+  {%
+    \गोटू
+    \pagenumbering{gobble}
+    \pagecolor{निळा}
+    \begin{tikzpicture}[remember picture, overlay]
+      \node[align=center,text width=\textwidth,color=सोनेरी] at (पृष्ठ cs:0,0) {%
+        \begin{tabular}{c}
+          {\HUGE ।। आलोक ।।}\\
+          \\
+          \\
+          {\Large पुष्प \पुष्पसंख्या}
+          \\
+          \\
+          \phantom{\Large \कोणतादिनांक}\\
+        \end{tabular}
+      };%
+    \end{tikzpicture}
+    
+    \clearpage
+%    \end{macrocode}
+% आलोक लाटेक्-वर्गाच्या आवृत्ती ०.१मध्ये छापील आवृत्तीच्या पृष्ठांनादेखील रंग असे व त्यामुळे छापताना
+% कागदावर त्या रंगाऐवजी राखाडी रंग दिसत असे. ही त्रुटी सुशान्त देवळेकरांनी लाटेक्-वर्गाच्या
+% गिट-पृष्ठाच्या अडचणींमध्ये नोंदवली (पाहा:
+% https://gitlab.com/aalok/aalok-latex/-/issues/1) आमची ही त्रुटी आम्ही आवृत्ती
+% ०.२मध्ये पुढील काही आज्ञांसह दुरुस्त करत आहोत.
+%    \begin{macrocode}
+    \ifछापील
+    \pagecolor{white}
+    \newpage\null\newpage
+    \else
+    \pagecolor{कागद}
+    \newpage
+    \fi
+    \begin{tikzpicture}[remember picture,overlay,every node/.style={anchor=center}]
+      \node[align=center,text width=\textwidth,color=black] at (पृष्ठ cs:0,0.75) {%
+        {\Large शास्त्रचर्चेस वाहिलेले पहिले मुक्त मराठी नियतकालिक}
+      };%
+      \node[align=center,text width=\textwidth,color=black] at (पृष्ठ cs:0,0) {%
+        \begin{tabular}{c}
+          {\HUGE ।। आलोक ।।}\\
+          \\
+          \\
+          {\Large पुष्प \पुष्पसंख्या}
+          \\
+          \\
+          {\Large \कोणतादिनांक, \कोणतेप्रकाशनवर्ष}\\
+        \end{tabular}
+      };%
+      \node[align=center,text width=\textwidth,color=black] at (पृष्ठ cs:0,-0.75)
+      {%
+        \ifखासगीवितरण
+        खासगी वितरणासाठी
+        \else
+        \includegraphics[width=2.5cm,height=3cm]{सामग्री/छायाचित्रे/बोधचिन्ह-काळे}
+        \fi
+      };%
+    \end{tikzpicture}
+  }%
+  \clearpage
+  \begin{paracol}{2}
+    \setlength{\parindent}{0pt}
+    \begin{tabular}{l}
+      \textbf{\underline{\Large संपादक}}\\
+      निरंजन, ऋषिकेश\\
+    \end{tabular}
+
+    \bigskip
+    \begin{tabular}{l}
+      \textbf{\underline{\Large प्रकाशक}}\\
+      वर्णमुद्रा पब्लिशर्स (\url{https://varnamudra.com})\\
+      पृथक् रामकृष्ण सोसायटी,\\
+      एसबीआय कॉलनी, शेगाव.\\
+      बुलढाणा ४४४२०३\\
+    \end{tabular}
+
+    \bigskip
+
+    \begin{tabular}{l}
+      \textbf{\underline{\Large अक्षरजुळणी}}\\
+      निरंजन, ऋषिकेश\\
+      \href{https://gitlab.com/aalok/aalok/आलोक/पुष्प/\पुष्पसंख्या}%
+      {%
+        \small\ttfamily
+        https://gitlab.com/aalok/aalok/%
+        {%
+          \normalfont\footnotesize
+          आलोक/पुष्प/\पुष्पसंख्या%
+        }%
+      }\\
+    \end{tabular}
+
+    \switchcolumn
+
+    {%
+      \large\bfseries
+      \कितवीआवृत्ती\ आवृत्ती
+
+      \कोणतीतिथी
+
+      \कोणतादिनांक, \कोणतेप्रकाशनवर्ष
+
+      \विद्वान\ ह्यांच्या \कितवीजयंती व्या जयंतीनिमित्त.
+    }%
+
+    \smallskip
+    \medskip
+    \bigskip
+
+    \begin{tabular}{l}
+      \textbf{%
+        \large
+        \faIcon[regular]{envelope} आमच्यापर्यंत कसे पोहोचाल?%
+      }\\
+      \href{mailto:varnamudra.editors@gmail.com}%
+      {%
+        \ttfamily
+        varnamudra.editors@gmail.com%
+      }\\
+      \href{mailto:aalokmarathi@protonmail.com}%
+      {%
+        \ttfamily
+        aalokmarathi@protonmail.com%
+      }
+    \end{tabular}
+
+    \bigskip
+
+    \ifखासगीवितरण
+    {%
+      \begin{tabular}{p{2.2cm}l}
+        \multicolumn{2}{l}{\large\bfseries केवळ खासगी वितरणाकरिता.}\\
+        \textbf{\large स्वागतमूल्य} & \textbf{\faIcon{rupee-sign} \large \आकडीमूल्यकिती/-}\\
+                                 & \अक्षरीमूल्यकिती\ रुपये फक्त.\\
+      \end{tabular}
+    }%
+
+    \else
+
+    \ifछापील
+
+    \begin{tabular}{p{0.75cm}l}
+      \textbf{\large मूल्य} & \textbf{\faIcon{rupee-sign} \large \आकडीमूल्यकिती/-}\\
+                          & \अक्षरीमूल्यकिती\ रुपये फक्त.\\
+    \end{tabular}
+
+    \else
+
+    \begin{tabular}{lll}
+      \multicolumn{3}{l}{\large\bfseries ह्या प्रकल्पास आर्थिक साहाय्य करण्याकरिता}
+      \medskip\\
+      बँक खाते क्रमांक & - & ५०२०००४७६२७११४\\
+      आयएफएससी क्रमांक & - & HDFC\(0002817\)
+                           \bigskip\\
+    \end{tabular}
+    \fi
+    \fi
+  \end{paracol}
+  
+  \vfill
+  
+  \hrule
+
+  \medskip
+  \noindent\copyright\ \कोणतेप्रकाशनवर्ष\ आलोक मराठी नियतकालिक
+  
+  \medskip
+  \noindent ह्या सामग्रीच्या वितरणाचे व प्रतिमुद्रणाचे अधिकार आलोक नित्यमुक्त परवान्यासह मुक्त
+  करण्यात येत आहेत. ह्या सामग्रीची यथामूल अथवा परिवर्तित प्रतिमुद्रणे व्यावसायिक अथवा
+  अव्यावसायिक स्वरूपात वितरित करण्यास प्रतिमुद्राधिकारधारक संमती देत आहे, परंतु असे करताना
+  वितरकाने प्रतिमुद्राधिकारांचा योग्य श्रेयनिर्देश करणे व सामग्री परिवर्तित असल्यास ती ह्याच
+  अटींसह वितरित करणे बंधनकारक आहे. ह्या (व ह्यावर आधारित) सामग्रीचे अमुक्त वितरण बेकायदेशीर
+  मानले जाईल. आलोक नित्यमुक्त परवान्याचा संपूर्ण मसुदा पुढील दुव्यावर वाचा अथवा
+  \autoref{परवाना} पाहा.
+  
+  \medskip
+  \noindent\url{https://varnamudra.com/aalok/parwana/}
+
+  \medskip
+  \hrule
+
+  \clearpage\pagebreak
+}%
+%    \end{macrocode}
+% ह्या आज्ञांसह \verb|शीर्षक| आज्ञेची सामग्री पुरवली गेली.
+%    \begin{macrocode}
+\newcommand{\लेखाचेशीर्षक}{%
+  \ifसुटालेख
+  \title{\लेखाचेनाव}
+  \author{%
+    \अभ्यासकाचेनाव\\
+    \small\orcidlogo\quad\url{https://orcid.org/\orcidno}\\
+    \href{mailto:\अभ्यासकाचाइपत्तादुवा}{\small\faIcon[regular]{envelope}\quad\ttfamily\अभ्यासकाचाइपत्तापाठ्य}
+  }%
+  \date{%
+    {\small\गोटू ।। आलोक ।।}\\
+    {\small\गोटू पुष्प \पुष्पसंख्या}\\
+    {\small\गोटू \कोणतादिनांक, \कोणतेप्रकाशनवर्ष}\\
+  }%
+  \maketitle
+  \pagecolor{कागद}
+  \else
+  \cleardoublepage\onecolumn
+  \thispagestyle{empty}
+  \vspace*{\fill}
+  \noindent\makebox[\textwidth][c]{%
+    \begin{minipage}{0.6\textwidth}
+      \centering
+      \hrule
+
+      \medskip
+      {%
+        \LARGE\bfseries
+        \लेखाचेनाव
+      }\\[3ex]%
+      \अभ्यासकाचेनाव\\
+      \orcidlogo\quad\url{https://orcid.org/\orcidno}\\[1ex]
+      \href{mailto:\अभ्यासकाचाइपत्तादुवा}{\faIcon[regular]{envelope}\quad\ttfamily\अभ्यासकाचाइपत्तापाठ्य}
+      \medskip
+      \hrule
+    \end{minipage}
+  }%
+  \vfill
+  \clearpage
+  \twocolumn
+  \chapter{\लेखाचेनाव}
+  \chapterprecistoc{\quad\quad\textemdash\ {\यशोमुद्रा\अभ्यासकाचेनाव}}
+  \fi
+}%
+%    \end{macrocode}
+% वरील आज्ञांसह \verb|\लेखाचेेशीर्षक| ही आज्ञा घडवण्यात आली आहे.
+%    \begin{macrocode}
+\ifसुटालेख
+\AtEndDocument{%
+ \clearpage
+ \pagebreak
+ \setlength{\parindent}{0pt}
+  
+  \section*{ह्या सामग्रीचा संदर्भ कसा द्याल?}
+
+  \fullcite{आलोक\jobname}
+
+  \subsection*{बिबटेक् आज्ञावली}
+  {%
+    \ttfamily
+    $@$article\{{\normalfont आलोक\jobname},\\
+    author=\{{\normalfont\अभ्यासकाचेनाव}\},\\
+    title=\{{\normalfont\लेखाचेनाव}\},\\
+    journaltitle=\{{\normalfont आलोक मराठी नियतकालिक}\},\\
+    date=\{{\normalfont\कोणतेप्रकाशनवर्ष-\दिनांकआकडी}\},\\
+    series=\{{\normalfont\पुष्पसंख्याआकडी}\},\\
+    note=\{{\normalfont बुलढाणा : वर्णमुद्रा प्रकाशन}\}\\
+    \}
+  }%
+}%
+\else
+\fi
+%    \end{macrocode}
+% वरील आज्ञांसह सुट्या लेखांच्या शेवटी संदर्भ कसा द्यावा ह्याविषयीची नोंद लिहिण्यात आली आहे.
+%    \begin{macrocode}
+%</class>
+%    \end{macrocode}
+% \end{implementation}
+% \pagebreak
+% \phantomsection
+% \addcontentsline{toc}{section}{\fontfamily{lmtt}\selectfont GNU Free Documentation License}
+% {%
+% \fontfamily{lmtt}\selectfont
+% 
+% \section*{\centering\fontfamily{lmr}\selectfont GNU Free Documentation
+% License}
+% \begin{center}
+% 
+% Version 1.3, 3 November 2008
+% 
+% 
+% Copyright \copyright{} 2000, 2001, 2002, 2007, 2008  Free Software Foundation, Inc.
+% 
+% \bigskip
+% 
+% \texttt{<https://fsf.org/>}
+% 
+% \bigskip
+% 
+% Everyone is permitted to copy and distribute verbatim copies
+% of this license document, but changing it is not allowed.
+% \end{center}
+% 
+% 
+% \begin{center}
+%   {\bf\large Preamble}
+% \end{center}
+% 
+% The purpose of this License is to make a manual, textbook, or other
+% functional and useful document ``free'' in the sense of freedom: to
+% assure everyone the effective freedom to copy and redistribute it,
+% with or without modifying it, either commercially or noncommercially.
+% Secondarily, this License preserves for the author and publisher a way
+% to get credit for their work, while not being considered responsible
+% for modifications made by others.
+% 
+% This License is a kind of ``copyleft'', which means that derivative
+% works of the document must themselves be free in the same sense.  It
+% complements the GNU General Public License, which is a copyleft
+% license designed for free software.
+% 
+% We have designed this License in order to use it for manuals for free
+% software, because free software needs free documentation: a free
+% program should come with manuals providing the same freedoms that the
+% software does.  But this License is not limited to software manuals;
+% it can be used for any textual work, regardless of subject matter or
+% whether it is published as a printed book.  We recommend this License
+% principally for works whose purpose is instruction or reference.
+% 
+% 
+% \begin{center}
+%   {\Large\bf 1. APPLICABILITY AND DEFINITIONS\par}
+% \end{center}
+% 
+% This License applies to any manual or other work, in any medium, that
+% contains a notice placed by the copyright holder saying it can be
+% distributed under the terms of this License.  Such a notice grants a
+% world-wide, royalty-free license, unlimited in duration, to use that
+% work under the conditions stated herein.  The ``\textbf{Document}'', below,
+% refers to any such manual or work.  Any member of the public is a
+% licensee, and is addressed as ``\textbf{you}''.  You accept the license if you
+% copy, modify or distribute the work in a way requiring permission
+% under copyright law.
+% 
+% A ``\textbf{Modified Version}'' of the Document means any work containing the
+% Document or a portion of it, either copied verbatim, or with
+% modifications and/or translated into another language.
+% 
+% A ``\textbf{Secondary Section}'' is a named appendix or a front-matter section of
+% the Document that deals exclusively with the relationship of the
+% publishers or authors of the Document to the Document's overall subject
+% (or to related matters) and contains nothing that could fall directly
+% within that overall subject.  (Thus, if the Document is in part a
+% textbook of mathematics, a Secondary Section may not explain any
+% mathematics.)  The relationship could be a matter of historical
+% connection with the subject or with related matters, or of legal,
+% commercial, philosophical, ethical or political position regarding
+% them.
+% 
+% The ``\textbf{Invariant Sections}'' are certain Secondary Sections whose titles
+% are designated, as being those of Invariant Sections, in the notice
+% that says that the Document is released under this License.  If a
+% section does not fit the above definition of Secondary then it is not
+% allowed to be designated as Invariant.  The Document may contain zero
+% Invariant Sections.  If the Document does not identify any Invariant
+% Sections then there are none.
+% 
+% The ``\textbf{Cover Texts}'' are certain short passages of text that are listed,
+% as Front-Cover Texts or Back-Cover Texts, in the notice that says that
+% the Document is released under this License.  A Front-Cover Text may
+% be at most 5 words, and a Back-Cover Text may be at most 25 words.
+% 
+% A ``\textbf{Transparent}'' copy of the Document means a machine-readable copy,
+% represented in a format whose specification is available to the
+% general public, that is suitable for revising the document
+% straightforwardly with generic text editors or (for images composed of
+% pixels) generic paint programs or (for drawings) some widely available
+% drawing editor, and that is suitable for input to text formatters or
+% for automatic translation to a variety of formats suitable for input
+% to text formatters.  A copy made in an otherwise Transparent file
+% format whose markup, or absence of markup, has been arranged to thwart
+% or discourage subsequent modification by readers is not Transparent.
+% An image format is not Transparent if used for any substantial amount
+% of text.  A copy that is not ``Transparent'' is called ``\textbf{Opaque}''.
+% 
+% Examples of suitable formats for Transparent copies include plain
+% ASCII without markup, Texinfo input format, LaTeX input format, SGML
+% or XML using a publicly available DTD, and standard-conforming simple
+% HTML, PostScript or PDF designed for human modification.  Examples of
+% transparent image formats include PNG, XCF and JPG.  Opaque formats
+% include proprietary formats that can be read and edited only by
+% proprietary word processors, SGML or XML for which the DTD and/or
+% processing tools are not generally available, and the
+% machine-generated HTML, PostScript or PDF produced by some word
+% processors for output purposes only.
+% 
+% The ``\textbf{Title Page}'' means, for a printed book, the title page itself,
+% plus such following pages as are needed to hold, legibly, the material
+% this License requires to appear in the title page.  For works in
+% formats which do not have any title page as such, ``Title Page'' means
+% the text near the most prominent appearance of the work's title,
+% preceding the beginning of the body of the text.
+% 
+% The ``\textbf{publisher}'' means any person or entity that distributes
+% copies of the Document to the public.
+% 
+% A section ``\textbf{Entitled XYZ}'' means a named subunit of the Document whose
+% title either is precisely XYZ or contains XYZ in parentheses following
+% text that translates XYZ in another language.  (Here XYZ stands for a
+% specific section name mentioned below, such as ``\textbf{Acknowledgements}'',
+% ``\textbf{Dedications}'', ``\textbf{Endorsements}'', or ``\textbf{History}''.)  
+% To ``\textbf{Preserve the Title}''
+% of such a section when you modify the Document means that it remains a
+% section ``Entitled XYZ'' according to this definition.
+% 
+% The Document may include Warranty Disclaimers next to the notice which
+% states that this License applies to the Document.  These Warranty
+% Disclaimers are considered to be included by reference in this
+% License, but only as regards disclaiming warranties: any other
+% implication that these Warranty Disclaimers may have is void and has
+% no effect on the meaning of this License.
+% 
+% 
+% \begin{center}
+%   {\Large\bf 2. VERBATIM COPYING\par}
+% \end{center}
+% 
+% You may copy and distribute the Document in any medium, either
+% commercially or noncommercially, provided that this License, the
+% copyright notices, and the license notice saying this License applies
+% to the Document are reproduced in all copies, and that you add no other
+% conditions whatsoever to those of this License.  You may not use
+% technical measures to obstruct or control the reading or further
+% copying of the copies you make or distribute.  However, you may accept
+% compensation in exchange for copies.  If you distribute a large enough
+% number of copies you must also follow the conditions in section~3.
+% 
+% You may also lend copies, under the same conditions stated above, and
+% you may publicly display copies.
+% 
+% 
+% \begin{center}
+%   {\Large\bf 3. COPYING IN QUANTITY\par}
+% \end{center}
+% 
+% 
+% If you publish printed copies (or copies in media that commonly have
+% printed covers) of the Document, numbering more than 100, and the
+% Document's license notice requires Cover Texts, you must enclose the
+% copies in covers that carry, clearly and legibly, all these Cover
+% Texts: Front-Cover Texts on the front cover, and Back-Cover Texts on
+% the back cover.  Both covers must also clearly and legibly identify
+% you as the publisher of these copies.  The front cover must present
+% the full title with all words of the title equally prominent and
+% visible.  You may add other material on the covers in addition.
+% Copying with changes limited to the covers, as long as they preserve
+% the title of the Document and satisfy these conditions, can be treated
+% as verbatim copying in other respects.
+% 
+% If the required texts for either cover are too voluminous to fit
+% legibly, you should put the first ones listed (as many as fit
+% reasonably) on the actual cover, and continue the rest onto adjacent
+% pages.
+% 
+% If you publish or distribute Opaque copies of the Document numbering
+% more than 100, you must either include a machine-readable Transparent
+% copy along with each Opaque copy, or state in or with each Opaque copy
+% a computer-network location from which the general network-using
+% public has access to download using public-standard network protocols
+% a complete Transparent copy of the Document, free of added material.
+% If you use the latter option, you must take reasonably prudent steps,
+% when you begin distribution of Opaque copies in quantity, to ensure
+% that this Transparent copy will remain thus accessible at the stated
+% location until at least one year after the last time you distribute an
+% Opaque copy (directly or through your agents or retailers) of that
+% edition to the public.
+% 
+% It is requested, but not required, that you contact the authors of the
+% Document well before redistributing any large number of copies, to give
+% them a chance to provide you with an updated version of the Document.
+% 
+% 
+% \begin{center}
+%   {\Large\bf 4. MODIFICATIONS\par}
+% \end{center}
+% 
+% You may copy and distribute a Modified Version of the Document under
+% the conditions of sections 2 and 3 above, provided that you release
+% the Modified Version under precisely this License, with the Modified
+% Version filling the role of the Document, thus licensing distribution
+% and modification of the Modified Version to whoever possesses a copy
+% of it.  In addition, you must do these things in the Modified Version:
+% 
+% \begin{itemize}
+% \item[A.] 
+%   Use in the Title Page (and on the covers, if any) a title distinct
+%   from that of the Document, and from those of previous versions
+%   (which should, if there were any, be listed in the History section
+%   of the Document).  You may use the same title as a previous version
+%   if the original publisher of that version gives permission.
+%   
+% \item[B.]
+%   List on the Title Page, as authors, one or more persons or entities
+%   responsible for authorship of the modifications in the Modified
+%   Version, together with at least five of the principal authors of the
+%   Document (all of its principal authors, if it has fewer than five),
+%   unless they release you from this requirement.
+%   
+% \item[C.]
+%   State on the Title page the name of the publisher of the
+%   Modified Version, as the publisher.
+%   
+% \item[D.]
+%   Preserve all the copyright notices of the Document.
+%   
+% \item[E.]
+%   Add an appropriate copyright notice for your modifications
+%   adjacent to the other copyright notices.
+%   
+% \item[F.]
+%   Include, immediately after the copyright notices, a license notice
+%   giving the public permission to use the Modified Version under the
+%   terms of this License, in the form shown in the Addendum below.
+%   
+% \item[G.]
+%   Preserve in that license notice the full lists of Invariant Sections
+%   and required Cover Texts given in the Document's license notice.
+%   
+% \item[H.]
+%   Include an unaltered copy of this License.
+%   
+% \item[I.]
+%   Preserve the section Entitled ``History'', Preserve its Title, and add
+%   to it an item stating at least the title, year, new authors, and
+%   publisher of the Modified Version as given on the Title Page.  If
+%   there is no section Entitled ``History'' in the Document, create one
+%   stating the title, year, authors, and publisher of the Document as
+%   given on its Title Page, then add an item describing the Modified
+%   Version as stated in the previous sentence.
+%   
+% \item[J.]
+%   Preserve the network location, if any, given in the Document for
+%   public access to a Transparent copy of the Document, and likewise
+%   the network locations given in the Document for previous versions
+%   it was based on.  These may be placed in the ``History'' section.
+%   You may omit a network location for a work that was published at
+%   least four years before the Document itself, or if the original
+%   publisher of the version it refers to gives permission.
+%   
+% \item[K.]
+%   For any section Entitled ``Acknowledgements'' or ``Dedications'',
+%   Preserve the Title of the section, and preserve in the section all
+%   the substance and tone of each of the contributor acknowledgements
+%   and/or dedications given therein.
+%   
+% \item[L.]
+%   Preserve all the Invariant Sections of the Document,
+%   unaltered in their text and in their titles.  Section numbers
+%   or the equivalent are not considered part of the section titles.
+%   
+% \item[M.]
+%   Delete any section Entitled ``Endorsements''.  Such a section
+%   may not be included in the Modified Version.
+%   
+% \item[N.]
+%   Do not retitle any existing section to be Entitled ``Endorsements''
+%   or to conflict in title with any Invariant Section.
+%   
+% \item[O.]
+%   Preserve any Warranty Disclaimers.
+% \end{itemize}
+% 
+% If the Modified Version includes new front-matter sections or
+% appendices that qualify as Secondary Sections and contain no material
+% copied from the Document, you may at your option designate some or all
+% of these sections as invariant.  To do this, add their titles to the
+% list of Invariant Sections in the Modified Version's license notice.
+% These titles must be distinct from any other section titles.
+% 
+% You may add a section Entitled ``Endorsements'', provided it contains
+% nothing but endorsements of your Modified Version by various
+% parties---for example, statements of peer review or that the text has
+% been approved by an organization as the authoritative definition of a
+% standard.
+% 
+% You may add a passage of up to five words as a Front-Cover Text, and a
+% passage of up to 25 words as a Back-Cover Text, to the end of the list
+% of Cover Texts in the Modified Version.  Only one passage of
+% Front-Cover Text and one of Back-Cover Text may be added by (or
+% through arrangements made by) any one entity.  If the Document already
+% includes a cover text for the same cover, previously added by you or
+% by arrangement made by the same entity you are acting on behalf of,
+% you may not add another; but you may replace the old one, on explicit
+% permission from the previous publisher that added the old one.
+% 
+% The author(s) and publisher(s) of the Document do not by this License
+% give permission to use their names for publicity for or to assert or
+% imply endorsement of any Modified Version.
+% 
+% 
+% \begin{center}
+%   {\Large\bf 5. COMBINING DOCUMENTS\par}
+% \end{center}
+% 
+% 
+% You may combine the Document with other documents released under this
+% License, under the terms defined in section~4 above for modified
+% versions, provided that you include in the combination all of the
+% Invariant Sections of all of the original documents, unmodified, and
+% list them all as Invariant Sections of your combined work in its
+% license notice, and that you preserve all their Warranty Disclaimers.
+% 
+% The combined work need only contain one copy of this License, and
+% multiple identical Invariant Sections may be replaced with a single
+% copy.  If there are multiple Invariant Sections with the same name but
+% different contents, make the title of each such section unique by
+% adding at the end of it, in parentheses, the name of the original
+% author or publisher of that section if known, or else a unique number.
+% Make the same adjustment to the section titles in the list of
+% Invariant Sections in the license notice of the combined work.
+% 
+% In the combination, you must combine any sections Entitled ``History''
+% in the various original documents, forming one section Entitled
+% ``History''; likewise combine any sections Entitled ``Acknowledgements'',
+% and any sections Entitled ``Dedications''.  You must delete all sections
+% Entitled ``Endorsements''.
+% 
+% \begin{center}
+%   {\Large\bf 6. COLLECTIONS OF DOCUMENTS\par}
+% \end{center}
+% 
+% You may make a collection consisting of the Document and other documents
+% released under this License, and replace the individual copies of this
+% License in the various documents with a single copy that is included in
+% the collection, provided that you follow the rules of this License for
+% verbatim copying of each of the documents in all other respects.
+% 
+% You may extract a single document from such a collection, and distribute
+% it individually under this License, provided you insert a copy of this
+% License into the extracted document, and follow this License in all
+% other respects regarding verbatim copying of that document.
+% 
+% 
+% \begin{center}
+%   {\Large\bf 7. AGGREGATION WITH INDEPENDENT WORKS\par}
+% \end{center}
+% 
+% 
+% A compilation of the Document or its derivatives with other separate
+% and independent documents or works, in or on a volume of a storage or
+% distribution medium, is called an ``aggregate'' if the copyright
+% resulting from the compilation is not used to limit the legal rights
+% of the compilation's users beyond what the individual works permit.
+% When the Document is included in an aggregate, this License does not
+% apply to the other works in the aggregate which are not themselves
+% derivative works of the Document.
+% 
+% If the Cover Text requirement of section~3 is applicable to these
+% copies of the Document, then if the Document is less than one half of
+% the entire aggregate, the Document's Cover Texts may be placed on
+% covers that bracket the Document within the aggregate, or the
+% electronic equivalent of covers if the Document is in electronic form.
+% Otherwise they must appear on printed covers that bracket the whole
+% aggregate.
+% 
+% 
+% \begin{center}
+%   {\Large\bf 8. TRANSLATION\par}
+% \end{center}
+% 
+% 
+% Translation is considered a kind of modification, so you may
+% distribute translations of the Document under the terms of section~4.
+% Replacing Invariant Sections with translations requires special
+% permission from their copyright holders, but you may include
+% translations of some or all Invariant Sections in addition to the
+% original versions of these Invariant Sections.  You may include a
+% translation of this License, and all the license notices in the
+% Document, and any Warranty Disclaimers, provided that you also include
+% the original English version of this License and the original versions
+% of those notices and disclaimers.  In case of a disagreement between
+% the translation and the original version of this License or a notice
+% or disclaimer, the original version will prevail.
+% 
+% If a section in the Document is Entitled ``Acknowledgements'',
+% ``Dedications'', or ``History'', the requirement (section~4) to Preserve
+% its Title (section~1) will typically require changing the actual
+% title.
+% 
+% 
+% \begin{center}
+%   {\Large\bf 9. TERMINATION\par}
+% \end{center}
+% 
+% 
+% You may not copy, modify, sublicense, or distribute the Document
+% except as expressly provided under this License.  Any attempt
+% otherwise to copy, modify, sublicense, or distribute it is void, and
+% will automatically terminate your rights under this License.
+% 
+% However, if you cease all violation of this License, then your license
+% from a particular copyright holder is reinstated (a) provisionally,
+% unless and until the copyright holder explicitly and finally
+% terminates your license, and (b) permanently, if the copyright holder
+% fails to notify you of the violation by some reasonable means prior to
+% 60 days after the cessation.
+% 
+% Moreover, your license from a particular copyright holder is
+% reinstated permanently if the copyright holder notifies you of the
+% violation by some reasonable means, this is the first time you have
+% received notice of violation of this License (for any work) from that
+% copyright holder, and you cure the violation prior to 30 days after
+% your receipt of the notice.
+% 
+% Termination of your rights under this section does not terminate the
+% licenses of parties who have received copies or rights from you under
+% this License.  If your rights have been terminated and not permanently
+% reinstated, receipt of a copy of some or all of the same material does
+% not give you any rights to use it.
+% 
+% 
+% \begin{center}
+%   {\Large\bf 10. FUTURE REVISIONS OF THIS LICENSE\par}
+% \end{center}
+% 
+% 
+% The Free Software Foundation may publish new, revised versions
+% of the GNU Free Documentation License from time to time.  Such new
+% versions will be similar in spirit to the present version, but may
+% differ in detail to address new problems or concerns.  See
+% \texttt{https://www.gnu.org/licenses/}.
+% 
+% Each version of the License is given a distinguishing version number.
+% If the Document specifies that a particular numbered version of this
+% License ``or any later version'' applies to it, you have the option of
+% following the terms and conditions either of that specified version or
+% of any later version that has been published (not as a draft) by the
+% Free Software Foundation.  If the Document does not specify a version
+% number of this License, you may choose any version ever published (not
+% as a draft) by the Free Software Foundation.  If the Document
+% specifies that a proxy can decide which future versions of this
+% License can be used, that proxy's public statement of acceptance of a
+% version permanently authorizes you to choose that version for the
+% Document.
+% 
+% 
+% \begin{center}
+%   {\Large\bf 11. RELICENSING\par}
+% \end{center}
+% 
+% 
+% ``Massive Multiauthor Collaboration Site'' (or ``MMC Site'') means any
+% World Wide Web server that publishes copyrightable works and also
+% provides prominent facilities for anybody to edit those works.  A
+% public wiki that anybody can edit is an example of such a server.  A
+% ``Massive Multiauthor Collaboration'' (or ``MMC'') contained in the
+% site means any set of copyrightable works thus published on the MMC
+% site.
+% 
+% ``CC-BY-SA'' means the Creative Commons Attribution-Share Alike 3.0
+% license published by Creative Commons Corporation, a not-for-profit
+% corporation with a principal place of business in San Francisco,
+% California, as well as future copyleft versions of that license
+% published by that same organization.
+% 
+% ``Incorporate'' means to publish or republish a Document, in whole or
+% in part, as part of another Document.
+% 
+% An MMC is ``eligible for relicensing'' if it is licensed under this
+% License, and if all works that were first published under this License
+% somewhere other than this MMC, and subsequently incorporated in whole
+% or in part into the MMC, (1) had no cover texts or invariant sections,
+% and (2) were thus incorporated prior to November 1, 2008.
+% 
+% The operator of an MMC Site may republish an MMC contained in the site
+% under CC-BY-SA on the same site at any time before August 1, 2009,
+% provided the MMC is eligible for relicensing.
+% 
+% 
+% \begin{center}
+%   {\Large\bf ADDENDUM: How to use this License for your documents\par}
+% \end{center}
+% 
+% To use this License in a document you have written, include a copy of
+% the License in the document and put the following copyright and
+% license notices just after the title page:
+% 
+% \bigskip
+% \begin{quote}
+%   Copyright \copyright{}  YEAR  YOUR NAME.
+%
+%   Permission is granted to copy, distribute and/or modify this document
+%   under the terms of the GNU Free Documentation License, Version 1.3
+%   or any later version published by the Free Software Foundation;
+%   with no Invariant Sections, no Front-Cover Texts, and no Back-Cover Texts.
+%   A copy of the license is included in the section entitled ``GNU
+%   Free Documentation License''.
+% \end{quote}
+% \bigskip
+% 
+% If you have Invariant Sections, Front-Cover Texts and Back-Cover Texts,
+% replace the ``with \dots\ Texts.''\ line with this:
+% 
+% \bigskip
+% \begin{quote}
+%   with the Invariant Sections being LIST THEIR TITLES, with the
+%   Front-Cover Texts being LIST, and with the Back-Cover Texts being LIST.
+% \end{quote}
+% \bigskip
+% 
+% If you have Invariant Sections without Cover Texts, or some other
+% combination of the three, merge those two alternatives to suit the
+% situation.
+% 
+% If your document contains nontrivial examples of program code, we
+% recommend releasing these examples in parallel under your choice of
+% free software license, such as the GNU General Public License,
+% to permit their use in free software.
+% }%
+% \Finale

@@ -1,0 +1,899 @@
+% $Id: tex4ht-jsmath.tex 77 2011-01-28 11:45:59Z cvr $
+% compile 3 times: latex tex4ht-jsmath
+%    or          xhlatex tex4ht-jsmath "html,3,sections+"
+%
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) 2005-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+%
+%  CDATA support:  
+%       http://planetmath.org/encyclopedia/ 
+%  
+%  <script type="text/javascript">
+%  //<![CDATA[
+%   jsMath.Macro( 'ab', '{#1}_{\\mathrm{ab}}', 1) 
+%  //]]>
+%  </script><script type="text/javascript">
+%  //<![CDATA[
+%   jsMath.Macro( 'Ad', '\\mathrm{Ad}', 0) 
+%  //]]>
+%  </script><script type="text/javascript">
+%  //<![CDATA[
+%   jsMath.Macro( 'ad', '\\mathrm{ad}', 0) 
+%  //]]>
+
+\ifx \HTML\UnDef
+   \def\HTML{jsmath,html-jsmath} 
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common-code}
+\input{common}
+\input{tex4ht-cpright}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Constructs}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<jsmath\><<<
+% jsmath.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) |CopyYear.2005. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+\<html-jsmath\><<<
+% html-jsmath.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) |CopyYear.2006. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+
+\<configure html-jsmath tex4ht\><<<
+\Configure{VERSION}{}
+>>>
+
+
+\<configure jsmath tex4ht\><<<
+\NewConfigure{jsmath}{1}
+\ifOption{easy-load}{%
+   \Configure{jsmath}{jsMath/easy/load.js}%
+}{%
+   \Log:Note{The `easy-load' command line option offers
+     an alternative loading approach of
+     jsMath version 3.4 or above}%
+   \Configure{jsmath}{jsMath/jsMath.js}%
+}
+>>>
+
+% CVR: 2011-01-28
+
+Rob Beezer \texttt{<beezer@ups.edu>} reported parse errors triggered
+by xtpipes when jsmath compatible html pages are generated. Hence the
+\verb=\Hcode{<!--l. \the\inputlineno-->}= has been commented out. Also
+commented out is \verb= |<recall dvimath par|>= which would insert a
+\verb=\sv:ignore= macro at the end of the \verb=DViMath=
+configuration.
+
+
+\<configure html-jsmath tex4ht\><<<
+\Configure{DviMath}
+    {\a:DviJsmath \mathltxtrue
+       \ifOption{mml-fonts}{}{|%\mml:htfsym|%\NoFonts}%
+       \IgnoreRule
+       % \HCode{<!--l. \the\inputlineno-->}
+       \ifx \a:@math\empty\else
+               \Tg<\a:@math\space class="math"\Hnewline >\fi
+       \a:math
+       |<sv dvimath par|>\IgnorePar}
+    {\ifx \a:@math\empty\else \Tg</\a:@math>\fi \EndIgnoreRule
+     \ifOption{mml-fonts}{}{|%\ext:htfsym|%\EndNoFonts}%
+     \mathltxfalse \After:Math \b:DviJsmath % |%recall dvimath par|%
+    }
+\NewConfigure{DviJsmath}{2}
+>>>
+
+
+
+\<defs for jsmath\><<<
+jsMath.Macro('firstOfOne','\#1',1)
+>>>
+
+
+
+\<end mtext space\><<<
+\ht:special{t4ht@,}%
+>>>
+
+\<start mtext space\><<<
+\ht:special{t4ht@,&\#x00A0;}%
+>>>
+
+Changes to fix bugs reported by Rob Beezer's
+\texttt{<beezer@ups.edu>}: Values of \verb=\@math= in the
+configurations of \verb=$= and \verb=$$= have been changed from
+\verb=span= and \verb=div= to \verb=\dlr= and \verb=\dlr\dlr=
+respectively.  \verb=\dlr= will expand to \verb=$= character which is
+needed by jsMath. Removed \verb=|<inline end-par comment|>= after
+\verb=IgnorePar= in the configuration for \verb=$$=.
+
+
+\<configure jsmath tex4ht\><<<
+\def\dlr{\expandafter\@gobble\string\$}
+\Configure{$}
+   {\Configure{@math}{\dlr}\DviMath}
+   {\EndDviMath}{}
+\Configure{$$} 
+   {\Configure{@math}{\dlr\dlr}\IgnorePar
+    \EndP\DviMath}
+   {\EndDviMath
+       \ShowPar\par{\csname HCondtrue\endcsname\noindent}}
+   {\DisplayMathtrue}
+>>>
+
+\<recall dvimath par\><<<
+\sv:ignore
+>>>
+
+\<sv dvimath par\><<<
+\edef\sv:ignore{\if:nopar  
+    \noexpand\IgnorePar\else \noexpand\ShowPar\fi}%
+>>>
+
+\<configure html-jsmath tex4ht\><<<
+\Configure{@HEAD}{|<load jsmath|>}
+\Configure{@BODY}
+   {\ifvmode \IgnorePar\fi \EndP\HCode{%
+    |<window opening|>%
+    |<load jsmath warning|>%
+   }\par\ShowPar}
+\ifOption{easy-load}{}{%
+   \Configure{@/BODY}{%
+      \par\IgnorePar\EndP
+      \HCode{
+        <script  type="text/javascript" >\Hnewline
+         jsMath.Process();\Hnewline
+        </script>
+      }\par}%
+}
+\Configure{!BODY}{ class="tex2math_ignore" }
+>>>
+
+
+
+\<load jsmath\><<<
+\HCode{<script
+ type="text/javascript"
+ src="\a:jsmath"></script>\Hnewline
+<script type="text/javascript">|<defs for jsmath|></script>\Hnewline}
+>>>
+
+\<load jsmath warning\><<<
+<noscript> \Hnewline
+<div style="color:\#CC0000; text-align:center"> \Hnewline
+<b>Warning: <a href="http://www.math.union.edu/locate/jsMath">jsMath</a> \Hnewline
+requires JavaScript to process the mathematics on this page.<br /> \Hnewline
+If your browser supports JavaScript, be sure it is enabled.</b> \Hnewline
+</div> \Hnewline
+<hr /> \Hnewline
+</noscript>\Hnewline
+>>>
+   
+
+
+%%%%%%%%%%%%%
+\subsection{Links}
+%%%%%%%%%%%%%
+
+
+
+
+\<configure jsmath tex4ht\><<<
+\def\Hbrakets<#1>{\ifmathltx 
+       \ifmtext    @(#1)\else \string\hbox{@(#1)}\fi
+    \else <#1>\fi}
+\def\EndLink{\ifmathltx 
+     \ifmtext    |<end mtext space|>%
+        \egroup \HCode{\%\Hnewline\%}\Endmtxt:link
+        \HCode{\string\end{ref}\Hnewline}|<start mtext space|>%
+     \else  \HCode{\Hbrakets</a>}\fi
+   \else \expandafter\M:EndLink\fi}
+\LinkCommand\msp:link{a, href, id, \mml:class="label",,}
+>>>
+
+\<configure jsmath tex4ht\><<<
+\def\Link{\M:Link}
+\def\EndLink{\M:EndLink}
+>>>
+
+
+``The contents of an \verb=\hbox{}= are not rendered by jsMath, but
+instead are used as plain text in the browser.  JsMath allows you to
+include HTML commands through the (rather awkward) means of using
+@(...) in place of \verb=<...>=.  For example, \verb=\hbox{@(tt)=
+  monospaced \verb=text@(/tt)= would get the enclosed text in the TT font.''
+The above also holds for \verb=\text= instead of \verb=\hbox=.
+
+
+
+%%%%%%%%%%%%%
+\subsection{Core}
+%%%%%%%%%%%%%
+
+
+
+\<configure jsmath tex4ht\><<<
+\Configure{over}
+   {\Send{GROUP}{0}{\l:brace\space}}
+   {\HCode{\string\over\space}\Send{EndGROUP}{0}{\r:brace\space}}
+\Configure{atop}
+   {\Send{GROUP}{0}{\l:brace\space}}
+   {\HCode{\string\atop\space}\Send{EndGROUP}{0}{\r:brace\space}}
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{LaTeX}
+%%%%%%%%%%%%%%%%%%
+
+\marginpar{Anchors need fixing}
+
+\<configure jsmath latex\><<<
+\def\set:label#1{\ifmathltx
+%   \HCode{\%\Hnewline\%\string\begin{label}}%
+%     {\ht:special{t4ht@, }\let\:newlnch\space \mathltxfalse #1}%
+%   \HCode{\string\end{label}\Hnewline}%
+  \else #1\fi
+}
+>>>
+
+
+
+
+\<configure jsmath latex\><<<
+\Configure{frac}
+   {\HCode{\l:brace}}
+   {\HCode{\string\over\space}\Configure{over}{}{}}
+   {}
+   {\HCode{\r:brace}}
+>>>
+
+
+
+
+
+\<configure jsmath latex\><<<
+\Configure{[]}
+  {\Configure{@math}{div}\csname a:mathltx[]\endcsname
+   \DviMath$$\DisplayMathtrue }
+  {$$\EndDviMath\csname b:mathltx[]\endcsname}
+\Configure{()}
+  {\Configure{@math}{span}\csname a:mathltx()\endcsname
+   \DviMath$}
+  {$\EndDviMath\csname b:mathltx()\endcsname}
+>>>
+
+
+\<configure jsmath fontmath\><<<
+\Configure{mfenced}{\langle}{\string\langle\space} 
+\Configure{mfenced}{\rangle}{\string\rangle\space} 
+\def\:tempc{\HCode{\string\langle\space}}
+\HLet\langle\:tempc
+\def\:tempc{\HCode{\string\rangle\space}}
+\HLet\rangle\:tempc
+\def\:tempc{\HCode{\string\vert\space}}
+\HLet\vert\:tempc
+\def\:tempc{\HCode{\string\Vert\space}}
+\HLet\Vert\:tempc
+\def\:tempc{\HCode{\string\||}}
+\HLet\||\:tempc
+\def\:tempc{\HCode{\string\big\space}}
+\HLet\big\:tempc
+\def\:tempc{\HCode{\string\bigg\space}}
+\HLet\bigg\:tempc
+\def\:tempc{\HCode{\string\Big\space}}
+\HLet\Big\:tempc
+\def\:tempc{\HCode{\string\Bigg\space}}
+\HLet\Bigg\:tempc
+>>>
+
+
+
+\<configure jsmath array\><<<
+|<config array|>
+>>>
+
+\<configure jsmath latex\><<<
+|<config array|>
+>>>
+
+\<config array\><<<
+\Configure{array} 
+   {%\expandafter\tmp:toks\expandafter{\Clr}%
+    \HCode{\string\array\l:brace\Hnewline}}
+   {\ifvmode \IgnorePar\fi \HCode{\r:brace}}
+   {\ifnum \HRow> 1\HCode{\string\cr\Hnewline}\fi}
+   {}
+   {|<mtd array|>}
+   {}
+>>>
+
+
+\<configure jsmath latex\><<<
+\Configure{emph}
+   {\ifmmode \Configure{@mtext}{\string\mathit}\fi}
+   {}%
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{AMS Math}
+%%%%%%%%%%%%%%%%%%
+
+\<configure jsmath amsmath\><<<
+\expandafter\def\csname genfrac \endcsname#1#2#3#4{%
+  \def\:tempa{#1}\ifx\:tempa\empty\else \HCode{\string\left}#1\fi
+  \def\:tempa{#2}\ifx\:tempa\empty\else \def\:tempa{\HCode{\string\right}#2}\fi
+  \edef\@tempb{\@nx\@genfrac\@mathstyle{#4}%
+    \expandafter\noexpand\csname @@\ifx @#3@over\else above\fi
+    \endcsname}%
+  \@tempb{#3}}
+\def\:tempc#1#2#3#4#5{{\a:genfrac#1\b:genfrac{\c:genfrac#4#2#3\relax
+   {\d:genfrac#5\e:genfrac}}\f:genfrac}\:tempa}
+\HLet\@genfrac\:tempc
+>>>
+
+
+\<configure html-jsmath amsmath\><<<
+\ifx \mathdisplay@@pop\:UnDef
+   \ifx \emdf@La\:UnDef
+      |<amsmath html-jsmath pre 2000|>
+   \else
+      |<amsmath html-jsmath jan 2000|>
+   \fi
+\else
+   |<amsmath html-jsmath july 2000|>
+\fi
+>>>
+
+
+\<configure html-jsmath amsmath\><<<
+\Configure{equation$$}
+  {\Configure{$$}
+   {\IgnorePar \Configure{@math}{div}\EndP\DviMath}
+   {\EndDviMath\EndP}
+   {\DisplayMathtrue}%
+  }
+>>>
+
+\<configure jsmath amsmath\><<<
+\Configure{tmspace}
+   {\HCode{\string\kern \space \textspace\space}}
+\def\lvert{\HCode{\string\vert\space}}
+\def\rvert{\HCode{\string\vert\space}}
+\def\lVert{\HCode{\string\Vert\space}}
+\def\rVert{\HCode{\string\Vert\space}}
+>>>
+
+% CVR: 2011-01-28
+
+Changes to fix bugs reported by Rob Beezer's
+\texttt{<beezer@ups.edu>}: Configuration for \verb=\intertext=
+introduced.
+
+\<configure jsmath amsmath\><<<
+\Configure{intertext}
+    {\IgnorePar %\ifinalign@
+      \HCode{\string\cr }%
+     \AA:text{intertext}}
+    {\BB:text \ifvmode \IgnorePar \fi %\EndP
+        \HCode{\string\cr }}
+>>>
+
+\<configure jsmath amsmath\><<<
+\ConfigureEnv{multline}
+   {\bgroup \Configure{$$}
+               {\Configure{@math}{}\IgnorePar \EndP\DviMath }
+               {\EndDviMath\ShowPar\csname par\endcsname
+                  {\csname HCondtrue\endcsname\noindent}}
+               {\DisplayMathtrue}%
+   } {\egroup}
+   {}{}
+\Configure{multline}
+   {\HCode{<table class="multline"><tr><td><span class="math">}}
+   {\HCode{</span></td></tr></table>}}
+   {\ifnum \HRow> 1\HCode{</span></td></tr>\Hnewline
+                                <tr><td><span class="math">}\fi}
+   {\gdef\mult:amp{\gdef\mult:amp{\HCode{</span></td>
+                       <td class="eq-no"><span class="math">}}}}
+   {\csname mult:amp\endcsname \HCode{\ifnum 1<\HMultispan
+%       \string\multicolumn\l:brace\HMultispan\r:brace
+        %\string\multispan
+        ?span/multispan-in-jsmath?
+        \space\HMultispan\space
+     \fi}%
+   }  {}
+\Css{table.multline td {text-align:left; 
+                  vertical-align:middle; padding-left: 2em; }}
+\Css{table.multline td.eq-no { text-align:center; }}
+\Css{table.multline { width:100\%; }}
+>>>
+
+\<configure jsmath amsmathNO\><<<
+\ConfigureEnv{multline}
+   {\bgroup |<display math-|>} {\egroup}
+   {}{}
+\Configure{multline}
+   {\HCode{\string\begin\l:brace array\r:brace
+              \l:brace lp{10mm}r\r:brace}}
+   {\HCode{\string\end \l:brace array\r:brace}}
+   {\ifnum \HRow> 1\HCode{\string\\\space}\qquad\fi} 
+   {\gdef\mult:amp{\gdef\mult:amp{\HCode{\a:math:amp}\qquad}}}
+   {\csname mult:amp\endcsname \HCode{\ifnum 1<\HMultispan
+%       \string\multicolumn\l:brace\HMultispan\r:brace
+        |<multi span|> \space\HMultispan\space
+     \fi}%
+   }  {}
+>>>
+
+\<configure jsmath amsmath\><<<
+\ConfigureEnv{multline*}
+   {\bgroup |<display math-|>} {\egroup}
+   {}{}
+\Configure{multline*}
+   {\HCode{\string\begin\l:brace array\r:brace
+              \l:brace lr\r:brace}}
+   {\HCode{\string\end \l:brace array\r:brace}}
+   {\ifnum \HRow> 1\HCode{\string\\\Hnewline}\fi}
+   {}
+>>>
+
+
+\<display math-\><<<
+\Configure{$$} 
+   {\Configure{@math}{div}\IgnorePar
+    \EndP\DviMath }
+   {\EndDviMath\ShowPar\csname par\endcsname
+     {\csname HCondtrue\endcsname\noindent}}
+   {\DisplayMathtrue}%
+>>>
+
+
+
+\<configure jsmath amsmath\><<<
+\Configure{subarray}
+   {\HCode{\string\begin\l:brace array\r:brace
+                        \l:brace \Hlcr\r:brace}}
+   {\HCode{\string\end \l:brace array\r:brace}}
+   {\ifnum \HRow> 1\HCode{\string\\\Hnewline}\fi}  {}
+\Configure{smallmatrix}
+   {\HCode{\string\begin\l:brace matrix\r:brace}}
+   {\HCode{\string\end \l:brace matrix\r:brace}}
+   {\ifnum \HRow> 1\HCode{\string\\\Hnewline}\fi}  {}
+   {\HCode{\ifnum \HCol>1 \a:math:amp\fi \scriptstyle
+            \ifnum 1<\HMultispan
+%        \string\multicolumn\l:brace\HMultispan\r:brace
+        |<multi span|> \space\HMultispan\space
+    \fi}%
+   }  {}
+>>>
+
+
+
+
+
+
+
+
+\<configure jsmath amsmath\><<<
+\Configure{aligned}  
+   {\HCode{\string\begin\l:brace array\r:brace
+                        \l:brace rlrlrl\r:brace}}
+   {\HCode{\string\end \l:brace array\r:brace}}
+   {}   
+   {\HCode{\string\cr\space}}  
+   {}
+   {\HCode{\a:math:amp\space}} 
+\Configure{alignedat}
+   {\HCode{\string\begin\l:brace array\r:brace
+                        \l:brace rlrl\r:brace}}
+   {\HCode{\string\end \l:brace array\r:brace}}
+   {}   
+   {\HCode{\string\cr\space}}  
+   {}
+   {\HCode{\a:math:amp\space}} 
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+\<amsmath html-jsmath july 2000\><<<
+\Configure{equation}
+  {\ifvmode \IgnorePar\fi\EndP
+   \HCode{<table class="equation"><tr><td>}%
+   |<amsmath equation july 2000|>%
+   |<math display in amsmath equation|>%
+  }
+  {\ifvmode \IgnorePar\fi\EndP
+   \HCode{</td><td class="eq-no">}%
+   }
+  {\ifvmode \IgnorePar\fi\EndP \HCode{</td></tr></table>}%
+   \ShowPar\IgnoreIndent\par}
+\Configure{equation*}
+  {\ifvmode \IgnorePar\fi\EndP
+   \HCode{<table class="equation-star"><tr><td>}%
+   |<amsmath equation* july 2000|>%
+   |<math display in amsmath equation|>%
+  }
+  {\ifvmode \IgnorePar\fi\EndP \HCode{</td></tr></table>}%
+   \ShowPar\IgnoreIndent\par}
+>>>
+
+
+\<math display in amsmath equation\><<<
+\csname a:equation\string$\string$\endcsname
+>>>
+
+
+
+\<amsmath equation july 2000\><<<
+\Configure{gather}
+  {\HCode{\string\begin\l:brace array\r:brace
+           \l:brace lp{10mm}r\r:brace}\IgnorePar 
+      |<math display in equation|>}
+  {\HCode{\string\end\l:brace array\r:brace}}
+  {}
+  {}
+  {\ifnum\HCol=2 \IgnorePar
+      \HCode{\a:math:amp}\fi }
+  {}
+>>>
+
+
+\<amsmath equation* july 2000\><<<
+\Configure{gather*}
+  {\HCode{\string\begin\l:brace array\r:brace
+           \l:brace lp{10mm}r\r:brace}\IgnorePar 
+      |<math display in equation|>}
+  {\HCode{\string\end\l:brace array\r:brace}}
+  {}
+  {}
+  {\ifnum\HCol=2 \IgnorePar
+      \HCode{\a:math:amp}\fi }
+  {}
+>>>
+
+
+
+
+\<configure jsmath amsmath\><<<
+\Configure{split}
+   {\HCode{\string\begin\l:brace array\r:brace
+           \l:brace rl\r:brace}}
+   {\ifvmode\IgnorePar\fi 
+    \HCode{\string\end \l:brace array\r:brace}}
+   {\ifnum \HRow> 1\HCode{\string\\\Hnewline}\fi}  {}
+   {|<mtd array|>}  {}
+>>>
+
+
+\<configure jsmath tex4ht\><<<
+\Configure{math:amp}{\string&amp;}
+>>>
+
+
+
+\<mtd array\><<<
+\HCode{\ifnum \HCol>1 \a:math:amp\fi 
+  \ifnum 1<\HMultispan 
+%     \string\multicolumn\l:brace\HMultispan\r:brace 
+     |<multi span|> \space\HMultispan\space
+  \fi}%
+>>>
+
+\<multi span\><<<
+%\string\multispan
+?span/multispan-in-jsmath?
+>>>
+
+
+\<configure jsmath amsmath\><<<
+\ConfigureEnv{gather}
+   {\bgroup |<display math-|>} {\egroup}
+   {}{}
+\Configure{gather}
+   {\HCode{\string\begin\l:brace array\r:brace
+           \l:brace cl\r:brace}}
+   {\HCode{\string\end \l:brace array\r:brace}}
+   {\ifnum \HRow> 1\HCode{\string\\\Hnewline}\fi}  {}
+   {|<mtd array|>}  {}
+\ConfigureEnv{gather*}
+   {\bgroup |<display math-|>} {\egroup}
+   {}{}
+\Configure{gather*}
+   {\HCode{\string\begin\l:brace array\r:brace
+           \l:brace cl\r:brace}}
+   {\HCode{\string\end \l:brace array\r:brace}}
+   {\ifnum \HRow> 1\HCode{\string\\\Hnewline}\fi}  {}
+   {|<mtd array|>}  {}
+>>>
+
+% CVR 2011-01-28
+
+\verb=\HtmlParOff= added to \verb=\Configure{#1}=.
+\verb=\HCode{<--tex4ht:inline-->}= commented out as it interfered with
+parsing. \verb=\HtmlParOn= added after \verb=\end:mathalign=. Before
+cell and after cell configurations have been rewritten to solve the
+problems reported by Rob Beezer's \texttt{<beezer@ups.edu>}.
+
+% \<configure jsmath amsmath\><<<
+% \def\:tempc#1#2{%
+%    \ConfigureEnv{#1}
+%      {\def\end:al:env{}\ifmmode\else 
+%        \ifvmode\else \def\end:al:env{\par\ShowPar\IgnoreIndent}
+%      \fi\fi}
+%      {\end:al:env }
+%      {}{}%
+%    \Configure{#1}
+%    {\IgnorePar\HtmlParOff
+%     \ifvmode \EndP  \else \EndP\fi 
+%     \ifmathltx
+%        \Tg<mrow>\def\end:mathalign{\Tg</mrow>}%
+%     \else
+%        \Configure{@math}{div}\DviMath
+%        \def\end:mathalign{\EndDviMath \DisplayMathfalse}%
+%        \DisplayMathtrue
+%     \fi
+%     \HCode{\string\matrix\l:brace}}
+%    {\HCode{\r:brace}\end:mathalign\HtmlParOn}
+%    {\ifnum \HRow> 1\HCode{\string\cr\Hnewline}\fi}  
+%    {}
+%    {\HCode{\ifnum \HCol>1 \a:math:amp\fi
+%      \ifnum 1<\HMultispan
+%       ?span/multispan-in-jsmath?
+%       \space\HMultispan\space\fi}}%
+%    {} %
+% }
+% \:tempc{align}{align}
+% \:tempc{alignat}{alignat}
+% \:tempc{xalignat}{xalignat}
+% \:tempc{xxalignat}{xxalignat}
+% \:tempc{flalign}{flalign}
+% \:tempc{align*}{align*}
+% \:tempc{alignat*}{alignat*}
+% \:tempc{xalignat*}{xalignat*}
+% \:tempc{flalign*}{flalign*}
+% >>>
+
+
+jsMath doesn't support hfil... hence the following
+
+\<extra align col sep\><<<
+\ifodd\HCol\space\else 
+   \string\kern \space 2em\space
+\fi
+>>>
+
+Yet another venue through eqalign
+
+\<configure jsmath amsmath\><<<
+\def\:tempc#1#2{% 
+   \ConfigureEnv{#1} 
+     {\def\end:al:env{}\ifmmode\else 
+       \ifvmode\else \def\end:al:env{\par\ShowPar\IgnoreIndent}
+     \fi\fi} 
+     {\end:al:env } 
+     {}{}% 
+   \Configure{#1} 
+   {\IgnorePar\HtmlParOff
+    \ifvmode \EndP  \else \EndP \fi
+    \ifmathltx 
+       \Tg<mrow>\def\end:mathalign{\Tg</mrow>}% 
+    \else 
+       \Configure{@math}{div}\DviMath 
+       \def\end:mathalign{\EndDviMath \DisplayMathfalse}% 
+       \DisplayMathtrue 
+    \fi 
+    \HCode{\string\eqalignno\l:brace}} 
+   {\HCode{\r:brace}\end:mathalign\HtmlParOn} 
+   {\ifnum \HRow> 1\HCode{\string\cr\Hnewline}\fi}
+   {}
+   {\HCode{\ifnum \HCol>1 \a:math:amp\fi
+       \ifnum 1<\HMultispan
+      ?span/multispan-in-jsmath?
+      \space\HMultispan\space\fi}}%  
+   {} %
+}  
+\:tempc{align}{align}
+\:tempc{alignat}{alignat}
+\:tempc{xalignat}{xalignat}
+\:tempc{xxalignat}{xxalignat}
+\:tempc{flalign}{flalign}
+\:tempc{align*}{align*}
+\:tempc{alignat*}{alignat*}
+\:tempc{xalignat*}{xalignat*}
+\:tempc{flalign*}{flalign*}
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{Over and Under}
+%%%%%%%%%%%%%%%%%%
+
+
+\<configure jsmath fontmath\><<<
+|<jsmath plain,fontmath|>
+>>>
+
+\<configure jsmath plain\><<<
+|<jsmath plain,fontmath|>
+>>>
+
+
+\<jsmath plain,fontmath\><<<
+\Configure{overrightarrow}  
+  {\HCode{\string\overrightarrow\l:brace}\:gobble}  
+  {\HCode{\r:brace}}
+\Configure{overleftarrow}  
+  {\HCode{\string\overleftarrow\l:brace}\:gobble}  
+  {\HCode{\r:brace}}
+>>>
+
+
+\<configure jsmath amsmath\><<<
+\Configure{underrightarrow}  
+  {\HCode{\string\mathop\l:brace}\:gobble}  
+  {\HCode{\r:brace\string\limits 
+                      \string_\string\longrightarrow\space}}
+\Configure{underleftarrow}  
+  {\HCode{\string\mathop\l:brace}\:gobble}  
+  {\HCode{\r:brace\string\limits 
+                      \string_\string\longleftarrow\space}}
+>>>
+
+
+
+\<configure jsmath amsmath\><<<
+\Configure{overleftrightarrow}  
+  {\HCode{\string\mathop\l:brace}\:gobble}  
+  {\HCode{\r:brace\string\limits 
+                      \string^\string\longleftrightarrow\space}}
+\Configure{underleftrightarrow}  
+  {\HCode{\string\mathop\l:brace}\:gobble}  
+  {\HCode{\r:brace\string\limits 
+                      \string_\string\longleftrightarrow\space}}
+>>>
+
+\<configure jsmath amsmath\><<<
+\def\:tempc#1{
+  {\HCode{\string\mathop\l:brace}#1%
+  \HCode{\r:brace\string\limits 
+                      \string^\l:brace\hbox\l:brace....\r:brace\r:brace}}}
+\HLet\ddddot\:tempc
+\def\:tempc#1{
+  {\HCode{\string\mathop\l:brace}#1%
+  \HCode{\r:brace\string\limits 
+                      \string^\l:brace\hbox\l:brace...\r:brace\r:brace}}}
+\HLet\dddot\:tempc
+>>>
+
+
+\<configure jsmath amsmath\><<<
+\def\:tempc#1#2{%
+   \HCode{\string\mathop\l:brace}#2%
+   \HCode{\r:brace\string\limits 
+                      \string^\l:brace}#1\HCode{\r:brace}}
+\HLet\overset\:tempc
+\def\:tempc#1#2{%
+   \HCode{\string\mathop\l:brace}#2%
+   \HCode{\r:brace\string\limits 
+                      \string_\l:brace}#1\HCode{\r:brace}}
+\HLet\underset\:tempc
+\def\:tempc#1#2#3{%
+   \HCode{\l:brace\l:brace\r:brace}#1%
+   \HCode{\l:brace}#3%
+   \HCode{\r:brace}#2\HCode{\r:brace}}
+\HLet\sideset\:tempc
+>>> 
+
+
+
+\<configure jsmath amsmath\><<<
+\renewcommand{\xrightarrow}[2][]{% 
+   \HCode{\string\mathop\l:brace \string\longrightarrow \r:brace\string\limits 
+        \string_\l:brace}#1\HCode{\r:brace\string^\l:brace}%
+      #2\HCode{\r:brace}}
+\renewcommand{\xleftarrow}[2][]{% 
+   \HCode{\string\mathop\l:brace \string\longleftarrow \r:brace\string\limits 
+        \string_\l:brace}#1\HCode{\r:brace\string^\l:brace}%
+      #2\HCode{\r:brace}}
+>>>
+
+
+The following definition is needed because \verb=\multispan= is not recognized by jsMath
+
+
+\<configure jsmath amsmath\><<<
+\def\hdots@for#1#2{% 
+         \tmp:cnt=#2\relax 
+   \ifnum \tmp:cnt>0 .% 
+         \loop  
+            \advance\tmp:cnt by -1\relax 
+            \ifnum \tmp:cnt>0 \HCode{\string&amp;}.% 
+          \repeat  
+   \fi 
+   }  
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{Symbols}
+%%%%%%%%%%%%%%%%%%
+
+
+\<configure jsmath amsmath\><<< 
+\def\:tempc#1{\HCode{\kern18mu 
+                    {\string\rm\space mod}\string\,\string\,}#1}
+\HLet\mod=\:tempc
+\def\:tempc#1{\HCode{\kern18mu }(#1)}
+\HLet\pod=\:tempc
+\def\:tempc#1{\HCode{\kern18mu 
+          \string\mathbin{\string\rm\space mod}\string\,\string\,}#1}
+\HLet\bmod\:tempc
+\def\:tempc#1{\HCode{\kern18mu }(\HCode{{\string\rm\space mod}\kern6mu\space} #1)}
+\HLet\pmod=\:tempc
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%% 
+\section{Boxed} 
+%%%%%%%%%%%%%%%%%% 
+ 
+\<configure html-jsmath amsmath\><<< 
+\Configure{boxed} 
+   {\ifmathltx \HCode{\string\class\l:brace boxed\r:brace\l:brace}% 
+    \else     \HCode{<span class="boxed">}\IgnorePar\fi} 
+   {\ifmathltx \HCode{\r:brace}% 
+    \else \HCode{</span>}\fi} 
+\Css{.boxed{border: 1px solid black; padding-left:2px; 
+                                     padding-right:2px;}} 
+>>> 
+
+
+
+
+
+\<configure html-jsmath amsmath\><<< 
+\Configure{boxed} 
+   {\ifmathltx \HCode{\string\class\l:brace boxed\r:brace\l:brace}% 
+    \else     \HCode{<span class="boxed">}\IgnorePar\fi} 
+   {\ifmathltx \HCode{\r:brace}% 
+    \else \HCode{</span>}\fi} 
+\Css{.boxed{border: 1px solid black; padding-left:2px; 
+                                     padding-right:2px;}} 
+>>> 
+
+
+
+%%%%%%%%%%%%%%%%%%
+\endinput
+%%%%%%%%%%%%%%%%%%
+
+

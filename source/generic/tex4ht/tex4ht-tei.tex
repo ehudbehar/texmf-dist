@@ -1,0 +1,1716 @@
+% $Id: tex4ht-tei.tex 768 2020-07-10 13:13:51Z michal_h21 $
+% compile 3 times:     latex   tex4ht-tei   
+%                  or  xhlatex tex4ht-tei "html,3,sections+"
+%
+% Copyright 2009-2019 TeX Users Group
+% Copyright 2000-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+%%%%%%%%%%%%%%%%%% load style files %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifx \HTML\UnDef
+   \def\HTML{tei,tei-mml,tei-mmltei,tei-math}                             
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\title{Source for TEI}%     
+        \author{Eitan M. Gurari \& Sebastian Rahtz}}   
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common.tex}
+\input{tex4ht-cpright.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{File Organization}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<tei\><<<
+% tei.4ht (|version), generated from |jobname.tex
+% Copyright 2009-2019 TeX Users Group
+% Copyright |CopyYear.2000. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+\<configure tei tex4ht\><<<
+\if:latex  |<Hinclude latex|>
+\else      |<Hinclude plain|>  \fi
+>>>
+
+\<configure tei plain\><<<
+|<Hinclude plain lib|>
+|<Hinclude plain + latex lib|>
+>>>
+
+\<configure tei latex\><<<
+|<Hinclude latex lib|>
+|<Hinclude plain + latex lib|>
+>>>
+
+\<configure tei Preamble\><<<    
+\Configure{ext}{xml}
+\edef\Preamble{\Preamble,refcaption}
+>>>
+
+\<tei-mml\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% tei-mml.4ht (|version), generated from |jobname.tex
+% Copyright (C) |CopyYear.2000. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+
+\<tei-math\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% tei-math.4ht (|version), generated from |jobname.tex
+% Copyright (C) |CopyYear.2000. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+
+\<tei-mmltei\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% tei-mmltei.4ht (|version), generated from |jobname.tex
+% Copyright (C) |CopyYear.2000. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Origin of Hooks}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%
+\section{tex4ht}
+%%%%%%%%%%%%%%%%%%
+
+\<configure tei tex4ht\><<<    
+|<tex4ht wrapper|>
+|<tex4ht paragraphs|>
+|<tex4ht cross-linking|>
+|<tex4ht math|>
+>>>
+
+
+
+%%%%%%%%%%%%%%%
+\section{latex}
+%%%%%%%%%%%%%%%
+
+\<configure tei latex\><<< 
+|<special latex environments|>
+|<revised TITLE for latex|>
+|<latex environments|>
+|<latex lists|>
+|<latex tables|>
+|<latex env|>
+|<latex,plain accents|>
+|<latex accents|>
+|<latex math|>
+|<obey lines|>
+|<latex etc|>
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%
+\section{plain}
+%%%%%%%%%%%%%%%
+
+\<configure tei plain\><<< 
+|<latex,plain accents|>
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{article, report, book}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<configure tei article\><<< 
+|<article,report,book utilities|>
+|<article,report maketitle|>
+|<article sections|>
+|<article,report,book lists|>
+|<article,report,book figures|>
+|<article tocs|>
+|<article,report|>
+>>>
+
+
+\<configure tei report\><<< 
+|<article,report,book utilities|>
+|<article,report maketitle|>
+|<article,report,book lists|>
+|<article,report,book figures|>
+|<report,book tocs|>
+|<article,report|>
+>>>
+
+
+
+\<configure tei book\><<< 
+|<article,report,book utilities|>
+|<book maketitle|>
+|<article,report,book lists|>
+|<article,report,book figures|>
+|<report,book tocs|>
+>>>
+
+
+\<configure tei amsart\><<< 
+|<sectioning utilities|>
+|<article,report maketitle|>
+|<ams article,report maketitle|>
+|<ams art,proc,book|>
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{TUG Boat/Proc}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<configure tei ltugboat\><<< 
+\Configure{address}
+   {\HCode{<byline rend="address">}}
+   {\HCode{</byline>}}
+\Configure{netaddress}
+   {\HCode{<byline rend="netaddress">}}
+   {\HCode{</byline>}}
+\Configure{PersonalURL}
+   {\HCode{<byline rend="PersonalURL">}}
+   {\HCode{</byline>}}
+>>>
+
+
+\<configure tei ltugproc\><<< 
+|<ltugproc maketitle|>
+\Configure{thanks author date and}{}{}
+   {|<tag proc author|>\HCode{<docAuthor>}} 
+   {\HCode{</docAuthor>}}  
+   {\HCode{<docDate>}}      {\HCode{</docDate>}}  
+   {\HCode{<!--and-->}}
+   {}
+>>>
+
+\<tag proc author\><<<
+{\Configure{thanks author date and}{}{}{}{}{}{}{}{}%
+|<disable latex fonts|>|<proc title @author|>\Tag{)author)}{\@author}}%
+>>>
+
+\<proc title @author\><<<
+\count@\authornumber
+\@tempcnta0
+\let\:temp\relax
+\let\@author\empty
+\loop
+  \ifnum\count@>0
+    \advance\@tempcnta by \@ne      
+    \edef\@author{\@author  \ifx\@author\empty\else, \fi
+                 \:temp{\number\@tempcnta}}%
+    \advance\count@ by \m@ne
+\repeat
+\let\ignorespaces\empty
+\let\unskip\empty
+\def\:temp##1{\csname theauthor##1\endcsname}%
+>>>
+
+
+\<configure tei ltugproc\><<< 
+\ConfigureEnv{abstract}
+   {}{} {}{}
+\Configure{abstract}
+   {\bgroup
+    \HCode{<epigraph rend="abstract"><p>}\IgnoreIndent\par}
+   {\ifvmode\IgnorePar\fi \EndP\HCode{</p></epigraph>}\egroup}
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Configurations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Front and Back Matter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{verbatim}
+<TEI.2>
+    <teiHeader> [ TEI Header information ]  </teiHeader>
+    <text>
+        <front> [ front matter ... ]   </front>
+        <body>  [ body of text ... ]   </body>
+        <back>  [ back matter ...  ]   </back>
+    </text>
+</TEI.2>
+\end{verbatim}
+
+The front and back elements are optional. 
+
+\<tex4ht wrapper\><<<
+\Configure{HTML}
+   {\HCode{<TEI.2>}}
+   {\HCode{</TEI.2>}}
+\Configure{HEAD}
+   {\HCode{<teiHeader type="text" status="new"><fileDesc>}}
+   {\HCode{</fileDesc>\Hnewline
+      <revisionDesc><list 
+         type="simple"><item></item></list></revisionDesc>\Hnewline
+      </teiHeader>}}
+\Configure{TITLE} 
+   {\HCode{<titleStmt><title></title></titleStmt>\Hnewline}}
+   {}
+\Configure{TITLE+} 
+   {\HCode{<publicationStmt> <p></p> </publicationStmt>\Hnewline
+           <sourceDesc><p>\FileName\space from \jobname.tex
+                          (TeX4ht)</p></sourceDesc>\Hnewline
+   }}
+>>>
+
+
+
+\<configure tei-mmltei tex4ht\><<<
+\Configure{HTML}
+   {\HCode{<TEI.2>}|<xsl elements|>}
+   {\HCode{</TEI.2>}}
+>>>
+
+
+The  \verb+<!--@Basename=\jobname-->+ is for clean-tei.xsl.
+
+
+
+\<revised TITLE for latex\><<<
+\Configure{TITLE} 
+   {\HCode{<titleStmt>\Hnewline
+       <title>\ifTag{TITLE+}{\LikeRef{TITLE+}}{}</title>\Hnewline
+       <author>\ifTag{)author)}{\LikeRef{)author)}}{}</author>\Hnewline
+       </titleStmt>\Hnewline
+   }}
+   {}%
+>>>
+
+\<tag author\><<<
+{\Configure{thanks author date and}{}{}{}{}{}{}{}{}%
+|<disable latex fonts|>\Tag{)author)}{\@author}}%
+>>>
+
+
+\<tag title\><<<
+{\Configure{maketitle}{}{}{}{}{}{}{}{}%
+|<disable latex fonts|>\Tag{TITLE+}{\@title}}%
+>>>
+
+% \let\thanks=\:gobble 
+% 
+% \def\TeX{TeX}%
+%\def\gobble:font##1##2{##2}\:TITLE:
+
+\<disable latex fonts\><<<
+\let\leavevmode=\empty \let\not@math@alphabet=\:gobbleII
+\def\text@command##1{##1}\let\selectfont=\empty \let\\=\empty  
+\no:fonts  \def\check@icl ##1\check@icr{}%
+\:TITLE:  \a:NoSection
+>>>
+
+\<configure tei latex\><<<
+\Configure{@TITLE}{\def\LaTeX{LaTeX}\let\fontencoding=\:gobble
+  \let\fontfamily=\:gobble \let\fontseries=\:gobble
+  \let\fontshape=\:gobble  \let\usefont=\:gobbleIV  }
+>>>
+
+
+
+
+
+
+
+
+\<special latex environments\><<<
+\Configure{InsertTitle}{\let\label=\lb:l
+   \let\ref=\o:ref \Configure{ref}{}{}{}}
+\Configure{AfterTitle}{\let\index=\:index
+       \let\ref=\:ref  \let\label=\lb:l }
+\Configure{NoSection}
+  {\let\sv:index=\index \let\sv:label=\label \let\sv:ref=\ref
+   \let\sv:newline=\newline \def\newline{ }%
+   \let\sv:setfontsize=\@setfontsize  \let\@setfontsize=\:gobbleIII
+   \let\index=\@gobble  \let\label=\@gobble  \let\ref=\@gobble
+  }
+  {\let\index=\sv:index \let\label=\sv:label \let\ref=\sv:ref
+   \let\newline=\sv:newline    \let\@setfontsize=\sv:setfontsize 
+  }
+>>>
+
+
+
+\<book maketitle\><<<
+\Configure{maketitle}
+   {|<tag title|>\HCode{<titlePage>}} 
+   {\HCode{</titlePage>}}
+   {\HCode{<title>}} 
+   {\HCode{</title>}}
+\Configure{thanks author date and}{}{}
+   {|<tag author|>\HCode{<author>}} 
+   {\HCode{</author>}}  
+   {\HCode{<date>}}      {\HCode{</date>}}  
+   {\HCode{<!--and-->}}
+   {}
+>>>
+
+\<article,report maketitle\><<<
+\Configure{maketitle}
+   {|<tag title|>\HCode{<titlePage>}} 
+   {\HCode{</titlePage>}}
+   {\HCode{<docTitle><titlePart  type="main">}} 
+   {\HCode{</titlePart></docTitle>}}
+\Configure{thanks author date and}{}{}
+   {|<tag author|>\HCode{<docAuthor>}} 
+   {\HCode{</docAuthor>}}  
+   {\HCode{<docDate>}}      {\HCode{</docDate>}}  
+   {\HCode{<!--and-->}}
+   {}
+>>>
+
+
+\<tex4ht wrapper\><<<
+\Configure{BODY}
+   {\ifTag{TITLE+}%
+     {\HCode{<text><front>}\PushStack\text:stack{front}}%
+     {\HCode{<text><body>}\PushStack\text:stack{body}\ShowPar
+      \csname par\endcsname}%
+   }
+   {\IgnorePar\EndP \PopStack\text:stack\:temp  \def\:tempa{front}%
+    \HCode{</\:temp>\ifx\:temp\:tempa <body><p></p></body>\fi</text>}}
+>>>
+
+\<ams article,report maketitle\><<<
+\Configure{authors}
+   {\HCode{<docAuthor>}}  {\HCode{</docAuthor>}}      
+\Configure{setdate}
+     {\HCode{<docDate>}}      {\HCode{</docDate>}}   
+\Configure{thanks author date and}{}{}
+   {|<tag author|>\HCode{<docAuthor>}} 
+   {\HCode{</docAuthor>}}  
+   {\HCode{<date>}}      {\HCode{</date>}}  
+   {\HCode{<!--and-->}}
+   {}
+>>>
+
+
+
+
+\<ltugproc maketitle\><<<
+\Configure{maketitle}
+   {|<tag title|>\HCode{<titlePage>}%
+    \bgroup \Configure{centerline}
+              {\HCode{<byline rend="centerline">}}
+              {\HCode{</byline>}}
+   } 
+   {\egroup \HCode{</titlePage>}}
+   {\HCode{<docTitle>}} 
+   {\HCode{</docTitle>}}
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\subsection{DTD's}
+%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\<configure tei Preamble\><<<  
+\Configure{PROLOG}{VERSION,DOCTYPE,*XML-STYLESHEET}
+\:CheckOption{no-DOCTYPE} \if:Option
+   \Configure{PROLOG}{VERSION,*XML-STYLESHEET}
+\fi
+>>>
+
+
+
+\<configure tei tex4ht\><<<
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0" encoding="utf-8"?>\Hnewline}}     
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}      
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE TEI.2 [|<tei dtd tex4ht|>]>}}
+>>>
+
+\<configure tei-mml tex4ht\><<<
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}     
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}      
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE TEI.2 [\Hnewline|<tei-mml dtd tex4ht|>]>\Hnewline}}
+>>>
+
+\<configure tei-mmltei tex4ht\><<<
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}     
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}      
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE TEI.2 |<tei-mmltei dtd tex4ht|> >\Hnewline}}
+>>>
+
+
+\<tei dtd tex4ht\><<<
+|<tei dtd|>%
+}\writesixteen{--- file \jobname.ent ---}\HCode{%
+|<tei entities dtd|>%
+>>>
+
+\<tei-mml dtd tex4ht\><<<
+|<tei-mml dtd|>%
+|<tei dtd tex4ht|>%
+|<mathml dtd|>%
+>>>
+
+
+\<tei-mmltei dtd tex4ht\><<<
+SYSTEM "teimml.dtd" [\Hnewline}
+|<xsl entities|>\HCode{%
+]
+>>>
+
+\<tei-mml dtd\><<<
+<!ELEMENT formula (math)>\Hnewline
+>>>
+
+% <!ENTITY \% list.qname "mathml-list">\Hnewline
+
+\<tei dtd\><<<
+<!ENTITY \% TEI.dtd PUBLIC\Hnewline
+    "-//TEI//DTD TEI Lite XML ver. 1.3//|<dtd lang|>"\Hnewline
+    "teixlite.dtd">
+\Hnewline \%TEI.dtd; \Hnewline
+>>>
+
+\<mathml dtd\><<<
+<!ENTITY \% mathml.dtd PUBLIC
+    "-//W3C//DTD MathML 2.0//|<dtd lang|>"\Hnewline\space\space
+    "mathml2.dtd">  
+    \Hnewline \%mathml.dtd;\Hnewline
+>>>
+
+
+\<xsl elements\><<<
+\HCode{<!--@entities=}|<xsl entities|>\HCode{-->}%
+>>>
+
+\<tei entities dtd\><<<
+<!ENTITY \% ENT-\jobname.ent SYSTEM "\jobname.ent">
+       \Hnewline \%ENT-\jobname.ent; \Hnewline
+>>>
+
+
+
+\<xsl entities\><<<
+\bgroup
+   \def\toctei##1##2##3{\HCode{##2\Hnewline}}%
+   \no:catcodes{34}{36}{12}\no:catcodes{94}{95}{12}\catcode`\~=12
+   \Configure{tableofcontents}  {}   {}   {}{}{}%
+   \:TableOfContents[tei]%
+\egroup
+>>>
+
+
+
+Instead of \verb=SYSTEM= earlier we had
+\verb=PUBLIC\Hnewline "-//TEI U5-1995//DTD TEI Lite 1.0 Extensions//|<dtd lang|>"\Hnewline=.
+
+
+\<early Decl\><<<
+\let\:NOTATIONs=\empty 
+\def\Decl#1{\edef\:NOTATIONs{\:NOTATIONs#1\Hnewline}}
+>>>
+
+
+\<early xslt Decl\><<<
+\def\Decl#1{\edef\:temp{\the\:tokwrite{\string\doTocEntry
+   \string\toc tei{}{#1}{}}}\:temp
+}
+>>>
+
+\<main Decl\><<<
+   \def\Decl##1{{\everypar{}%
+      \ht:special{t4ht>\jobname.ent}\hbox{\HCode{##1\Hnewline}}%
+      \ht:special{t4ht>\FileName}}}
+   \Decl{\:NOTATIONs}\let\:NOTATIONs=\:UnDef
+>>>
+
+
+\begin{verbatim}
+> oh yes. I copied the entity declaration into a comment after <TEI.2>,
+> because xsl has no access to the document subset...
+
+Consider this:
+
+<?xml version="1.0"?>
+<!DOCTYPE TEI.2 [
+<!ELEMENT formula (math)>
+<!ENTITY % TEI.dtd PUBLIC
+"-//TEI//DTD TEI Lite XML ver. 1.3//|<dtd lang|>"
+"teixlite.dtd">
+%TEI.dtd;
+<!ENTITY % ENT-1-3.ent SYSTEM "1-3.ent">
+%ENT-1-3.ent;
+<!ENTITY % list.qname "mathml-list"> <!ENTITY % mathml.dtd PUBLIC "-//W3C//DTD \
+MathML 2.0//|<dtd lang|>"
+  "mathml2.dtd">
+%mathml.dtd;
+]>
+
+
+the entities are read in from an external file via the %ENT-1-3.ent;
+unfortunately such parameter entities do not have to be expanded by
+XML processors, so the file can not get read. xmltex is an example of
+a system which fails to do so...
+
+we need to textually include the entity file, not reference it.
+\end{verbatim}
+
+
+\<configure tei tex4ht\><<<
+\HAssign\ent:cnt = 0
+\Configure{Preamble}
+   {}
+   {{\ifdim \lastskip>\z@ \unskip\fi
+     \IgnorePar\parindent\z@ \leavevmode}%
+     |<main Decl|>%     
+   } 
+|<early Decl|>
+>>>
+
+
+\<configure tei-mmltei tex4ht\><<<
+\Configure{Preamble}
+   {}
+   {{\ifdim \lastskip>\z@ \unskip\fi
+     \IgnorePar\parindent\z@ \leavevmode}%
+   } 
+|<early xslt Decl|>
+>>>
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Css}
+%%%%%%%%%%%%%%%%%%%%
+
+The following code has been copied from tex4ht-docbook.tex. It provides basic
+support for writing to the CSS file produced by tex4ht.
+
+\<configure tei tex4ht\><<<
+|<cascade style sheets|>
+\Configure{Preamble}
+   {|<default cascade style sheets|>} {}
+\Configure{CssFile}{\jobname.css}
+  {/* \aa:CssFile\space from \jobname.tex (TeX4ht) */}
+\Configure{Needs}{l. 
+   \the\inputlineno\space--- needs --- #1 ---}
+\Configure{Needs-}{l.
+   \the\inputlineno\space--- needs --- #1 ---}
+>>>
+
+\<default cascade style sheets\><<<
+{\ifdim \lastskip>\z@ \unskip\fi  \IgnorePar\parindent\z@
+\leavevmode}%
+\immediate\write-1{--- file \aa:CssFile\space ---}%
+\ht:special{t4ht>\aa:CssFile}\ht:special{t4ht=\Hnewline /* css.sty */}%
+\ht:special{t4ht<\aa:CssFile}%
+>>>
+
+
+\<cascade style sheets\><<<
+\ScriptCommand{\CssFile}{%
+  \immediate\write-1{--- file \aa:CssFile\space ---}%
+  \def\FontSize##1##2{\:Context{##1}\ht:special{t4ht;\%##2}\%}%
+  \def\FontName##1{\:Context{##1}\ht:special{t4ht;=}}%
+  \def\:Context##1{\ht:special{t4ht>\jobname.tmp}##1\ht:special
+     {t4ht>\aa:CssFile}}%
+  \ht:special{t4ht>\jobname.tmp}\ht:special{t4ht>\aa:CssFile}\bb:CssFile
+  \hfil\break\NoFonts}{\EndNoFonts
+  \ht:special{t4ht<\aa:CssFile}\ht:special{t4ht<\jobname.tmp}}
+\let\Css:File|=\CssFile
+\def\CssFile{\futurelet\:temp\Css:Fl}
+\def\Css:Fl{\ifx [\:temp  \expandafter\Css:fl
+   \else \expand:after{\Css:File \space}\fi}
+\def\Css:fl[#1]{\Css:File\space \css:files #1,,|<par del|>}
+\def\css:files#1,#2|<par del|>{\def\:temp{#1}\ifx \:temp\empty
+   \else \def\:temp{\in:css#1.|<par del|>\css:files#2,,|<par del|>}\fi
+   \:temp }
+\def\in:css#1.#2|<par del|>{\def\:temp{#2}\ifx \:temp\empty \input #1.css
+   \else \inc:ss#1.#2|<par del|>\fi}
+\def\inc:ss#1.|<par del|>{\input #1 }
+\NewConfigure{CssFile}[2]{\def\aa:CssFile{#1}\def\bb:CssFile{#2}}
+>>>
+
+
+
+\<cascade style sheets\><<<
+\def\Css#1{{\def\:temp{\Configure{Needs}}%
+   \expandafter\:temp\expandafter{\aa:Css}\Needs{#1}}}
+
+\expandafter\ifx \csname aa:Css\endcsname\relax
+   \Configure{Css}{Css: ##1}
+\fi
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{HTF}
+%%%%%%%%%%%%%%%%%%
+
+Basic support for HTF fonts. I am not sure if this method is the best,
+there seems to be no direct equivalent to HTML class and corresponding CSS.
+
+\<configure tei tex4ht\><<<
+\Configure{htf}{0}{+}{<hi rendition="\#}{\%s}{-\%s}{x-x-\%d}{}{">}{</hi>}
+\Configure{htf}{4}{+}{<hi rend="small-caps">}{}{}{}{}{}{</hi>}
+\Configure{htf}{6}{+}{<hi rend="underline">}{}{}{}{}{}{</hi>}
+\Configure{htf}{8}{+}{<hi rend="superscript">}{}{}{}{}{}{</hi>}
+\Configure{htf}{10}{+}{<hi rend="bold">}{}{}{}{}{}{</hi>}
+\Configure{htf}{12}{+}{<hi rend="caligraphy">}{}{}{}{}{}{</hi>}
+\Configure{htf}{14}{+}{<hi rend="italic">}{}{}{}{}{}{</hi>}
+\Configure{htf}{16}{+}{<hi rend="bold">}{}{}{}{}{}{</hi>}
+\Configure{htf}{18}{+}{<hi rend="calligraphy-bold">}{}{}{}{}{}{</hi>}
+\Configure{htf}{20}{+}{<hi rend="htf-flip-hor">}{}{}{}{}{}{</hi>}
+\Configure{htf}{22}{+}{<hi rend="subscript>}{}{}{}{}{}{</hi>}
+\Configure{htf}{24}{+}{<hi rend="small-caps">}{}{}{}{}{}{</hi>}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Sections}
+%%%%%%%%%%%%%%%%%%
+
+\<article sections\><<<
+\Configure{part}
+   {\OpenDiv{part}}   {\CloseDiv{part}}
+   {\HCode{<head>}} {\CloseHead}
+\Configure{section}
+   {\OpenDiv{section}}   {\CloseDiv{section}}
+   {\HCode{<head>}}   {\CloseHead}
+\Configure{subsection}
+   {\OpenDiv{subsection}}   {\CloseDiv{subsection}}
+   {\HCode{<head>}}   {\CloseHead}
+\Configure{subsubsection}
+   {\OpenDiv{subsubsection}}   {\CloseDiv{subsubsection}}
+   {\HCode{<head>}}   {\CloseHead}
+\Configure{paragraph}
+   {\OpenDiv{paragraph}}   {\CloseDiv{paragraph}}
+   {\HCode{<head>}}   {\CloseHead}
+\Configure{subparagraph}
+   {\OpenDiv{subparagraph}}   {\CloseDiv{subparagraph}}
+   {\HCode{<head>}}   {\CloseHead}
+>>>
+
+
+
+
+\<article sections\><<<
+\Configure{likepart}
+   {\OpenDiv{likepart}}   {\CloseDiv{likepart}}
+   {\HCode{<head>}} {\CloseHead}
+\Configure{likesection}
+   {\OpenDiv{likesection}}   {\CloseDiv{likesection}}
+   {\HCode{<head>}}   {\CloseHead}
+\Configure{likesubsection}
+   {\OpenDiv{likesubsection}}   {\CloseDiv{likesubsection}}
+   {\HCode{<head>}}   {\CloseHead}
+\Configure{likesubsubsection}
+   {\OpenDiv{likesubsubsection}}   {\CloseDiv{likesubsubsection}}
+   {\HCode{<head>}}   {\CloseHead}
+\Configure{likeparagraph}
+   {\OpenDiv{likeparagraph}}   {\CloseDiv{likeparagraph}}
+   {\HCode{<head>}}   {\CloseHead}
+\Configure{likesubparagraph}
+   {\OpenDiv{likesubparagraph}}   {\CloseDiv{likesubparagraph}}
+   {\HCode{<head>}}   {\CloseHead}
+>>>
+
+
+
+\<ams art,proc,book\><<<
+|<article sections|>
+>>>
+
+
+%\let\contentsname|=\empty
+
+\<article tocs\><<<
+\Configure{tableofcontents}
+   {\ifvmode\IgnorePar\fi \EndP 
+    \HCode{<divGen type="toc"/>}} 
+   {} {}{}{}
+>>>
+
+
+
+\<report,book tocs\><<<
+|<article tocs|>
+\ConfigureToc{appendix}{}{}{}{}
+\ConfigureToc{chapter}{}{}{}{}
+\ConfigureToc{likechapter}{}{}{}{}
+>>>
+
+\<article tocs\><<<
+\ConfigureToc{likeparagraph}{}{}{}{}
+\ConfigureToc{likepart}{}{}{}{}
+\ConfigureToc{likesection}{}{}{}{}
+\ConfigureToc{likesubparagraph}{}{}{}{}
+\ConfigureToc{likesubsection}{}{}{}{}
+\ConfigureToc{likesubsubsection}{}{}{}{}
+\ConfigureToc{paragraph}{}{}{}{}
+\ConfigureToc{part}{}{}{}{}
+\ConfigureToc{section}{}{}{}{}
+\ConfigureToc{subparagraph}{}{}{}{}
+\ConfigureToc{subsection}{}{}{}{}
+\ConfigureToc{subsubsection}{}{}{}{}
+>>>
+
+
+
+
+
+
+
+\<configure tei tex4ht-OUT\><<<
+\Configure{TocEntry}{\Link{#2}{#3}#4\EndLink}   
+>>>
+
+
+
+\<article tocs-OUT\><<<
+\Configure{tableofcontents}
+  {\HCode{<list rend="toc">}}
+  {\HCode{</list>}}
+  {}{}{}
+>>>
+
+
+\<report,book tocs-OUT\><<<
+|<article tocs|>
+\ConfigureToc{appendix}
+   {\HCode{\Hnewline<item rend="appendixToc">}}
+   {\ }{} {\HCode{</item>}}
+\ConfigureToc{chapter}
+   {\HCode{\Hnewline<item rend="chapterToc">}}
+   {\ }{} {\HCode{</item>}}
+\ConfigureToc{likechapter}
+   {} {\HCode{\Hnewline<item rend="likechapterToc">}}
+   {} {\HCode{</item>}}
+>>>
+
+\<article tocs-OUT\><<<
+\ConfigureToc{likeparagraph}
+   {} {\HCode{\Hnewline<item rend="likeparagraphToc">}}
+   {} {\HCode{</item>}}
+\ConfigureToc{likepart}
+   {} {\HCode{\Hnewline<item rend="likepartToc">}}
+   {} {\HCode{</item>}}
+\ConfigureToc{likesection}
+   {} {\HCode{\Hnewline<item rend="likesectionToc">}}
+   {} {\HCode{</item>}}
+\ConfigureToc{likesubparagraph}
+   {} {\HCode{\Hnewline<item rend="likesubparagraphToc">}}
+   {} {\HCode{</item>}}
+\ConfigureToc{likesubsection}
+   {} {\HCode{\Hnewline<item rend="likesubsectionToc">}}
+   {} {\HCode{</item>}}
+\ConfigureToc{likesubsubsection}
+   {} {\HCode{\Hnewline<item rend="likesubsubsectionToc">}}
+   {} {\HCode{</item>}}
+\ConfigureToc{paragraph}
+   {\HCode{\Hnewline<item rend="paragraphToc">}}
+   {\ }{} {\HCode{</item>}}
+\ConfigureToc{part}
+   {\HCode{\Hnewline<item rend="partToc">}}
+   {\ }{} {\HCode{</item>}}
+\ConfigureToc{section}
+   {\HCode{\Hnewline<item rend="sectionToc">}}
+   {\ }{} {\HCode{</item>}}
+\ConfigureToc{subparagraph}
+   {\HCode{\Hnewline<item rend="subparagraphToc">}}
+   {\ }{} {\HCode{</item>}}
+\ConfigureToc{subsection}
+   {\HCode{\Hnewline<item rend="subsectionToc">}}
+   {\ }{} {\HCode{</item>}}
+\ConfigureToc{subsubsection}
+   {\HCode{\Hnewline<item rend="subsubsectionToc">}}
+   {\ }{} {\HCode{</item>}}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Mapping Utilities}
+
+
+\begin{verbatim}
+                                  \section{...}
+<div1 type="section">        
+  <div2 type="preamble">                    
+    .............................
+  </div2>                                
+                                  \subsection{...}
+  <div2 type="subsection">                    
+    .............................
+  </div2>                    
+    .............................
+</div1>                    
+                                  \section{...}
+<div1 type="section">                    
+    .............................
+</div1>                    
+\end{verbatim}
+
+
+
+
+
+
+
+
+
+
+\<article,report,book utilities\><<<
+|<sectioning utilities|>
+>>>
+
+\<sectioning utilities\><<<
+\HAssign\DivLevel=0
+\HAssign\DivCount=0
+\def\OpenDiv#1{%
+   \IgnorePar\EndP \PopStack\text:stack\:temp \def\:tempa{body}%
+   \ifx \:temp\:tempa \else \HCode{</\:temp><body>}\fi
+   \PushStack\text:stack{body}%
+   |<close div preamble|>%
+   \gHAdvance\DivLevel by 1
+   \HCode{<!--l. \the\inputlineno--><div\Hnewline
+       type="#1">}\gHAdvance\P:level by 1 }
+\def\CloseDiv#1{%
+   \IgnorePar\EndP \gHAdvance\P:level by -1 \HCode{</div><!--end #1-->}%
+   \gHAdvance\DivLevel by -1
+}
+\def\CloseHead{\HCode{</head>}%
+   |<open div preamble|>\ShowPar\par}
+>>>
+
+
+\<close div preamble\><<<
+\ifnum \DivLevel>0  \ifnum \DivLevel=0\LikeRef{dv)\DivCount}\relax
+   \gHAdvance\P:level by 1 
+   \HCode{</div>}%
+\fi\fi
+>>>
+
+\<open div preamble\><<<
+\gHAdvance\DivCount by 1
+\Tag{dv)\DivCount}{\DivLevel}%
+\HAdvance\DivLevel by 1
+\HAdvance\DivCount by 1
+\ifnum \DivLevel=0\LikeRef{dv)\DivCount}\relax
+   \HCode{<div type="preamble"><p></p>}%
+   \gHAdvance\P:level by 1 
+\fi
+\HAdvance\DivLevel by -1
+\HAdvance\DivCount by -1
+>>>
+
+
+The \verb+<p></p>+ is to ensure at least one paragaph in the preamble, e.g.,
+between the section heads of
+\begin{verbatim}
+.................
+\section{Distributions}%
+\subsection{Definitions}
+...............
+\end{verbatim}
+
+
+\<latex etc\><<<
+\gHAssign\P:level=0 
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{End Points}
+
+\<article sections\><<<
+\Configure{endsection}
+     {likesection,chapter,likechapter,appendix,part,likepart}
+\Configure{endlikesection}
+     {section,chapter,likechapter,appendix,part,likepart}
+\Configure{endsubsection}
+   {likesubsection,section,likesection,chapter,%
+      likechapter,appendix,part,likpart}
+\Configure{endlikesubsection}
+   {subsection,section,likesection,chapter,%
+      likechapter,appendix,part,likpart}
+\Configure{endsubsubsection}
+   {likesubsubsection,subsection,likesubsection,section,%
+      likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endlikesubsubsection}
+   {subsubsection,subsection,likesubsection,section,%
+      likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endparagraph}
+   {likeparagraph,subsubsection,likesubsubsection,subsection,%
+    likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endlikeparagraph}
+   {paragraph,subsubsection,likesubsubsection,subsection,%
+    likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endsubparagraph}
+   {likesubparagraph,likeparagraph,subsubsection,likesubsubsection,%
+    subsection,likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endlikesubparagraph}
+   {subparagraph,likeparagraph,subsubsection,likesubsubsection,%
+    subsection,likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\ifx \part\:UnDef \else
+   \Configure{endpart}{likepart}
+   \Configure{endlikepart}{endpart}
+\fi
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%
+\section{Lists}
+%%%%%%%%%%%%%%%
+
+
+\<latex lists\><<<
+\ConfigureList{trivlist}%
+   {\EndP\HCode{<list type="gloss">}\let\end:itm=\empty}
+   {\EndP\HCode{</item></list>}\ShowPar}
+   {\end:itm\def\end:itm{\EndP\Tg</item>}\HCode{<label>}\bgroup \bf}
+   {\egroup\HCode{</label><item\Hnewline>}}
+\ConfigureList{list}%
+   {\EndP\HCode{<list type="gloss">}\let\end:itm=\empty}
+   {\EndP\HCode{</item></list>}\ShowPar}
+   {\end:itm\def\end:itm{\EndP\Tg</item>}\HCode{<label>}\bgroup \bf}
+   {\egroup\HCode{</label><item\Hnewline>}}
+\ConfigureList{itemize}%
+   {\EndP\HCode{<list type="bulleted">}\let\end:itm=\empty}
+   {\EndP\HCode{</item></list>}\ShowPar}
+   {\end:itm\def\end:itm{\EndP\Tg</item>}\DeleteMark}
+   {\HCode{<item>}}
+\ConfigureList{enumerate}%
+   {\EndP\HCode{<list type="ordered"\Hnewline>}\let\end:itm=\empty}
+   {\EndP\HCode{</item></list>}\ShowPar}
+   {\end:itm\def\end:itm{\EndP\Tg</item>}\DeleteMark}
+   {\HCode{<item>}\AnchorLabel}
+>>>
+
+
+\<article,report,book lists\><<<
+\ConfigureList{thebibliography}%
+   {\IgnorePar\EndP
+    \HCode{<div rend="thebibliography"><listBibl>}\let\en:bib=\empty}
+   {\en:bib\HCode{</listBibl></div>}}
+   {\en:bib\def\en:bib{\HCode{</bibl>}}%
+      \HCode{<!--l. \the\inputlineno--><!--}|<par within bib|>} 
+   {\HCode{--><bibl>}}
+>>>
+
+
+\<par within bib\><<<
+\Configure{HtmlPar}
+   {\HCode{<!--l. \the\inputlineno--><gap desc="bib p"/>}} 
+   {\HCode{<!--l. \the\inputlineno--><gap desc="bib p"/>}}    
+   {} {}
+>>>
+
+
+
+
+
+\<latex lists\><<<
+\Configure{cite}{}{}{\Link}{\EndLink}
+\Configure{bibitem}{\Link}{\EndLink}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%
+\section{Tables}
+%%%%%%%%%%%%%%%%
+
+
+\<latex tables\><<<
+\Configure{tabular}
+   {|<start count rows,cols|>|<set row count|>%
+    \HCode{<table\Hnewline |<insert row count|> >}}
+   {\HCode{</table>}%
+     |<end count rows,cols|>}
+   {|<modify rows count|>\HCode{<row role="data">}}
+   {\HCode{</row>}}
+   {|<modify cols count|>%
+    \HCode{<cell\Hnewline cols="\HMultispan" rows="1" role="data">}}
+   {\HCode{</cell>}}
+\HAssign\tabularN=0
+>>>
+
+\<start count rows,cols\><<<
+\gHAdvance\tabularN by 1  \PushStack\tabular:N\tabularN
+\let\prevR:max=\R:max  \let\prevC:max=\C:max  \gHAssign\C:max=0
+>>>
+
+\<end count rows,cols\><<<
+\PopStack\tabular:N\i:var |<toks Clr|>%
+\Tag{rc-\i:var}{rend="|<get Clr|>" rows="\R:max" cols="\C:max"}
+\global\let\R:max=\prevR:max  \global\let\C:max=\prevC:max 
+>>>
+
+
+
+\<toks Clr\><<<
+\expandafter\tmp:toks\expandafter{\Clr}%
+>>>
+
+\<get Clr\><<<
+\the\tmp:toks
+>>>
+
+
+
+
+
+\<modify cols count\><<<
+\HAssign\i:var=\HCol \HAdvance\i:var by \HMultispan
+\HAdvance\i:var by -1  \ifnum \C:max<\i:var \gHAssign\C:max=\i:var \fi
+>>>
+
+\<modify rows count\><<<
+\gHAssign\R:max=\HRow
+>>>
+
+\<set row count\><<<
+\expandafter\ifx \csname  cw:rc-\tabularN\endcsname \relax 
+        \tmp:toks{ }%
+\else
+   \expandafter\expandafter\expandafter\tmp:toks
+      \expandafter\expandafter\expandafter{\csname
+                                              cw:rc-\tabularN\endcsname}%
+\fi
+>>>
+
+\<insert row count\><<<
+\the\tmp:toks
+>>>
+
+\<latex tables\><<<
+\Configure{hline}{}
+\Configure{//[]}{}
+>>>
+
+
+\<obey lines\><<<
+\Configure{verb}{}{}
+\Configure{obeylines}
+   {\ifvmode \EndP
+       \HCode{<div rend="obeylines-v">}%
+       \gdef\ob:ln{div}%
+    \else \HCode{<emph rend="obeylines-h">}%
+       \gdef\ob:ln{emph}%
+    \fi
+   }
+   {\ht:special{t4ht=</\ob:ln>}\ShowPar} {\hbox{\HCode{<br />}}}
+>>>
+
+
+\<ams art,proc,book\><<<
+\ifx \deferred@thm@head\:UnDef\else   
+  \Configure{newtheorem}
+     {\par\HCode{<title rend="newtheorem-ams">}\IgnorePar\par}
+     {\HCode{</title>}}
+     {}
+\fi
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%
+\section{Figures}
+%%%%%%%%%%%%%%%%%
+
+\<article,report,book figures\><<<
+\ConfigureEnv{figure}
+   {\ifvmode \IgnorePar\fi\EndP \HCode{<note rend="figure">}}
+   {\ifvmode \IgnorePar\fi\EndP \HCode{</note>}}
+   {}{}
+\Configure{caption}
+   {}{}
+   {\HCode{<title>}}   {\HCode{</title>}}
+>>>
+
+
+%%%%%%%%%%%%%%%%%
+\section{Accents}
+%%%%%%%%%%%%%%%%%
+
+
+\<latex env\><<<
+\Configure{centerline}
+    {\ifvmode \IgnorePar \fi \EndP\HCode{<p \Hnewline
+      rend="centerline">}}
+    {\EndP\HCode{</p>}\ShowPar}
+\Configure{leftline}
+    {\ifvmode \IgnorePar \fi \EndP\HCode{<p \Hnewline
+      rend="leftline">}}
+    {\EndP\HCode{</p>}\ShowPar}
+\Configure{rightline}
+    {\ifvmode \IgnorePar \fi \EndP\HCode{<p \Hnewline
+      rend="rightline">}}
+    {\EndP\HCode{</p>}\ShowPar}
+>>>
+
+
+%%%%%%%%%%%%%%%%%
+\section{Accents}
+%%%%%%%%%%%%%%%%%
+
+\<latex,plain accents\><<<
+\:CheckOption{new-accents}     \if:Option
+   |<new accents|>
+\else
+   |<old accents|>
+\fi
+\let\^^_=\v
+>>>
+
+
+\<latex accents\><<<
+\let\@acci=\' \let\@accii=\` \let\@acciii=\=       
+>>>
+
+\<new accents\><<<
+\:CheckOption{accent-}     \if:Option
+  \Configure{HAccent}\acute{AEIOUYaeiouy{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\bar{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\breve{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\check{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\ddot{AEIOUYaeiouy{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\dot{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\grave{AEIOUaeiou{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\hat{AEIOUaeiou{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\tilde{AOaoNn{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\vec{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\widehat{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\widetilde{}{\Picture+{}}{\EndPicture}
+\fi
+\:CheckOption{mathaccent-}     \if:Option
+  \Configure{HAccent}\"{AEIOUYaeiouy{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\'{AEIOUYaeiouy{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\.{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\={}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\H{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\^{AEIOUaeiou{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\`{AEIOUaeiou{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\b{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\c{Cc{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\d{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\t{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\u{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\v{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\~{AOaoNn{}}{\Picture+{}}{\EndPicture}
+\fi
+>>>
+
+
+\<new accents\><<<
+\Configure{accent}{*}
+   {<!--tex4ht:accent\Hnewline font="}{" char="}{" type="}{"-->}
+   {<!--tex4ht:end accent-->}
+\Configure{mathaccent}{*}
+   {<!--tex4ht:mathaccent\Hnewline font="}{" char="}{" type="}{"-->}
+   {<!--tex4ht:end mathaccent-->}
+\Configure{accented}{*}
+   {<!--tex4ht:accented\Hnewline font="}{" char="}{" type="}{"-->}
+   {<!--tex4ht:end accented-->}
+\Configure{accenting}{*}
+   {<!--tex4ht:accenting\Hnewline-->}
+   {<!--tex4ht:end accenting-->}
+>>>
+
+
+
+
+\<old accents\><<<
+\Configure{accent}\`\grave{A{A}E{E}I{I}O{O}U{U}%
+                   a{a}e{e}i{i}\i{i}o{o}u{u}{}{}}
+   {\a:accents{grave}{#1}}   {\b:accents{grave}{#1}{#2}}
+\Configure{accent}\'\acute{A{A}E{E}I{I}O{O}U{U}Y%
+           {Y}a{a}e{e}i{i}\i{i}o{o}u{u}y{y}{}{}}
+   {\a:accents{acute}{#1}}   {\b:accents{acute}{#1}{#2}}
+\Configure{accent}\^\hat{A{A}E{E}I{I}O{O}U{U}a{a}%
+                      e{e}i{i}\i{i}o{o}u{u}{}{}}
+   {\a:accents{circ}{#1}}   {\b:accents{hat}{#1}{#2}}
+\Configure{accent}\~\tilde{A{A}O{O}a{a}o{o}N{N}n{n}{}{}}
+   {\a:accents{tilde}{#1}}   {\b:accents{tilde}{#1}{#2}}
+\Configure{accent}\"\ddot{A{A}E{E}I{I}O{O}U{U}Y%
+           {Y}a{a}e{e}i{i}\i{i}o{o}u{u}y{y}{}{34}}
+   {\a:accents{uml}{#1}}     {\b:accents{uml}{#1}{#2}}
+>>>
+
+
+
+
+
+The following are also placed under accents configuration.
+
+\<old accents\><<<
+\Configure{accent}\c\c{C{C}c{c}{}{}}
+   {\a:accents{cedil}{#1}}     {\b:accents{cedil}{#1}{#2}}
+\Configure{accent}\t\t{{}{}}
+   {\a:accents{udot}{#1}}     {\b:accents{udot}{#1}{#2}}
+\Configure{accent}\H\H{{}{}} {}{\b:accents{Huml}{#1}{#2}}
+>>>
+
+The following originally have been defined to be parameter-less.
+
+
+
+\<old accents\><<<
+\Configure{accent}\.\dot{{}{}}  {}{\b:accents{dot}{#1}{#2}}
+\Configure{accent}\u\breve{{}{}}{}{\b:accents{breve}{#1}{#2}}
+\Configure{accent}\vec\vec{{}{}}{}{\b:accents{vec}{#1}{#2}}
+\Configure{accent}\v\check{{}{}}{}{\b:accents{check}{#1}{#2}} 
+\Configure{accent}\=\bar{{}{}}  {}{\b:accents{bar}{#1}{#2}}
+>>>
+
+
+%  \= macron
+
+\<old accents\><<<
+\Configure{accent}\widetilde\widetilde{{}{}} 
+   {}{\b:accents{widetilde}{#1}{#2}}
+\Configure{accent}\widehat\widehat{{}{}} 
+   {}{\b:accents{widehat}{#1}{#2}}
+>>>
+
+
+\verb'\vec', \verb'\widetilde', and \verb'\widehat' are for math mode.
+\verb'\b', \verb'\c', \verb'\d', \verb'\t', and \verb'\H' are for text mode.
+
+
+
+
+\<configure tei-math plain\><<<    
+|<shared latex,plain accents|>
+>>>
+
+\<configure tei-math latex\><<<    
+|<shared latex,plain accents|>
+>>>
+
+\<shared latex,plain accents\><<<
+\:CheckOption{new-accents}     \if:Option \else
+   \Configure{accents}
+     {\ifmmode \expandafter\mathord\fi
+      {|<temp hcode accents|>%
+      \ht:special{t4ht@[}#2\ht:special{t4ht@]}}}
+     {\ifmmode \expandafter\mathord\fi
+       {\HCode{<term type='accent#1'>}#3\HCode{</term>}}}
+\fi
+>>>
+
+
+
+\<temp hcode accents\><<<
+\HCode{&\#x\expandafter \ifx\csname U#2#1\endcsname\relax
+                 #2#1\else \csname U#2#1\endcsname\fi;}%
+>>>
+
+
+%\HCode{&#2#1;}%
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Math}
+%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\<latex math\><<<
+\Configure{equation}
+   {}    {\HCode{<title>}}   {\HCode{</title>}}
+\ConfigureEnv{equation}
+   {\IgnorePar\EndP
+    \HCode{<div rend="equation"><p rend="equation">}}
+   {\HCode{</p></div>}\ShowPar\par}
+   {}{}
+>>>
+
+\<configure tei-mml tex4ht\><<<
+\Configure{$$}
+   {\Configure{@math}{display="block"}\DviMath}
+   {\EndDviMath{\csname HCondtrue\endcsname\noindent}}{}
+\Configure{DviMath}
+    {\mathmltrue \NoFonts\IgnoreRule\HCode{<!--l.
+       \the\inputlineno--><formula notation="mathml"\Hnewline
+         \expandafter\:rend \a:@math==//><math 
+           xmlns="http://www.w3.org/1998/Math/MathML"\Hnewline
+           \expandafter\m:rend\a:@math==//>}\a:math
+       |<sv dvimath par|>\IgnorePar}
+    {\HCode{</math></formula>}\EndIgnoreRule\EndNoFonts
+     |<recall dvimath par|>\mathmlfalse}
+\def\:rend#1=#2=#3//{\if !#1!\else rend=#2\fi}
+\def\m:rend#1=#2=#3//{\if !#1!\else display=#2\fi}
+>>>
+
+\<recall dvimath par\><<<
+\sv:ignore
+>>>
+
+\<sv dvimath par\><<<
+\edef\sv:ignore{\if:nopar  
+    \noexpand\IgnorePar\else \noexpand\ShowPar\fi}%
+>>>
+
+
+
+\<configure tei-mml amsmath\><<<  
+\ConfigureEnv{gather}
+   {\ShowPar\par}   {\ShowPar\par}
+   {}{}
+>>>
+
+
+
+
+
+
+\<configure tei-mml amsmath\><<<
+\ConfigureEnv{align*} 
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="align-star">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi} {}{}    
+\ConfigureEnv{alignat*}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="alignat-star">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+\ConfigureEnv{alignat}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="alignat">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}   
+\ConfigureEnv{align}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="align">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}   
+\ConfigureEnv{eqxample}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="eqxample">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+\ConfigureEnv{flalign*}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="flalign*">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+\ConfigureEnv{flalign}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="flalign">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+\ConfigureEnv{gather}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="gather">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+\ConfigureEnv{gather*}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="gather-star">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+\ConfigureEnv{gathered}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="gathered">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+\ConfigureEnv{matrix}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="matrix">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+\ConfigureEnv{xalignat*}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="xalignat-star">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+\ConfigureEnv{xalignat}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="xalignat">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+\ConfigureEnv{xxalignat}
+   {\ifmmode\else \IgnorePar\EndP \HCode{<note rend="xxalignat">}\fi}
+   {\ifmmode\else \HCode{</note>}\par\ShowPar\fi}{}{}
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Loose Ends}
+%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\<latex environments\><<<
+\ConfigureEnv{verbatim}
+  {\ifinner\else \vfill\break\fi
+    \IgnorePar\EndP\HCode{<p rend="verbatim">}\EndNoFonts}
+  {\NoFonts \ht:special{t4ht=</p>}\ShowPar\par}
+  {} {}
+\ConfigureEnv{verbatim*}
+  {\ifinner\else \vfill\break\fi
+    \IgnorePar\EndP\HCode{<p rend="verbatim-star">}\EndNoFonts}
+  {\NoFonts \HCode{</note><p>}\ShowPar\par}
+  {} {}
+\Configure{verbatim}{\:nbsp}{\a:sp}
+>>>
+
+
+\<latex environments\><<<
+\ConfigureEnv{flushleft}
+   {\IgnorePar\EndP\HCode{<div type="flushleft">}%
+    \gHAdvance\P:level by 1 }
+   {\IgnorePar\EndP\gHAdvance\P:level by -1 \HCode{</div>}}
+   {}{}
+\ConfigureEnv{flushright}
+   {\IgnorePar\EndP\HCode{<div type="flushright">}%
+    \gHAdvance\P:level by 1 }
+   {\IgnorePar\EndP\gHAdvance\P:level by -1 \HCode{</div>}}
+   {}{}
+\ConfigureList{flushleft}
+  {}{}
+  {} {\par\ShowPar}
+\ConfigureList{flushright}
+  {}{}
+  {} {\par\ShowPar}
+>>>
+
+
+\<article,report\><<<
+\ConfigureEnv{abstract}
+   {\IgnorePar\EndP\HCode{<div type="abstract">}%
+    \gHAdvance\P:level by 1 }
+   {\IgnorePar\EndP\gHAdvance\P:level by -1 \HCode{</div>}}
+   {\HCode{<head>}}
+   {\HCode{</head>}}
+>>>
+
+
+\<tex4ht paragraphs\><<<
+\newif\ifHCond
+\Configure{HtmlPar}
+   {\EndP\HCode{<!--l. \the\inputlineno-->%
+      \ifnum\P:level=0 <div type="p">\fi 
+      <p>}\gHAdvance\P:level by 1 } 
+   {\EndP\HCode{<!--l. \the\inputlineno-->%
+      \ifnum\P:level=0 <div type="p">\fi 
+      <p>}\gHAdvance\P:level by 1 }    
+   {\gHAdvance\P:level by -1 \HCode{</p>\ifnum\P:level=0 </div>\fi }}
+   {\gHAdvance\P:level by -1 \HCode{</p>\ifnum\P:level=0 </div>\fi }}    
+>>>
+
+
+
+
+
+
+\<latex etc\><<<
+\Configure{newline}{\HCode{<!--br/-->}}             
+>>>
+
+\<configure tei-mml latex\><<< 
+\Configure{newline}
+  {\ifmtext \HCode{</mtext><mtext class="newline">}%
+   \else \HCode{<!--br role="newline" /-->}\fi}
+>>>
+
+
+
+\<latex etc\><<<
+\ConfigureEnv{minipage}
+   {\IgnorePar\EndP\HCode{<note rend="minipage">}}
+   {\IgnorePar\EndP\HCode{</note>}\ShowPar}
+   {}{}
+\Configure{newtheorem}
+   {\IgnorePar\EndP\HCode{<note rend="newtheorem"><title>}}
+   {\HCode{</title>}\ShowPar\par}
+   {\IgnorePar\EndP\HCode{</note>}\ShowPar\par}
+>>>
+
+
+
+
+\<ams art,proc,book\><<<
+\ifx \deferred@thm@head\:UnDef\else   
+   |<shared ams thm/cls|>
+\fi
+>>>
+
+\<configure tei amsthm\><<<
+|<shared ams thm/cls|>
+>>>
+
+\<shared ams thm/cls\><<<
+\Configure{proof}
+   {\IgnorePar\EndP\HCode{<note rend="proof"><title>}}
+   {\HCode{</title>}\ShowPar\par}
+   {\IgnorePar\EndP\HCode{</note>}\ShowPar\par}
+>>>
+
+
+
+
+\<tex4ht cross-linking\><<<
+\Configure{Link}{ref}{ target=}{ id=}{\empty}
+>>>
+
+\<configure tei url\><<<
+\Decl{<!NOTATION URL SYSTEM "" >}
+\Configure{url}{%
+  \urlLink[xr-ent\ent:cnt]{}{}#1\EndurlLink
+    \Decl{<!ENTITY xr-ent\ent:cnt\space  SYSTEM "#1" NDATA URL>}%
+    \gHAdvance\ent:cnt by 1
+}
+\LinkCommand\urlLink{xref,doc}
+>>>
+
+ xr-ent has to be a notation-type entity to fit with TEI's demand
+ of `\verb+doc ENTITY #IMPLIED+'. For instance,
+
+\begin{verbatim}
+<!NOTATION URL SYSTEM "">
+<!ENTITY xr-ent0 SYSTEM
+   "http://wwwinfo.cern.ch/asdoc/geant/geantall.html" NDATA URL>
+\end{verbatim}
+
+% \Decl{<!ATTLIST figure width CDATA \#IMPLIED>}
+% \Decl{<!ATTLIST figure height CDATA \#IMPLIED>}
+
+
+\<configure tei-mmltei graphics\><<<
+\def\:tempc#1{%
+   \Configure{graphics*}
+      {#1}
+      {\HCode{<figure entity="fg-ent\ent:cnt" 
+                  width="\the\Gin@req@width" 
+                 height="\the\Gin@req@height" />}%
+       \Decl{<!ENTITY fg-ent\ent:cnt\space  SYSTEM 
+             "\csname Gin@base\endcsname" NDATA #1>}%
+       \gHAdvance\ent:cnt by 1
+      }}
+|<graphics types|>
+>>>
+
+
+\<configure tei graphics\><<<
+\def\:tempc#1{%
+   \Decl{<!NOTATION #1 SYSTEM "" >}
+   \Configure{graphics*}
+      {#1}
+      {\HCode{<figure entity="fg-ent\ent:cnt" />%
+              <!--width="\the\Gin@req@width" 
+                 height="\the\Gin@req@height"-->}%
+       \Decl{<!ENTITY fg-ent\ent:cnt\space  SYSTEM 
+             "\csname Gin@base\endcsname.#1" NDATA #1>}%
+       \gHAdvance\ent:cnt by 1
+      }}
+|<graphics types|>
+>>>
+
+\<graphics types\><<<
+\:tempc{eps}
+\:tempc{jpg}
+\:tempc{pdf}
+\:tempc{png}
+\:tempc{tif}
+\:tempc{gif}
+>>>
+
+
+\<configure tei fontmath\><<<
+\Configure{mathit}{\ifmathml\else \HCode{<hi rend="it">}\fi}
+                  {\ifmathml\else \HCode{</hi>}\fi}
+\Configure{mathbf}{\ifmathml\else \HCode{<hi rend="bf">}\fi}
+                  {\ifmathml\else \HCode{</hi>}\fi}
+\Configure{mathtt}{\ifmathml\else \HCode{<hi rend="tt">}\fi}
+                  {\ifmathml\else \HCode{</hi>}\fi}
+\Configure{mathsf}{\ifmathml\else \HCode{<hi rend="sf">}\fi}
+                  {\ifmathml\else \HCode{</hi>}\fi}
+\Configure{mathrm}{\ifmathml\else \HCode{<hi rend="rm">}\fi}
+                  {\ifmathml\else \HCode{</hi>}\fi}
+>>>
+
+\<configure tei fontmath\><<<
+\Configure{textbf}{\ifmathml\else
+                     |<par within font|>\HCode{<hi rend="bf">}\fi}
+                  {\ifmathml\else 
+                    \HCode{</hi>}|<end par within font|>\fi}
+\Configure{textit}{\ifmathml\else
+                     |<par within font|>\HCode{<hi rend="it">}\fi}
+                  {\ifmathml\else 
+                    \HCode{</hi>}|<end par within font|>\fi}
+\Configure{textrm}{\ifmathml\else
+                     |<par within font|>\HCode{<hi rend="rm">}\fi}
+                  {\ifmathml\else 
+                    \HCode{</hi>}|<end par within font|>\fi}
+\Configure{textup}{\ifmathml\else
+                     |<par within font|>\HCode{<hi rend="up">}\fi}
+                  {\ifmathml\else 
+                    \HCode{</hi>}|<end par within font|>\fi}
+\Configure{textsc}{\ifmathml\else
+                     |<par within font|>\HCode{<hi rend="sc">}\fi}
+                  {\ifmathml\else 
+                    \HCode{</hi>}|<end par within font|>\fi}
+\Configure{textsf}{\ifmathml\else
+                     |<par within font|>\HCode{<hi rend="sf">}\fi}
+                  {\ifmathml\else 
+                    \HCode{</hi>}|<end par within font|>\fi}
+\Configure{textsl}{\ifmathml\else
+                     |<par within font|>\HCode{<hi rend="sl">}\fi}
+                  {\ifmathml\else 
+                    \HCode{</hi>}|<end par within font|>\fi}
+\Configure{texttt}{\ifmathml\else
+                     |<par within font|>\HCode{<hi rend="tt">}\fi}
+                  {\ifmathml\else 
+                    \HCode{</hi>}|<end par within font|>\fi}
+\Configure{emph}{\ifmathml\else
+                     |<par within font|>\HCode{<emph>}\fi}
+                  {\ifmathml\else 
+                    \HCode{</emph>}|<end par within font|>\fi}
+>>>
+
+
+
+\<par within font\><<<
+\leavevmode\SaveEndP\bgroup 
+\Configure{HtmlPar}
+   {\HCode{<!--br role="newline" /-->}}
+   {\HCode{<!--br role="newline" /-->}}
+   {}{}%
+>>>                    
+
+\<end par within font\><<<
+\egroup \RecallEndP
+>>>
+
+\endinput

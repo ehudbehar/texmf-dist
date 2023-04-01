@@ -1,0 +1,119 @@
+% lua-widow-control
+% https://github.com/gucci-on-fleek/lua-widow-control
+% SPDX-License-Identifier: MPL-2.0+
+% SPDX-FileCopyrightText: 2022 Max Chernoff
+
+\wlog{lua-widow-control v3.0.0} %%version
+
+\ifx\directlua\undefined
+    \errmessage{%
+        LuaTeX is required for this package.
+        Make sure to compile with `luatex'%
+    }
+\fi
+
+\catcode`@=11
+
+% We need to change some code if we're using LuaMetaTeX
+\def\lwc@iflmtx{\ifnum\luatexversion>200\relax}
+
+\input ltluatex % \LuaTeX{}Base
+
+\clubpenalty=1
+\widowpenalty=1
+\displaywidowpenalty=1
+\brokenpenalty=1
+
+\newdimen\lwcemergencystretch
+\lwcemergencystretch=3em
+
+\newdimen\lwcdraftoffset
+\lwcdraftoffset=1in
+
+\newcount\lwcmaxcost
+\lwcmaxcost=2147483647
+
+\directlua{require "lua-widow-control"}
+
+% Here, we enable font expansion/contraction. It isn't strictly necessary for
+% \lwc/'s functionality; however, it is required for the
+% lengthened paragraphs to not have terrible spacing.
+\lwc@iflmtx\else
+    \expandglyphsinfont\the\font 20 20 5
+    \adjustspacing=2
+\fi
+
+% Enable \lwc/ by default when the package is loaded.
+\lwc@enable
+
+% Fix some strange LMTX bugs
+\lwc@iflmtx
+    \normalizelinemode=\numexpression\normalizelinemode bor 2\relax
+\fi
+
+
+% Expansion of some parts of the document, such as section headings, is quite
+% undesirable, so we'll disable \lwc/ for certain commands.
+
+% We should only reenable \lwc/ at the end if it was already enabled.
+\newcount\lwc@disable@count
+
+\def\lwc@patch@pre{%
+    \lwc@if@enabled%
+        \advance\lwc@disable@count by 1%
+        \lwc@disable%
+    \fi%
+}
+
+\def\lwc@patch@post{
+    \ifnum\lwc@disable@count>0%
+        \lwc@enable%
+        \advance\lwc@disable@count by -1%
+    \fi
+}
+
+\def\lwc@extractcomponents #1:#2->#3\STOP{%
+    \def\lwc@params{#2}%
+    \def\lwc@body{#3}%
+}
+
+\def\lwcdisablecmd#1{%
+    \ifdefined#1%
+        \expandafter\lwc@extractcomponents\meaning#1\STOP%
+        \begingroup%
+            \catcode`@=11%
+            \expanded{%
+                \noexpand\scantokens{%
+                    \gdef\noexpand#1\lwc@params{%
+                        \noexpand\lwc@patch@pre\lwc@body\noexpand\lwc@patch@post%
+                    }%
+                }%
+            }%
+        \endgroup%
+    \fi%
+}
+
+\begingroup
+    \lwc@iflmtx\else
+        \suppressoutererror=1
+    \fi
+    \lwcdisablecmd{\beginsection} % Sectioning
+\endgroup
+
+% Make the commands public
+\let\lwcenable=\lwc@enable
+\let\lwcdisable=\lwc@disable
+\let\lwcdebug=\lwc@debug
+\def\lwcdraft#1{%
+    \lwc@show@costs{#1}%
+    \lwc@show@colours{#1}%
+}
+\let\lwcshowcosts=\lwc@show@costs
+\let\lwcshowcolours=\lwc@show@colours
+\let\iflwc=\lwc@if@enabled
+\let\lwcnobreak=\lwc@nobreak
+\let\lwcpreshipout=\lwc@pre@shipout
+
+
+\catcode`@=12
+\endinput

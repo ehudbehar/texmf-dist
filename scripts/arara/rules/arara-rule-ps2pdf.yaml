@@ -1,0 +1,35 @@
+!config
+# Arara, the cool TeX automation tool
+# Copyright (c) 2022, Island of TeX
+# All rights reserved.
+#
+# This rule is part of arara.
+identifier: ps2pdf
+name: PS2PDF
+authors:
+- Island of TeX
+commands:
+- name: The PS2PDF program
+  command: >
+    @{
+        infile = getBasename(reference.fileName).concat('.ps');
+        outfile = getBasename(output[0]).concat('.pdf');
+        return getCommand('ps2pdf', options, infile, outfile);
+    }
+arguments:
+- identifier: output
+  flag: >
+    @{
+        isEmpty(parameters.output, reference.fileName, parameters.output)
+    }
+  default: ''
+- identifier: options
+  flag: >
+    @{
+        if (isList(parameters.options)) {
+            return parameters.options;
+        }
+        else {
+            throwError('I was expecting a list of options.');
+        }
+    }

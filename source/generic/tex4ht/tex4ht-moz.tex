@@ -1,0 +1,1071 @@
+% $Id: tex4ht-moz.tex 65 2010-11-17 19:16:45Z karl $
+% compile 3 times: latex tex4ht-moz
+%           or   xhlatex tex4ht-moz "html,3,sections+"
+%
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) 2000-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+%%%%%%%%%%%%%%%%%% load style files %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifx \HTML\UnDef
+   \def\HTML{mozilla}                   
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}         
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common.tex}
+\input{tex4ht-cpright.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Preamble}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<mozilla\><<<
+% mozilla.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) |CopyYear.2000. Eitan M. Gurari, Paul Gartside
+% gartside@maths.ox.ac.uk
+|<TeX4ht copywrite|>
+>>>
+
+  
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Start Here}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<configure mozilla Preamble\><<<
+\:CheckOption{xht} \if:Option 
+  \Configure{ext}{xht}
+\else
+  \Configure{ext}{xml}
+\fi
+>>>
+
+It looks like frames on (just current?) browsers require
+html extension fot file names.
+
+Mozilla complaints about version 1.1 :-(
+
+
+%\Configure{VERSION}
+%  {\IgnorePar \HCode{<?xml version="1.0"?>\Hnewline}}     
+
+\<configure mozilla tex4ht\><<<
+\:CheckOption{frames}  \if:Option
+  \Configure{frames-altDOCTYPE}{|<no frames DOCTYPE|>}
+\else
+  |<no frames DOCTYPE|>
+\fi
+\:CheckOption{-css} \if:Option \else
+  \Configure{XML-STYLESHEET}
+    {\HCode{<?xml-stylesheet type="text/css"
+                             href="\aa:CssFile"?>\Hnewline}}
+\fi
+>>>
+
+
+\<no frames DOCTYPE\><<<
+\:CheckOption{pmathml} \if:Option 
+    |<pmathml dtd|>
+\else
+    |<non pmathml dtd|>
+\fi
+>>>
+
+
+
+\<non pmathml dtd\><<<
+\Configure{DOCTYPE}
+  {\IgnorePar
+    \HCode{<!DOCTYPE html
+   PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0//|<dtd lang|>"\Hnewline
+   "http://www.w3.org/Math/DTD/mathml2/xhtml-math11-f.dtd"
+   >\Hnewline     
+%   "http://www.w3.org/TR/MathML2/dtd/xhtml-math11-f.dtd" [\Hnewline
+%     <!ENTITY mathml "http://www.w3.org/1998/Math/MathML">\Hnewline
+%  ]>\Hnewline     
+  }}
+>>>
+
+
+\<dtd lang\><<<
+\expandafter
+\ifx \csname a:dtd-lang\endcsname\relax EN\else
+  \csname a:dtd-lang\endcsname
+\fi
+>>>
+
+
+% \Configure{@HEAD}{\HCode{<meta  \Hnewline
+%   http-equiv="Content-Type" content="text/html;
+%   \ifx \a:charset\:UnDef \A:charset
+%   \else \a:charset\fi "    \xml:empty>}}
+
+
+
+\<xmlns\><<<
+xmlns="http://www.w3.org/1999/xhtml"
+>>>
+
+
+\<configure mozilla tex4ht\><<<
+\Configure{HTML}
+     {\IgnorePar\HCode{<html \a:@HTML\Hnewline
+            \:xhtml{|<xmlns|>}\Hnewline>}}
+     {\HCode{\Hnewline</html>\Hnewline}}
+>>>
+
+%        
+
+
+
+
+
+\<configure mozilla tex4ht\><<<  
+\Configure{DviMath}
+    {\mathmltrue 
+     \ifOption{mml-fonts}{|<mml fonts|>}{\NoFonts}\IgnoreRule\HCode{<!--l.
+       \the\inputlineno-->}{\Tg<\a:mathml math\Hnewline
+         |<math xmlns|>\a:@math>}\a:math
+       |<sv dvimath par|>\IgnorePar}
+    {\Tg</\a:mathml math>\EndIgnoreRule
+     \ifOption{mml-fonts}{|<html fonts|>}{\EndNoFonts}%
+     |<recall dvimath par|>\mathmlfalse}
+>>>
+
+
+
+
+\<html fonts\><<<
+\Configure{htf}{0}{+}{<span\Hnewline
+   class="}{\%s}{-\%s}{x-x-\%d}{}{">}{</span>}%
+>>>
+
+\<mml fonts\><<<
+\Configure{htf}{0}{+}{<mstyle\Hnewline
+   class="}{\%s}{-\%s}{x-x-\%d}{}{">}{</mstyle>}%
+>>>
+
+
+
+\<recall dvimath par\><<<
+\sv:ignore
+>>>
+
+
+
+\<sv dvimath par\><<<
+\edef\sv:ignore{\if:nopar  
+    \noexpand\IgnorePar\else \noexpand\ShowPar\fi}%
+>>>
+
+
+\<math xmlns\><<<
+\csname a:math-xmlns\endcsname
+>>>
+
+The amphersand chracter must be embeded within group parentheses, to
+hide it in tables from halign.
+
+
+\<configure mozilla tex4htDEPRECATED\><<<
+\Configure{$$} 
+   {\Configure{@math}{mode="display"}\IgnorePar\EndP\DviMath}
+   {\EndDviMath\ShowPar\par{\HCondtrue\noindent}}{}
+\Configure{$}
+   {\Configure{@math}{mode="inline"}\DviMath}
+   {\EndDviMath}{}
+>>>
+
+\<configure mozilla latexDEPRECATED\><<<
+\Configure{[]}
+  {\Configure{@math}{mode="display"}\csname a:mathml[]\endcsname
+   \DviMath\Tg<\a:mathml mrow\Hnewline>$$}
+  {$$\Tg</\a:mathml mrow>\EndDviMath\csname b:mathml[]\endcsname}
+>>>
+
+\<configure mozilla latexDEPRECATED\><<<
+\Configure{()}
+  {\Configure{@math}{mode="inline"}\csname a:mathml()\endcsname
+   \DviMath\Tg<\a:mathml mrow\Hnewline>$}
+  {$\Tg</\a:mathml mrow>\EndDviMath\csname b:mathml()\endcsname}
+\Css{math[mode="display"] 
+    {margin-top:0.8em; margin-bottom:0.8em; display:block; text-align:center;}}
+>>>
+
+\<configure mozilla latex\><<<
+\Configure{Roman}{I}{V}{X}{L}{C}{D}{M}
+\Configure{roman}{i}{v}{x}{l}{c}{d}{m}
+>>>
+
+\<configure mozilla latex\><<<
+\Configure{underline}
+   {\bgroup\ifmathml |<mathml underline|>%
+    \else |<nomath underline|>\HCode{<span class="underline">}\fi}
+   {\ifmathml |<end mathml underline|>\else \HCode{</span>}\fi\egroup}
+>>>
+
+\<configure mozilla plain\><<<
+\Configure{underline}
+   {\bgroup |<mathml underline|>}
+   {|<end mathml underline|>\egroup}
+>>>
+
+
+
+
+
+\<mathml underline\><<<
+\HCode{<\a:mathml munder 
+class="mml-underline"><\a:mathml mrow>}% 
+>>>
+
+\<end mathml underline\><<<
+\HCode{</\a:mathml mrow><\a:mathml mo\Hnewline
+accent="true">&\#x00AF;</\a:mathml mo></\a:mathml munder>}%
+>>>
+
+The code 0332 for underbar is not recognized. Hence, we use the code
+00AF of overbar (\verb+&OverBar;+ is not recognized anymore).
+
+
+
+
+\<nomath underline\><<<
+\expandafter\everymath
+\expandafter{\expandafter\everymath
+             \expandafter{\the\everymath}}%
+\let\o::@underline:\o:@@underline:
+\def\o:@@underline:{\let\o:@@underline:\o::@underline:}%
+>>>
+
+
+\<configure mozilla latex\><<<
+\Configure{equation}
+  {\ifmmode\else\par \IgnorePar\fi \EndP  
+           \HCode{<table\Hnewline class="equation"><tr><td>}\IgnorePar
+  }
+  {\IgnorePar\EndP\HCode{</td><td class="eq-no">}}
+  {\end:TTT \ifmmode\else \ShowPar\par{\HCondtrue\noindent}\fi}
+>>>
+
+
+
+
+Mozilla has problem dealing with double and triple unicode prime characters.
+
+\<configure mozilla latex\><<<
+|<plain,latex math|>
+>>>
+
+\<configure mozilla plain\><<<
+|<plain,latex math|>
+>>>
+
+\<plain,latex math\><<<
+\Configure{'}
+   {\let\:primes=\empty}
+   {\relax \csname SUB:prime\endcsname
+     \sp{\global\let\SUB:prime=\:UnDef \:primes}}
+   {\let\prime=\relax \xdef\:primes{\:primes\prime}}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Spaces after mtext}
+%%%%%%%%%%%%%%%%%%
+
+
+\<configure mozilla latex\><<<
+|<mathml text util|>
+>>>
+
+\<configure mathml amstex\><<<  
+|<mathml text util|>
+>>>
+
+\<mathml text util\><<<
+\def\AA:text#1{\mtexttrue
+   \HCode{<!--mstyle\Hnewline
+      class="#1"--><\a:mathml
+                mtext \a:@mtext>}|<start mtext space|>\PauseMathClass
+   |<math within mtext|>}
+\def\BB:text{\mtextfalse\EndPauseMathClass|<end mtext space|>\HCode
+     {</\a:mathml mtext><!--/mstyle-->}}
+>>>
+
+\<math within mtext\><<<
+\Configure{$}{\EndPauseMathClass \mtextfalse
+    |<end mtext space|>\HCode{</\a:mathml
+                mtext><!--mstyle\Hnewline class="math"-->}}
+  {\HCode{<!--/mstyle--><\a:mathml mtext 
+               \a:@mtext>}|<start mtext space|>\PauseMathClass
+              \mtexttrue}{}
+>>>
+
+\<math within mtext\><<<
+\Configure{()}%
+  {\EndPauseMathClass \mtextfalse
+      |<end mtext space|>\HCode{</\a:mathml mtext><\a:mathml
+                                mstyle\Hnewline \mml:class="math">}$}%
+  {$\HCode{</\a:mathml mstyle><\a:mathml
+       mtext \a:@mtext>}|<start mtext space|>\PauseMathClass
+   \mtexttrue}%
+  {}%
+>>>
+
+
+
+\<start mtext space\><<<
+\ht:special{t4ht@,&\#x00A0;}%
+>>>
+\<end mtext space\><<<
+\ht:special{t4ht@,}%
+>>>
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Accents}
+%%%%%%%%%%%%%%%%%%
+
+See test file at tex4ht-mathml
+
+\begin{verbatim}
+ > There is a problem in \dot{x}: it is never build well, but \dot{k} or
+ > \dot{V} are correctly arranged.
+
+It is a mozilla problem--it doesnt recognizes the unicode character
+&#x1E8B; of \dot{x}.  I modified the defintion to get a simulation of
+the same effect, as is the case   for \dot{k} and \dot{V}.
+
+ > I detected that symbols \tilde and \widetilde are not being generated
+ > by TeX4ht
+
+I'm getting the same problem here.  Tex4ht produces the combining
+tilde U0303, but mozilla fails to recognize it.  Changing it
+to the small tilde character U02DC fixes the problem (now in the bug
+fixes page of tex4ht).  
+
+However, that is an improper behavior of mozilla. It can be seen with
+the hat and widehat operations. There U0302 does the right job and
+U02C6 doesn't.
+\end{verbatim}
+
+
+
+\<old unicode accents\><<<
+\expand:after{\Configure{accent}}\csname OT1\string\.\endcsname
+   \dot{{}{}}  
+   {\a:accents{}{#1}}    {\b:accents{dot}{#1}{#2}}
+\expand:after{\Configure{accent}}\csname OT1\string\"\endcsname
+   \ddot{{}{}}
+   {\a:accents{}{#1}}     {\b:accents{uml}{#1}{#2}}
+>>>
+
+
+\<configure mozilla latex\><<<
+\:CheckOption{new-accents}     \if:Option \else
+  \def\:widetilde:over{\ifmmode \expandafter\mathop\fi
+                                     {\x:unicode{02DC}}}  
+%  \def\:tilde:over{\mathop{\x:unicode{02DC}}}
+\fi
+>>>
+
+\<configure mozilla plain\><<<
+\:CheckOption{new-accents}     \if:Option \else
+  \def\:widetilde:over{\mathop{\ifmmode \expandafter\x:unicode\fi
+                                                          {02DC}}}   
+%  \def\:tilde:over{\mathop{\x:unicode{02DC}}}
+\fi
+>>>
+
+
+\<old unicode accents\><<<
+\:CheckOption{uniaccents}     \if:Option \else
+  \Configure{accent}\dot\dot{|<dot above codes|>{}{}}  
+    {}{}
+  \expand:after{\Configure{accent}}\csname OT1\string\.\expandafter
+    \endcsname
+      \csname OT1\string\.\endcsname{|<dot above codes|>{}{}}  
+    {}{}
+  \expand:after{\Configure{accent}}\csname OT1\string\v\endcsname
+    \check{|<caron codes|>{}{}}
+    {}{}
+  \expand:after{\Configure{accent}}\csname OT1\string\=\endcsname
+    \bar{|<macron codes|>{}{}}  
+    {}{}
+  \expand:after{\Configure{accent}}\csname OT1\string\`\endcsname
+    \grave{|<grave codes|>{}{}}
+    {\a:accents{}{#1}}  {\b:accents{grave}{#1}{#2}}
+  \expand:after{\Configure{accent}}\csname OT1\string\^\endcsname
+     \hat{|<circumflex codes|>{}{}}
+     {}{}
+  \expand:after{\Configure{accent}}\csname OT1\string\~\endcsname
+     \tilde{|<tilde codes|>{}{}}
+     {}{}
+  \Configure{accent}\ddot\ddot{|<diaeresis codes|>{}{34}}
+     {}{}
+  \expand:after{\Configure{accent}}\csname OT1\string\"\expandafter
+     \endcsname
+     \csname OT1\string\"\endcsname{|<diaeresis codes|>{}{34}}
+     {}{}
+%  \expand:after{\expand:after{\Configure{accent}}%
+%    \csname OT1\string\r\endcsname}%
+%    \csname OT1\string\r\endcsname{|<ring codes|>{}{}}
+%    {}{}
+  \expand:after{\Configure{accent}}\csname OT1\string\b\endcsname
+    \b{|<bar below codes|>{}{}}
+    {}{}
+  \expand:after{\expand:after{\Configure{accent}}%
+    \csname OT1\string\d\endcsname}%
+    \csname OT1\string\d\endcsname{|<dot below codes|>{}{}}
+    {}{}
+  \expand:after{\expand:after{\Configure{accent}}%
+    \csname OT1\string\c\endcsname}%
+    \csname OT1\string\c\endcsname{|<cedilla codes|>{}{}}
+    {}{}
+  \expand:after{\expand:after{\Configure{accent}}%
+    \csname OT1\string\H\endcsname}%
+    \csname OT1\string\H\endcsname{|<double acute code|>{}{}}
+    {}{}
+\fi
+>>>
+
+
+\<dot above codes\><<<
+C{010A}c{010B}E{0116}e{0117}G{0120}g{0121}%
+I{0130}Z{017B}z{017C}A{0226}a{0227}O{022E}%
+o{022F}B{1E02}b{1E03}D{1E0A}d{1E0B}F{1E1E}%
+f{1E1F}H{1E22}h{1E23}M{1E40}m{1E41}N{1E44}%
+n{1E45}P{1E56}p{1E57}R{1E58}r{1E59}S{1E60}%
+s{1E61}T{1E6A}t{1E6B}W{1E86}w{1E87}X{1E8A}%
+x{1E8B}Y{1E8E}y{1E8F}%
+>>>
+
+\<caron codes\><<<
+C{010C}c{010D}D{010E}d{010F}%
+E{011A}e{011B}L{013D}l{013E}N{0147}n{0148}R{0158}r{0159}%
+S{0160}s{0161}T{0164}t{0165}Z{017D}z{017E}A{01CD}a{01CE}I{01CF}%
+i{01D0}O{01D1}o{01D2}U{01D3}u{01D4}G{01E6}g{01E7}K{01E8}k{01E9}%
+j{01F0}\i{01D0}\j{01F0}%
+>>>
+
+\<macron codes\><<<
+A{0100}a{0101}E{0112}%
+e{0113}I{012A}i{012B}O{014C}o{014D}U{016A}u{016B}%
+G{1E20}g{1E21}%
+>>>
+
+\<grave codes\><<<
+A{00C0}E{00C8}I{00CC}N{01F8}O{00D2}U{00D9}W{1E80}%
+Y{1EF2}a{00E0}e{00E8}o{00F2}u{00F9}%
+w{1E81}y{1EF3}\i{00EC}%
+>>>
+
+\<circumflex codes\><<<
+A{00C2}E{00CA}I{00CE}O{00D4}U{00DB}a{00E2}e{00EA}%
+i{00EE}o{00F4}u{00FB}C{0108}c{0109}G{011C}g{011D}%
+H{0124}h{0125}J{0134}j{0135}S{015C}s{015D}W{0174}%
+w{0175}Y{0176}y{0177}\i{00EE}\j{0135}%
+>>>
+
+\<tilde codes\><<<
+A{00C3}N{00D1}O{00D5}a{00E3}n{00F1}o{00F5}I{0128}%
+i{0129}U{0168}u{0169}E{1EBC}e{1EBD}%
+Y{1EF8}y{1EF9}\i{0129}%
+>>>
+
+\<diaeresis codes\><<<
+A{00C4}E{00CB}I{00CF}O{00D6}U{00DC}%
+a{00E4}e{00EB}i{00EF}o{00F6}u{00FC}y{00FF}%
+Y{0178}\i{00EF}%
+>>>
+
+\<bar below codes\><<<
+D{1E0E}d{1E0F}K{1E34}k{1E35}L{1E3A}l{1E3B}N{1E48}n{1E49}%
+R{1E5E}r{1E5F}T{1E6E}t{1E6F}Z{1E94}z{1E95}h{1E96}%
+>>>
+
+
+\<cedilla codes\><<<
+K{0136}k{0137}L{013B}l{013C}N{0145}n{0146}%
+R{0156}r{0157}S{015E}s{015F}T{0162}t{0163}%
+E{0228}e{0229}H{1E28}h{1E29}%
+C{00C7}c{00E7}G{0122}g{0123}%
+>>>
+
+
+\<dot below codes\><<<
+A{1EA0}a{1Ea1}D{1E0C}d{1E0D}%
+E{1EB8}e{1EB9}H{1E24}h{1E25}I{1ECA}i{1ECB}%
+K{1E32}k{1E33}L{1E36}l{1E37}M{1E42}m{1E43}%
+N{1E46}n{1E47}O{1ECC}o{1ECD}R{1E5A}r{1E5B}%
+S{1E62}s{1E63}T{1E6C}t{1E6D}U{1EE4}u{1EE5}%
+V{1E7E}v{1E7F}W{1E88}w{1E89}Y{1EF4}y{1EF5}%
+>>>
+
+
+
+
+
+
+
+
+\<old unicode accentsNO\><<<
+\expand:after{\Configure{accent}}\csname OT1\string\`\endcsname
+    \grave{|<grave codes|>{}{}}
+   {\a:accents{}{#1}}  {\b:accents{grave}{#1}{#2}}
+\expand:after{\Configure{accent}}\csname OT1\string\'\endcsname
+    \acute{|<acute codes|>{}{}}
+   {\a:accents{}{#1}}  {\b:accents{acute}{#1}{#2}}
+\expand:after{\Configure{accent}}\csname OT1\string\^\endcsname
+    \hat{|<circumflex codes|>{}{}}
+   {\a:accents{}{#1}}   {\b:accents{hat}{#1}{#2}}
+\expand:after{\Configure{accent}}\csname OT1\string\~\endcsname
+    \tilde{|<tilde codes|>{}{}}
+   {\a:accents{}{#1}}   {\b:accents{tilde}{#1}{#2}}
+\Configure{accent}\ddot\ddot{|<diaeresis codes|>{}{34}}
+   {\a:accents{}{#1}}     {\b:accents{uml}{#1}{#2}}
+\expand:after{\Configure{accent}}\csname OT1\string\"\expandafter
+   \endcsname
+   \csname OT1\string\"\endcsname{|<diaeresis codes|>{}{34}}
+   {\a:accents{}{#1}}     {\b:accents{uml}{#1}{#2}}
+>>>
+
+\<\><<<
+\expand:after{\expand:after{\Configure{accent}}%
+   \csname OT1\string\r\endcsname}%
+   \csname OT1\string\r\endcsname{|<ring codes|>{}{}}
+   {\a:accents{}{#1}}     {\b:accents{ring}{#1}{#2}}
+>>>
+
+\<old unicode accentsNO\><<<
+\expand:after{\expand:after{\Configure{accent}}%
+   \csname OT1\string\d\endcsname}%
+   \csname OT1\string\d\endcsname{|<dot below codes|>{}{}}
+   {\a:accents{}{#1}}     {\b:accents{d}{#1}{#2}}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+\<configure mozilla plain\><<<
+\:CheckOption{new-accents}     \if:Option \else
+   |<old unicode accents|>
+\fi
+>>>
+
+
+\<configure mozilla latex\><<<
+\:CheckOption{new-accents}     \if:Option \else
+   |<old unicode accents|>
+\fi
+>>>
+
+
+
+
+\<configure mozilla croatian\><<<
+\:CheckOption{new-accents}     \if:Option \else
+  |<old unicode accents|>
+\fi
+>>>
+
+
+
+\<configure mozilla romanian\><<<
+\:CheckOption{new-accents}     \if:Option \else
+  |<old unicode accents|>
+\fi
+>>>
+
+
+\<configure mozilla slovak\><<<
+\:CheckOption{new-accents}     \if:Option \else
+  |<old unicode accents|>
+\fi
+>>>
+
+
+\<configure mozilla slovene\><<<
+\:CheckOption{new-accents}     \if:Option \else
+  |<old unicode accents|>
+\fi
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Thin Spaces}
+%%%%%%%%%%%%%%%%%%%%%
+
+
+\<configure mozilla latex\><<<
+\Configure{,}{\mskip\thinmuskip}
+>>>
+
+\<configure mozilla plain\><<<
+\Configure{,}{\mskip\thinmuskip}
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Fonts}
+%%%%%%%%%%%%%%%%%%%%%
+
+\<configure mozilla fontmath\><<<
+|<math fonts utilities|>
+|<set mathcal class|>
+|<set mathcal symbols|>
+|<set Re/Im class|>
+|<set Re/Im symbols|>
+|<set math sf class|>
+|<set math sf symbols|>
+>>>
+
+
+\<configure mozilla euler\><<<
+|<math fonts utilities|>
+|<set fraktur class|>
+|<set fraktur symbols|>
+|<set math script class|>
+|<set math script symbols|>
+|<set math sf class|>
+|<set math sf symbols|>
+>>>
+
+\<configure mozilla eucal\><<<
+|<set mathcal class|>
+|<set mathcal symbols|>
+>>>
+
+\<configure mozilla amsfonts\><<<
+|<math fonts utilities|>
+|<set mathbb class|>
+|<set mathbb symbols|>
+|<set fraktur class|>
+|<set fraktur symbols at amsfonts|>
+>>>
+
+
+\<configure mozilla dsfont\><<<
+|<math fonts utilities|>
+|<configure mathds mathclass|>
+>>>
+
+
+\<math fonts utilities\><<<
+\ifx \tmp:bx\:UnDef \csname newbox\endcsname \tmp:bx \fi
+\def\find:set:mgroup#1#2#3{\bgroup
+  \def\use@mathgroup##1##2##3{\relax
+    \tmp:cnt=##2%
+    \xdef\:temp####1{\noexpand\Configure{MathClass}{#2}%
+        {}{}{}{\mathchar"0\the\tmp:cnt ####1}}%
+  }%
+  \setbox\tmp:bx=\hbox{$#1$}\setbox\tmp:bx=\hbox{}% 
+  \set:mgroup#3{}{}%
+  \egroup
+}
+\def\set:mgroup#1#2{\if :#1#2:\else
+   \:temp{#1#2}\expandafter\set:mgroup \fi}
+>>>
+
+
+
+\<set mathbb class\><<< 
+\ifx \mathbbMathClass\:UnDef
+  \NewMathClass\mathbbMathClass
+\fi
+\Configure{MathClass}{\mathbbMathClass}{*}
+    {<\a:mathml mi mathvariant="double-struck">}{</\a:mathml mi>}{}  
+>>>
+
+
+
+\<set mathbb symbols\><<<
+\find:set:mgroup{\mathbb{A}}{\mathbbMathClass}%
+   {414244454647494A4B4C4D4F535455565758597C} |%A--Z (not CHNPQRZ),k|%
+>>>
+
+The characters CHNPQRZ bet a \verb+<mi mathvariant="double-struck">+    decoration.
+
+
+
+Mathfrak might be conditionally loaded by latex, upon encountering
+the mathfrak command. Hence, the indirect setting of math classes.
+
+\<set fraktur symbols at amsfonts\><<<
+\expandafter\ifx \csname sv:@mathfrak:\endcsname\relax
+   \let\sv:@mathfrak:=\n:@mathfrak:
+\fi
+\def\n:@mathfrak:{\global\let\n:@mathfrak:=\sv:@mathfrak:
+   \global\let\sv:@mathfrak:=\:UnDef
+   |<set fraktur symbols|>%
+}
+\n:@mathfrak:
+>>>
+
+
+In version 1.4b   \verb+<mi mathvariant="fraktur">&Lfr;</mi>+
+is needed. The representations
+   \verb+<mi>&Lfr;</mi>+ and
+   \verb+<mi mathvariant="fraktur">L</mi>+
+don't work.
+
+\<set fraktur class\><<<
+\ifx \mathfrakMathClass\:UnDef
+  \NewMathClass\mathfrakMathClass
+\fi
+\Configure{MathClass}{\mathfrakMathClass}{*}
+    {<\a:mathml mi\Hnewline 
+         mathvariant="fraktur">}{</\a:mathml mi>}{}  
+>>>
+
+\<set fraktur symbols\><<<
+\find:set:mgroup{\mathfrak{A}}{\mathfrakMathClass}%
+  {4142434445464748494A4B4C4D4E4F505152535455565758595A% |%A--Z|%
+   6162636465666768696A6B6C6D6E6F707172737475767778797A% |%a--z|%
+   30313233343536373839}% |%0--9|%
+>>>
+
+
+
+\<set fraktur class\><<<
+\ifx \mathboldfrakMathClass\:UnDef
+  \NewMathClass\mathboldfrakMathClass
+\fi
+\Configure{MathClass}{\mathboldfrakMathClass}{*}
+    {<\a:mathml mi\Hnewline 
+         mathvariant="bold-fraktur">}{</\a:mathml mi>}{}  
+>>>
+
+\<set fraktur symbols\><<<
+\expandafter\ifx\csname mv@bold\endcsname\relax  \else
+\bgroup
+\mathversion{bold}%
+\find:set:mgroup{\mathfrak{A}}{\mathboldfrakMathClass}%
+  {4142434445464748494A4B4C4D4E4F505152535455565758595A% |%A--Z|%
+   6162636465666768696A6B6C6D6E6F707172737475767778797A% |%a--z|%
+  }%
+\egroup
+\fi
+>>>
+
+
+
+\<set math script class\><<<
+\ifx \mathscrMathClass\:UnDef
+  \NewMathClass\mathscrMathClass
+\fi
+\Configure{MathClass}{\mathscrMathClass}{*}
+    {<\a:mathml mi\Hnewline
+         mathvariant="script">}{</\a:mathml mi>}{}  
+>>>
+
+\<set math script symbols\><<<
+\find:set:mgroup{\mathscr{A}}{\mathscrMathClass}%
+  {4142434445464748494A4B4C4D4E4F505152535455565758595A} |%A--Z|%
+>>>
+
+\<set math script class\><<<
+\ifx \mathboldscrMathClass\:UnDef
+  \NewMathClass\mathboldscrMathClass
+\fi
+\Configure{MathClass}{\mathboldscrMathClass}{*}
+    {<\a:mathml mi\Hnewline
+         mathvariant="bold-script">}{</\a:mathml mi>}{}  
+>>>
+
+\<set math script symbols\><<<
+\expandafter\ifx\csname mv@bold\endcsname\relax  \else
+\bgroup
+\mathversion{bold}%
+\find:set:mgroup{\mathscr{A}}{\mathboldscrMathClass}%
+  {4142434445464748494A4B4C4D4E4F505152535455565758595A} |%A--Z|%
+\egroup
+\fi
+>>>
+
+\<set mathcal class\><<<
+\ifx \mathcalMathClass\:UnDef
+  \NewMathClass\mathcalMathClass
+\fi
+\Configure{MathClass}{\mathcalMathClass}{*}
+    {<\a:mathml mi\Hnewline
+         mathvariant="script">}{</\a:mathml mi>}{}  
+>>>
+
+\<set mathcal symbols\><<<
+\find:set:mgroup{\mathcal{A}}{\mathcalMathClass}%
+  {4142434445464748494A4B4C4D4E4F505152535455565758595A} |%A--Z|%
+>>>
+
+\<set mathcal class\><<<
+\ifx \mathboldcalMathClass\:UnDef
+  \NewMathClass\mathboldcalMathClass
+\fi
+\Configure{MathClass}{\mathboldcalMathClass}{*}
+    {<\a:mathml mi\Hnewline
+         mathvariant="bold-script">}{</\a:mathml mi>}{}  
+>>>
+
+\<set mathcal symbols\><<<
+\expandafter\ifx\csname mv@bold\endcsname\relax  \else
+\bgroup
+\mathversion{bold}%
+\find:set:mgroup{\mathcal{A}}{\mathboldcalMathClass}%
+  {4142434445464748494A4B4C4D4E4F505152535455565758595A} |%A--Z|%
+\egroup
+\fi
+>>>
+
+
+
+
+\<set math sf classBROKEN\><<<
+\ifx \boldmathsfMathClass\:UnDef
+  \NewMathClass\boldmathsfMathClass
+\fi
+\Configure{MathClass}{\boldmathsfMathClass}{*}
+    {<\a:mathml mi mathvariant="bold-sans-serif">}{</\a:mathml mi>}{}  
+>>>
+
+\<set math sf symbolsBROKEN\><<<
+\find:set:mgroup{{\boldmath\mathsf{A}}}{\boldmathsfMathClass}%
+  {4142434445464748494A4B4C4D4E4F505152535455565758595A% |%A--Z|%
+   6162636465666768696A6B6C6D6E6F707172737475767778797A% |%a--z|%
+  }% 
+>>>
+
+\<set math sf classBROKEN\><<<
+\ifx \boldmathsfDigitMathClass\:UnDef
+  \NewMathClass\boldmathsfDigitMathClass
+\fi
+\Configure{MathClass}{\boldmathsfDigitMathClass}{*}
+    {<\a:mathml mn mathvariant="bold-sans-serif">}{</\a:mathml mn>}{}  
+>>>
+
+\<set math sf symbolsBROKEN\><<<
+\find:set:mgroup{{\boldmath\mathsf{A}}}{\boldmathsfDigitMathClass}%
+  {30313233343536373839}% |%0--9|%
+>>>
+
+
+BROKEN: The above, for instance, fail for the prima math code:
+
+\begin{verbatim}
+\documentclass{article} 
+\tracingmacros=2 
+\begin{document} 
+  
+prima  {\boldmath $\mathrm{{\csname HCode\endcsname{}}^{14}C}$} 
+ 
+seconda   {\boldmath $\mathsf{{\csname HCode\endcsname{}}^{15}C}$} 
+ 
+terza   {\boldmath $\mathrm{{\csname HCode\endcsname{}}^{16}C}$} 
+ 
+quarta   {\boldmath $\mathsf{{\csname HCode\endcsname{}}^{17}C}$} 
+ 
+ quinta   {$\mathtt{{\csname HCode\endcsname{}}^{18}C}$} 
+\end{document} 
+\end{verbatim}
+
+
+
+
+
+
+Double strike:
+
+\<configure mathds mathclass\><<<
+\ifx \mathdsMathClass\:UnDef
+  \NewMathClass\mathdsMathClass
+\fi
+\Configure{MathClass}{\mathdsMathClass}{*}
+    {<\a:mathml mi mathvariant="double-struck">}{</\a:mathml mi>}{}  
+\find:set:mgroup{\mathds{A}}{\mathdsMathClass}%  |%1,A--Z,A,h,k|%
+   {314142434445464748494A4B4C4D4E4F505152535455565758595A61686B} 
+>>>
+
+
+
+
+
+
+
+\<set Re/Im class\><<<
+\ifx \mathReImMathClass\:UnDef
+  \NewMathClass\mathboldReImMathClass
+\fi
+\Configure{MathClass}{\mathboldReImMathClass}{*}
+    {<\a:mathml mi\Hnewline
+         fontweight="bold">}{</\a:mathml mi>}{}  
+>>>
+
+\<set Re/Im symbols\><<<
+\expandafter\ifx\csname mv@bold\endcsname\relax  \else
+\bgroup
+\mathversion{bold}%
+\find:set:mgroup{\mathcal{A}}{\mathboldReImMathClass}%
+  {3C3D}
+\egroup
+\fi
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%
+\chapter{pmathml.xsl}
+%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%
+\section{Header Part}
+%%%%%%%%%%%%%%%%%%%%%
+
+\<pmathml dtd\><<<
+\Configure{DOCTYPE}{}
+>>>
+
+
+
+
+\<configure mozilla tex4ht\><<<
+\:CheckOption{pmathml} \if:Option
+   |<pmathml configurations|>
+  \:CheckOption{pmathml-css} \if:Option \else
+      \Log:Note{If css rendering is preferred
+         for MathML, use option `pmathml-css' instead of `pmathml'.}
+      |<pmathml but not pmathml-css|>
+  \fi
+\else
+  \:CheckOption{pmathml-css} \if:Option \else
+     \Log:Note{For multi-platform MathML 
+       through stylesheet transforms, use the command line option
+       `pmathml'. If css rendering is preferred, use `pmathml-css'.}
+\fi \fi
+>>>
+
+
+\<pmathml configurations\><<<
+\:CheckOption{pmathml-css} \if:Option
+  \Configure{XML-STYLESHEET}
+    {\HCode{%
+      <?xml-stylesheet type="text/xsl"
+                       href="pmathmlcss.xsl"?>\Hnewline
+      <!--http://www.w3.org/Math/XSL/pmathmlcss.xsl-->\Hnewline
+  }}
+\else
+  \Configure{XML-STYLESHEET}
+    {\HCode{%
+      <?xml-stylesheet type="text/xsl" 
+                       href="pmathml.xsl"?>\Hnewline
+      <!--http://www.w3.org/Math/XSL/pmathml.xsl-->\Hnewline
+  }}
+\fi
+>>>
+
+\<pmathml configurations\><<<
+\:CheckOption{pmathml-css} \if:Option
+   \Configure{@HTML}
+     {xmlns:math="http://www.w3.org/1998/Math/MathML"\Hnewline
+      xmlns:pref="http://www.w3.org/2002/Math/preference"\Hnewline
+      pref:renderer="css"
+     }
+\fi
+>>>
+
+
+\<configure mozilla Preamble\><<<    
+\:CheckOption{pmathml-css} \if:Option
+   \edef\Preamble{\Preamble,pmathml}
+\fi
+>>>
+
+
+\Link[http://www.w3.org/Math/XSL/Overview.html]{}{}%
+http://www.w3.org/Math/XSL/Overview.html\EndLink{} and
+\Link[http://www.w3.org/Math/XSL/Overview-tech.html]{}{}%
+http://www.w3.org/Math/XSL/Overview-tech.html\EndLink{} explains how
+to make .xml pages (in fact, Tex4ht option MOZILLA) to Explorer 6 even
+WITHOUT Mathplayer: it requires two .xsl style sheets (pmathml.xsl and
+pmathmlcss.xsl, they can be retrieved there) and replacing
+\verb+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//|<dtd lang|>" "mathml.dtd">+ 
+with 
+\verb+<?xml-stylesheet type="text/xsl" href="pmathml.xsl"?>+.  
+Moreover, if one has Mathplayer installed, one must keep it away, for
+check purposes, by replacing    \verb+<html...>+ with
+
+\begin{verbatim}
+<html
+ xmlns="http://www.w3.org/1999/xhtml"
+ xmlns:math="http://www.w3.org/1998/Math/MathML"
+  xmlns:pref="http://www.w3.org/2002/Math/preference"
+  pref:renderer="css"
+ >
+\end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%
+\section{Tables}
+%%%%%%%%%%%%%%%%%
+
+
+The attribute \verb+nowrap="nowrap"+ in table cells prevents
+Mathplayer from displaying them its own way, and one gets minimal
+cells, overlapped: it ought to be avoided altogether.
+
+It reappears in the option pmathml - as soon as Mathplayer is called
+upon to deal with a table, the cells overlap from left to right, and
+the last row is reduced almost to nothing. Pmathml-css, NOT calling on
+Mathplayer, gives no trouble that way.
+
+\<pmathml but not pmathml-css\><<<
+\Configure{halignTD} {}{}
+   {<}{\ifmathml \HCode{ columnalign="left"}\else
+        \HCode{ style="text-align:left" }\fi}
+   {-}{\ifmathml \HCode{ columnalign="center"}\else
+        \HCode{ style="text-align:center" }\fi}
+   {>}{\ifmathml \HCode{ columnalign="right"}\else
+        \HCode{ style="text-align:right" }\fi}
+   {^}{\ifmathml \HCode{ rowalign="top"}\else
+        \HCode{ style="vertical-align:top" }\fi}
+   {=}{\ifmathml \HCode{ rowalign="baseline"}\else
+        \HCode{ style="vertical-align:baseline" }\fi}
+   {||}{\ifmathml \HCode{ rowalign="center"}\else
+        \HCode{ style="vertical-align:middle" }\fi}
+   {_}{\ifmathml \HCode{ rowalign="bottom"}\else
+        \HCode{ style="vertical-align:bottom" }\fi}
+   {p}{\ifmathml \HCode{ columnalign="left"}\else
+        \HCode{ style="text-align:left"}\fi}
+   {}
+>>>
+
+
+
+
+
+
+\endinput

@@ -1,0 +1,318 @@
+% luaset package
+% version 1.1
+% Licensed under LaTeX Project Public License v1.3c or later. The complete license text is available at http://www.latex-project.org/lppl.txt.
+%Authors: Chetan Shirore and Dr. Ajit Kumar
+
+\ProvidesPackage{luatruthtable}[1.1]
+\RequirePackage{xkeyval}
+\RequirePackage{amsmath}
+\RequirePackage{luacode}
+\begin{luacode*}
+local function toBinary(x,y)
+    y = y or math.max(1, select(2, math.frexp(x)))
+    local res = {}
+    for i = y, 1, -1 do
+        res[i] = math.fmod(x, 2)
+        x = math.floor((x - res[i]) / 2)
+    end
+    return res
+end
+
+local function _not(a)
+  if a ==0 then return 1
+    else return 0 end
+end
+
+local lognot = {}
+
+local not_mt= {
+  __mul = function(a,b)
+      return _not(b)
+
+  end
+}
+
+setmetatable(lognot, not_mt)
+_G.lognot = lognot
+
+local function _and(a, b)
+  if a == 1 and b == 1 then return 1
+    else return 0 end
+end
+
+local tmp1 = {}
+local logand = {}
+local v1 = 0
+
+local and_mt= {
+  __mul = function(a,b)
+    if b==logand then
+    	v1 = v1 + 1 
+      tmp1[v1]=a
+      return tmp1
+    elseif a == tmp1 then
+      local w1 = _and(tmp1[v1], b)
+      v1 = v1 - 1
+		return w1
+    end
+  end
+}
+
+setmetatable(tmp1, and_mt)
+setmetatable(logand, and_mt)
+_G.logand = logand
+
+local function _or(a, b)
+  if a == 0 and b == 0 then return 0
+    else return 1 end
+end
+
+local tmp2 = {}
+local logor = {}
+local v2 = 0
+
+local or_mt= {
+  __mul = function(a,b)
+    if b==logor then
+    	 v2 = v2 + 1 
+      tmp2[v2] = a
+      return tmp2
+    elseif a == tmp2 then
+      local w2 =  _or(tmp2[v2], b)
+      v2 = v2 - 1
+		return w2
+    end
+  end
+}
+
+setmetatable(tmp2, or_mt)
+setmetatable(logor, or_mt)
+_G.logor = logor
+
+local function _imp(a, b)
+  if a == 1 and b == 0 then return 0
+    else return 1 end
+end
+
+local tmp3 = {}
+local imp = {}
+local v3 = 0
+
+local imp_mt= {
+  __mul = function(a,b)
+    if b==imp then
+		 v3 = v3 + 1
+      tmp3[v3]=a
+      return tmp3
+    elseif a == tmp3 then
+      local w3 =  _imp(tmp3[v3], b)
+      v3 = v3 - 1
+		return w3
+    end
+  end
+}
+
+setmetatable(tmp3, imp_mt)
+setmetatable(imp, imp_mt)
+_G.imp = imp
+
+local function _iff(a, b)
+  if a == b then return 1
+    else return 0 end
+end
+
+local tmp4 = {}
+local iff = {}
+local v4 = 0
+
+local iff_mt= {
+  __mul = function(a,b)
+    if b==iff then
+     v4 = v4 + 1 
+      tmp4[v4]=a
+      return tmp4
+    elseif a == tmp4 then
+      local w4 = _iff(tmp4[v4], b)
+      v4 = v4 - 1
+		return w4
+    end
+  end
+}
+
+setmetatable(tmp4, iff_mt)
+setmetatable(iff, iff_mt)
+_G.iff = iff
+
+local function _xor(a, b)
+  if a ~= b then return 1
+    else return 0 end
+end
+
+local tmp5 = {}
+local logxor = {}
+local v5 = 0
+
+local xor_mt= {
+  __mul = function(a,b)
+    if b==logxor then
+     v5 = v5 + 1 
+      tmp5[v5]=a
+      return tmp5
+    elseif a == tmp5 then
+      local w5 = _xor(tmp5[v5], b)
+      v5 = v5 - 1
+		return w5
+    end
+  end
+}
+
+setmetatable(tmp5, xor_mt)
+setmetatable(logxor, xor_mt)
+_G.logxor = logxor
+
+local function _nand(a, b)
+  if a ==1 and b == 1 then return 0
+    else return 1 end
+end
+
+local tmp6 = {}
+local lognand = {}
+local v6 = 0
+
+local nand_mt= {
+  __mul = function(a,b)
+    if b==lognand then
+		 v6 = v6 + 1 
+      tmp6[v6]=a
+      return tmp6
+    elseif a == tmp6 then
+      local w6 =  _nand(tmp6[v6], b)
+      v6 = v6 - 1
+		return w6
+    end
+  end
+}
+
+setmetatable(tmp6, nand_mt)
+setmetatable(lognand, nand_mt)
+_G.lognand = lognand
+
+local function _nor(a, b)
+  if a ==0 and b == 0 then return 1
+    else return 0 end
+end
+
+local tmp7 = {}
+local lognor = {}
+local v7 = 0
+
+local nor_mt= {
+  __mul = function(a,b)
+    if b==lognor then
+	   v7 = v7 + 1 
+      tmp7[v7]=a
+      return tmp7
+    elseif a == tmp7 then
+      local w7 = _nor(tmp7[v7], b)
+		 v7 = v7 - 1
+		return w7
+    end
+  end
+}
+
+setmetatable(tmp7, nor_mt)
+setmetatable(lognor, nor_mt)
+_G.lognor = lognor
+
+local function _xnor(a, b)
+  if a == b then return 1
+    else return 0 end
+end
+
+local tmp8 = {}
+local logxnor = {}
+local v8 = 0
+
+local xnor_mt= {
+  __mul = function(a,b)
+    if b==logxnor then
+      v8 = v8 + 1 
+      tmp8[v8]=a
+      return tmp8
+    elseif a == tmp8 then
+     local w8 =  _xnor(tmp8[v8], b)
+     v8 = v8 - 1
+		return w8
+    end
+  end
+}
+
+setmetatable(tmp8, xnor_mt)
+setmetatable(logxnor, xnor_mt)
+_G.logxnor = logxnor
+
+function truthTable(str0,str,trtext,fltext)
+local eval=""
+local names={lognot=lognot,logand=logand,logor=logor, imp=imp, 
+  iff=iff, logxor=logxor,lognand=lognand,lognor=lognor, logxnor=logxnor}
+local vars={}
+local expr={}
+local countexp = 1
+local countvars =1
+local res=""
+local sep=" & "
+trtext = trtext or "$T$"
+fltext = fltext or "$F$"
+for variables in string.gmatch(str0, '([^,]+)') do
+  vars[countvars] = variables
+ countvars = countvars + 1
+end
+
+for subexp in string.gmatch(str, '([^,]+)') do
+    expr[countexp] = subexp
+    countexp = countexp + 1
+end
+
+local n =#vars
+for i =1,2^n do
+  itr = toBinary(i,n)
+
+  for j=1, #itr do
+    names[vars[j]] = itr[j]
+end
+
+    for k = 1, #expr do
+      res= res ..sep.. load("return " .. expr[k],nil,"t",names)()
+      end
+if i~=2^n then
+eval = eval .. table.concat(toBinary(i,n)," & ") .. res .."\\\\"
+else
+eval = eval .. table.concat(toBinary(i,n)," & ") .. res
+end
+ res=""
+end
+
+if trtext:gsub("%s+", "") =="0" or trtext:gsub("%s+", "") == "$0$"  
+or fltext:gsub("%s+", "") =="1" or fltext:gsub("%s+", "") == "$1$" 
+then
+eval=eval
+else
+eval=eval:gsub(0,fltext):gsub(1,trtext)
+end
+return eval
+end
+
+\end{luacode*}
+
+% ========= KEY DEFINITIONS =========
+\define@key{luatruthtable}{trtext}{\def\luatrtbl@trtext{#1}}
+\define@key{luatruthtable}{fltext}{\def\luatrtbl@fltext{#1}}
+
+% ========= KEY DEFAULTS =========
+\setkeys{luatruthtable}{trtext=$T$,fltext=$F$}%
+% ========= Defining Command =========
+\newcommand{\luaTruthTable}[3][]{%
+  \setkeys{luatruthtable}{#1}
+  \directlua{tex.sprint(truthTable(\luastringN{#2},\luastringN{#3},'\luatrtbl@trtext','\luatrtbl@fltext'))}} %
+
+\endinput

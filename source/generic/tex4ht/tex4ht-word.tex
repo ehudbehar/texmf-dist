@@ -1,0 +1,549 @@
+% $Id: tex4ht-word.tex 65 2010-11-17 19:16:45Z karl $
+% compile 3 times:     latex   tex4ht-word   
+%                  or  xhlatex tex4ht-word "html,3,sections+"
+
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) 2000-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+%%%%%%%%%%%%%%%%%% load style files %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifx \HTML\UnDef
+   \def\HTML{htmlw}                   
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}         
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common.tex}
+\input{tex4ht-cpright.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Preamble}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<htmlw\><<<
+% htmlw.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) |CopyYear.2000. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{General}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<configure htmlw tex4ht\><<<
+% \Configure{Picture}{.wmf}
+>>>
+
+\<configure htmlw latex\><<<
+\Css{body {text-align:both;}}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Char Set}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<configure htmlw babel\><<<
+\def\:temp#1#2{%
+   \def\:tempa{#1}\ifx \languagename\:tempa
+      \def\A:charset{#2}\ifx \A:charset\empty\else
+          \def\A:charset{charset=#2}%
+   \fi\fi}
+\:temp{afrikaans}{windows-1252}
+\:temp{arabic}{windows-1256}
+\:temp{austrian}{windows-1252}
+\:temp{brazilian}{windows-1252}
+\:temp{brazil}{windows-1252}
+\:temp{catalan}{windows-1252}
+\:temp{croatian}{windows-1251}
+\:temp{czech}{windows-1251}
+\:temp{danish}{windows-1252}
+\:temp{dutch}{windows-1252}
+\:temp{estonian}{windows-1251}
+\:temp{finnish}{windows-1252}
+\:temp{francais}{windows-1252}
+\:temp{frenchb}{windows-1252}
+\:temp{french}{windows-1252}
+\:temp{galician}{windows-1252}
+\:temp{germanb}{windows-1252}
+\:temp{german}{windows-1252}
+\:temp{greek}{windows-1253}
+\:temp{hebrew}{windows-1255}
+\:temp{hungarian}{windows-1250}
+\:temp{ngerman}{windows-1252}
+\:temp{norsk}{windows-1252}
+\:temp{nynorsk}{windows-1252}
+\:temp{polish}{windows-1252}
+\:temp{polutonikogreek}{windows-1253}
+\:temp{portuges}{windows-1252}
+\:temp{portuguese}{windows-1252}
+\:temp{romanian}{windows-1250}
+\:temp{russian}{windows-1251}
+\:temp{scottish}{windows-1252}
+\:temp{slovak}{windows-1250}
+\:temp{slovene}{windows-1250}
+\:temp{spanish}{windows-1252}
+\:temp{swedish}{windows-1252}
+\:temp{ukrainian}{windows-1251}
+\:temp{uppersorbian}{windows-1252}
+\:temp{welsh}{windows-1252}
+>>>
+
+
+\<configure htmlw austrian\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw catalan\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw croatian\><<<
+\def\A:charset{charset=windows-1251}
+>>>
+\<configure htmlw czech\><<<
+\def\A:charset{charset=windows-1251}
+>>>
+\<configure htmlw danish\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw dutch\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw english\><<<
+\def\A:charset{charset=windows-1251}
+>>>
+\<configure htmlw estonian\><<<
+\def\A:charset{charset=windows-1251}
+>>>
+\<configure htmlw finnish\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw francais\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw galician\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw germanb\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw greek\><<<
+\def\A:charset{charset=windows-1253}
+>>>
+\<configure htmlw hebrew\><<<
+\def\A:charset{charset=windows-1255}
+>>>
+\<configure htmlw ngermanb\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw norsk\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw polish\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw portuges\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw romanian\><<<
+\def\A:charset{charset=windows-1250}
+>>>
+\<configure htmlw russianb\><<<
+\def\A:charset{charset=windows-1251}
+>>>
+\<configure htmlw scottish\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw slovak\><<<
+\def\A:charset{charset=windows-1250}
+>>>
+\<configure htmlw slovene\><<<
+\def\A:charset{charset=windows-1250}
+>>>
+\<configure htmlw spanish\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw swedish\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw ukraineb\><<<
+\def\A:charset{charset=windows-1251}
+>>>
+\<configure htmlw usorbian\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+\<configure htmlw welsh\><<<
+\def\A:charset{charset=windows-1252}
+>>>
+
+
+\<configure htmlw hebtex\><<<
+\def\A:charset{charset=windows-1255}
+>>>
+
+\<configure htmlw exerquiz\><<<
+\def\A:charset{charset=windows-1252}  
+>>>
+
+
+\<configure htmlw tex4ht\><<<
+\def\A:charset{charset=windows-1252} 
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Etc}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\<configure htmlw alphanum\><<<
+\Configure{toclvld}
+   {}{}
+   {\ifvmode \IgnorePar\fi \EndP\IgnorePar
+    \HCode{<p class="MsoHeading6">}\TitleMark\space\HtmlParOff}
+   {\HCode{</p>}\HtmlParOn \IgnoreIndent \par}
+\Configure{toclvle}
+   {}{}
+   {\ifvmode \IgnorePar\fi \EndP\IgnorePar
+    \HCode{<p class="MsoHeading7">}\TitleMark\space\HtmlParOff}
+   {\HCode{</p>}\HtmlParOn \IgnoreIndent \par}
+\Configure{toclvlf}
+   {}{}
+   {\ifvmode \IgnorePar\fi \EndP\IgnorePar
+    \HCode{<p class="MsoHeading8">}\TitleMark\space\HtmlParOff}
+   {\HCode{</p>}\HtmlParOn \IgnoreIndent \par}
+\Configure{toclvlg}
+   {}{}
+   {\ifvmode \IgnorePar\fi \EndP\IgnorePar
+    \HCode{<p class="MsoHeading9">}\TitleMark\space\HtmlParOff}
+   {\HCode{</p>}\HtmlParOn \IgnoreIndent \par}
+\Configure{toclvlh}
+   {}{}
+   {\ifvmode \IgnorePar\fi \EndP\IgnorePar
+    \HCode{<p class="MsoHeading10">}\TitleMark\space\HtmlParOff}
+   {\HCode{</p>}\HtmlParOn \IgnoreIndent \par}
+\Configure{toclvli}
+   {}{}
+   {\ifvmode \IgnorePar\fi \EndP\IgnorePar
+    \HCode{<p class="MsoHeading11">}\TitleMark\space\HtmlParOff}
+   {\HCode{</p>}\HtmlParOn \IgnoreIndent \par}
+\Configure{toclvlj}
+   {}{}
+   {\ifvmode \IgnorePar\fi \EndP\IgnorePar
+    \HCode{<p class="MsoHeading12">}\TitleMark\space\HtmlParOff}
+   {\HCode{</p>}\HtmlParOn \IgnoreIndent \par}
+\Configure{toclvlk}
+   {}{}
+   {\ifvmode \IgnorePar\fi \EndP\IgnorePar
+    \HCode{<p class="MsoHeading13">}\TitleMark\space\HtmlParOff}
+   {\HCode{</p>}\HtmlParOn \IgnoreIndent \par}
+\Configure{toclvll}
+   {}{}
+   {\ifvmode \IgnorePar\fi \EndP\IgnorePar
+    \HCode{<p class="MsoHeading14">}\TitleMark\space\HtmlParOff}
+   {\HCode{</p>}\HtmlParOn \IgnoreIndent \par}
+
+\Css{p.MsoHeading6 {margin-top:12.0pt;
+                    margin-right:0cm;
+                    margin-bottom:3.0pt;
+                    margin-left:0cm;
+                    font-size:11.0pt;}}
+\Css{p.MsoHeading7 {margin-top:12.0pt;
+                    margin-right:0cm;
+                    margin-bottom:3.0pt;
+                    margin-left:0cm;
+                    font-size:12.0pt;}}
+\Css{p.MsoHeading8 {margin-top:12.0pt;
+                    margin-right:0cm;
+                    margin-bottom:3.0pt;
+                    margin-left:0cm;
+                    font-size:12.0pt;
+                    font-style:italic;}}
+\Css{p.MsoHeading9 {margin-top:12.0pt;
+                    margin-right:0cm;
+                    margin-bottom:3.0pt;
+                    margin-left:0cm;
+                    font-size:11.0pt;
+                    font-family:Arial;}}
+>>>
+
+
+
+\begin{verbatim}
+>> But they should go for h6, h7, h8 ... (which is not the case now).
+
+EG> But HTML does not recognize h* tags besides h1--h5. What we can do is
+EG> to set diffent CSS code there--however, I didn't see differents in
+EG> fonts there. -eitan
+
+This is true as far as plain html is concerned. But you can use higher
+h? if you are planning to convert to *.doc because word interprets h1 as
+heading 1 or h9 as heading 9 (presumably) as long as they are defined in
+normal.dot.
+
+EG> Do you know how can I inspect the content of that file? Under
+EG> emacs it all looks like junk. -eitan
+
+Which file do you mean? --- I suppose normal.dot. I do not think that
+there is a possibility to view that file (apart from looking at it
+with an hex editor).
+
+But you can see the result quite easily if you produce an html-file
+with several headings (lets say h1 to h9) and load that file into
+word. After saving that file in a word format (*.doc) you will realize
+that your headings are assigned to word's styles Heading 1 to Heading
+9. Start then a new document with a different template. Let's say
+thesis. Copy the hole text by Edit/Select All, Edit/Copy and Edit/Paste
+into the new document. Then you will realize that all headings are
+formated according to the heading styles of the thesis template.
+
+This feature makes tex4ht even more interesting for converting
+latex to word. Because you can write your texts with latex, convert
+them to word and use then a template which is given to you by your
+publisher. Unfortunately, German publishers do that quite often now
+because nearly 90 % of all German lawyers are using word for writing
+their essays these days.
+\end{verbatim}
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Plain Footnotes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<configure htmlw plain\><<<
+\:CheckOption{fn-in}\if:Option  
+   |<inline footnote plain|>
+   |<inline footnote css|>
+\fi
+>>>
+
+\<inline footnote plain\><<<
+\Configure{vfootnote}
+  {|<mark inline vfootnote|>}
+  {|<open inline vfootnote|>}
+  {|<close inline vfootnote|>}
+\Css{span.MsoFootnoteReference {vertical-align:super;}}
+>>>
+
+\<mark inline vfootnote\><<<
+\Link{fn\FNnum}{fn\FNnum-bk}\HCode{<span class="MsoFootnoteReference">}%
+  \ifx \FNmark\empty +\else \FNmark\fi\HCode{</span>}\EndLink
+>>>
+
+
+
+\<open inline vfootnote\><<<
+|<open inline footnote box|>
+   \Link{fn\FNnum-bk}{fn\FNnum}\HCode{<span class="MsoFootnoteReference">}%
+   \ifx \FNmark\empty +\else \FNmark\fi
+   \space\HCode{</span>}\EndLink
+>>>
+
+\<close inline vfootnote\><<<
+|<close inline footnote box|>
+>>>  
+
+\<footnote par\><<<
+\Configure{HtmlPar}
+  {\EndP\HCode{<!--l. \the\inputlineno-->}\HCode{<p 
+         \csname a:!P\endcsname class="MsoFootnoteText">}}
+  {\EndP\HCode{<!--l. \the\inputlineno-->}\HCode{<p
+         \csname a:!P\endcsname class="MsoFootnoteText">}}
+  {\:xhtml{\Tg</p>}}
+  {\:xhtml{\Tg</p>}}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Latex Footnotes}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<configure htmlw Preamble\><<<    
+\:CheckOption{fn-out}\if:Option \else
+   \Log:Note{for offline footnotes use
+          command line option `fn-out'}
+   \edef\Preamble{\Preamble,fn-in} 
+\fi
+>>>
+
+
+
+\<configure htmlw latex\><<<
+\:CheckOption{fn-in}\if:Option  
+   |<inline footnote mark|>
+   |<inline footnote text|>
+   |<inline footnote css|>
+\fi
+>>>
+
+
+\<inline footnote mark\><<<
+\Configure{footnotemark}
+   {\leavevmode |<inline fn mark /Link|>%
+    \NoFonts
+    \Tag{|<footnote id|>}{}}
+   {\EndNoFonts
+    |<end inline fn mark /Link|>%
+    \expandafter\global\expandafter
+       \let\csname (|<footnote id|>-bk)\endcsname\def}
+>>>
+
+
+\<inline footnote text\><<<
+\Configure{footnotetext}
+   {|<open inline footnote box|>%
+    \leavevmode |<inline fn text /Link|>%
+    \NoFonts
+    \Tag{|<footnote id|>-bk}{}
+   }
+   {\EndNoFonts |<end inline fn text /Link|>}
+   {\expandafter\global\expandafter
+       \let\csname (|<footnote id|>)\endcsname\def
+    |<close inline footnote box|>}
+>>>
+
+
+
+\<open inline footnote box\><<<
+\SaveEndP\global\setbox\fn:box=\vtop\bgroup\ShowPar
+   |<footnote par|>%
+   \ifvoid\fn:box\else  \csname unvbox\endcsname\fn:box\fi
+>>>
+
+\<close inline footnote box\><<<
+\EndP\egroup\RecallEndP
+>>>  
+
+
+
+
+
+
+\<inline fn text /Link\><<<
+\ifTag{|<footnote id|>}
+   {\expandafter\ifx\csname (|<footnote id|>)\endcsname\def
+      \Link{|<footnote id|>-bk}{}%       
+      \HCode{<span class="MsoFootnoteReference">}%
+    \else
+      \Link{|<footnote id|>-bk}{|<footnote id|>}%
+      \HCode{<span class="MsoFootnoteReference">}%
+    \fi
+   }
+   {\expandafter\ifx\csname (|<footnote id|>)\endcsname\def
+    \else
+      \Link{}{|<footnote id|>}%
+      \HCode{<span class="MsoFootnoteReference">}%
+    \fi
+   }%
+>>>
+
+\<end inline fn text /Link\><<<
+\ifTag{|<footnote id|>}
+   {\space\HCode{</span>}\EndLink
+   }
+   {\expandafter\ifx\csname (|<footnote id|>)\endcsname\def
+    \else
+       \space\HCode{</span>}\EndLink
+    \fi
+   }%
+>>>
+
+
+
+\<mouseover inline fn mark /Link\><<<
+|<start js|>%
+\ifTag{|<footnote id|>-bk}
+   {\expandafter\ifx\csname (|<footnote id|>-bk)\endcsname\def
+      \Link[ |<mouseover-footnote arguments|>\Hnewline
+                    ]{|<footnote id|>}{}%       
+    \else
+      \Link[ |<mouseover-footnote arguments|>\Hnewline
+                    ]{|<footnote id|>}{|<footnote id|>-bk}%
+    \fi
+   }
+   {\expandafter\ifx\csname (|<footnote id|>-bk)\endcsname\def
+    \else \Link[ |<mouseover-footnote arguments|>\Hnewline
+                    ]{}{|<footnote id|>-bk}\fi
+   }%
+>>>
+
+
+
+
+
+
+
+\<inline fn mark /Link\><<<
+\ifTag{|<footnote id|>-bk}
+   {\expandafter\ifx\csname (|<footnote id|>-bk)\endcsname\def
+      \Link{|<footnote id|>}{}%
+      \HCode{<span class="MsoFootnoteReference">}%       
+    \else
+      \Link{|<footnote id|>}{|<footnote id|>-bk}%
+      \HCode{<span class="MsoFootnoteReference">}%
+    \fi
+   }
+   {\expandafter\ifx\csname (|<footnote id|>-bk)\endcsname\def
+    \else
+      \Link{}{|<footnote id|>-bk}
+      \HCode{<span class="MsoFootnoteReference">}%
+    \fi
+   }%
+>>>
+
+
+\<end inline fn mark /Link\><<<
+\ifTag{|<footnote id|>-bk}
+   {\HCode{</span>}\EndLink}
+   {\expandafter\ifx\csname (|<footnote id|>-bk)\endcsname\def
+    \else \HCode{</span>}\EndLink\fi
+   }%
+>>>
+
+
+
+
+\<inline footnote css\><<<
+\Css{span.footnotetext{ font-size:80\%; font-style:italic; } }
+\Css{div.footnotes{border-bottom:0;}}
+>>>
+
+
+\<ams footnotes\><<<
+\:CheckOption{fn-in}\if:Option  
+   \Css{span.MsoFootnoteReference {vertical-align:super;}}
+\fi
+>>>
+
+
+\<footnote id\><<<
+fn\FNnum x\minipageNum
+>>>
+
+
+\<configure htmlw amsart\><<<
+|<ams footnotes|>
+>>>
+
+\<configure htmlw amsproc\><<<
+|<ams footnotes|>
+>>>
+
+\<configure htmlw amsbook\><<<
+|<ams footnotes|>
+>>>
+
+
+\endinput

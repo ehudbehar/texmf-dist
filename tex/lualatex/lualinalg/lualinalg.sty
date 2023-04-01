@@ -1,0 +1,1685 @@
+
+% The lualinalg package
+% Authors: Chetan Shirore and Ajit Kumar
+% version 1.2, Date=14-Feb-2023
+% Licensed under LaTeX Project Public License v1.3c or later. The complete license text is available at http://www.latex-project.org/lppl.txt.
+
+
+\ProvidesPackage{lualinalg}[1.2]
+\RequirePackage{xkeyval}
+\RequirePackage{amsmath}
+\RequirePackage{luamaths}
+\RequirePackage{luacode}
+\begin{luacode*}
+local complex = require "lualinalg_complex"
+
+-- matrices part
+matrices = {}
+
+matrix = {} --module
+
+local matrix_meta = {}
+
+function matrix.new(matrix, rows, columns)
+    if type(rows) == "table" then
+        for i = 1, #rows do
+            if #rows[1] ~= #rows[i] then
+                error("Check input matrix.")
+            end
+        end
+        return setmetatable(rows, matrix_meta)
+    end
+    local mtx = {}
+    if columns == "I" then
+        for i = 1, rows do
+            mtx[i] = {}
+            for j = 1, rows do
+                if i == j then
+                    mtx[i][j] = 1
+                else
+                    mtx[i][j] = 0
+                end
+            end
+        end
+        return setmetatable(mtx, matrix_meta)
+    end
+end
+
+setmetatable(
+    matrix,
+    {__call = function(...)
+            return matrix.new(...)
+        end}
+)
+
+function matrix.add(m1, m2)
+    local mtx = {}
+    for i = 1, #m1 do
+        local m3i = {}
+        mtx[i] = m3i
+        for j = 1, #m1[1] do
+            m3i[j] = m1[i][j] + m2[i][j]
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+function matrix.sub(m1, m2)
+    local mtx = {}
+    for i = 1, #m1 do
+        local m3i = {}
+        mtx[i] = m3i
+        for j = 1, #m1[1] do
+            m3i[j] = m1[i][j] - m2[i][j]
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.mulnum(m1, num)
+    local mtx = {}
+    -- multiply elements with number
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, #m1[1] do
+            mtx[i][j] = m1[i][j] * num
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.mul(m1, m2)
+    local mtx = {}
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, #m2[1] do
+            local num = m1[i][1] * m2[1][j]
+            for n = 2, #m1[1] do
+                num = num + m1[i][n] * m2[n][j]
+            end
+            mtx[i][j] = num
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.swapRows(m1, p, q)
+    local mtx = {}
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, #m1[1] do
+            mtx[i][j] = m1[i][j]
+        end
+    end
+    for j = 1, #m1[1] do
+        rowHold = m1[p][j]
+        mtx[p][j] = m1[q][j]
+        mtx[q][j] = rowHold
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.swapCols(m1, p, q)
+    local mtx = {}
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, #m1[1] do
+            mtx[i][j] = m1[i][j]
+        end
+    end
+    for j = 1, #m1 do
+        rowHold = m1[j][p]
+        mtx[j][p] = m1[j][q]
+        mtx[j][q] = rowHold
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.mulRow(m1, p, k)
+    local mtx = {}
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, #m1[1] do
+            mtx[i][j] = m1[i][j]
+        end
+    end
+    for j = 1, #m1[1] do
+        mtx[p][j] = k * m1[p][j]
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.mulAddRow(m1, k, p, q)
+    if p == q then
+        error("Can't operate on same row.")
+    end
+    local mtx = {}
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, #m1[1] do
+            mtx[i][j] = m1[i][j]
+        end
+    end
+    for j = 1, #m1[1] do
+        mtx[q][j] = k * (mtx[p][j]) + mtx[q][j]
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.mulCol(m1, p, k)
+    local mtx = {}
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, #m1[1] do
+            mtx[i][j] = m1[i][j]
+        end
+    end
+    for j = 1, #m1 do
+        mtx[j][p] = k * m1[j][p]
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.mulAddCol(m1, k, p, q)
+    if p == q then
+        error("Can't operate on same column.")
+    end
+    local mtx = {}
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, #m1[1] do
+            mtx[i][j] = m1[i][j]
+        end
+    end
+    for j = 1, #m1 do
+        mtx[j][q] = k * mtx[j][p] + mtx[j][q]
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.transpose(m1)
+    local mtx = {}
+    for i = 1, #m1[1] do
+        mtx[i] = {}
+        for j = 1, #m1 do
+            mtx[i][j] = m1[j][i]
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.subm(m1, i1, j1, i2, j2)
+    local mtx = {}
+    for i = i1, i2 do
+        local _i = i - i1 + 1
+        mtx[_i] = {}
+        for j = j1, j2 do
+            local _j = j - j1 + 1
+            mtx[_i][_j] = m1[i][j]
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.concath(m1, m2)
+    if #m1 ~= #m2 then
+        error("No. of rows must be equal.")
+    end
+    local mtx = {}
+    local offset = #m1[1]
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, offset do
+            mtx[i][j] = m1[i][j]
+        end
+        for j = 1, #m2[1] do
+            mtx[i][j + offset] = m2[i][j]
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.concatv(m1, m2)
+    if #m1[1] ~= #m2[1] then
+        error("No. of columns must be equal.")
+    end
+    local mtx = {}
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, #m1[1] do
+            mtx[i][j] = m1[i][j]
+        end
+    end
+    local offset = #mtx
+    for i = 1, #m2 do
+        local _i = i + offset
+        mtx[_i] = {}
+        for j = 1, #m2[1] do
+            mtx[_i][j] = m2[i][j]
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.rows(mtx)
+    return #mtx
+end
+
+function matrix.columns(mtx)
+    return #mtx[1]
+end
+
+setmetatable(
+    matrix,
+    {__call = function(...)
+            return matrix.new(...)
+        end}
+)
+
+function matrix.getelement(mtx, i, j)
+    if mtx[i] and mtx[i][j] then
+        return mtx[i][j]
+    end
+end
+
+function matrix.setelement(mtx, i, j, value)
+    if matrix.getelement(mtx, i, j) then
+        mtx[i][j] = value
+        return value
+    end
+end
+
+function matrix.invert(m1)
+    if #m1 ~= #m1[1] then
+        error("matrix not square")
+    end
+    if matrix.det(m1) == 0 then
+        error("matrix not invertible")
+    end
+    local mtx = {}
+    local idnt = matrix(#m1, "I")
+    mtx = matrix.subm(matrix.rref(matrix.concath(m1, idnt)), 1, #m1 + 1, #m1, #m1 + #m1)
+    return mtx
+end
+
+function matrix.trace(m1)
+    if #m1 ~= #m1[1] then
+        error("matrix not square")
+    end
+    local sum = 0
+
+    for i = 1, #m1 do
+        for j = 1, #m1[1] do
+            if i == j then
+                sum = sum + m1[i][j]
+            end
+        end
+    end
+
+    return sum
+end
+
+function matrix.normF(mtx)
+    local result = 0
+    for i = 1, #mtx do
+        for j = 1, #mtx[1] do
+            local e = mtx[i][j]
+            result = result + complex.abs(complex(e)) ^ 2
+        end
+    end
+    return complex.sqrt(complex(result))
+end
+
+function matrix.normmax(mtx)
+    local result = 0
+    for i = 1, #mtx do
+        for j = 1, #mtx[1] do
+            local e = complex.abs(complex(mtx[i][j]))
+            if e > result then
+                result = e
+            end
+        end
+    end
+    return result
+end
+
+function matrix.norminfty(mtx)
+    local e = 0
+    local result = 0
+    for i = 1, #mtx do
+        local e = 0
+        for j = 1, #mtx[1] do
+            e = e + complex.abs(complex(mtx[i][j]))
+        end
+        if e > result then
+            result = e
+        end
+    end
+    return result
+end
+
+function matrix.norm1(mtx)
+    local e = 0
+    local result = 0
+    for i = 1, #mtx[1] do
+        local e = 0
+        for j = 1, #mtx do
+            e = e + complex.abs(complex(mtx[j][i]))
+        end
+        if e > result then
+            result = e
+        end
+    end
+    return result
+end
+
+function matrix.conjugate(m1)
+    local mtx = matrix.copy(m1)
+    for i = 1, #mtx do
+        for j = 1, #mtx[1] do
+            mtx[i][j] = complex.conjugate(complex(mtx[i][j]))
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.conjugateT(m1)
+    local mtx = {}
+    for i = 1, #m1[1] do
+        mtx[i] = {}
+        for j = 1, #m1 do
+            mtx[i][j] = complex.conjugate(complex(m1[j][i]))
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function copy(x)
+    return type(x) == "table" and x.copy(x) or x
+end
+
+function matrix.pow(m1, num)
+    assert(num == math.floor(num), "exponent not an integer")
+    if num == 0 then
+        return matrix:new(#m1, "I")
+    end
+    if num < 0 then
+        local rank
+        m1, rank = matrix.invert(m1)
+        if not m1 then
+            return m1, rank
+        end -- singular
+        num = -num
+    end
+    local mtx = matrix.copy(m1)
+    for i = 2, num do
+        mtx = matrix.mul(mtx, m1)
+    end
+    return mtx
+end
+
+function matrix.createrandom(nrow, ncol, start, stop)
+    mtx = {}
+    for i = 1, nrow do
+        mtx[i] = {}
+        for j = 1, ncol do
+            mtx[i][j] = math.random(start, stop)
+            mtx[i][j] = mtx[i][j] + math.min(math.random(), math.abs(mtx[i][j] - start), math.abs(stop - mtx[i][j]))
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.process(m1)
+    --m1=load("return "..m1)()
+    return matrix.mulnum(m1, 1.0)
+end
+
+function matrix.det(m1)
+    assert(#m1 == #m1[1], "matrix not square")
+
+    local size = #m1
+
+    if size == 1 then
+        return m1[1][1]
+    end
+
+    if size == 2 then
+        return m1[1][1] * m1[2][2] - m1[2][1] * m1[1][2]
+    end
+
+    if size == 3 then
+        return (m1[1][1] * m1[2][2] * m1[3][3] + m1[1][2] * m1[2][3] * m1[3][1] + m1[1][3] * m1[2][1] * m1[3][2] -
+            m1[1][3] * m1[2][2] * m1[3][1] -
+            m1[1][1] * m1[2][3] * m1[3][2] -
+            m1[1][2] * m1[2][1] * m1[3][3])
+    end
+
+    local e = m1[1][1]
+    local zero = type(e) == "table" and e.zero or 0
+    local norm2 = type(e) == "table" and e.norm2 or number_norm2
+
+    local mtx = matrix.copy(m1)
+    local det = 1
+
+    for j = 1, #mtx[1] do
+        local rows = #mtx
+        local subdet, xrow
+        for i = 1, rows do
+            local e = mtx[i][j]
+            if not subdet then
+                if e ~= zero then
+                    subdet, xrow = e, i
+                end
+            elseif e ~= zero and math.abs(norm2(e) - 1) < math.abs(norm2(subdet) - 1) then
+                subdet, xrow = e, i
+            end
+        end
+        if subdet then
+            if xrow ~= rows then
+                mtx[rows], mtx[xrow] = mtx[xrow], mtx[rows]
+                det = -det
+            end
+
+            for i = 1, rows - 1 do
+                if mtx[i][j] ~= zero then
+                    local factor = mtx[i][j] / subdet
+                    for n = j + 1, #mtx[1] do
+                        mtx[i][n] = mtx[i][n] - factor * mtx[rows][n]
+                    end
+                end
+            end
+            if math.fmod(rows, 2) == 0 then
+                det = -det
+            end
+            det = det * subdet
+            table.remove(mtx)
+        else
+            return det * 0
+        end
+    end
+
+    return det
+end
+
+function matrix.copy(m1)
+    local mtx = {}
+    for i = 1, #m1 do
+        mtx[i] = {}
+        for j = 1, #m1[1] do
+            mtx[i][j] = m1[i][j]
+        end
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+norm2 = type(e) == "table" and e.norm2 or number_norm2
+
+function number_norm2(x)
+    return x * x
+end
+
+function matrix.op(exp)
+    return load("return " .. exp, exp, "t", matrices)()
+end
+
+function matrix.rref(mtx)
+    local mtx = matrix.copy(mtx)
+    step = 1
+    lead = 1
+    rowCount = #mtx
+    columnCount = #mtx[1]
+    for r = 1, rowCount do
+        if lead > columnCount then
+            return mtx
+        end
+        i = r
+        while (mtx[i][lead] == 0) do
+            i = i + 1
+            if (i - 1 == rowCount) then
+                i = r
+                if (columnCount == lead) then
+                    return mtx
+                end
+                lead = lead + 1
+            end
+        end
+
+        if i ~= r then
+            mtx = matrix.swapRows(mtx, i, r)
+        end
+
+        local m = mtx[r][lead]
+        if (mtx[r][lead] ~= 0) then
+            for u = 1, columnCount do
+                mtx[r][u] = mtx[r][u] / m
+            end
+        end
+        for i = 1, rowCount do
+            local m = mtx[i][lead]
+            if (i ~= r) then
+                for v = 1, columnCount do
+                    mtx[i][v] = mtx[i][v] - m * mtx[r][v]
+                end
+            end
+        end
+        lead = lead + 1
+    end
+    return mtx
+end
+
+function matrix.rref0E(mtx, fom, dignum)
+    local strng = ""
+    truncate = truncate or 6
+    local mtx = matrix.copy(mtx)
+    step = 1
+    lead = 1
+    stepCnt = 0
+    rowCount = #mtx
+    columnCount = #mtx[1]
+    for r = 1, rowCount do
+        if lead > columnCount then
+            return mtx
+        end
+        i = r
+        while (mtx[i][lead] == 0) do
+            i = i + 1
+            if (i - 1 == rowCount) then
+                i = r
+                if (columnCount == lead) then
+                    if stepCnt == 0 then
+                        stepCnt = stepCnt + 1
+                        strng = strng .. "Step " .. tostring(stepCnt) ".$$" .. tostring(matrix.show(mtx, fom, dignum))
+                        return strng
+                    end
+                    return strng
+                end
+                lead = lead + 1
+            end
+        end
+
+        if i ~= r then
+            mtx = matrix.swapRows(mtx, i, r)
+            stepCnt = stepCnt + 1
+            strng =
+                strng ..
+                "Step " ..
+                    tostring(stepCnt) ..
+                        ": Interchange rows  " ..
+                            tostring(i) ..
+                                " and " .. tostring(r) .. ".$$" .. tostring(matrix.show(mtx, fom, dignum)) .. "$$"
+        end
+
+        local m = mtx[r][lead]
+        if (mtx[r][lead] ~= 0) then
+            for u = 1, columnCount do
+                mtx[r][u] = mtx[r][u] / m
+            end
+            if m ~= 1.0 then
+                if m ~= complex("1.0") then
+                    stepCnt = stepCnt + 1
+                    strng =
+                        strng ..
+                        "Step " ..
+                            tostring(stepCnt) ..
+                                ": Divide row  " ..
+                                    tostring(r) ..
+                                        " by " ..
+                                            tostring(complex.round(complex(m), dignum)) ..
+                                                ".$$" .. tostring(matrix.show(mtx, fom, dignum)) .. "$$"
+                end
+            end
+        end
+        for i = 1, rowCount do
+            local m = mtx[i][lead]
+            if (i ~= r) then
+                for v = 1, columnCount do
+                    mtx[i][v] = mtx[i][v] - m * mtx[r][v]
+                end
+                if m ~= 0 then
+                    if m ~= complex("0.0") then
+                        stepCnt = stepCnt + 1
+                        strng =
+                            strng ..
+                            "Step " ..
+                                tostring(stepCnt) ..
+                                    ": Multiply row  " ..
+                                        tostring(r) ..
+                                            " by " ..
+                                                tostring(complex.round(complex(m), dignum)) ..
+                                                    " and subtract it from row " ..
+                                                        tostring(i) ..
+                                                            ".$$" .. tostring(matrix.show(mtx, fom, dignum)) .. "$$"
+                    end
+                end
+            end
+        end
+        lead = lead + 1
+    end
+    return strng
+end
+
+function matrix.GaussJordan(mtx, augmt)
+    local mtx = matrix.copy(mtx)
+    local augmt = matrix.copy(augmt)
+    step = 1
+    lead = 1
+    rowCount = #mtx
+    columnCount = #mtx[1]
+    for r = 1, rowCount do
+        if lead > columnCount then
+            return matrix.concath(mtx, augmt)
+        end
+        i = r
+        while (mtx[i][lead] == 0) do
+            i = i + 1
+            if (i - 1 == rowCount) then
+                i = r
+                if (columnCount == lead) then
+                    return matrix.concath(mtx, augmt)
+                end
+                lead = lead + 1
+            end
+        end
+
+        if i ~= r then
+            mtx = matrix.swapRows(mtx, i, r)
+            augmt = matrix.swapRows(augmt, i, r)
+        end
+
+        local m = mtx[r][lead]
+        if (mtx[r][lead] ~= 0) then
+            for u = 1, columnCount do
+                mtx[r][u] = mtx[r][u] / m
+            end
+            augmt[r][1] = augmt[r][1] / m
+        end
+        for i = 1, rowCount do
+            local m = mtx[i][lead]
+            if (i ~= r) then
+                for v = 1, columnCount do
+                    mtx[i][v] = mtx[i][v] - m * mtx[r][v]
+                end
+                augmt[i][1] = augmt[i][1] - m * augmt[r][1]
+            end
+        end
+        lead = lead + 1
+    end
+    return matrix.concath(mtx, augmt)
+end
+
+function matrix.gauss0E(mtx, augmt, fom, dignum)
+    local strng = ""
+    truncate = truncate or 6
+    local mtx = matrix.copy(mtx)
+    local augmt = matrix.copy(augmt)
+    if matrix.columns(augmt) ~= 1 then
+        error("The second matrix should have only 1 column.")
+    end
+    step = 1
+    lead = 1
+    stepCnt = 0
+    rowCount = #mtx
+    columnCount = #mtx[1]
+    for r = 1, rowCount do
+        if lead > columnCount then
+            return mtx
+        end
+        i = r
+        while (mtx[i][lead] == 0) do
+            i = i + 1
+            if (i - 1 == rowCount) then
+                i = r
+                if (columnCount == lead) then
+                    if stepCnt == 0 then
+                        stepCnt = stepCnt + 1
+                        strng =
+                            strng ..
+                            "Step " ..
+                                tostring(stepCnt) ".$$" ..
+                                    tostring(matrix.show(matrix.concath(mtx, augmt), fom, dignum))
+                        return strng
+                    end
+                    return strng
+                end
+                lead = lead + 1
+            end
+        end
+
+        if i ~= r then
+            mtx = matrix.swapRows(mtx, i, r)
+            augmt = matrix.swapRows(augmt, i, r)
+            stepCnt = stepCnt + 1
+            strng =
+                strng ..
+                "Step " ..
+                    tostring(stepCnt) ..
+                        ": Interchange rows  " ..
+                            tostring(i) ..
+                                " and " .. tostring(r) .. ".$$" .. tostring(matrix.show(mtx, fom, dignum)) .. "$$"
+        end
+
+        local m = mtx[r][lead]
+        if (mtx[r][lead] ~= 0) then
+            for u = 1, columnCount do
+                mtx[r][u] = mtx[r][u] / m
+            end
+            augmt[r][1] = augmt[r][1] / m
+            if m ~= 1.0 then
+                if m ~= complex("1.0") then
+                    stepCnt = stepCnt + 1
+                    strng =
+                        strng ..
+                        "Step " ..
+                            tostring(stepCnt) ..
+                                ": Divide row  " ..
+                                    tostring(r) ..
+                                        " by " ..
+                                            tostring(complex.round(complex(m), dignum)) ..
+                                                ".$$" ..
+                                                    tostring(matrix.show(matrix.concath(mtx, augmt), fom, dignum)) ..
+                                                        "$$"
+                end
+            end
+        end
+        for i = 1, rowCount do
+            local m = mtx[i][lead]
+            if (i ~= r) then
+                for v = 1, columnCount do
+                    mtx[i][v] = mtx[i][v] - m * mtx[r][v]
+                end
+                augmt[i][1] = augmt[i][1] - m * augmt[r][1]
+                if m ~= 0 then
+                    if m ~= complex("0.0") then
+                        stepCnt = stepCnt + 1
+                        strng =
+                            strng ..
+                            "Step " ..
+                                tostring(stepCnt) ..
+                                    ": Multiply row  " ..
+                                        tostring(r) ..
+                                            " by " ..
+                                                tostring(complex.round(complex(m), dignum)) ..
+                                                    " and subtract it from row " ..
+                                                        tostring(i) ..
+                                                            ".$$" ..
+                                                                tostring(
+                                                                    matrix.show(matrix.concath(mtx, augmt), fom, dignum)
+                                                                ) ..
+                                                                    "$$"
+                    end
+                end
+            end
+        end
+        lead = lead + 1
+    end
+    return strng
+end
+
+function matrix.rank(m1)
+    local mtx = {}
+    mtx = matrix.rref(m1)
+    rank = #mtx
+    for i = 1, #mtx do
+        if CheckEqual(mtx[i], 0) then
+            rank = rank - 1
+        end
+    end
+    return rank
+end
+
+function CheckEqual(Values, Number)
+    local CheckEqual = true
+    local i = 1
+
+    while (CheckEqual and (i <= #Values)) do
+        if Values[i] == Number then
+            i = i + 1
+        else
+            CheckEqual = false
+        end
+    end
+
+    return CheckEqual
+end
+
+function matrix.replace(m1, func, ...)
+    local mtx = {}
+    for i = 1, #m1 do
+        local m1i = m1[i]
+        local mtxi = {}
+        for j = 1, #m1i do
+            mtxi[j] = func(m1i[j], ...)
+        end
+        mtx[i] = mtxi
+    end
+    return setmetatable(mtx, matrix_meta)
+end
+
+function matrix.show(mtx, format, dig)
+    mtx = matrix.process(mtx)
+    local format = format or "bmatrix"
+    local dig = dig or 6
+    local str = "\\begin{" .. format .. "}"
+    for i = 1, #mtx do
+        str = str .. "\t" .. complex.round(complex(mtx[i][1]), dig)
+        for j = 2, #mtx[1] do
+            str = str .. " & " .. complex.round(complex(mtx[i][j]), dig)
+        end
+        if i == #mtx then
+            str = str .. " \\\\ "
+        else
+            str = str .. " \\\\ "
+        end
+    end
+    return str .. "\\end{" .. format .. "} "
+end
+
+matrix_meta.__tostring = function(...)
+    return matrix.show(...)
+end
+
+matrix_meta.__add = function(...)
+    return matrix.add(...)
+end
+
+matrix_meta.__sub = function(...)
+    return matrix.sub(...)
+end
+
+matrix_meta.__mul = function(m1, m2)
+    if getmetatable(m1) ~= matrix_meta then
+        return matrix.mulnum(m2, m1)
+    elseif getmetatable(m2) ~= matrix_meta then
+        return matrix.mulnum(m1, m2)
+    end
+    return matrix.mul(m1, m2)
+end
+
+matrix_meta.__div = function(m1, m2)
+    if getmetatable(m1) ~= matrix_meta then
+        return matrix.mulnum(matrix.invert(m2), m1)
+    elseif getmetatable(m2) ~= matrix_meta then
+        return matrix.divnum(m1, m2)
+    end
+    return matrix.div(m1, m2)
+end
+
+matrix_meta.__unm = function(mtx)
+    return matrix.mulnum(mtx, -1)
+end
+
+local option = {
+    ["*"] = function(m1)
+        return matrix.conjugate(m1)
+    end,
+    ["T"] = function(m1)
+        return matrix.transpose(m1)
+    end
+}
+matrix_meta.__pow = function(m1, opt)
+    return option[opt] and option[opt](m1) or matrix.pow(m1, opt)
+end
+
+-- vector part
+
+vectors = {}
+
+vector = {} --module
+
+local vector_meta = {}
+
+function vector.new(vector, rows, columns, n)
+    if columns ~= "e" then
+        local tbl = {}
+        for i = 1, #rows do
+            tbl[i] = rows[i]
+        end
+        return setmetatable(tbl, vector_meta)
+    end
+    local vec = {}
+    if columns == "e" then
+        for i = 1, rows do
+            if i == n then
+                vec[i] = 1
+            else
+                vec[i] = 0
+            end
+        end
+        return setmetatable(vec, vector_meta)
+    end
+end
+
+setmetatable(
+    vector,
+    {__call = function(...)
+            return vector.new(...)
+        end}
+)
+
+function vector.add(v1, v2)
+    if #v1 ~= #v2 then
+        return error("Vectors should be of same dimension.")
+    end
+    local vec = {}
+    for i = 1, #v1 do
+        vec[i] = v1[i] + v2[i]
+    end
+    return setmetatable(vec, vector_meta)
+end
+
+function vector.sub(v1, v2)
+    if #v1 ~= #v2 then
+        return error("Vectors should be of same dimension.")
+    end
+    local vec = {}
+    for i = 1, #v1 do
+        vec[i] = v1[i] - v2[i]
+    end
+    return setmetatable(vec, vector_meta)
+end
+
+function vector.dot(v1, v2)
+    if #v1 ~= #v2 then
+        return error("Vectors should be of same dimension")
+    end
+    local sum = 0
+    for i = 1, #v1 do
+        sum = sum + v1[i] * complex.conjugate(complex(v2[i]))
+    end
+    return sum
+end
+
+function vector.mulnum(v1, num)
+    local vec = {}
+    -- multiply elements with number
+    for i = 1, #v1 do
+        vec[i] = v1[i] * num
+    end
+    return setmetatable(vec, vector_meta)
+end
+
+function vector.sumnorm(v1)
+    local norm = 0
+    for i = 1, #v1 do
+        norm = norm + complex.abs(complex(v1[i]))
+    end
+    return norm
+end
+
+function vector.euclidnorm(v1)
+    return complex.sqrt(vector.dot(v1, v1))
+end
+
+function vector.pnorm(v1, p)
+    if math.floor(p) ~= math.abs(p) or p <= 1 then
+        return error("Invalid value of p")
+    end
+    local sum = 0
+    for i = 1, #v1 do
+        sum = sum + complex.abs(complex(v1[i])) ^ p
+    end
+    return sum ^ (1 / p)
+end
+
+function vector.supnorm(v1)
+    local result = 0
+    for i = 1, #v1 do
+        local e = complex.abs(complex(v1[i]))
+        if e > result then
+            result = e
+        end
+    end
+    return result
+end
+
+function vector.cross(v1, v2)
+    if #v1 ~= 3 or #v2 ~= 3 then
+        return error("Vectors should be of dimension 3")
+    end
+    local vec = {}
+    vec[1] = v1[2] * v2[3] - v1[3] * v2[2]
+    vec[2] = v1[3] * v2[1] - v1[1] * v2[3]
+    vec[3] = v1[1] * v2[2] - v1[2] * v2[1]
+    return setmetatable(vec, vector_meta)
+end
+
+function vector.createrandom(n, start, stop)
+    start = start or 0
+    stop = stop or 10
+    vec = {}
+    for i = 1, n do
+        vec[i] = math.random(start, stop)
+        vec[i] = vec[i] + math.min(math.random(), math.abs(vec[i] - start), math.abs(stop - vec[i]))
+    end
+    return setmetatable(vec, vector_meta)
+end
+
+function vector.getcoordinate(vec, i)
+    if vec[i] then
+        return vec[i]
+    end
+end
+
+function vector.setcoordinate(vec, i, val)
+    if vec[i] then
+        vec[i] = val
+        return val
+    end
+end
+
+function vector.getangle(v1, v2)
+    if #v1 ~= #v2 then
+        return error("Vectors should be of same dimension")
+    end
+    local x = complex.get(vector.dot(v1, v2) / (vector.euclidnorm(v1) * vector.euclidnorm(v2)))
+    return math.acos(mathround(x, 15))
+end
+
+function vector.copy(v1)
+    local vec = {}
+    for i = 1, #v1 do
+        vec[i] = v1[i]
+    end
+    return setmetatable(vec, vector_meta)
+end
+
+function vector.op(exp)
+    return load("return " .. exp, exp, "t", vectors)()
+end
+
+function vector.process(v1)
+    --v1=load("return "..v1)()
+    return vector.mulnum(v1, 1.0)
+end
+
+function vector.show(vec, dig)
+    vec = vector.process(vec)
+    local dig = dig or 6
+    local str = ""
+    for i = 1, #vec do
+        if i == 1 then
+            str = str .. complex.round(complex(vec[i]), dig)
+        else
+            str = str .. "," .. complex.round(complex(vec[i]), dig)
+        end
+    end
+    return str .. ""
+end
+
+function vector.parse(vec)
+    local tbl = {}
+    for i = 1, #vec do
+        tbl[i] = vec[i]
+    end
+    return "(" .. table.concat(tbl, ",") .. ")"
+end
+
+function vector.gs(inptTbl, brckt, dignum)
+    local brcktR = ""
+    brckt = brckt or "round"
+    if brckt == "round" then
+        brcktL = "("
+        brcktR = ")"
+    end
+    if brckt == "square" then
+        brcktL = "["
+        brcktR = "]"
+    end
+    if brckt == "curly" then
+        brcktL = "\\{"
+        brcktR = "\\}"
+    end
+
+    local tbl = {}
+    local str = ""
+    k = #inptTbl
+
+    if vector.euclidnorm(inptTbl[1]) ~= complex(0.0) then
+        tbl[1] = vector.mulnum(inptTbl[1], 1 / vector.euclidnorm(inptTbl[1]))
+    else
+        tbl[1] = vector.mulnum(inptTbl[1], 1.0)
+    end
+    setmetatable(tbl[1], vector_meta)
+    str = str .. "$\\left" .. brcktL .. vector.show(tbl[1], dignum) .. "\\right" .. brcktR
+    for i = 2, k do
+        tbl[i] = inptTbl[i]
+        setmetatable(tbl[i], vector_meta)
+        for j = 1, i - 1 do
+            setmetatable(tbl[j], vector_meta)
+            tbl[i] = vector.sub(tbl[i], vector.mulnum(tbl[j], vector.dot(tbl[i], tbl[j])))
+        end
+        if vector.euclidnorm(tbl[i]) ~= complex(0.0) then
+            tbl[i] = vector.mulnum(tbl[i], 1 / vector.euclidnorm(tbl[i]))
+        end
+        tbl[i] = vector.mulnum(tbl[i], 1.0)
+        str = str .. ",\\left" .. brcktL .. vector.show(tbl[i], dignum) .. "\\right" .. brcktR
+    end
+    str = str .. "$"
+    return str
+end
+
+function vector.gsX(inptTbl, brckt, dignum)
+    local brcktR = ""
+    local cnt = 1
+    brckt = brckt or "round"
+    if brckt == "round" then
+        brcktL = "\\left("
+        brcktR = "\\right)$$"
+    end
+    if brckt == "square" then
+        brcktL = "\\left["
+        brcktR = "\\right]$$"
+    end
+    if brckt == "curly" then
+        brcktL = "\\left\\{"
+        brcktR = "\\right\\}$$"
+    end
+
+    local tbl = {}
+    local tmpTbl = {}
+    local str = ""
+    k = #inptTbl
+    str = str .. "\\ \\newline Take given vectors as $v_1,\\ldots, v_" .. k .. "$ in order."
+
+    if vector.euclidnorm(inptTbl[1]) ~= complex(0.0) then
+        tbl[1] = vector.mulnum(inptTbl[1], 1 / vector.euclidnorm(inptTbl[1]))
+    else
+        tbl[1] = vector.mulnum(inptTbl[1], 1.0)
+    end
+    setmetatable(tbl[1], vector_meta)
+    str = str .. "\\ \\newline Step " .. cnt .. ": $$ u_" .. cnt .. "=v_" .. cnt .. "="
+    str = str .. brcktL .. vector.show(inptTbl[1], dignum) .. brcktR
+    str = str .. " $$ e_" .. cnt .. "="
+    if vector.euclidnorm(tbl[1]) ~= complex(0.0) then
+        str = str .. "\\frac{u_{" .. cnt .. "}}" .. "{||u_{" .. cnt .. "}||} ="
+    end
+    str = str .. brcktL .. vector.show(tbl[1], dignum) .. brcktR
+    for i = 2, k do
+        tbl[i] = inptTbl[i]
+        setmetatable(tbl[i], vector_meta)
+        for j = 1, i - 1 do
+            setmetatable(tbl[j], vector_meta)
+            tmpTbl[i] = vector.sub(tbl[i], vector.mulnum(tbl[j], vector.dot(tbl[i], tbl[j])))
+            tbl[i] = vector.sub(tbl[i], vector.mulnum(tbl[j], vector.dot(tbl[i], tbl[j])))
+        end
+        if vector.euclidnorm(tbl[i]) ~= complex(0.0) then
+            tbl[i] = vector.mulnum(tbl[i], 1 / vector.euclidnorm(tbl[i]))
+        else
+            tbl[i] = vector.mulnum(tbl[i], 1.0)
+        end
+
+        cnt = cnt + 1
+        str = str .. " Step " .. cnt
+        str = str .. ": $$ u_" .. cnt .. "="
+        str = str .. "v_" .. cnt .. "-\\sum_{j=1}^{" .. (cnt - 1) .. "}{{proj_{u_j}(v_" .. cnt .. ")}}="
+        str = str .. brcktL .. vector.show(tmpTbl[i], dignum) .. brcktR
+        str = str .. " $$ e_" .. cnt .. "="
+        if vector.euclidnorm(tbl[i]) ~= complex(0.0) then
+            str = str .. "\\frac{u_{" .. cnt .. "}}" .. "{||u_{" .. cnt .. "}||} ="
+        end
+        str = str .. brcktL .. vector.show(tbl[i], dignum) .. brcktR
+    end
+
+    return str
+end
+
+vector_meta.__tostring = function(...)
+    return vector.show(...)
+end
+
+vector_meta.__add = function(...)
+    return vector.add(...)
+end
+
+vector_meta.__sub = function(...)
+    return vector.sub(...)
+end
+
+vector_meta.__unm = function(vec)
+    return vector.mulnum(vec, -1)
+end
+
+vector_meta.__mul = function(v1, v2)
+    if getmetatable(v1) ~= vector_meta then
+        return vector.mulnum(v2, v1)
+    elseif getmetatable(v2) ~= vector_meta then
+        return vector.mulnum(v1, v2)
+    end
+    return vector.dot(v1, v2)
+end
+
+function mathround(num, numDecimalPlaces)
+    local mult = 10 ^ (numDecimalPlaces or 0)
+    return math.floor(num * mult + 0.5) / mult
+end
+
+
+\end{luacode*}
+
+% matrix latex commands
+
+\newcommand\matrixNew[2]{%
+    \directlua{%
+        matrices['#1'] = matrix(#2)
+    }%
+}
+
+% ========= KEY DEFINITIONS =========
+\define@key{matrixop}{type}{\def\mop@type{#1}}
+\define@key{matrixop}{truncate}{\def\mop@truncate{#1}}
+
+% ========= KEY DEFAULTS =========
+\setkeys{matrixop}{type=bmatrix,truncate=6}%
+
+\newcommand{\matrixPrint}[2][]{%
+  \begingroup%
+  \setkeys{matrixop}{#1}
+  \directlua{tex.sprint(matrix.show(matrices['#2'],"\mop@type",\mop@truncate))}
+  %
+  \endgroup%
+}
+
+\newcommand\matrixOp[2]{%
+    \directlua{%
+        matrices['#1'] = matrix.op('#2')
+    }%
+}
+
+
+\newcommand\matrixAdd[3]{%
+    \directlua{%
+        matrices['#1'] = matrix.add(matrices['#2'],matrices['#3'])
+    }%
+}
+
+\newcommand\matrixSub[3]{%
+    \directlua{%
+        matrices['#1'] = matrix.sub(matrices['#2'],matrices['#3'])
+    }%
+}
+
+\newcommand\matrixMulNum[3]{%
+    \directlua{%
+        matrices['#1'] = matrix.mulnum(matrices['#3'],#2)
+    }%
+}
+
+\newcommand\matrixMul[3]{%
+    \directlua{%
+        matrices['#1'] = matrix.mul(matrices['#2'],matrices['#3'])
+    }%
+}
+
+\newcommand\matrixSwapRows[4]{%
+    \directlua{%
+        matrices['#1'] = matrix.swapRows(matrices['#2'],#3,#4)
+    }%
+}
+
+\newcommand\matrixSwapCols[4]{%
+    \directlua{%
+        matrices['#1'] = matrix.swapCols(matrices['#2'],#3,#4)
+    }%
+}
+
+\newcommand\matrixMulRow[4]{%
+    \directlua{%
+        matrices['#1'] = matrix.mulRow(matrices['#2'],#3,#4)
+    }%
+}
+
+\newcommand\matrixMulCol[4]{%
+    \directlua{%
+        matrices['#1'] = matrix.mulCol(matrices['#2'],#3,#4)
+    }%
+}
+
+\newcommand\matrixMulAddRow[5]{%
+    \directlua{%
+        matrices['#1'] = matrix.mulAddRow(matrices['#2'],#4,#3,#5)
+    }%
+}
+
+\newcommand\matrixMulAddCol[5]{%
+    \directlua{%
+        matrices['#1'] = matrix.mulAddCol(matrices['#2'],#4,#3,#5)
+    }%
+}
+
+\newcommand\matrixTranspose[2]{%
+    \directlua{%
+        matrices['#1'] = matrix.transpose(matrices['#2'])
+    }%
+}
+
+\newcommand\matrixSubmatrix[6]{%
+    \directlua{%
+        matrices['#1'] = matrix.subm(matrices['#2'],#3,#4,#5,#6)
+    }%
+}
+
+\newcommand\matrixConcatH[3]{%
+    \directlua{%
+        matrices['#1'] = matrix.concath(matrices['#2'],matrices['#3'])
+    }%
+}
+
+\newcommand\matrixConcatV[3]{%
+    \directlua{%
+        matrices['#1'] = matrix.concatv(matrices['#2'],matrices['#3'])
+    }%
+}
+
+\newcommand\matrixNumRows[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.rows(matrices['#1'])))
+    }%
+}
+
+\newcommand\matrixNumCols[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.columns(matrices['#1'])))
+    }%
+}
+
+\newcommand\matrixGetElement[3]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.getelement(matrices['#1'],#2,#3)))
+    }%
+}
+
+\newcommand\matrixSetElement[4]{%
+    \directlua{%
+        matrix.setelement(matrices['#1'],#2,#3,#4)
+    }%
+}
+
+\newcommand\matrixInvert[2]{%
+    \directlua{%
+        matrices['#1'] = matrix.invert(matrices['#2'])
+    }%
+}
+
+\newcommand\matrixPow[3]{%
+    \directlua{%
+        matrices['#1'] = matrix.pow(matrices['#2'],#3)
+    }%
+}
+
+\newcommand\matrixCreateRandom[5]{%
+    \directlua{%
+        matrices['#1'] = matrix.createrandom(#2,#3,#4,#5)
+    }%
+}
+
+\newcommand\matrixDet[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.det(matrices['#1'])))
+    }%
+}
+
+\newcommand\matrixTrace[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.trace(matrices['#1'])))
+    }%
+}
+
+\newcommand\matrixNormOne[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.norm1(matrices['#1'])))
+    }%
+}
+
+\newcommand\matrixNormInfty[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.norminfty(matrices['#1'])))
+    }%
+}
+
+\newcommand\matrixNormMax[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.normmax(matrices['#1'])))
+    }%
+}
+
+\newcommand\matrixNormF[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.normF(matrices['#1'])))
+    }%
+}
+
+\newcommand\matrixCopy[2]{%
+    \directlua{%
+        matrices['#1'] = matrix.copy(matrices['#2'])
+    }%
+}
+
+\newcommand\matrixRREF[2]{%
+    \directlua{%
+        matrices['#1'] = matrix.rref(matrices['#2'])
+    }%
+}
+
+\newcommand\matrixConjugate[2]{%
+    \directlua{%
+        matrices['#1'] = matrix.conjugate(matrices['#2'])
+    }%
+}
+
+\newcommand\matrixConjugateT[2]{%
+    \directlua{%
+        matrices['#1'] = matrix.conjugateT(matrices['#2'])
+    }%
+}
+
+\newcommand\matrixRank[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.rank(matrices['#1'])))
+    }%
+}
+
+\newcommand\matrixRREFERR[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.rref0E(matrices['#1'])))
+    }%
+}
+
+\newcommand\matrixRREFE[1]{%
+    \directlua{%
+        tex.sprint(tostring(matrix.rref0E(matrices['#1'])))
+    }%
+}
+
+% ========= KEY DEFINITIONS =========
+\define@key{matrixrr}{type}{\def\moprr@type{#1}}
+\define@key{matrixrr}{truncate}{\def\moprr@truncate{#1}}
+
+% ========= KEY DEFAULTS =========
+\setkeys{matrixrr}{type=bmatrix,truncate=6}%
+
+\newcommand{\matrixRREFSteps}[2][]{%
+  \begingroup%
+  \setkeys{matrixrr}{#1}
+  \directlua{%
+  tex.sprint(matrix.rref0E(matrices['#2'],"\moprr@type",\moprr@truncate))}
+  %
+  \endgroup%
+}
+
+\newcommand\matrixGaussJordan[3]{%
+    \directlua{%
+        matrices['#1'] = matrix.GaussJordan(matrices['#2'],matrices['#3'])
+    }%
+}
+
+\newcommand{\matrixGaussJordanSteps}[3][]{%
+  \begingroup%
+  \setkeys{matrixrr}{#1}
+  \directlua{%
+  tex.sprint(matrix.gauss0E(matrices['#2'],matrices['#3'],"\moprr@type",\moprr@truncate))}
+  %
+  \endgroup%
+}
+
+% vector latex commands
+
+\newcommand\vectorNew[2]{%
+    \directlua{%
+        vectors['#1'] = vector(#2)
+    }%
+}
+
+% ========= KEY DEFINITIONS =========
+\define@key{vectorop}{truncate}{\def\vop@truncate{#1}}
+
+% ========= KEY DEFAULTS =========
+\setkeys{vectorop}{truncate=6}%
+
+\newcommand{\vectorPrint}[2][]{%
+  \begingroup%
+  \setkeys{vectorop}{#1}
+  \directlua{tex.sprint(vector.show(vectors['#2'],\vop@truncate))}
+  %
+  \endgroup%
+}
+
+\newcommand\vectorParse[1]{%
+    \directlua{%
+        tex.sprint(tostring(vector.parse(vectors['#1'])))
+    }%
+}
+
+\newcommand\vectorOp[2]{%
+    \directlua{%
+        vectors['#1'] = vector.op('#2')
+    }%
+}
+
+\newcommand\vectorAdd[3]{%
+    \directlua{%
+        vectors['#1'] = vector.add(vectors['#2'],vectors['#3'])
+    }%
+}
+
+\newcommand\vectorSub[3]{%
+    \directlua{%
+        vectors['#1'] = vector.sub(vectors['#2'],vectors['#3'])
+    }%
+}
+
+\newcommand\vectorDot[2]{%
+    \directlua{%
+        tex.sprint(tostring(vector.dot(vectors['#1'],vectors['#2'])))
+    }%
+}
+
+\newcommand\vectorMulNum[3]{%
+    \directlua{%
+        vectors['#1'] = vector.mulnum(vectors['#2'],#3)
+    }%
+}
+
+\newcommand\vectorCross[3]{%
+    \directlua{%
+        vectors['#1'] = vector.cross(vectors['#2'],vectors['#3'])
+    }%
+}
+
+\newcommand\vectorSumNorm[1]{%
+    \directlua{%
+        tex.sprint(tostring(vector.sumnorm(vectors['#1'])))
+    }%
+}
+
+\newcommand\vectorEuclidNorm[1]{%
+    \directlua{%
+        tex.sprint(tostring(vector.euclidnorm(vectors['#1'])))
+    }%
+}
+
+\newcommand\vectorSupNorm[1]{%
+    \directlua{%
+        tex.sprint(tostring(vector.supnorm(vectors['#1'])))
+    }%
+}
+
+\newcommand\vectorpNorm[2]{%
+    \directlua{%
+        tex.sprint(tostring(vector.pnorm(vectors['#1'],#2)))
+    }%
+}
+
+\newcommand\vectorCreateRandom[4]{%
+    \directlua{%
+        vectors['#1'] = vector.createrandom(#2,#3,#4)
+    }%
+}
+
+\newcommand\vectorCopy[2]{%
+    \directlua{%
+        vectors['#1'] = vector.copy(vectors['#2'])
+    }%
+}
+
+\newcommand\vectorGetCoordinate[2]{%
+    \directlua{%
+        tex.sprint(tostring(vector.getcoordinate(vectors['#1'],#2)))
+    }%
+}
+
+\newcommand\vectorSetCoordinate[3]{%
+    \directlua{%
+        tex.sprint(tostring(vector.setcoordinate(vectors['#1'],#2,#3)))
+    }%
+}
+
+\newcommand\vectorGetAngle[2]{%
+    \directlua{%
+        tex.sprint(tostring(vector.getangle(vectors['#1'],vectors['#2'])))
+    }%
+}
+
+\newcommand\complexRound[2]{%
+    \directlua{%
+        tex.sprint(tostring(complex.round(complex('#1'),#2)))
+    }%
+}
+
+% ========= KEY DEFINITIONS =========
+\define@key{vecrr}{brckt}{\def\voprr@brckt{#1}}
+\define@key{vecrr}{truncate}{\def\voprr@truncate{#1}}
+
+% ========= KEY DEFAULTS =========
+\setkeys{vecrr}{brckt=round,truncate=6}%
+\newcommand{\vectorGramSchmidt}[2][]{%
+  \begingroup%
+  \setkeys{vecrr}{#1}
+  \directlua{%
+  local tbl = #2
+		local outTbl={}
+		local sum = 0
+		for i=1,table.getn(tbl) do
+		 outTbl[i] = vectors[tbl[i]]
+		end
+  
+  tex.sprint(vector.gs(outTbl,"\voprr@brckt",\voprr@truncate))}
+  %
+  \endgroup%
+}
+
+\newcommand{\vectorGramSchmidtSteps}[2][]{%
+  \begingroup%
+  \setkeys{vecrr}{#1}
+  \directlua{%
+  local tbl = #2
+		local outTbl={}
+		local sum = 0
+		for i=1,table.getn(tbl) do
+		 outTbl[i] = vectors[tbl[i]]
+		end 
+  tex.sprint(vector.gsX(outTbl,"\voprr@brckt",\voprr@truncate))}
+  %
+  \endgroup%
+}
+
+\endinput

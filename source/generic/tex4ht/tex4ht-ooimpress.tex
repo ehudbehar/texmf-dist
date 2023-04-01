@@ -1,0 +1,436 @@
+% $Id: tex4ht-ooimpress.tex 65 2010-11-17 19:16:45Z karl $
+% compile 3 times: latex tex4ht-ooimpress
+%      htlatex tex4ht-ooimpress "xhtml,4,sections+"
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) 2001-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+%%%%%%%%%%%%%%%%%% load style files %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifx \HTML\UnDef
+   \def\HTML{ooimpress}%,ooimpress-mml}                   
+   \def\PREAMBLE{%
+      \usepackage{url}%
+      \usepackage{hyperref}%
+   }
+   \def\OPTIONS{html,sections+,3}%
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari, 
+                          James Naughton, and Maarten Wisse}}         
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common}
+\input{tex4ht-cpright}
+
+See ch 7 of \cite{odbook}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{The Code}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{The Root}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Imported Configurations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<configure ooimpress tex4ht\><<<
+\if:latex  |<Hinclude latex|>
+\else      |<Hinclude plain|>  \fi
+>>>
+
+
+\<configure ooimpress plain\><<<
+|<Hinclude plain lib|>
+|<Hinclude plain + latex lib|>
+>>>
+
+\<configure ooimpress latex\><<<
+|<Hinclude latex lib|>
+|<Hinclude plain + latex lib|>
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Common Code Fragments}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<par del\><<<
+!*?: >>>
+
+\<tag of Tag\><<<
+ cw:>>>
+
+\<tail\><<<
+tail>>>
+
+\<addr for Tag and Ref of Sec\><<<
+\xdef\:cursec{|<section html addr|>}%
+>>>
+
+\<utilities\><<<
+\newif\ifHCond
+\def\:gobbleM#1->{}
+>>>
+
+
+\<try env inline par\><<<
+\ShowPar
+>>>
+
+\<try inline par\><<<
+\ShowPar\par{\HCondtrue\noindent}%
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Copyright}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\<ooimpress\><<<
+% ooimpress.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) |CopyYear.2001. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+\<configure ooimpress tex4ht\><<<
+|<utilities|>
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%
+\section{The XML Files}
+%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%
+\subsection{content.xml (= jobname.xml)}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\<configure ooimpress foils\><<<
+\Configure{BODY}
+  {\HCode{<office:body><office:presentation>}%   
+   \let\end:rootslide\empty
+   \start:slide 
+   \gdef\end:rootslide{\end:slide \global\let\end:rootslide=\empty}%
+   \par\ShowPar}
+  {\IgnorePar\EndP
+   \end:rootslide
+   \HCode{</office:presentation></office:body>\Hnewline}}
+>>>
+
+
+\<configure ooimpress foils\><<<
+\Configure{maketitle}
+   {\bgroup  
+       \Configure{newpage}{}%
+       \IgnorePar\EndP\HCode{<!--begin maketitle-->}
+       \Configure{tabular}{}{}{}{}{\ifnum \HRow>1
+               \HCode{<text:line-break\Hnewline/>}\fi}{}%
+       \ConfigureEnv{tabular}{}{}{}{}%
+   }
+   {\ifvmode \IgnorePar\fi \EndP
+    \HCode{|<end page body|><!--end maketitle-->}\egroup \par}
+   {\ifvmode \IgnorePar\fi \EndP
+    \HCode{|<start document title|>%
+           <text:p text:style-name="Title|<cond rtl class|>" >}}
+   {\HCode{</text:p>|<end document title|>|<start maketitle page body|>}}
+>>>
+
+\<start maketitle page body\><<<
+<draw:frame presentation:style-name="pr1"  
+            draw:layer="layout" 
+            svg:width="25.199cm"  
+%             svg:height="3.256cm" 
+            svg:x="1.4cm"  
+            svg:y="6.0cm" 
+            presentation:class="notes"> 
+  <draw:text-box>\Hnewline
+>>>
+
+
+
+\<start page body\><<<
+<draw:frame presentation:style-name="pr1"  
+            draw:layer="layout" 
+            svg:width="25.199cm"  
+%             svg:height="3.256cm" 
+            svg:x="1.4cm"  
+            svg:y="2.0cm" 
+            presentation:class="notes"> 
+  <draw:text-box>\Hnewline
+>>>
+
+
+\<end page body\><<<
+  </draw:text-box> 
+</draw:frame>\Hnewline         
+>>>
+
+
+
+\<start document title\><<<
+<draw:frame presentation:style-name="pr1"  
+            draw:layer="layout" 
+            svg:width="25.199cm"  
+%             svg:height="3.256cm" 
+            svg:x="1.4cm"  
+            svg:y="3.0cm" 
+            presentation:class="title"> 
+  <draw:text-box>\Hnewline
+>>>
+
+\<end document title\><<<
+  </draw:text-box> 
+</draw:frame>\Hnewline         
+>>>
+
+
+
+\<configure ooimpress foils\><<<
+\HAssign\PageN=0
+\Configure{foilhead}
+   {\IgnorePar\EndP \start:slide }
+   {\IgnorePar\EndP 
+    \HCode{|<end page body|>}\end:slide }
+   {\HCode{|<start foilhead title|>%
+           <text:p text:style-name="|<cond rtl class|>" >}%
+    \IgnoreIndent}
+   {\HCode{</text:p>\Hnewline
+           |<end foilhead title|>|<start page body|>}\par\ShowPar}
+
+\def\start:slide{\end:rootslide
+    \HAdvance\PageN by 1
+    \HCode{<!--start of foilhead-->
+    <draw:page draw:name="page\PageN" 
+                 draw:style-name="dp1" 
+                 draw:master-page-name="Default"> \Hnewline}}
+\def\end:slide{\HCode{
+    </draw:page> 
+    <!--end of foilhead-->}}
+>>>
+
+
+\<cond rtl class\><<<
+\if@rl-rtl\fi
+>>>
+
+
+
+\<start foilhead title\><<<
+<draw:frame presentation:style-name="pr1"  
+            draw:layer="layout" 
+            svg:width="25.199cm"  
+%             svg:height="3.256cm" 
+            svg:x="1.4cm"  
+            svg:y="0.962cm" 
+            presentation:class="subtitle"> 
+  <draw:text-box>\Hnewline
+>>>
+
+\<end foilhead title\><<<
+  </draw:text-box> 
+</draw:frame>\Hnewline         
+>>>
+
+\<configure ooimpress foils NO\><<<
+\NewConfigureOO{slide}
+\ConfigureOO{slide}{%
+<style:style style:name="dp1" style:family="drawing-page"> 
+   <style:drawing-page-properties 
+       presentation:background-visible="true" 
+       presentation:background-objects-visible="true" 
+       presentation:display-footer="true" 
+       presentation:display-page-number="false" 
+       presentation:display-date-time="true"/> 
+</style:style> 
+<style:style style:name="gr1" 
+       style:family="graphic" 
+       style:parent-style-name="standard"> 
+   <style:graphic-properties  
+       draw:stroke="none"  
+       svg:stroke-color="\#000000" 
+       draw:fill="none"  
+       draw:fill-color="\#ffffff" 
+       draw:textarea-horizontal-align="left" 
+       draw:auto-grow-height="true"  
+       draw:auto-grow-width="true" 
+       fo:min-height="0cm"  
+       fo:min-width="0cm"/> 
+</style:style> 
+}
+>>>
+
+
+
+
+\<configure ooimpress foils\><<<
+\ConfigureOO{foilhead}{\Hnewline
+<style:style style:name="foilhead"
+                  style:family="paragraph"
+   >\Hnewline
+<\style:par:properties fo:font-size="12pt"
+                  fo:font-weight="bold"
+                  style:font-size-asian="14pt"
+                  style:font-weight-asian="bold"
+                  style:font-size-complex="14pt"
+                  style:font-weight-complex="bold"
+                  fo:margin-top="0.42cm"
+                  fo:margin-bottom="0.51cm"
+                  fo:text-align="center"
+                  style:justify-single-word="false"
+/>
+</style:style>
+}
+>>>
+
+
+\<configure ooimpress foils\><<<
+\ConfigureOO{title}{%
+<style:style style:name="Title"
+             style:family="paragraph"
+  >\Hnewline
+<\style:par:properties fo:margin-top="0.42cm"
+                  fo:margin-bottom="0.51cm"
+                  fo:font-size="20pt"
+                  fo:font-weight="normal"
+                  style:font-size-asian="18pt"
+                  style:font-weight-asian="bold"
+                  style:font-size-complex="18pt"
+                  style:font-weight-complex="bold"
+                  fo:text-align="center"
+                  style:justify-single-word="false"/>
+</style:style> \Hnewline
+ }
+>>>
+
+
+
+\<configure ooimpress foils\><<<
+\Configure{thank}
+   {\setbox\tmp:bx=\hbox\bgroup}
+   {\egroup}
+   {\NoFonts   \leavevmode   \bgroup \protect\Configure{$}{}{}{}%
+    \hbox{\HCode{<!--text:note\Hnewline text:note-class="footnote"
+                  text:id="}|<thank id|>%
+               \HCode{"><text:note-citation>}}%
+   }
+   {\egroup \EndNoFonts
+    \HCode{</text:note-citation><text:note-body>
+    <text:p\Hnewline text:style-name="Footnote" ><text:s/>}}
+   {\HCode{</text:p></text:note-body></text:note-->}}   
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Undo ooffice}
+%%%%%%%%%%%%%
+
+
+\<configure ooimpress tex4ht\><<<
+\def\media:type{application/vnd.oasis.opendocument.presentation}
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\subsection{Remove `reference-mark'}
+%%%%%%%%%%%%%%%%%%
+
+Introduced in xtpipes for \verb=\Link=
+
+
+\<configure ooimpress latex\><<<
+\Odef\Link[#1]#2#3{}
+\let\EndLink\empty
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\subsection{Remove `style:columns'}
+%%%%%%%%%%%%%%%%%%
+
+
+OpenOffice impress chocks on `style:columns' (why?)
+
+\<configure ooimpress latex\><<<
+\ConfigureOO{Sect1}{\Hnewline
+   <style:style style:name="Sect1"
+                style:family="section">
+   <\style:sectionproperties>
+      <!--style:columns fo:column-count="1"
+                   fo:column-gap="0cm">
+         <style:column fo:margin-top="0.5cm"
+                      fo:margin-left="0cm"
+                      fo:margin-right="0cm"
+         />
+      </style:columns-->
+   </\style:sectionproperties>
+   </style:style>
+\Hnewline }
+>>>
+
+
+\<configure ooimpress latex\><<<
+\ConfigureOO{Sect2}{\Hnewline
+<style:style    style:name="Sect2"
+   style:family="section">
+   <\style:sectionproperties>
+      <!--style:columns fo:column-count="0" fo:column-gap="0cm"/-->
+   </\style:sectionproperties>
+</style:style>
+\Hnewline }
+>>>
+
+\<configure ooimpress tex4ht\><<<
+\Configure{figure-style}{%
+   <style:style style:name="Figure" style:family="section">\Hnewline
+     <style:section-properties 
+                               fo:margin-left="0.25in" 
+                               fo:margin-right="0.25in" 
+                               style:editable="true">\Hnewline
+         <!--style:columns fo:column-count="0" 
+                        fo:column-gap="0in"/--> 
+     </style:section-properties> 
+   </style:style>\Hnewline 
+}
+>>>
+
+
+\<configure ooimpress g-brief\><<<
+\ConfigureOO{g-brief-header}{\Hnewline
+<style:style style:name="header-style" style:family="section">\Hnewline
+   <\style:properties text:dont-balance-text-columns="false"
+                     fo:margin-bottom="2cm">\Hnewline
+      <!--style:columns    fo:column-count="2"
+                        fo:column-gap="1in">\Hnewline
+          <style:column fo:margin-left="0in"
+                        fo:margin-right="0in"/>\Hnewline
+          <style:column fo:margin-left="0in"
+                        fo:margin-right="0in"/>\Hnewline
+      </style:columns-->\Hnewline      
+   </\style:properties>\Hnewline
+</style:style>\Hnewline
+}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{thebibliography}{9} 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\bibitem{odbook}
+OASIS OpenDocument Essentials,
+Using OASIS OpenDocument XML
+\url{http://books.evc-cit.info/odbook/book.html}
+
+
+\end{thebibliography} 
+
+
+\endinput

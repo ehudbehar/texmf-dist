@@ -1,0 +1,429 @@
+%%
+%% This is file `latex-lab-footnotes.ltx',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% latex-lab-footnotes.dtx  (with options: `kernel')
+%% 
+%% This is a generated file.
+%% 
+%% Copyright 2021,2022 LaTeX Project
+%% 
+%% This file was generated from file(s) of the  `LaTeX-lab Bundle'.
+%% ------------------------------------------------------------------------------------
+%% 
+%% It may be distributed and/or modified under the
+%% conditions of the LaTeX Project Public License, either version 1.3c
+%% of this license or (at your option) any later version.
+%% The latest version of this license is in
+%%    http://www.latex-project.org/lppl.txt
+%% and version 1.3c or later is part of all distributions of LaTeX
+%% version 2008 or later.
+%% 
+%% This file may only be distributed together with a copy of the LaTeX
+%% `LaTeX-lab Bundle'. You may however distribute the `LaTeX-lab Bundle'
+%% without such generated files.
+%% 
+%% The newest sources can be found below
+%% 
+%%    https://github.com/latex3/latex2e/required/latex-lab
+%% 
+%% where one can also log issues in case there are any.
+%% 
+%% 
+%% File: latex-lab-footnotes.dtx
+\ProvidesFile{latex-lab-footnotes.ltx}
+        [2022-07-22 v0.6b changes to the footnote interfaces]
+
+
+        % not looked at yet
+
+\long\def\@mpfootnotetext#1{%
+  \global\setbox\@mpfootins\vbox{%
+    \unvbox\@mpfootins
+    \reset@font\footnotesize
+    \hsize\columnwidth
+    \@parboxrestore
+    \def\@currentcounter{mpfootnote}%
+    \protected@edef\@currentlabel
+         {\csname p@mpfootnote\endcsname\@thefnmark}%
+    \color@begingroup
+      \@makefntext{%
+        \rule\z@\footnotesep\ignorespaces#1\@finalstrut\strutbox}%
+    \par
+    \color@endgroup}}
+
+\def\@makefnmark{\hbox{\@textsuperscript{\normalfont\@thefnmark}}}
+
+\def\@mpfn{footnote}
+\def\thempfn{\thefootnote}
+
+
+\ExplSyntaxOn
+
+\cs_new_protected:Npn \fnote_step_fnmark:nn #1#2 {
+  \tl_if_novalue:nTF {#1}
+    {
+      \stepcounter {#2}
+      \protected@xdef \@thefnmark { \use:c { the#2 } }
+    }
+    {
+     \group_begin:
+        \int_set:cn { c@#2 }{ #1 }
+        \unrestored@protected@xdef \@thefnmark { \use:c { the#2 } }
+     \group_end:
+    }
+}
+
+\cs_new_protected:Npn \fnote_set_fnmark:nn #1#2 {
+  \tl_if_novalue:nTF {#1}
+    {
+      \protected@xdef \@thefnmark { \use:c { the#2 } }
+    }
+    {
+     \group_begin:
+        \int_set:cn { c@#2 }{ #1 }
+        \unrestored@protected@xdef \@thefnmark { \use:c { the#2 } }
+     \group_end:
+    }
+}
+
+
+\bool_new:N \g_fnote_debug_bool
+\bool_gset_true:N  \g_fnote_debug_bool   % for now we have debugging turned on by default
+
+
+\NewMirroredHookPair{fnmark/before}{fnmark/after}
+\NewHook{fnmark}
+\NewHook{fnmark/begin}
+\NewHook{fnmark/end}
+
+\cs_new:Npn \__fnote_debug_footnotemark: {
+  \bool_if:NT \g_fnote_debug_bool
+       {
+         \LogHook{fnmark/before}
+         \LogHook{fnmark}
+         \LogHook{fnmark/begin}
+         \LogHook{fnmark/end}
+         \LogHook{fnmark/after}
+         \cs_gset_eq:NN \__fnote_debug_footnotemark: \prg_do_nothing:
+       }
+}
+
+\cs_new_protected:Npn \fnote_footnotemark: {
+  \__fnote_debug_footnotemark:
+  \UseHook{fnmark/before}
+  \leavevmode
+  \ifhmode
+    \edef\@x@sf{\the\spacefactor}
+    \UseHook{fnmark}
+    \nobreak
+  \fi
+  \UseHook{fnmark/begin}
+  \@kernel@process@makefnmark
+     \@makefnmark
+  \__fnote_footnotemark_finish:
+}
+
+\cs_new:Npn \__fnote_finish: {
+  \UseHook{fnmark/end}
+  \ifhmode
+    \spacefactor \@x@sf \relax
+  \fi
+  \UseHook{fnmark/after}
+}
+
+\cs_new_eq:NN \__fnote_footnotemark_finish: \__fnote_finish:
+
+\def \@kernel@process@makefnmark { }
+
+
+
+\cs_set_eq:NN  \@footnotemark \fnote_footnotemark:
+
+
+\NewMirroredHookPair{fntext/before}{fntext/after}
+\NewHook{fntext}
+\NewHook{fntext/para}
+\NewHook{fntext/begin}
+\NewHook{fntext/end}
+
+\cs_new:Npn \__fnote_debug_footnotetext: {
+  \bool_if:NT \g_fnote_debug_bool
+       {
+         \cs_log:N\@footnotetext@cfgpoint
+         \cs_log:N\@footnotetext@cfgpointii
+         \cs_log:N\@footnotetext@cfgpointiii
+         \cs_log:N\@footnotetext@cfgpointiv
+         \cs_log:N\@makefntext@cfgpoint
+         \cs_log:N\@makefntext@cfgpointii
+         \LogHook{fntext/before}
+         \LogHook{fntext}
+         \LogHook{fntext/para}
+         \LogHook{fntext/begin}
+         \LogHook{fntext/end}
+         \LogHook{fntext/after}
+         \cs_gset_eq:NN \__fnote_debug_footnotetext: \prg_do_nothing:
+       }
+  }
+
+\cs_new_protected:Npn \fnote_footnotetext:n #1 {
+  \__fnote_debug_footnotetext:
+  \UseHook{fntext/before}
+  \@kernel@process@footnotetext
+  \@footnotetext@cfgpoint {  % config point
+    \UseHook{fntext}
+    \reset@font
+    \footnotesize
+    \interlinepenalty\interfootnotelinepenalty
+    \splittopskip\footnotesep
+    \splitmaxdepth \dp\strutbox
+    \floatingpenalty \@MM
+    \hsize\columnwidth
+    \@parboxrestore
+    \parindent 1em     % typical default used in \@makefntext moved up here
+    \def\@currentcounter{footnote}
+    \protected@edef \@currentlabel { \p@footnote \@thefnmark }
+    \UseHook{fntext/para}
+    \color@begingroup
+      \@footnotetext@cfgpointii       % config point
+        {
+          \@footnotetext@cfgpointiii  % config point
+          \UseHook{fntext/begin}
+          \ignorespaces
+          #1
+          \UseHook{fntext/end}
+          \@footnotetext@cfgpointiv   % config point
+        }
+      \par
+    \color@endgroup
+  }
+  \UseHook{fntext/after}
+}
+
+\cs_new_protected:Npn \@footnotetext@cfgpoint    { \insert\footins }
+
+\cs_new_protected:Npn \@footnotetext@cfgpointii  { \@makefntext }
+
+\cs_new_protected:Npn \@footnotetext@cfgpointiii { \rule\z@\footnotesep }
+
+\cs_new_protected:Npn \@footnotetext@cfgpointiv  { \@finalstrut\strutbox }
+
+\cs_new_protected:Npn \@kernel@process@footnotetext {}
+
+
+\AddToHook{begindocument}{
+  \cs_set_eq:NN \@footnotetext \fnote_footnotetext:n
+}
+
+
+
+\newdimen\footnotemargin
+\footnotemargin\maxdimen         % no value given
+
+\AtBeginDocument{
+  \ifdim \footnotemargin=\maxdimen
+    \setlength\footnotemargin{1.8em}
+  \fi
+}
+
+\cs_new_protected:Npn \fnote_makefntext:n #1 {
+  \@makefntext@cfgpoint
+      {
+        \ifdim\footnotemargin>\z@
+          \hb@xt@ \footnotemargin{\hss\@makefnmark}
+        \else
+          \ifdim\footnotemargin=\z@
+            \llap{\@makefnmark}
+          \else
+          \ifdim\footnotemargin=-\maxdimen
+               \@makefnmark
+            \else
+               \llap{\hb@xt@ -\footnotemargin{\@makefnmark\hss}}
+            \fi
+          \fi
+        \fi
+      }
+  \@makefntext@cfgpointii
+      { #1 }
+}
+
+\cs_new_protected:Npn \@makefntext@cfgpoint { \noindent }
+
+\cs_new_protected:Npn \@makefntext@cfgpointii #1 { #1 }
+\newcommand\old@std@class@makefntext[1]{%
+    \parindent 1em%
+    \noindent
+    \hb@xt@1.8em{\hss\@makefnmark}#1}
+
+
+\tl_new:N \l__fnote_patch_tl
+\cs_new_eq:NN \__fnote_tmp:w \ERROR
+
+\cs_new_protected:Npn \__fnote_patch:
+  {
+    \tl_set:No \l__fnote_patch_tl { \@makefntext { \@makefntext@cfgpointii{##1} } }
+    \tl_if_in:NnTF \l__fnote_patch_tl { \hbox }
+      { \cs_set_eq:NN \__fnote_tmp:w \__fnote_patch_hbox:w }
+      {
+        \tl_if_in:NnTF \l__fnote_patch_tl { \hb@xt@ }
+          { \cs_set_eq:NN \__fnote_tmp:w \__fnote_patch_hb@xt@:w }
+          {
+            \tl_if_in:NnTF \l__fnote_patch_tl { \@makefnmark }
+              { \cs_set_eq:NN \__fnote_tmp:w \__fnote_patch_@makefnmark:w }
+              { \ERROR
+                \cs_set_eq:NN \__fnote_tmp:w \exp_stop_f: }
+          }
+      }
+    \tl_set:Nf \l__fnote_patch_tl
+      { \exp_after:wN \__fnote_tmp:w \l__fnote_patch_tl }
+    \cs_set:Npn \__fnote_tmp:w { \long \def \@makefntext ####1 }
+    \exp_after:wN \__fnote_tmp:w \exp_after:wN { \l__fnote_patch_tl }
+  }
+\cs_new:Npn \__fnote_patch_hbox:w #1 \hbox #2 #
+  { \exp_stop_f: #1 \@makefntext@processX { \hbox #2 } }
+\cs_new:Npn \__fnote_patch_hb@xt@:w #1 \hb@xt@ #2 #
+  { \exp_stop_f: #1 \@makefntext@processX { \hb@xt@ #2 } }
+\cs_new:Npn \__fnote_patch_@makefnmark:w #1 \@makefnmark
+  { \exp_stop_f: #1 \@makefntext@processX { \use:n } { \@makefnmark } }
+\cs_new:Npn \@makefntext@processX #1#2{\@makefntext@cfgpoint{#1{#2}}}
+
+\AddToHook{begindocument}{
+  \cs_if_eq:NNTF \@makefntext \old@std@class@makefntext
+     {
+       \cs_set_eq:NN \@makefntext \fnote_makefntext:n
+     }
+     {
+       \__fnote_patch:
+     }
+}
+
+
+\DeclareDocumentCommand\footnotetext {o+m} {
+  \fnote_set_fnmark:nn {#1} \@mpfn
+  \@footnotetext {#2}
+}
+
+
+\DeclareDocumentCommand\footnote {o+m} {
+  \fnote_step_fnmark:nn {#1} \@mpfn
+  \cs_set_eq:NN \__fnote_footnotemark_finish: \prg_do_nothing:
+  \@footnotemark
+  \cs_set_eq:NN \__fnote_footnotemark_finish: \__fnote_finish:
+  \@footnotetext {#2}
+  \__fnote_footnotemark_finish:
+}
+
+
+\DeclareDocumentCommand\footnotemark {o} {
+  \fnote_step_fnmark:nn {#1} { footnote }
+  \@footnotemark
+}
+
+
+\DeclareDocumentCommand\footref {m}{%
+  \begingroup
+    \unrestored@protected@xdef\@thefnmark{\ref{#1}}%
+  \endgroup
+  \@footnotemark
+}
+
+\AddToHook{package/setspace/after}
+   {\let \@footnotetext \fnote_footnotetext:n
+    \AddToHook{fntext}[setspace]{\let\baselinestretch\setspace@singlespace}}
+\AddToHook{package/hyperref/after}{
+  \let\H@@footnotetext\fnote_footnotetext:n
+  \let\H@@footnotemark\fnote_footnotemark:
+  \let \@footnotetext \fnote_footnotetext:n
+  \let \@footnotemark \fnote_footnotemark:
+}
+
+
+
+
+
+
+
+
+\newcounter{absfootnote}
+\AddToHook{fnmark/begin}{\stepcounter{absfootnote}}  % too simple (fails with opt args)
+
+
+\cs_new_protected:Npn \tag_if_loaded:TF  { \cs_if_exist:NTF \tag_struct_begin:n }
+
+\cs_new_protected:Npn \tag@FEMark #1 {
+  \tag_if_loaded:TF
+     {
+       \tag_mc_end_push:
+       \exp_args:Nx
+       \tag_struct_begin:n{tag=Lbl,ref=fn.\the\c@absfootnote}
+       \tag_mc_begin:n{tag=Lbl}
+       \IfPackageLoadedTF{hyperref}{ \hyper@linkstart
+         {link}{fn.\the\c@absfootnote} }{}
+       #1
+      \IfPackageLoadedTF{hyperref}{ \hyper@linkend }{}
+      \tag_mc_end:
+      \tag_struct_end:
+      \tag_mc_begin_pop:n{}
+     }
+     { #1 }
+}
+
+
+\cs_set_eq:NN \@kernel@process@makefnmark \tag@FEMark
+
+\cs_set:Npn \@kernel@process@footnotetext #1#2 {
+  \tag_if_loaded:TF
+    {
+      \tag_mc_end_push:
+      \tag_struct_begin:n { tag=FENote,label=fn.\the\c@absfootnote }
+      #1 {#2}
+      \tag_struct_end:
+      \tag_mc_begin_pop:n{}
+    }
+    { #1 {#2} }
+}
+
+\cs_set:Npn \@makefntext@cfgpoint #1 {
+  \noindent
+  \cs_if_exist:NT \tag_struct_begin:n { \tag_mc_end_push: }
+  \tag@FELbl { #1 }
+}
+
+\cs_set:Npn \@makefntext@cfgpointii #1 {
+  \tag@FENote { #1 }
+  \cs_if_exist:NT \tag_struct_begin:n { \tag_mc_begin_pop:n{} }
+}
+
+\cs_new_protected:Npn \tag@FELbl #1 {
+  \tag_if_loaded:TF
+    {
+      % target should perhaps be raised ...
+      \IfPackageLoadedTF{hyperref}{ \hypertarget{fn.\the\c@absfootnote}{} }{}
+      %\tag_struct_begin:n { tag=FENote,label=fn.\the\c@absfootnote } %alternativ location for structure
+      \tag_struct_begin:n { tag=Lbl }
+        \tag_mc_begin:n { tag=Lbl }
+          #1
+        \tag_mc_end:
+      \tag_struct_end:
+    }
+    { #1 }
+}
+
+\cs_new_protected:Npn \tag@FENote #1 {
+  \tag_if_loaded:TF
+    {
+      \tag_mc_begin:n{tag=FENote}
+      #1
+      \tag_mc_end:
+      %\tag_struct_end: %alternative location for structure end but ends inside a P
+    }
+    { #1 }
+}
+
+
+\ExplSyntaxOff
+\endinput
+%%
+%% End of file `latex-lab-footnotes.ltx'.

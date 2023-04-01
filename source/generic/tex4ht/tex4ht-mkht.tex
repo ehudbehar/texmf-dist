@@ -1,0 +1,1931 @@
+% $Id: tex4ht-mkht.tex 955 2021-06-20 16:36:07Z karl $
+% (1) latex tex4ht-mkht      
+% (2) perl -c mk4ht.perl                (checking correctness)
+% (3) latex mkht-scripts.4ht
+%
+% Copyright 2009-2021 TeX Users Group
+% Copyright 1997-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\documentclass{article}
+   \usepackage{url}
+\def\CodeDel{{<<<-}{->>>}}
+\ifx \HCode\UnDef
+   \input tex4ht.sty
+   \Preamble{xhtml}
+   \input ProTex.sty     
+   \AlProTex{4ht,<<<>>>,?,title,list}
+   \AtBeginDocument{\EndPreamble}
+\else
+   \Configure{ProTex}{4ht,<<<>>>,?,title,list,[[]]}
+\fi
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%% definitions %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{common}
+
+\def\mkhtNote{
+
+}
+\newtoks\ourtoks
+
+\expandafter\ourtoks\expandafter{\mkhtNote}
+
+%%%%%%%%%%%%%%%%%%%%% end definitions %%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{TeX Dialects}
+%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\LaTeX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<def script\><<<-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{LaTeX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<htlatex ...\><<<
+|<unix line|>|<windows line|>
+        |<latex|>
+        |<latex|>
+        |<latex|>
+        |<base|>tex4ht |<dir ch|>|<@|>1  |<III|>
+        |<base|>t4ht |<dir ch|>|<@|>1 |<IV|>
+
+>>>
+
+
+\<latex\><<<
+latex |<@|>5 |<'|>|<definitions|>|<get parameters|>|empty>>>
+
+\<get parameters\><<<
+\HCode |<'|>|<@|>2|<'|>.a.b.c.\input |<'|> |<@|>1>>>
+
+
+\<definitions\><<<
+\makeatletter|<get 2nd arg|>|<2e + 209|>\makeatother>>>
+
+\<get 2nd arg\><<<
+\def\HCode{\futurelet\HCode\HChar}\def\HChar{|<double quotes??|>}>>>
+
+\<double quotes??\><<<
+\ifx"\HCode|<remove qts|>\expandafter\HCode\else\expandafter\Link\fi>>>
+
+\<remove qts\><<<
+\def\HCode"##1"{\Link##1}>>>
+
+
+\<2e + 209\><<<
+\def\Link#1.a.b.c.{|<2e|>|<209|>}>>>
+
+\<2e\><<<
+\g@addto@macro\@documentclasshook{|<require package|>}>>>
+
+\<209\><<<
+|<save|>\def\documentstyle{|<recall|>|<options|>|<209+tex4ht|>}>>>
+
+\<require package\><<<
+\RequirePackage[#1|<II|>|<,html|>]{tex4ht}>>>
+
+
+\<options\><<<
+|<def tex4ht|>{#1|<II|>|<,html|>}>>>
+
+
+\<209+tex4ht\><<<
+|<209+tex4ht+...|>\@ifnextchar[{\HCode}{\documentstyle[tex4ht]}>>>
+
+\<209+tex4ht+...\><<<
+\def\HCode####1{\documentstyle[tex4ht,}>>>
+
+
+\<save\><<<
+\let\HCode\documentstyle>>>
+
+\<recall\><<<
+\let\documentstyle\HCode>>>
+
+
+
+\<htlatex 2e...\><<<
+|<unix line|>|<windows line|>|<latex2e|>
+        |<latex2e|>
+        |<latex2e|>
+        |<base|>tex4ht |<dir ch|>|<@|>1  |<III|>
+        |<base|>t4ht |<dir ch|>|<@|>1 |<IV|>
+
+>>>
+
+
+
+
+\<latex2e\><<<
+latex |<@|>5 |<'|>|<definitions2e|>|<get parameters|>|empty>>>
+
+\<definitions2e\><<<
+\makeatletter|<get 2nd arg|>|<2e only|>\makeatother>>>
+
+
+\<2e only\><<<
+\def\Link#1.a.b.c.{|<2e|>}>>>
+
+
+
+
+
+\<htlatex 209...\><<<
+|<unix line|>|<windows line|>|<latex209|>
+        |<latex209|>
+        |<latex209|>
+        |<base|>tex4ht |<dir ch|>|<@|>1  |<III|>
+        |<base|>t4ht |<dir ch|>|<@|>1 |<IV|>
+
+>>>
+
+
+
+
+\<latex209\><<<
+latex  |<@|>5 |<'|>|<definitions209|>|<get parameters|>|empty>>>
+
+\<definitions209\><<<
+\makeatletter|<get 2nd arg|>|<209 only|>\makeatother>>>
+
+
+\<209 only\><<<
+\def\Link#1.a.b.c.{|<209|>}>>>
+
+->>>
+
+
+\<add script\><<<-
+\OutputCodE\<\pref latex\latex.\ext\>   \script{\pref latex}{\ext}  %
+\expandafter\let\csname\pref latex\latex\endcsname=\UnDef
+%
+->>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{\TeX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<def script\><<<-
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{TeX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<httex...\><<<
+|<unix line|>|<windows line|>|<tex|>
+        |<tex|>
+        |<tex|>
+        |<base|>tex4ht |<dir ch|>|<@|>1 |<III|>
+        |<base|>t4ht |<dir ch|>|<@|>1 |<IV|>
+
+>>>
+
+\<tex\><<<
+etex  |<@|>5 |<'|>|<tex definitions|>|<get parameters|>|empty>>>
+
+
+\<tex definitions\><<<
+|<set hook|>|<get 2nd arg|>|empty>>>
+
+\<set hook\><<<
+\def\Link#1.a.b.c.{|<def tex4ht|>{|<options|>\input tex4ht.sty }}>>>
+
+
+\<def tex4ht\><<<
+\expandafter\def\csname tex4ht\endcsname>>>
+
+->>>
+
+
+\<add script\><<<-
+\<\pref tex.\ext\><<<
+\<httex...\>
+>>> %
+%
+\OutputCodE\<\pref tex.\ext\>    \script{\pref tex}{\ext}  %
+%
+->>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Texinfo}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<def script\><<<-
+%%%%%%%%%%%%%%%%%%%%
+\section{Texinfo}
+%%%%%%%%%%%%%%%%%%%%
+
+The loading of tex4ht takes place at the @rm command at the end of the
+texinfo.tex file.
+
+\<httexi...\><<<
+|<unix line|>|<windows line|>|<texinfo|>
+        |<texinfo|>
+        |<texinfo|>
+        |<base|>tex4ht |<dir ch|>|<@|>1 |<III|>
+        |<base|>t4ht |<dir ch|>|<@|>1 |<IV|>
+|<Rem|>        texindex ??
+
+>>>
+
+\<texinfo\><<<
+etex |<@|>5 |<'|>|<texinfo definitions|>|<get parameters|>|empty>>>
+
+
+\<texinfo definitions\><<<
+|<tex definitions|>\let\svrm=\rm\def\rm{\svrm|<tex4ht into texinfo|>}>>>
+
+\<tex4ht into texinfo\><<<
+\ifx\c\comment\def\rm{\let\rm=\svrm|<load into texinfo|>}\expandafter\rm\fi>>>
+
+\<load into texinfo\><<<
+|<change cats|>\csname tex4ht\endcsname|<restore cats|>|empty>>>
+
+\<change cats\><<<
+\catcode`\@=12\catcode`\\=0 >>>
+
+\<restore cats\><<<
+\catcode`\@=0\catcode`\\=13 >>>
+->>>
+
+
+\<add script\><<<-
+\<\pref texi.\ext\><<<
+\<httexi...\>
+>>> %
+%
+\OutputCodE\<\pref texi.\ext\>   \script{\pref texi}{\ext}  %
+%
+->>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Context}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<def script\><<<-
+%%%%%%%%%%%%%%%
+\section{ConTeXt}
+%%%%%%%%%%%%%%%
+
+
+\<context...\><<<
+|<unix line|>|<windows line|>
+        |<texexec|>
+        |<base|>tex4ht |<dir ch|>|<@|>1 |<III|>
+        |<base|>t4ht |<dir ch|>|<@|>1 |<IV|>
+
+>>>
+
+\<texexec\><<<
+|<ruby call|>texexec --arg="ht-1=|<@|>2" --use=tex4ht --dvi --nobackend |<@|>5 |<@|>1 >>>
+->>>
+
+
+``In the latest ConTeXt, texexec for Windows is realized 
+as a batch file from which texmfstart.exe ---> ruby script 
+is called.'' 
+
+\immediate\write16{...............................fix......}
+\immediate\write16{%
+perl /opt/cvr/gurari/main.dir/try.dir/context.dir/context/perltk/texexec.pl%
+}
+\immediate\write16{........................................}
+
+
+\<add script\><<<-
+\<\pref context.\ext\><<<
+\<context...\>
+>>> %
+%
+\OutputCodE\<\pref context.\ext\>   \script{\pref context}{\ext}  %
+%
+->>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{XeTeX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<def script\><<<-
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{XeTeX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<htxetex...\><<<
+|<unix line|>|<windows line|>|<xetex|>
+        |<xetex|>
+        |<xetex|>
+        |<base|>tex4ht -.xdv |<dir ch|>|<@|>1 |<III|>
+        |<base|>t4ht -.xdv |<dir ch|>|<@|>1 |<IV|>
+
+>>>
+
+\<xetex\><<<
+xetex -no-pdf |<@|>5 |<'|>|<tex definitions|>|<get parameters|>|empty>>>
+->>>
+
+
+\<add script\><<<-
+\<\pref xetex.\ext\><<<
+\<htxetex...\>
+>>> %
+%
+\OutputCodE\<\pref xetex.\ext\>    \script{\pref xetex}{\ext}  %
+%
+->>>
+
+
+
+\<def script\><<<-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{XeLaTeX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<htxelatex...\><<<
+|<unix line|>|<windows line|>|<xelatex|>
+        |<xelatex|>
+        |<xelatex|>
+        |<base|>tex4ht -.xdv |<dir ch|>|<@|>1  |<III|>
+        |<base|>t4ht -.xdv |<dir ch|>|<@|>1 |<IV|>
+
+>>>
+
+
+\<xelatex\><<<
+xelatex -no-pdf |<@|>5 |<'|>|<definitions|>|<get parameters|>|empty>>>
+->>>
+
+\<add script\><<<-
+\<\pref xelatex.\ext\><<<
+\<htxelatex...\>
+>>> %
+%
+\OutputCodE\<\pref xelatex.\ext\>    \script{\pref xelatex}{\ext}  %
+%
+->>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Mex}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<def script\><<<-
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{MeX}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<htmex...\><<<
+|<unix line|>|<windows line|>|<mex|>
+        |<mex|>
+        |<mex|>
+        |<base|>tex4ht |<dir ch|>|<@|>1 |<III|>
+        |<base|>t4ht |<dir ch|>|<@|>1 |<IV|>
+
+>>>
+
+\<mex\><<<
+mex |<@|>5 |<'|>|<tex definitions|>|<get parameters|>|empty>>>
+
+->>>
+
+
+\<add script\><<<-
+\<\pref mex.\ext\><<<
+\<htmex...\>
+>>> %
+%
+\OutputCodE\<\pref mex.\ext\>    \script{\pref mex}{\ext}  %
+%
+->>>
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Mex}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% 
+% \<def script\><<<-
+% 
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{MeX il2-pl}
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 
+% \<htmex-pl...\><<<
+%         |<unix line|>|<windows line|>|<mex-pl|>
+%         |<mex-pl|>
+%         |<mex-pl|>
+%         |<base|>tex4ht |<dir ch|>|<@|>1 |<III|>
+%         |<base|>t4ht |<dir ch|>|<@|>1 |<IV|>
+% 
+% >>>
+% 
+% \<mex-pl\><<<
+% mex-pl -translate-file=il2-pl |<'|>|<tex definitions|>|<get parameters|>|empty>>>
+% 
+% ->>>
+% 
+% 
+% \<add script\><<<-
+% \<\pref mex-pl.\ext\><<<
+% \<htmex-pl...\>
+% >>> %
+% %
+% \OutputCodE\<\pref mex-pl.\ext\>    \script{\pref mex-pl}{\ext}  %
+% %
+% ->>>
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Markup Dialects}
+%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%
+\subsection{HTML: ht}
+%%%%%%%%%%%%%
+
+
+WARNING: Don't include `-cvalidatehtml' in the htlatex script as it will
+be required by every script called with mk4ht.  For instance, `mk4ht
+dblatex file'.
+
+\<unix scripts\><<<-
+\Ii{,html}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1}
+\Iv{#1   ## -d~/WWW/temp/ -m644  }
+
+\make{ht}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,html}
+\Iii{-i/tex4ht/ht-fonts/#1 
+     -ewin32/tex4ht.env}
+\Iv{#1 -ewin32/tex4ht.env  }
+
+\make{ht}
+->>>
+
+The first line is for `ht ...  ...' scripts.
+
+\<perl options\><<<-
+ "",     "ht",        "",         "", "", "-cvalidatehtml",
+ "ht",   "htlatex",   "latex",    "", "", "-cvalidatehtml",
+ "ht",   "httex",     "tex",      "", "", "-cvalidatehtml",
+ "ht",   "httexi",    "texi",     "", "", "-cvalidatehtml",
+ "ht",   "htcontext", "context",  "", "", "-cvalidatehtml",
+ "ht",   "htxetex",   "xetex",    "", "", "-cvalidatehtml",
+ "ht",   "htxelatex", "xelatex",  "", "", "-cvalidatehtml",
+->>>
+
+
+\<unix scripts\><<<-
+\<ht.unix\><<<
+|<unix line|>|<windows line|>$1 $2 
+        $1 $2 
+        $1 $2 
+        tex4ht $2 
+        t4ht $2  $3 
+>>>
+\OutputCodE\<ht.unix\>     \script{ht}{unix}  %
+->>>
+
+
+\<ms scripts\><<<-
+\<ht.bat\><<<
+|<windows line|>
+        %1 %2  
+        %1 %2  
+        %1 %2  
+        tex4ht %2  
+        t4ht %2  %3  
+>>>
+\OutputCodE\<ht.bat\>    \script{ht}{bat}  %
+->>>
+
+
+%%%%%%%%%%%%%
+\subsection{XHTML: xh}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,xhtml}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1}
+\Iv{#1  -cvalidate   ## -d~/WWW/temp/ -m644 }
+\make{xh}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml}
+\Iii{-i/tex4ht/ht-fonts/#1 
+     -ewin32/tex4ht.env}
+\Iv{#1 -ewin32/tex4ht.env -cvalidate }
+\make{xh}
+->>>
+
+
+
+\<perl options\><<<-
+ "xh", "xhlatex",  "latex",   "xhtml", "", "-cvalidate",
+ "xh", "xhtex",    "tex",     "xhtml", "", "-cvalidate",
+ "xh", "xhtexi",   "texi",    "xhtml", "", "-cvalidate",
+ "xh", "xhcontext","context", "xhtml", "", "-cvalidat",
+ "xh", "xhxelatex", "xelatex", "xhtml", "", "-cvalidate",
+ "xh", "xhxetex",  "xetex",   "xhtml", "", "-cvalidate",
+->>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Unicode XHTML: uxh}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,xhtml,uni-html4}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cunihtf}
+\Iv{#1 -cvalidate  ## -d~/WWW/temp/ -m644 }
+\make{uxh}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml,uni-html4}
+\Iii{-i/tex4ht/ht-fonts/#1 
+     -ewin32/tex4ht.env
+      -cunihtf}
+\Iv{#1 -ewin32/tex4ht.env -cvalidate }
+\make{uxh}
+->>>
+
+\<perl options\><<<-
+ "uxh", "uxhlatex",  "latex",   "xhtml,uni-html4", " -cunihtf", "-cvalidate",
+ "uxh", "uxhtex",    "tex",     "xhtml,uni-html4", " -cunihtf", "-cvalidate",
+ "uxh", "uxhtexi",   "texi",    "xhtml,uni-html4", " -cunihtf", "-cvalidate",
+ "uxh", "uxhcontext","context",  "xhtml,uni-html4", " -cunihtf", "-cvalidate",
+ "uxh", "uxhxelatex",  "xelatex",   "xhtml,uni-html4", " -cunihtf", "-cvalidate",
+ "uxh", "uxhxetex",    "xetex",     "xhtml,uni-html4", " -cunihtf", "-cvalidate",
+->>>
+
+%%%%%%%%%%%%%
+\subsection{XHTML+MathML: xhm}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,xhtml,mathml}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cunihtf}
+\Iv{#1 -cvalidate   ## -d~/WWW/temp/ -m644 }
+\make{xhm}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml,mathml}
+\Iii{-i/tex4ht/ht-fonts/#1
+     -ewin32/tex4ht.env -cunihtf}
+\Iv{#1 -ewin32/tex4ht.env -cvalidate }
+\make{xhm}
+->>>
+
+
+\<perl options\><<<-
+ "xhm", "xhmlatex", "latex",  "xhtml,mathml", " -cunihtf", "-cvalidate",
+ "xhm", "xhmtex",   "tex",    "xhtml,mathml", " -cunihtf", "-cvalidate",
+ "xhm", "xhmtexi",  "texi",   "xhtml,mathml", " -cunihtf", "-cvalidate",
+ "xhm", "xhmcontext","context", "xhtml,mathml", " -cunihtf", "-cvalidate",
+ "xhm", "xhmxelatex", "xelatex",  "xhtml,mathml", " -cunihtf", "-cvalidate",
+ "xhm", "xhmxetex",   "xetex",    "xhtml,mathml", " -cunihtf", "-cvalidate",
+->>>
+
+
+%%%%%%%%%%%%%
+\subsection{Mozilla XHTML+MathML: mz}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,xhtml,mozilla}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cmozhtf}
+\Iv{#1 -cvalidate   ## -d~/WWW/temp/ -m644 }
+\make{mz}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml,mozilla}
+\Iii{-i/tex4ht/ht-fonts/#1
+     -ewin32/tex4ht.env  -cmozhtf}
+\Iv{#1 -ewin32/tex4ht.env -cvalidate }
+\make{mz}
+->>>
+
+
+\<perl options\><<<-
+ "mz", "mzlatex",   "latex",   "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
+ "mz", "mztex",     "tex",     "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
+ "mz", "mztexi",    "texi",    "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
+ "mz", "mzcontext", "context", "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
+ "mz", "mzxelatex", "xelatex",   "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
+ "mz", "mzxetex",   "xetex",     "xhtml,mozilla", " -cmozhtf",  "-cvalidate",
+->>>
+
+
+%%%%%%%%%%%%%
+\subsection{OpenOffice: oo}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,xhtml,ooffice}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cmozhtf}
+\Iv{#1 -cooxtpipes -coo }
+\make{oo}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml,ooffice}
+\Iii{-i/tex4ht/ht-fonts/#1
+     -ewin32/tex4ht.env -cmozhtf}
+\Iv{#1 -cooxtpipes -coo -ewin32/tex4ht.env -cvalidate }
+\make{oo}
+->>>
+
+
+\<perl options\><<<-
+ "oo", "oolatex",   "latex",   "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "oo", "ootex",     "tex",     "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "oo", "ootexi",    "texi",    "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "oo", "oocontext", "context", "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "oo", "ooxelatex",   "xelatex",   "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+ "oo", "ooxetex",     "xetex",     "xhtml,ooffice", "ooffice/\! -cmozhtf",  "-cooxtpipes -coo",
+->>>
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{EmacSpeak: es}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,xhtml,emspk}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cemspkhtf -s4es}
+\Iv{#1 -cemspk   ## -d~/WWW/temp/ -m644 }
+\make{es}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml,emspk}
+\Iii{-itex4ht/ht-fonts/#1
+     -ewin32/tex4ht.env  -cemspkhtf -s4es}
+\Iv{#1 -ewin32/tex4ht.env -cemspk }
+\make{es}
+->>>
+
+
+\<perl options\><<<-
+ "es", "eslatex",   "latex",   "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "es", "estex",     "tex",     "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "es", "estexi",    "texi",    "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "es", "escontext", "context", "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "es", "esxelatex",   "xelatex",   "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+ "es", "esxetex",     "xetex",     "xhtml,emspk", " -cemspkhtf -s4es",  "-cemspk",
+->>>
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{JSML: js}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,xhtml,jsml}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cjsmlhtf }
+\Iv{#1 -cjsml   ## -d~/WWW/temp/ -m644 }
+\make{js}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml,jsml}
+\Iii{-i/tex4ht/ht-fonts/#1
+     -ewin32/tex4ht.env  -cjsmlhtf }
+\Iv{#1 -ewin32/tex4ht.env -cjsml }
+\make{js}
+->>>
+
+
+\<perl options\><<<-
+ "js", "jslatex",   "latex",   "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "js", "jstex",     "tex",     "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "js", "jstexi",    "texi",    "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "js", "jscontext", "context", "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "js", "jsxelatex",   "xelatex",   "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+ "js", "jsxetex",     "xetex",     "xhtml,jsml", " -cjsmlhtf",  "-cjsml",
+->>>
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{jsMath: jm}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,xhtml,jsmath}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cmozhtf }
+\Iv{#1 ## -d~/WWW/temp/ -m644 }
+\make{jm}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml,jsmath}
+\Iii{-i/tex4ht/ht-fonts/#1
+     -ewin32/tex4ht.env  -cmozhtf }
+\Iv{#1 -ewin32/tex4ht.env  }
+\make{jm}
+->>>
+
+
+\<perl options\><<<-
+ "jm", "jmlatex",   "latex",   "xhtml,jsmath", " -cmozhtf", "",
+ "jm", "jmtex",     "tex",     "xhtml,jsmath", " -cmozhtf", "",
+ "jm", "jmtexi",    "texi",    "xhtml,jsmath", " -cmozhtf", "",
+ "jm", "jmcontext", "context", "xhtml,jsmath", " -cmozhtf", "",
+ "jm", "jmxelatex",   "xelatex",   "xhtml,jsmath", " -cmozhtf", "",
+ "jm", "jmxetex",     "xetex",     "xhtml,jsmath", " -cmozhtf", "",
+->>>
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{TEI: tei, teim}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,xhtml,tei}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cunihtf}
+\Iv{#1 -cvalidate   ## -d~/WWW/temp/ -m644 }
+\make{tei}
+
+\Ii{,xhtml,tei-mml}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cunihtf}
+\Iv{#1 -cvalidate   ## -d~/WWW/temp/ -m644 }
+\make{teim}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml,tei}
+\Iii{-i/tex4ht/ht-fonts/#1
+     -ewin32/tex4ht.env -cunihtf}
+\Iv{#1 -ewin32/tex4ht.env -cvalidate }
+\make{tei}
+
+\Ii{,xhtml,tei-mml}
+\Iii{-i/tex4ht/ht-fonts/#1 
+     -ewin32/tex4ht.env -cunihtf}
+\Iv{#1 -ewin32/tex4ht.env -cvalidate }
+\make{teim}
+->>>
+
+
+\<perl options\><<<-
+ "tei",  "teilatex",  "latex",   "xhtml,tei",    " -cunihtf",  "-cvalidate",
+ "tei",  "teitex",    "tex",     "xhtml,tei",    " -cunihtf",  "-cvalidate",
+ "tei",  "teitexi",   "texi",    "xhtml,tei",    " -cunihtf",  "-cvalidate",
+ "tei",  "teicontext","context", "xhtml,tei",    " -cunihtf",  "-cvalidate",
+ "teim", "teimlatex", "latex",   "xhtml,tei-mml"," -cunihtf",  "-cvalidate",
+ "teim", "teimtex",   "tex",     "xhtml,tei-mml"," -cunihtf",  "-cvalidate",
+ "teim", "teimtexi",  "texi",    "xhtml,tei-mml"," -cunihtf",  "-cvalidate",
+ "teim", "teimcontext","context","xhtml,tei-mml"," -cunihtf",  "-cvalidate",
+ "tei",  "teixelatex",  "xelatex",   "xhtml,tei",    " -cunihtf",  "-cvalidate",
+ "tei",  "teixetex",    "xetex",     "xhtml,tei",    " -cunihtf",  "-cvalidate",
+->>>
+
+
+%%%%%%%%%%%%%
+\subsection{DocBook: db, dbm}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,xhtml,docbook}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cunihtf}
+\Iv{#1    -cvalidate -cdocbk  ## -d~/WWW/temp/ -m644  }
+\make{db}
+
+\Ii{,xhtml,docbook-mml}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cunihtf}
+\Iv{#1  -cdocbk  ## -d~/WWW/temp/ -m644 }
+\make{dbm}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml,docbook}
+\Iii{-i/tex4ht/ht-fonts/#1
+     -ewin32/tex4ht.env -cunihtf}
+\Iv{#1 -ewin32/tex4ht.env -cvalidate -cdocbk }
+\make{db}
+
+\Ii{,xhtml,docbook-mml}
+\Iii{-i/tex4ht/ht-fonts/#1
+     -ewin32/tex4ht.env -cunihtf}
+\Iv{#1 -ewin32/tex4ht.env -cvalidate -cdocbk }
+\make{dbm}
+->>>
+
+
+
+\<perl options\><<<-
+ "db",  "dblatex",   "latex",   "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+ "db",  "dbtex",     "tex",     "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+ "db",  "dbtexi",    "texi",    "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+ "db",  "dbcontext", "context", "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+ "dbm", "dbmlatex",  "latex",   "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
+ "dbm", "dbmtex",    "tex",     "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
+ "dbm", "dbmtexi",   "texi",    "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
+ "dbm", "dbmcontext","context", "xhtml,docbook-mml", " -cunihtf",  "-cdocbk",
+ "db",  "dbxelatex",   "xelatex",   "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+ "db",  "dbxetex",     "xetex",     "xhtml,docbook",     " -cunihtf",  "-cvalidate -cdocbk",
+->>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{MS Word HTML: w}
+%%%%%%%%%%%%%
+
+
+\<unix scripts\><<<-
+\Ii{,xhtml,word}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1  -csymhtf}
+\Iv{#1    -cvalidate ## -d~/WWW/temp/ -m644 }
+\make{w}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,xhtml,word}
+\Iii{-i/tex4ht/ht-fonts/#1 
+     -ewin32/tex4ht.env  -csymhtf}
+\Iv{#1 -ewin32/tex4ht.env -cvalidate }
+\make{w}
+->>>
+
+
+
+
+\<perl options\><<<-
+ "w", "wlatex",   "latex",   "xhtml,word", " -csymhtf", "",
+ "w", "wtex",     "tex",     "xhtml,word", " -csymhtf", "",
+ "w", "wtexi",    "texi",    "xhtml,word", " -csymhtf", "",
+ "w", "wcontext", "context", "xhtml,word", " -csymhtf", "",
+ "w", "wxelatex",   "xelatex",   "xhtml,word", " -csymhtf", "",
+ "w", "wxetex",     "xetex",     "xhtml,word", " -csymhtf", "",
+->>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{JavaHelp: jh}
+%%%%%%%%%%%%%
+
+\<unix scripts\><<<-
+\Ii{,html,javahelp,xml,3.2,unicode}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cmozhtf -u10}
+\Iv{#1 -d$1-doc/   -cjavahelp -cvalidatehtml  -m644}
+\make{jh}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,html,javahelp,xml,3.2,unicode}
+\Iii{-i/tex4ht/ht-fonts/#1 
+     -ewin32/tex4ht.env
+      -cmozhtf -u10}
+\Iv{#1 -ewin32/tex4ht.env -d%1-doc\ -cjavahelp }
+\make{jh}
+->>>
+
+
+\<perl options\><<<-
+ "jh", "jhlatex",  "latex",  "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhtex",    "tex",    "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhtexi",   "texi",   "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhcontext","context", "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhxelatex",  "xelatex",  "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+ "jh", "jhxetex",    "xetex",    "html,javahelp,xml,3.2,unicode", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp -cvalidatehtml",
+->>>
+
+
+\<unix scripts\><<<-
+\Ii{,html,javahelp,xml,3.2,unicode,jh1.0}
+\Iii{-i~/tex4ht.dir/texmf/tex4ht/ht-fonts/#1 -cmozhtf -u10}
+\Iv{#1 -d$texFile-doc/  -cjavahelp1 -m644  }
+\make{jh1}
+->>>
+
+\<ms scripts\><<<-
+\Ii{,html,javahelp,xml,3.2,unicode,jh1.0}
+\Iii{-i/tex4ht/ht-fonts/#1 
+     -ewin32/tex4ht.env
+      -cmozhtf -u10}
+\Iv{#1 -ewin32/tex4ht.env -d%1-doc\ -cjavahelp1 }
+\make{jh1}
+->>>
+
+
+\<perl options\><<<-
+ "jh1", "jh1latex",  "latex",  "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+ "jh1", "jh1tex",    "tex",    "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+ "jh1", "jh1texi",   "texi",   "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+ "jh1", "jh1context","context", "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+ "jh1", "jh1xelatex",  "xelatex",  "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+ "jh1", "jh1xetex",    "xetex",    "html,javahelp,xml,3.2,unicode,jh1.0", " -cmozhtf -u10", " -d$texFile-doc/ -cjavahelp",
+->>>
+
+
+
+The xml declaration at
+\url{http://java.sun.com/products/javahelp/toc_1_0.dtd}
+doesn't start at row/col=1 make it impossible to validate
+against that file.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{mkht.4ht}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<mkht\><<<-
+% mkht.4ht (?version), generated from ?jobname.tex
+% Copyright 2009-2020 TeX Users Group
+% Copyright ?CopyYear.1997. Eitan M. Gurari
+?<TeX4ht copyright?>
+\immediate\write-1{version ?version}
+
+\def\exit{\documentclass{article}\begin{document}\end{document}\endinput}
+\bgroup
+  \def\missing#1{\aftergroup\exit
+     \immediate\write16{---------------------------- error 
+        ---------------------------- 
+        ^^JRequires #1ProTex.sty from 
+        https://tug.org/tex4ht^^J%
+       ---------------------------------------------------------------}}
+  \openin15=ProTex.sty \ifeof15 \missing{}\else \closein15 \fi
+  \openin15=AlProTex.sty \ifeof15 \missing{Al}\else \closein15 \fi
+\egroup
+
+\let\ScriptFileName\relax
+\let\AddExtn\relax
+
+\documentclass{article}
+
+\ifx \HCode\UnDef
+  \input tex4ht.sty
+  \Preamble{xhtml}
+  \input ProTex.sty
+  \AlProTex{foo,<<<>>>,|,title,list}
+  \begin{document}
+  \EndPreamble
+\else
+  \Configure{ProTex}{foo,<<<>>>,|,title,list,[[]]}
+  \begin{document}
+\fi
+
+\catcode`\:=11
+\def\OutputCodE\<#1.#2\>{{\xdef\ScriptFileName{#1}
+   \:DoName\def{#1}{\<#1.#2\>}
+   \OutputCode[#2]\<#1\>}}
+\def\winextn{bat}
+\def\AddExtn{\ifx\ext\winextn .bat\fi}
+
+\tableofcontents
+
+?<def script?>
+
+%%%%%%%%%%%%%%%%%%%%%%
+\section{Script Components}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\def\setcats{\catcode`\\=12 \catcode`\%=12 \catcode`\~=12
+ \catcode`\_=12
+}
+
+\def\Remark{\bgroup \catcode`\#=12 \setcats \Rema}  \def\Rema#1{\egroup\def\Rem{#1}}
+\def\Ii{\def\II}
+\def\Iii{\bgroup \setcats \Iiicont}  \def\Iiicont#1{\egroup\def\III.##1.{#1}}
+\def\Iv{\bgroup \setcats \Ivcont}    \def\Ivcont#1{\egroup\def\IV.##1.{#1}}
+\def\Quote{\bgroup \setcats \Qcont}  \def\Qcont#1{\egroup\def\quote{#1}}
+\def\Argchar{\bgroup \setcats \Acont}\def\Acont#1{\egroup\def\argchar{#1}}
+\def\Dirchar{\bgroup \setcats \Dicont}\def\Dicont#1{\egroup\def\dirchar{#1}}
+\def\Rubycall{\bgroup \setcats \Dcont}\def\Dcont#1{\egroup\def\rubyCall{#1}}
+\def\Echooff{\bgroup \setcats \Dcont}\def\Dcont#1{\egroup\def\echoOff{#1}}
+\def\Ext{\bgroup \setcats \Econt}    \def\Econt#1{\egroup\def\ext{#1}%
+  ?<unix shebang line?>}
+\def\Base{\bgroup \setcats \Bcont}   \def\Bcont#1{\egroup\def\base{#1}}
+\def\Script{\def\script##1##2}  % #1 -- file    #2 -- extension   
+\def\Options#1{\ifx \OPTIONS\UnDef \def\OPTIONS{#1}\fi}
+\def\Latex#1{\ifx \latex\UnDef \def\latex{#1}\fi}
+
+\let\Rem=\relax       
+\let\II=\relax       
+\let\III=\relax
+\let\IV=\relax
+\let\quote=\relax
+\let\argchar=\relax
+\let\dirchar=\relax
+\let\rubyCall=\relax
+\let\echoOff=\relax
+\let\ext=\relax
+\ifx \script\UnDef \let\script=\relax \fi
+\let\base=\relax
+\let\firstln=\relax
+
+\<Rem\><<<
+|Rem>>>
+
+\<II\><<<
+|II>>>
+
+\<III\><<<
+|III.|<@|>3.>>>
+
+\<IV\><<<
+|IV.|<@|>4.>>>
+
+\<'\><<<
+|quote>>>
+
+\<@\><<<
+|argchar>>>
+
+\<dir ch\><<<
+|dirchar>>>
+
+\<base\><<<
+|base>>>
+
+\<ruby call\><<<
+|rubyCall>>>
+
+\<echo off\><<<
+|echoOff>>>
+
+\<unix line\><<<
+|firstln#!/bin/sh
+# stop at first error
+set -e
+
+# No interaction on the TeX runs is desirable.
+# Simpler to do that here than on the individual commands;
+# let's hope exec redirections are portable enough.
+exec </dev/null
+endfirstln
+>>>
+
+Despite the name, this macro is not for Windows. It is unconditionally
+included in all the scripts. It should only be the copyright notice,
+which somehow gets transformed for Unix. Thus we go to lots of trouble
+to insert the at-echo off only for Windows.
+
+\<windows line\><<<
+|<echo off|>
+?<MYcopyrightnotice?>
+>>>
+
+
+\def\IfExt#1,#2//{\def\next{#1}%
+   \ifx \next\ext \def\next{\csname iftrue\endcsname}%
+   \else \ifx \next\empty \def\next{\csname iffalse\endcsname}%
+   \else \def\next{\IfExt#2,,//}\fi\fi \next}
+
+\begingroup
+\catcode`\:=11 \catcode`\^=7    \catcode`\^^M=13%
+%
+\gdef\make#1{%
+  \expandafter\IfExt\OPTIONS,,//%
+  %
+   \subsection{#1}%
+   \def\temp##1{\par{\tt\string##1: \meaning##1}}%
+   \temp\quote
+   \temp\argchar
+   \temp\dirchar
+   \temp\rubyCall
+   \temp\echoOff
+   \temp\ext
+   \temp\script
+   \temp\base
+   \temp\firstln
+   \temp\latex
+   \temp\Rem
+   \temp\II
+   \temp\III
+   \temp\IV
+   \def\pref{#1} %
+   \<\pref latex\latex.\ext\><<<
+   \<htlatex \latex...\>
+   >>> %
+   ?<add script?>%
+  \fi
+}                                      %
+\endgroup
+
+\ifx \JOBNAME\UnDefined
+   ?<user's made scripts?>
+   \expandafter\endinput
+\fi
+
+\input \JOBNAME
+
+\end{document}
+\endinput
+->>>
+
+\<user's made scripts\><<<-
+\def\one{\Ii}
+\def\two{\Iii}
+\def\three{\Iv}
+\Latex{}             % {}, {2e}, {209}
+\def\temp{unix}\ifx\script\temp
+   \Options{unix}   % {unix,bat}, {unix}, {bat}
+   ?<unix setup?>
+\else
+   \def\temp{bat}\ifx\script\temp
+      \Options{bat}
+      ?<ms setup?>
+   \else
+      \bgroup
+         \def\1{\space\space\space}
+         \def\2{\space\space\space\space\space\space}
+         \catcode`\%=12
+         \catcode`\#=12
+         \catcode`\~=12
+         \catcode`\@=0
+         \catcode`\\=12
+      @immediate@write16{|-------------------------------------------------------------}
+      @immediate@write16{|@2@1 A sample of a scripts generator file }
+      @immediate@write16{|}
+      @immediate@write16{|@1    Creates a foolatex script for commands}
+      @immediate@write16{|}
+      @immediate@write16{|@2        foolatex file}
+      @immediate@write16{|}
+      @immediate@write16{|@1    similar to htlatex for commands}
+      @immediate@write16{|}
+      @immediate@write16{|@2        htlatex file "html,...1..." " ...2..." "...3..."}
+      @immediate@write16{|}
+      @immediate@write16{|@1    with the arguments ...1..., ...2..., and ...3... }
+      @immediate@write16{|@1    embedded in the new script. General usage}
+      @immediate@write16{|}
+      @immediate@write16{|@2        foolatex file "..." "..." "..."}
+      @immediate@write16{|}
+      @immediate@write16{|----------------- sample.tex --------------------------------}
+      @immediate@write16{|% latex sample}
+      @immediate@write16{|}
+      @immediate@write16{| \def\script{bat} }
+      @immediate@write16{| % \def\script{unix} }
+      @immediate@write16{|}
+      @immediate@write16{| \input ./mkht.4ht }
+      @immediate@write16{|}
+      @immediate@write16{| \one{,html,...1...}}
+      @immediate@write16{| \two{-i/tex4ht/ht-fonts/#1 ...2...}    % bat }
+      @immediate@write16{| % \two{-i~/tex4ht/texmf/tex4ht/ht-fonts/#1 ...2...}   % unix }
+      @immediate@write16{| \three{#1 ...3...}}
+      @immediate@write16{| \make{foo}}
+      @immediate@write16{|}
+      @immediate@write16{| \end{document} }
+      @immediate@write16{-------------------------------------------------------------}
+      @egroup
+      \def\next{\csname fi\endcsname
+                \csname fi\endcsname
+                \csname fi\endcsname\end{document}}
+\fi \fi
+->>>
+
+The script should have an explicit shebang (\#!/bin/sh) line for the
+systems where csh-like shells are the foundation. If there is no
+shebang line, the defaul shell (which can be anything) is used.
+
+
+\<unix shebang line\><<<-
+  \def\firstln{unix}\ifx \firstln\ext
+           \def\firstln##1endfirstln{##1}%
+  \else    \def\firstln##1endfirstln{}\fi
+->>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{mkht-scripts.4ht}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<mkht-scripts\><<<-
+% mkht-scripts.4ht (?version), generated from ?jobname.tex
+% Copyright 2009-2020 TeX Users Group
+% Copyright ?CopyYear.2000. Eitan M. Gurari
+?<TeX4ht copyright?>
+
+\ifx \JOBNAME\UnDef
+   \def\JOBNAME{mkht-scripts.4ht}
+   \def\next{\input ./mkht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\Options{unix,bat}   % {unix,bat}, {unix}, {bat}
+\Latex{}             % {}, {2e}, {209}
+
+%%%%%%%%%%%%%%%%%%
+\section{Unix Scripts}
+%%%%%%%%%%%%%%%%%%
+?<unix setup?>
+\ifOption{Needs}{%
+\Script{%                        #1 -- file    #2 -- extension
+   \Needs{"sed -e 's/\#\# -d/ -d/g' < #1.#2 >  /opt/cvr/gurari/tex4ht.dir/bin/solaris/#1"}%
+   \Needs{"chmod 700 /opt/cvr/gurari/tex4ht.dir/bin/solaris/#1"}%
+   \Needs{"mkdir -p mn.dir/ht-unix"}%
+   \Needs{"cp #1.#2  mn.dir/ht-unix/#1"}%
+}}{}
+\Script{%                        #1 -- file    #2 -- extension
+   \Needs{"mkdir -p /opt/cvr/gurari/tex4ht.dir/bin/ht"}%
+   \Needs{"mkdir -p /opt/cvr/gurari/tex4ht.dir/bin/ht/unix"}%
+   \Needs{"mv #1.#2  /opt/cvr/gurari/tex4ht.dir/bin/ht/unix/#1"}%
+   \Needs{"chmod 744 /opt/cvr/gurari/tex4ht.dir/bin/ht/unix/#1"}%
+}
+
+?<unix scripts?>
+
+%%%%%%%%%%%%%%%%%%
+\section{MS Window Scripts}
+%%%%%%%%%%%%%%%%%%
+?<ms setup?>
+\ifOption{Needs}{\Script{%
+   \Needs{"mkdir -p mn.dir/ht-win32"}%
+   \Needs{"cp #1.#2  mn.dir/ht-win32/."}%
+}}{}
+\Script{%                        #1 -- file    #2 -- extension
+   \Needs{"mkdir -p /opt/cvr/gurari/tex4ht.dir/bin/ht/win32"}%
+   \Needs{"mv #1.#2  /opt/cvr/gurari/tex4ht.dir/bin/ht/win32/#1.#2"}%
+   \Needs{"chmod 744 /opt/cvr/gurari/tex4ht.dir/bin/ht/win32/#1.#2"}%
+}
+
+?<ms scripts?>
+?<mkht note?>
+
+\end{document}
+->>>
+
+\<unix setup\><<<-
+%%%%%%%%%%
+\Ext{unix}
+%%%%%%%%%%
+\Base{}
+\Quote{'}
+\Argchar{$}
+\Dirchar{-f/}
+\Rubycall{}
+\Echooff{}
+\Remark{#}
+->>>
+
+\<ms setup\><<<-
+%%%%%%%%%%%%%%%%%%
+\Options{bat}
+%%%%%%%%%%%%%%%%%%
+%%%%%%%%%
+\Ext{bat}
+%%%%%%%%%
+\Base{}
+\Quote{}
+\Argchar{%}
+\Dirchar{}
+\Rubycall{call }
+\Echooff{@echo off}
+\Remark{Rem }
+->>>
+
+
+
+The htlatex-oriented scripts have the following outline.
+
+\begin{verbatim}
+        latex  $5 $1
+        latex  $5 $1
+        latex  $5 $1   
+        tex4ht -f/$1  -i~/tex4ht.dir/texmf/tex4ht/ht-fonts/$3  
+        t4ht -f/$1 $4 
+\end{verbatim}
+
+The latex command may be introduced with a filename residing out of
+the work directory. However, it produces the dvi code in the work
+directory. Consequently, when activated by htlatex-oriented scripts,
+the tex4ht.c and t4ht.c utilities need to look for the dvi code in the
+work directory.  The -f prefix asks these utilities to ignore the
+paths possibly appearing in \verb!$1!. A path is recognized by
+determining whether the character immediately after \verb'-f' is a
+directory indicator character `\verb+\+' or `\verb+/+'.
+
+
+ 
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Perl Script}
+%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+\subsection{Core}
+%%%%%%%%%%%%%
+
+
+
+\<mk4ht.perl\><<<-
+#!/usr/bin/env perl
+?<perl copyright notice?>
+use strict;
+$^W=1; # turn warning on
+my $texFile = ''; 
+if( @ARGV  ){ 
+  my(@array) = split('\.',@ARGV[1]); 
+  $texFile = @array[0]; 
+} 
+?<available options?>
+?<help info?>
+print "mk4ht (?version)\n";
+if(  !@ARGV  ){
+  print "improper command\n";
+  showInstrucions(); exit(1);
+}
+my @command=("","","","","");
+my $i=0;
+my $j=0;
+my $param;
+?<mk4ht.cfg vars?>
+foreach $param (@ARGV) {
+  if( $i == 0 ){
+    ?<load mk4ht.cfg?>
+    for( $j=1; $j<$#options; $j+=6 ){
+      if( $param eq $options[$j] ){
+         if( $name ){
+            ?<use cfg command?>            
+         } else {
+            ?<use cfg+built in command?>
+         }
+         ?<insert cfg extras?>
+         last;
+    } }
+    if( $j>$#options ){ 
+      if( $name ){ ?<use cfg command?> }
+      else {
+          print "improper command: $param \n";
+          showInstrucions(); exit(1); 
+    } }
+  } elsif ( $i== 1 ) {
+    $command[1] = $param;
+  } elsif ( $i== 2 ) {
+    if( $command[2] eq "" ){
+      $command[2] = $param;
+    } else {
+      $command[2] = $param. "," . $command[2];
+    }
+  } elsif ( $i== 3 ) {
+    $command[3] = $param . $command[3];
+  } else {
+    $command[4] = $param. " " .$command[4];
+  }
+  $i++;
+}
+my $cmd;
+?<cmd = search command with kpsewhich?>
+my $commando = $cmd . " "    . $command[1] . " \"".
+            $command[2] . "\" \"". $command[3] . "\" \"" .
+            $command[4] . "\"";
+print "$commando\n";
+my $rtrn;
+if( $rtrn = system($commando) ){
+   print "--- error --- failed to execute command\n";
+} else {
+   ?<clean files?>   
+}
+exit( $rtrn ); 
+->>>
+
+
+\<ensure initialized command[*]MOPE\><<<-
+if( !$command[1] ){ $command[1] = ""; } 
+if( !$command[2] ){ $command[2] = ""; } 
+if( !$command[3] ){ $command[3] = ""; } 
+if( !$command[4] ){ $command[4] = ""; } 
+->>>
+
+
+
+\<cmd = search command with kpsewhich\><<<-
+open (KPSEA, "kpsewhich " . $command[0] . " |");
+if ($cmd = <KPSEA>){ 
+  $cmd =~ s/\s+$//; 
+} else {
+  $cmd = $command[0];
+}
+close KPSEA;
+->>>
+
+
+\<available options\><<<-
+my @options = (
+?<perl options?>
+);
+->>>
+
+
+Safety guards:
+
+\begin{itemize}
+\item The `use strict'  should be employed when not
+   dynamically exporting variables. 
+\item Put `my' on local declarations.
+\item The `W'  (?)
+
+\end{itemize}
+
+
+%%%%%%%%%%%%%
+\subsection{Load Command}
+%%%%%%%%%%%%%
+
+
+\<use cfg command\><<<-
+$command[0] = "ht".$compiler;
+if( $tex    ){ $command[2] = $tex;    } else { $command[2] = ""; }
+if( $tex4ht ){ $command[3] = $tex4ht; } else { $command[3] = ""; }
+if( $t4ht   ){ $command[4] = $t4ht;   } else { $command[4] = ""; }
+->>>
+
+
+\<use cfg+built in command\><<<-
+if( $options[$j-1] eq "" ){
+  $command[0] = $options[$j];
+} else {
+  $command[0] = "ht".$options[$j+1];
+}
+if( $tex    ){ $command[2] = $tex;    } else { $command[2] = $options[$j+2]; }
+if( $tex4ht ){ $command[3] = $tex4ht; } else { $command[3] = $options[$j+3]; }
+if( $t4ht   ){ $command[4] = $t4ht;   } else { $command[4] = $options[$j+4]; }
+->>>
+
+
+
+\<insert cfg extras\><<<-
+if( $texp   ){ $command[2] = $command[2] . "," . $texp; } 
+if( $tex4htp){ $command[3] = $command[3] . " " . $tex4htp; } 
+if( $t4htp  ){ $command[4] = $command[4] . " " . $t4htp; } 
+->>>
+
+
+%%%%%%%%%%%%%
+\subsection{Commands from Configuration File}
+%%%%%%%%%%%%%
+
+
+A configuration file may contain records of the following kinds.
+
+\begin{description}
+\item[\#] Comment
+\item[name = type]  Defines a ht*tex like command, and assocites to it 
+the TeX compiler of the specified type.  Examples of TeX types: latex, tex,
+texi, and context.
+\item[name.tex = options]  Command line options for the compilation under 
+   the (la)tex compiler  
+\item[name.tex4ht = options]  Command line options for  tex4ht.c
+\item[name.t4ht = options]  Command line options for  t4ht.c
+\end{description}
+
+
+Each record should appear in a different line.
+The variants `name.tex += options', `name.tex4ht += options',
+`name.t4ht += options' ask to add the listed options to the base
+values.
+
+
+
+
+
+Example:
+
+
+\begin{verbatim}
+foohlatex         = latex
+foohlatex.tex     = xhtml,uni-html4
+foohlatex.tex4ht += -cunihtf
+foohlatex.t4ht    = -cvalidate
+htlatex.t4ht     += -d./
+\end{verbatim}
+
+
+
+
+\<load mk4ht.cfg\><<<-
+?<inf = cfg handler?>
+if( $inf ){
+   print "(mk4ht cfg)\n"; 
+   while(<$inf>) { 
+     my($line) = $_; 
+     chomp($line);      # remove eoln char 
+     if ($line =~ m|\s*#.*|) {} 
+     elsif($line =~ m|^\s*(\S*)\.(\S*)\s*\+=\s*(.*\S)\s*$|) { 
+         if( ($param."tex4ht") eq ($1.$2) ){ 
+              $tex4htp = $tex4htp . " " . $3; 
+         } 
+         elsif( ($param."t4ht") eq ($1.$2) ){ 
+              $t4htp = $t4htp . " " . $3; 
+         } 
+         elsif( ($param."tex") eq ($1.$2) ){ 
+              $texp = $texp . "," . $3; 
+         } 
+     } 
+     elsif($line =~ m|^\s*(\S*)\.(\S*)\s*=\s*(.*\S)\s*$|) { 
+         if( ($param."tex4ht") eq ($1.$2) ){ 
+              $tex4ht = $3 . " "; 
+              $tex4htp = ""; 
+         } 
+         elsif( ($param."t4ht") eq ($1.$2) ){ 
+              $t4ht = $3 . " ";
+              $t4htp = "";  
+         } 
+         elsif( ($param."tex") eq ($1.$2) ){ 
+              $tex = $3 . ",";
+              $texp = "";  
+         } 
+     }  
+     elsif($line =~ m|^\s*(\S*)\s*=\s*(.*\S)\s*$|) { 
+         if( $param eq $1 ){ 
+              $name = $1; 
+              $compiler = $2; 
+         } 
+     }
+     ?<elsif get ext?>
+     elsif ($line) { print "--- Error --- " . $line . "\n"; } 
+   } 
+   close $inf; 
+}
+->>>
+
+
+\<inf = cfg handler\><<<-
+my $inf; 
+open $inf, "<mk4ht.cfg"  
+or  
+(  open $inf, "<.mk4ht"  
+   or   
+  ( 
+     open $inf, "<" . $ENV{HOME} . "/mk4ht.cfg"  
+     or  
+     ( 
+        open $inf, "<" . $ENV{HOME} . "/.mk4ht"  
+        or $inf = "" 
+) )  ) 
+; 
+->>>
+
+\<mk4ht.cfg vars\><<<-
+my $name;
+my $compiler;
+my $tex;
+my $tex4ht;
+my $t4ht;
+my $texp;
+my $tex4htp = "";
+my $t4htp = "";
+->>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Cleaning Temporary files}
+%%%%%%%%%%%%%
+
+Requested in the mk4ht.cfg file through records of the following form
+
+\begin{description}
+\item[clean ext1 ext2 ...]
+The extension names of the files to be removed.
+
+\item[clean.name ext1 ext2 ...]
+
+The `name' refers to the ht*tex like command in use.
+
+\end{description}
+
+
+
+
+
+
+Example:
+
+
+\begin{verbatim}
+clean             dvi idv
+clean.foohlatex   lg 
+clean.htlatex     lg tmp
+\end{verbatim}
+
+
+
+\<mk4ht.cfg vars\><<<-
+my @ext;
+->>>
+
+\<clean files\><<<-
+my $file;
+my $ext;
+opendir(DIR,".") ;
+while ($file = readdir(DIR) ){
+  if(index($file,$texFile) == 0 ){
+    foreach $ext(@ext){
+    if (index($file,$ext,length($file)-length($ext)) != -1){
+      if( stat($file)){
+         unlink($file);
+         print  "Deleted: ". $file . "\n";
+} } } } }
+closedir(DIR);
+->>>
+
+
+
+
+\<elsif get ext\><<<-
+elsif($line =~ m|^\s*clean\s+(.+)|){
+   my(@array) = split(' ',$1);
+   push(@ext,@array);
+} elsif($line =~ m|^\s*clean\.(\S+)\s+(.+)|){
+   if( $1 eq @ARGV[0] ){
+      my(@array) = split(' ',$2);
+      push(@ext,@array);
+}  }
+->>>
+
+
+
+   
+%%%%%%%%%%%%%
+\subsection{Info}
+%%%%%%%%%%%%%
+
+
+
+
+\<help info\><<<-
+sub showInstrucions(){
+  print " option1:  mk4ht #1 \"#2\" \"#3\" \"#4\" \"#5\"\n";
+  print " \n";
+  print "    #1: htlatex, xhlatex, mzlatex, oolatex, dblatex, dbmlatex,\n";
+  print "        jhlatex, eslatex, teilatex, teimlatex, uxhlatex,  \n";
+  print "        wlatex, xhmlatex\n";
+  print " \n";
+  print "        also 'tex', 'texi', 'context', 'xetex', and 'xelatex'\n";
+  print "        instead of 'latex'\n";
+  print " \n";
+  print "    #2: file name\n";
+  print "    #3: optional arguments for latex/tex/... \n";
+  print "    #4: optional arguments for tex4ht.c\n";
+  print "    #5: optional arguments for t4ht.c\n";
+  print " \n";
+  print " option2:  mk4ht ht #2 #3 \"#4\" \"#5\"\n";
+  print " \n";
+  print "    #1: ht\n";
+  print "    #2: latex, tex\n";
+  print "    #3: file name\n";
+  print "    #4: optional arguments for tex4ht.c\n";
+  print "    #5: optional arguments for t4ht.c\n";
+  print " \n";
+  print " Within the program, in column three of the options\n";
+  print " variable, the  requests for the commands \"latex\",\n";
+  print " \"tex\", etc. can be replaced with other equivalent\n";
+  print " commands (e.g., \"tex -fmt=latex\").\n";
+
+  ?<help cfg info?>
+
+  ?<clean info?>
+}
+->>>
+
+
+
+
+
+
+\<help cfg info\><<<-
+print "--------------------------------------------------------------------------\n";
+print "           Private configuration file: mk4ht.cfg\n";
+print "--------------------------------------------------------------------------\n";
+print "\n";
+print "A private configuration file mk4ht.cfg or .mk4ht may be placed at the\n";
+print "work or home directory, to update existing commands and introduce new\n";
+print "ones. The configuration file may contain records of the following\n";
+print "kinds.\n";
+print "\n";
+print "   #  Comment\n";
+print "    \n";
+print "   name = type\n";
+print "          Defines a ht*tex like command, and assocites to it the \n";
+print "          TeX compiler of the specified type. Examples of TeX \n";
+print "          types: latex, tex, texi, context, xetex, and xelatex.\n";
+print "    \n";
+print "   name.tex = options\n";
+print "          Command line options for the compilation under\n";
+print "          the (la)tex compiler\n";
+print "      \n";
+print "   name.tex4ht = options\n";
+print "          Command line options for tex4ht.c \n";
+print "    \n";
+print "   name.t4ht = options\n";
+print "          Command line options for t4ht.c\n";
+print "    \n";
+print "Each record should appear in a different line.  Variants\n";
+print "`name.tex += options', `name.tex4ht += options',\n";
+print "`name.t4ht += options' of the above records are also allowed.\n";
+print "They append the listed options to the base values.\n";
+print "\n";
+print "Example:\n";
+print "\n";
+print "   foohlatex         = latex\n";
+print "   foohlatex.tex     = xhtml,uni-html4\n";
+print "   foohlatex.tex4ht += -cunihtf\n";
+print "   foohlatex.t4ht    = -cvalidate\n";
+print "   htlatex.t4ht     += -d./\n";
+->>>
+
+
+
+
+\<clean info\><<<-
+print "--------------------------------------------------------------------------\n";
+print "           Deleting files\n";
+print "--------------------------------------------------------------------------\n";
+print "\n";
+print "The configuration file mk4ht.cfg may also contain requests for\n";
+print "removing files created in the work directory during the compilation.\n";
+print "The requests are to be made through records of the following forms.\n";
+print "\n";
+print "   clean ext1 ext2 ...\n";
+print "     The extensions of the file name to be removed.\n";
+print "   \n";
+print "   clean.name ext1 ext2 ...\n";
+print "     Conditional request. The `name' refers to the ht*tex \n";
+print "     like command in use.\n";
+print "\n";
+print "Example:\n";
+print "  clean             dvi idv\n";
+print "  clean.foohlatex   lg \n";
+print "  clean.htlatex     lg tmp\n";
+->>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Info}
+%%%%%%%%%%%%%%%%%%
+
+
+
+\<mkht note\><<<-
+\immediate\write16{--------------------------------------------------------}
+\immediate\write16{* Compile mkht-scripts.4ht with latex to get the 
+                                                              full scripts.}
+\immediate\write16{* For shorter latex2e scripts, compile a file whose 
+                                                                content is:}
+\immediate\write16{\space\space\space\space\def\string\latex{2e}
+                                      \string\input\space mkht-scripts.4ht }
+\immediate\write16{* For shorter latex209 scripts, compile a file whose 
+                                                                content is:}
+\immediate\write16{\space\space\space\space\def\string\latex{209}
+                                      \string\input\space mkht-scripts.4ht }
+\immediate\write16{* Remove the extension .unix from the file names        }
+\immediate\write16{--------------------------------------------------------}
+->>>
+
+% The - at the end of the first line prevents us from using tex4ht-cpright.tex.
+\<TeX4ht copyright\><<<-
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any
+% later version. The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions
+% of LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status "maintained".
+%
+% The Current Maintainer of this work
+% is the TeX4ht Project <https://tug.org/tex4ht>.
+% 
+% If you modify this program, changing the 
+% version identification would be appreciated.
+%
+\immediate\write-1{version \ifx \JOBNAME\UnDefined ?version\else |version\fi}
+->>>
+
+\<perl copyright notice\><<<-
+# mk4ht (?version), generated from ?jobname.tex
+# Copyright 2009-2020 TeX Users Group
+# Copyright ?CopyYear.2003. Eitan M. Gurari
+#
+# This work may be distributed and/or modified under the
+# conditions of the LaTeX Project Public License, either
+# version 1.3 of this license or (at your option) any
+# later version. The latest version of this license is in
+#   http://www.latex-project.org/lppl.txt
+# and version 1.3 or later is part of all distributions
+# of LaTeX version 2003/12/01 or later.
+#
+# This work has the LPPL maintenance status "maintained".
+#
+# The Current Maintainer of this work
+# is the TeX4ht Project <https://tug.org/tex4ht>.
+#
+# If you modify this file, changing the
+# version identification be appreciated.
+->>>
+
+% used in the generated scripts.
+\<MYcopyrightnotice\><<<-
+|Rem |ScriptFileName|AddExtn (?version), generated from ?jobname.tex
+|Rem Copyright 2009-2020 TeX Users Group
+|Rem Copyright ?CopyYear.2003. Eitan M. Gurari
+|Rem
+|Rem This work may be distributed and/or modified under the
+|Rem conditions of the LaTeX Project Public License, either
+|Rem version 1.3 of this license or (at your option) any
+|Rem later version. The latest version of this license is in
+|Rem   http://www.latex-project.org/lppl.txt
+|Rem and version 1.3 or later is part of all distributions
+|Rem of LaTeX version 2003/12/01 or later.
+|Rem
+|Rem This work has the LPPL maintenance status "maintained".
+|Rem
+|Rem The Current Maintainer of this work
+|Rem is the TeX4ht Project <https://tug.org/tex4ht>.
+|Rem
+|Rem If you modify this file, changing the
+|Rem version identification be appreciated.
+->>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\OutputCode\<mkht\>
+\OutputCode\<mkht-scripts\>
+
+\OutputCodE\<mk4ht.perl\>
+%"mv mk4ht.perl mk4ht"
+
+
+   \Needs{"mkdir -p         /opt/cvr/gurari/tex4ht.dir/bin/ht/perl"}%
+   \Needs{"cp mk4ht.perl /opt/cvr/gurari/tex4ht.dir/bin/ht/perl/mk4ht.perl"}%
+   \Needs{"chmod 744     /opt/cvr/gurari/tex4ht.dir/bin/ht/perl/mk4ht.perl"}%
+
+
+\immediate\write16{--------------------------------------------------------}
+\immediate\write16{Compile mkht-scripts.4ht with latex to get the
+                                                              full scripts.}
+\immediate\write16{Use the option `Needs' to automatically move the
+    files to private directories.}
+\immediate\write16{--------------------------------------------------------}
+
+\end{document}
+\endinput

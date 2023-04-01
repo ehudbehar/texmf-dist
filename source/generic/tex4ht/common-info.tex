@@ -1,0 +1,68 @@
+% $Id: common-info.tex 237 2017-01-29 18:20:42Z karl $
+% Common TeX definitions used only in the *-info.tex literate sources.
+% Not installed.
+% 
+% Copyright 2009-2017 TeX Users Group
+% Copyright 1996-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\expandafter\ifx \csname YES\HTML\endcsname\relax
+    % begin comment. 21/07/2016 (dg)
+    %   on first run \infoIVht expects \ConfigureHinput
+    %   ( \def\infoIVht#1\ConfigureHinput{..} )
+    %   so we feed it with "\ConfigureHinput" (no expansion here, merely
+    %   a delimiter); the rest is slurped until the "//".
+    % end
+    \def\CleanComment{[0]\ConfigureHinput\id:gobble}
+\else
+    \let\saveCd=\<
+    \def\<{\edef\FIRST{\the\inputlineno}\let\<\saveCd \saveCd}
+    %
+    % Eitan's commented-out definition started like this (and doesn't work):
+    %\def\CleanComment#1tex4ht-info#2#3#4.#5>#6//{[\eatIV#4%     <--jobname
+    %
+    % Eitan's active definition started like this:
+    %\def\CleanComment#1tex4ht-info#2#3#4.#5>#6//{[#4%     <--jobname
+    %
+    % However, that didn't work either.  #4 is not the jobname. 
+    % The arguments when running htlatex tex4ht-info-mml.tex are these:
+    % %#1<-
+    %\CleanComment #1tex4ht-info#2#3#4.#5>#6//->
+    %[\if ,\ifnum \FIRST =#6 .\else ,0\fi
+    %#1<-
+    %#2<--
+    %#3<-m
+    %#4<-ml
+    %#5<-html#QPrTx1"\<infomml\
+    %#6<-92\ifx \CodeId \:gobbleii \else ...\fi 
+    %
+    % As a result, when running  mzlatex hello.tex xhtml,info  there was
+    % an error on the first line of infomml.4ht, which looked like this:
+    % \ifx\infoIVht\UnDeF\def\infoIVht#1//{}\fi\infoIVht[ml0]28...//
+    % That "ml" is not a number, so \ifnum fails.  This only happens
+    % mzlatex and the info option, not htlatex.  We don't understand.
+    %
+    % This version avoids the spurious "ml" but mzlatex hello.tex still
+    % fails, trying to process the \ConfigureHinput blocks as text.
+    % Changing the bracketed number in infomml.4ht to small values seems
+    % to make it pass, but can't see how to generate it.  The number
+    % after the brackets (#6) changes also.
+    % 
+    % Since all this is only about the info option with mzlatex,
+    % just leaving it failing for now.  Other things to do.
+    \def\CleanComment#1tex4ht-info#2#3#4.#5>#6//{[1\empty %
+                  \if,\ifnum \FIRST=#6 .\else ,0\fi\fi]#6//}
+    \def\eatIV#1#2#3#4{}
+\fi
+
+\Comment{
+
+\string\ifx\string\infoIVht\string\UnDeF\string\def\string\infoIVht#1//{}\string\fi\string\infoIVht\CleanComment}{//
+
+}
+
+\def\>>>#1<<<{\bgroup\csname no:catcodes\endcsname0{255}{12}%
+   \csname no:catcodes\endcsname{13}{13}{13}% ^^M
+   \def\temp##1>>>{\egroup
+      \expandafter \def\csname #1\endcsname{##1}}\temp}

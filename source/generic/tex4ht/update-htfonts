@@ -1,0 +1,137 @@
+#!/bin/sh
+# $Id: update-htfonts 1141 2022-06-01 21:43:42Z karl $
+# Update TeX4ht font files (.htf). See ./Makefile for invocations.
+# Public domain. Originally written by Karl Berry, 2022.
+
+# don't bother with real option parsing.
+if test $# -ne 3; then
+cat <<END_USAGE
+Usage: $0 [ diff | update ] HTF-DEVDIR HTF-INSTDIR
+END_USAGE
+  exit 1
+fi
+
+verbose=true
+prg=`basename $0`
+cp="cp -pv"
+mkdir="mkdir -v"
+svn=svn
+
+if test x"$1" = xdiff; then
+  shift
+  do_updates=false
+  cp="echo would $cp"
+  mkdir="echo would $mkdir"
+  svn="echo would $svn"
+
+elif test x"$1" = xupdate; then
+  shift
+  do_updates=true
+else
+  echo "$0: first arg must be \`diff' or \`update', not: $1" >&2
+  exit 1
+fi
+
+devdir=$1
+instdir=$2
+verbose=true
+tmpdir=/tmp/htdif.d # prefix
+rm -rf $tmpdir; mkdir $tmpdir
+
+if test ! -d "$devdir"; then
+  echo "$0: devdir not a directory: $devdir" >&2
+  exit 1
+fi
+if test ! -d "$instdir"; then
+  echo "$0: instdir not a directory: $instdir" >&2
+  exit 1
+fi
+
+
+#  Function to copy SRC to DEST, or fail. Just calls $cp.
+# 
+copy_file () {
+  src=$1; dest=$2
+  #
+  if $cp "$src" "$dest"; then :; else
+    echo "$0: copy ($cp) failed: $src -> $dest" >&2
+    exit 1
+  fi
+}
+
+#  Function to compare SRC to DEST. Return zero if equivalent,
+# nonzero if different (or DEST does not exist, etc.).
+# 
+# Remove a timestamp string from both files for comparison:
+# YYYY-MM-DD-HH:MM or just YYYY-MM-DD
+# 
+htf_same () {
+  src=$1; dest=$2;
+  #
+  src_filtered=$tmpdir/s`basename "$src"`
+  dest_filtered=$tmpdir/d`basename "$dest"`
+  #
+  sed 's/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]\(-[0-9][0-9]:[0-9][0-9]\)*//' \
+      $src >$src_filtered || exit 1
+  sed 's/20[0-9][0-9]-[0-9][0-9]-[0-9][0-9]\(-[0-9][0-9]:[0-9][0-9]\)*//' \
+      $dest >$dest_filtered || exit 1
+  cmp -s "$src_filtered" "$dest_filtered"
+}
+
+#  Iterate through all files in the dev directory.
+echo "$prg: comparing $devdir"
+echo "$prg:        to $instdir"
+>$tmpdir/0 # accumulate diffs here
+#
+find "$devdir" -type f -print | sort | while read devf; do
+  instf=`echo "$devf" | sed "s,^$devdir/,$instdir/,"`
+  #echo "$devf" | grep ec-mlm >/dev/null &&
+  #$verbose && echo "considering $devf -> $instf"
+  
+  if test -r "$instf"; then
+    # we have a file in both directories; see if they are the same (enough).
+    if htf_same "$devf" "$instf"; then
+      : # $verbose && echo "`basename \"$devf\"`: same ($devf == $instf)"
+    else
+      $verbose && echo "`basename \"$devf\"`: diff ($devf != $instf)"
+      # save diff from (older) DEST to newer (SRC).
+      diff -u0 "$dest" "$src" >>$tmpdir/0
+      #
+      copy_file "$devf" "$instf"
+    fi
+
+  else
+    # no destination file. see if we have the containing directory.
+    destdirf=`dirname "$instf"`
+    if test -d "$destdirf"; then
+      # have directory, so add file.
+      $verbose && echo "newfile ($devf -> $instf)"
+      copy_file "$devf" "$instf"
+      $svn add "$instf" || exit 1
+    else
+      # don't even have directory. create it, then copy file.
+      $mkdir "$destdirf"
+      $verbose && echo "newdir ($devf -> $destdirf)"
+      if test ! -d "$destdirf"; then
+        echo "$0: could not make dest dir: $destdirf (for $devf->$instf)" >&2
+        exit 1
+      fi
+      $svn add "$destdirf" || exit 1
+      copy_file "$devf" "$instf"
+      $svn add "$instf" || exit 1
+    fi
+  fi
+done
+
+#  check for extra files in $instdir
+(cd "$devdir" && find . -type f -print | sort) >$tmpdir/devdir || exit 1
+(cd "$instdir" && find . -type f -print | sort) >$tmpdir/instdir || exit 1
+
+echo "$prg: files in devdir and not in instdir (should be empty):"
+comm -23 $tmpdir/devdir $tmpdir/instdir
+
+echo "$prg: files in instdir and not in devdir (you should remove):"
+comm -13 $tmpdir/devdir $tmpdir/instdir
+# maybe better to leave it for manual removal?
+
+echo "$prg: done."

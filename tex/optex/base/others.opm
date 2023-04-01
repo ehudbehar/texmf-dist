@@ -1,0 +1,207 @@
+%% This is part of the OpTeX project, see http://petr.olsak.net/optex
+
+\_codedecl \uv {Miscenaleous <2022-05-04>} % preloaded in format
+
+    \_doc ----------------------------
+    \`\useOpTeX` and \`\useoptex` are declared as `\relax`.
+    \_cod ----------------------------
+
+\_let \useOpTeX = \_relax   \_let \useoptex = \_relax
+
+    \_doc ----------------------------
+    The \`\lastpage` and \`\totalpages` get the information from the
+    \^`\_currpage`. The \^`\_Xpage` from `.ref` file sets the \^`\_currpage`.
+    \_cod ----------------------------
+
+\_def\_totalpages {\_openref\_ea\_ignoresecond\_currpage}
+\_def\_lastpage   {\_openref\_ea\_usesecond\_currpage}
+\_def\_currpage {{0}{?}}
+\_public \lastpage \totalpages ;
+
+    \_doc ----------------------------
+    We need \`\uv`, \`\clqq`, \`\crqq`, \`\flqq`, \`\frqq`, \`\uslang`, \`\ehyph`
+    \`\chyph`, \`\shyph`, for backward compatibility with \csplain.
+    Codes are set according to Unicode because we are using Czech only in Unicode
+    when \LuaTeX/ is used.
+    \_cod ----------------------------
+
+
+% for compatibility with csplain:
+
+\_chardef\clqq=8222  \_chardef\crqq=8220
+\_chardef\flqq=171   \_chardef\frqq=187
+\_chardef\promile=8240
+
+\_def\uv#1{\clqq#1\crqq}
+
+\_let\uslang=\enlang  \_let\ehyph=\enlang
+\_let\chyph=\cslang   \_let\shyph=\sklang
+\_let\csUnicode=\csPatt \_let\czUnicode=\csPatt \_let\skUnicode=\skPatt
+
+    \_doc ----------------------------
+    The \`\letfont` was used in \csplain/ instead of `\fontlet`.
+    \_cod ----------------------------
+
+\_let \letfont = \_fontlet
+
+    \_doc ----------------------------
+    Non-breaking space in Unicode.
+    \_cod ----------------------------
+
+\let ^^a0=~
+
+    \_doc ----------------------------
+    Old macro packages need these funny control sequences.
+    We don't use them in new macros.
+    \_cod ----------------------------
+
+\_catcode`\@=11
+\_let\z@=\_zo  \_let\z@skip=\_zoskip
+\_newdimen\p@ \p@=1pt
+\_toksdef\toks@=0
+\_let\voidb@x=\_voidbox
+\_chardef\@ne=1 \_chardef\tw@=2 \_chardef\thr@@=3 \_chardef\sixt@@n=16
+\_mathchardef\@m=1000 \_mathchardef\@M=10000 \_mathchardef\@MM=20000
+\_countdef\m@ne=22 \m@ne=-1
+\_chardef\@cclv=255 \_mathchardef\@cclvi=256
+\_skipdef\skip@=0
+\_dimendef\dimen@=0  \_dimendef\dimen@i=1
+\_dimendef\dimen@ii=2
+\_countdef\count@=255
+\_def\m@th{\_mathsurround\z@}
+\_def\o@lign{\_lineskiplimit\z@ \_oalign}
+\_def\n@space{\_nulldelimiterspace\z@ \m@th}
+\_newdimen\p@renwd \p@renwd=8.75pt
+\_def\alloc@#1#2#3#4#5{\_allocator#5{\_csstring#2}#3}
+\_catcode`\@=12
+
+    \_doc ----------------------------
+    We don't want to read `opmac.tex` unless `\input opmac` is specified.
+    \_cod ----------------------------
+
+\_def\OPmacversion{OpTeX}
+
+    \_doc ----------------------------
+    We allow empty lines in math formulae. It is more comfortable.
+    \_cod ----------------------------
+
+\_suppressmathparerror = 1
+
+    \_doc ----------------------------
+    Lorem ipsum can be printed by \`\lipsum``[<range>]` or \`\lorem``[<range>]`,
+    for example `\lipsum[3]` or `\lipsum[112-121]`, max=150.
+
+    First usage of `\lipsum` reads the \LaTeX/ file `lipsum.ltd.tex`
+    by \`\_lipsumload`
+    and prints the selected paragraph(s). Next usages of `\lipsum`
+    prints the selected paragraph(s) from memory. This second and more
+    usages of `\lipsum` are fully expandable. If you want to have all
+    printings of `\lipsum` expandable, use dummy `\lipsum[0]` first.
+
+    `\lipsum` adds `\_par` after each printed paragraph. If you don't need
+    such `\_par` here, use \`\lipsumtext``[<number>]` or `\lipsum[<number>.]`
+    (i.e.\ dot after the parameter). The first case prints the paragraph
+    <number> without the final `\_par` and the second case prints only
+    first sentence from the paragraph <number> using \`\_lipsumdot`.
+    \_cod ----------------------------
+
+\_def\_lipsumtext[#1]{\_lipsumload\_cs{_lip:#1}}
+\_def\_lipsum[#1]{\_lipsumA #1.]{#1}}
+\_def\_lipsumA #1.#2]#3{\_ifx^#2^\_lipsumB #1\_empty-\_empty\_fin \_else \_lipsumdot[#1].\_fi}
+\_def\_lipsumB #1-#2\_empty#3\_fin{%
+   \_fornum #1..\_ifx^#2^#1\_else#2\_fi \_do {\_lipsumtext[##1]\_par}}
+\_def\_lipsumload{{%
+   \_setbox0=\_vbox{\_tmpnum=0 % vertical mode during \input lipsum.ltd.tex
+      \_def\ProvidesFile##1[##2]{}%
+      \_def\SetLipsumLanguage##1{}%
+      \_def\NewLipsumPar{\_incr\_tmpnum \_sxdef{_lip:\_the\_tmpnum}}%
+      \_opinput {lipsum.ltd.tex}%
+      \_global\_let\_lipsumload=\_empty
+   }}}
+\_def\_lipsumdot[#1]{\_lipsumload \_ea\_ea\_ea \_lipsumdotA \_csname _lip:#1\_endcsname.\_fin}
+\_def\_lipsumdotA #1.#2\_fin {#1}
+
+\_public \lipsum \lipsumtext ;
+\_let \lorem=\lipsum
+
+   \_doc -----------------------------
+   Lua\TeX/ version 1.14 and newer provides `\partokenname` which allows to
+   specify something different than `\par` at empty lines. We set `\_par`
+   (see bellow) in \OpTeX/ version 1.04+ and newer. Some macros were rewritten
+   due to this change. And we copy old versions of these changed macros here
+   in order to allow to use older Lua\TeX/ versions where `\partokenname` is
+   not provided.\nl
+   Note that your macros where a parameter is separated by the empty line
+   must be changed too. Use `\def\macro #1\_par{...}` instead
+   `\def\macro #1\par{...}`.
+   \_cod -----------------------------
+
+\_ifx\_partokenname\_undefined % LuaTeX 1.13 or older:
+
+   \_def\_begmulti #1 {\_par\_bgroup\_wipeepar\_multiskip\_penalty0 \_def\_Ncols{#1}
+      \_setbox6=\_vbox\_bgroup\_bgroup \_let\_setxhsize=\_relax \_penalty-99
+      \_advance\_hsize by\_colsep
+      \_divide\_hsize by\_Ncols  \_advance\_hsize by-\_colsep
+      \_mullines=0
+      \_def\par{\_ifhmode\_endgraf\_global\_advance\_mullines by\_prevgraf\_fi}%
+   }
+   \_def\_incaption {\_bgroup
+      \_ifcsname _\_tmpa num\_endcsname \_ea\_incr \_csname _\_tmpa num\_endcsname
+      \_else \_opwarning{Unknown caption /\_tmpa}\_fi
+      \_edef\_thecapnum {\_csname _the\_tmpa num\_endcsname}%
+      \_edef\_thecaptitle{\_mtext{\_tmpa}}%
+      \_ea\_the \_csname _everycaption\_tmpa\_endcsname
+      \_def\_par{\_nbpar\_egroup}\_let\par=\_par
+      \_cs{_printcaption\_tmpa}%
+   }
+   \_def\_boxlines{%
+      \_def\_boxlinesE{\_ifhmode\_egroup\_empty\_fi}%
+      \_def\_nl{\_boxlinesE}%
+      \_bgroup \_lccode`\~=`\^^M\_lowercase{\_egroup\_let~}\_boxlinesE
+      \_everypar{\_setbox0=\_lastbox\_endgraf
+         \_hbox\_bgroup \_catcode`\^^M=13 \_let\par=\_nl \_aftergroup\_boxlinesC}%
+   }
+   \_def\_letter{
+      \_def\_address{\_vtop\_bgroup\_boxlines \_parskip=0pt \_let\par=\_egroup}
+      \_def\_subject{{\_bf \_mtext{subj}: }}
+      \_public \address \subject ;
+      \_typosize[11/14]
+      \_vsize=\_dimexpr \_topskip + 49\_baselineskip \_relax % added 2020-03-28
+      \_parindent=0pt
+      \_parskip=\_medskipamount
+      \_nopagenumbers
+   }
+   \_def\_printverbline#1{\_putttpenalty \_indent \_printverblinenum \_kern\_ttshift #1\par}
+   \_public \begmulti \boxlines \letter ;
+
+\_else % LuaTeX 1.14 or newer:
+
+   \_doc -----------------------------
+   We set `\partokenneame` to `\_par` in order to keep the name `\par` in the
+   public namespace for end users. I.e.\ a user can say `\def\par{paragraph}` for example
+   without crash of processing the document. Se section~\ref[namespaces] for
+   more details about the name space concept.\nl
+   Moreover, we set `\partokencontext` to one in order to the `\_par` token
+   is inserted not only at empty lines, but also at the end of `\vbox`, `\vtop` and
+   `\vcenter` if horizontal mode is opened here. This differs from default
+   \TeX/ behavior where horizontal mode is closed in these cases without
+   inserting par token.\nl
+   We set \`\_partokenset` to defined value 1 in order to the macro programmer can
+   easily check these settings in \OpTeX/ format by
+   `\ifx\_partokenset\undefined ... \else ...\fi`.
+   \_cod -----------------------------
+
+   \_partokenname\_par
+   \_partokencontext=1
+   \_let\_partokenset=1
+\_fi
+
+\_endcode
+
+2022-05-04 \lipsum[<num>]. changed to \lipsum[<num>.] to keep macro expandable.
+2022-04-21 syntax \lipsum[<num>]. introduced.
+2022-02-16 declaration of @-names moved here from plain-at.opm.
+2021-08-02 \SetLipsumLanguage added, fix for new lipusm version
+2021-01-04 \lipsumtext introduced
+2020-05-22 \lipsum uses \fornum (expandable after first usage)
+2020-04-02 released

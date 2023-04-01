@@ -1,0 +1,518 @@
+% $Id: wripro.tex 414 2018-06-12 23:04:41Z karl $
+% Used in tex4ht.sty.  Not installed in runtime.
+% 
+% Copyright (C)) 2009-2010 TeX Users Group
+% Copyright (C) 1996-2009, 2018 Eitan M. Gurari
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any
+% later version. The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions
+% of LaTeX version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status "maintained".
+%
+% The Current Maintainer of this work
+% is the TeX4ht Project <http://tug.org/tex4ht>.
+% 
+% If you modify this program, changing the 
+% version identification would be appreciated.
+
+%\openin15= wripro.tex
+%\ifeof15 \closein15 \else \closein15 \input wripro.tex \fi
+
+
+
+\Section{Root Point}
+
+\<html TeX4ht protex\><<<
+\ifx\html:addr\:UnDeF
+   |<html common to TeX4ht and protex|>
+   \Htmltrue
+\fi
+>>>
+
+\ifalprotex
+
+\<html+nohtml protex\><<<
+|<new ifs|>
+|<html+nohtml common to TeX4ht and protex|>
+|<nohtml common to TeX4ht and protex|>
+>>>
+
+\fi
+
+\<non-html utilities\><<<
+|<nohtml common to TeX4ht and protex|>
+>>>
+
+
+\SubSection{Directory for Files}
+
+\<html common to TeX4ht and protex\><<<
+\writesixteen{--- needs --- tex4ht \jobname\space ---}%
+>>>
+
+
+
+
+\<html common to TeX4ht and protexNO\><<<
+\ifx\HDir\:UnDef \let\HDir=\empty \fi
+\let\:HDir=\HDir
+\immediate\write16{--- needs --- TeX4ht \ifx\HDir\empty
+               \else-d \HDir\space\space\fi \jobname\space ---}%
+>>>
+
+
+\SubSection{Identifiers and Counters}
+
+
+\<new ifs\><<<
+\ifx \Htmltrue\:UnDef
+   \def\:temp{\csname newif\endcsname}
+   \expandafter\:temp \csname ifHtml\endcsname  \Htmlfalse
+\fi
+>>>
+
+
+\<html common to TeX4ht and protex\><<<
+\ifx\tmp:cnt\:UnDeF    \csname newcount\endcsname\tmp:cnt \fi
+\def\g:advance#1{\bgroup \def\:temp{#1}%
+                 \tmp:cnt=#1\afterassignment\:gplus \advance\tmp:cnt}
+\def\:gplus{\expandafter\xdef\:temp{\the\tmp:cnt}\egroup}
+\def\html:lbl{1}
+\def\html:addr{\xdef\last:haddr{\file:id-\html:lbl}%
+     \g:advance\html:lbl by 1\relax }
+>>>
+
+\<html common to TeX4ht and protex\><<<
+\ifx  \file:id\:UnDef
+   \gdef\file:id{|<first file id|>}
+   \global\let\maxfile:id=\file:id
+\fi
+>>>
+
+\<first file id\><<<
+1>>>
+
+
+
+\SubSection{Relax Right Margin}
+
+\<html common to TeX4ht and protex\><<<
+\hbadness=10000      \vbadness=10000
+\:CheckOption{fussy}  \if:Option  \else
+   \hfuzz=99in          \vfuzz=\hfuzz
+\fi
+\hyphenpenalty=1000  \exhyphenpenalty=1000
+\def\html:rightskip{\rightskip = 0pt plus 0.5\hsize  minus0.5\hsize }
+\html:rightskip
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\SubSection{Foot and Head Lines}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \<html common to TeX4ht and protex\><<<
+
+\<html protex\><<<
+\ifx \footline\:UnDef \else
+   \footline={\hfil}   \headline={\hfil}
+\fi
+>>>
+
+
+\Section{Html Commmands From Users}
+
+The \''\let\ht:special=\special' is for protection
+against redefinitions of the \''\special', as is the case in french.sty.
+
+
+\<html common to TeX4ht and protex\><<<
+\ifx \ht:special\:UnDef
+   \let\ht:special=\special
+\fi
+\def\HCode#1{\ifx \EndPicture\:UnDef
+   \relax\ifvmode\leavevmode\fi\ht:special{t4ht=#1}\fi}
+\let\:HCode=\HCode
+\let\Hbrakets\empty
+\def\NewLineChar{\bgroup \catcode`\^=7 \:NewLineChar}
+\def\:NewLineChar#1{\egroup \def\:newlnch{ #1}}
+\NewLineChar{^^J}
+>>>
+
+
+\<nohtml common to TeX4ht and protex\><<<
+\def\HCode#1{}
+>>>
+
+The \`+\HCode+' starts a new paragraph if introduced in vertical mode.
+The \`+\leavevmode+' is included for proper spacing in dviht.
+
+
+
+\Section{Cross References within Html}
+
+   - NCSA Mosaic can't handle the
+ end-of-anchor {\tt</...>} tag if it is not on one line.
+For instance, in {\tt
+<A>...<A\vfil\break>},
+   Mosaic paints everything blue until the next {\tt </A> }it finds that is
+ entirely on one line.
+
+\<html+nohtml common to TeX4ht and protex\><<<
+\def\EndLink{\ifx \empty:lnk\empty \HCode{\Hbrakets</\tag:A>}\fi}
+\def\:HRef{\ifx [\:temp \expandafter\::HRef
+           \else \expandafter\:::HRef \fi }
+\def\HT:tag{\ifx -\let:val   \expandafter\H:Tag
+            \else            \expandafter\HTa:g\fi }
+\def\HTa:g{\H:Tag-}
+\def\Link{\let\:attr\empty \futurelet\let:val\HRefT:ag}
+\def\HRefT:ag{\ifx -\let:val \expandafter\H:RefTag
+              \else          \expandafter\HRefTa:g\fi   }
+\def\HRefTa:g{\H:RefTag-}
+\def\H:RefTag#1{\futurelet\:temp\:HRefTag}
+\def\:HRefTag{\ifx [\:temp \expandafter\::HRefTag
+              \else \expandafter\:::HRefTag \fi }
+>>>
+
+
+A \`'\Link-{..}{b}' asks that a \''\Tag' will not be produced for `b'.
+A \`'\Link[\empty]{b}{..}' asks that a \''\Ref' will not be produced for
+`a'. The same is true for any other non-empty replacement to \''\empty'
+A `b' for which we neither have a \''\Tag' and a \''\Ref' provides
+a memory save in `strings out of', `string characters out of', and
+`multiletter control sequences' (see log files).
+
+\<html common to TeX4ht and protex\><<<
+\def\::HRef[#1]{\get:attr{#1}\::hRef\:::HRef}
+\def\::HRefTag[#1]{\get:attr{#1}\::hRefTag\:::HRefTag}
+\def\get:attr#1{\edef\:attr{\noexpand\get:atr #1 |<par del|>}\:attr}
+\def\get:atr#1 #2|<par del|>#3#4{\def\:attr{\space#2}%
+   \def\:te:mpa{#1}\ifx \:te:mpa\empty \let\:te:mpa#4\else
+   \def\:te:mpa{#3[#1]}\fi \:te:mpa}
+>>>
+
+
+\<html common to TeX4ht and protex\><<<
+\def\H:Tag#1#2{\:TagHTag{#2}\HCode{\Hbrakets<\tag:A\:newlnch
+   \NAME:"#2"\empty:lnk>}}
+\def\::hRef[#1]#2{%
+   \HCode{\Hbrakets<\tag:A\:newlnch \if\relax#1#2\relax \NOHREF:{}\else
+             \HREF:"#1\if\relax#1\relax \else\:sharp #2\fi"\fi
+           \:attr \empty:lnk>}}
+\def\:::HRef#1{%
+   \HCode{\Hbrakets<\tag:A\:newlnch \if\relax#1\relax \NOHREF:{}\else
+               \HREF:"\get:hfile{#1}\:sharp #1"\fi \:attr \empty:lnk>}}
+>>>
+
+
+
+\<\><<<
+\def\::hRef[#1]#2{\def\:te:mp{#1}\def\:te:mpa{#1#2}%
+   \HCode{<\tag:A\:newlnch \ifx\:te:mpa\empty \NOHREF: \else
+             \HREF:"#1\ifx\:te:mp\empty \else\:sharp #2\fi"\fi
+           \:attr \empty:lnk>}}
+\def\:::HRef#1{\def\:te:mpa{#1}%
+   \HCode{<\tag:A\:newlnch \ifx\:te:mpa\empty \NOHREF: \else
+               \HREF:"\get:hfile{#1}\:sharp #1"\fi \:attr \empty:lnk>}}
+>>>
+
+
+
+
+\<html common to TeX4ht and protex\><<<
+\def\::hRefTag[#1]#2#3{%
+   \if\relax#3\relax\else\:TagHTag{#3}\fi
+   \HCode{\Hbrakets<\tag:A\:newlnch \if\relax#1#2\relax \NOHREF:{#3}\else
+                 \HREF:"#1\if\relax#2\relax \else\:sharp #2\fi"\fi
+               \if\relax#3\relax\else\space \NAME:"#3"\fi
+             \:attr \empty:lnk>}}
+\def\:::HRefTag#1#2{%
+   \if\relax#2\relax\else\:TagHTag{#2}\fi
+   \HCode{\Hbrakets<\tag:A\:newlnch \if\relax#1\relax \NOHREF:{#2}%
+                 \else\HREF:"\get:hfile{#1}\:sharp #1"\fi
+               \if\relax#2\relax\else\space  \NAME:"#2"\fi
+             \:attr \empty:lnk>}}
+\let\empty:lnk=\empty
+\def\NOHREF#1{\space}
+>>>
+
+\<\><<<
+\def\::hRefTag[#1]#2#3{\def\:te:mp{#2}\def\:te:mpa{#1#2}\def\:te:mpb{#3}%
+   \ifx\:te:mpb\empty\else\:TagHTag{#3}\fi
+   \HCode{<\tag:A\:newlnch \ifx\:te:mpa\empty \NOHREF: \else
+                 \HREF:"#1\ifx\:te:mp\empty \else\:sharp #2\fi"\fi
+               \ifx\:te:mpb\empty\else\space \NAME:"#3"\fi
+             \:attr \empty:lnk>}}
+\def\:::HRefTag#1#2{\def\:te:mp{#1}\def\:te:mpa{#2}%
+   \ifx\:te:mpa\empty\else\:TagHTag{#2}\fi
+   \HCode{<\tag:A\:newlnch \ifx\:te:mp\empty \NOHREF:
+                 \else\HREF:"\get:hfile{#1}\:sharp #1"\fi
+               \ifx\:te:mpa\empty\else\space  \NAME:"#2"\fi
+             \:attr \empty:lnk>}}
+>>>
+
+
+
+
+
+
+
+\''\def\NOHREF:#1{\ifx \hrEF:\HREF: \space NOHREF \fi}' is not part of html!
+
+\<html protex\><<<
+\def\HREF:{ href=}
+\def\tag:A{a}
+\def\NAME:{ name=}
+>>>
+
+
+% \let\hrEF:=\HREF:
+
+
+We don't use \`'^^J' to break lines in \''\write' because user may
+change it, and because I had unexplained problem with it in emtex.
+
+\<html common to TeX4ht and protex\><<<
+\def\:TagHTag#1{\ifx -\let:val\else \Tag{|<HTag tag|>#1}{\file:id}\fi}
+>>>
+
+\<nohtml common to TeX4ht and protex\><<<
+\def\H:Tag#1#2{}
+\def\::HRef[#1]#2{}
+\def\:::HRef#1{}
+\def\::HRefTag[#1]#2#3{}
+\def\:::HRefTag#1#2{}
+\def\:TagHTag#1{}
+>>>
+
+
+
+
+\Section{Html Addresses}
+
+\SubSection{Retrieving for HREF}
+
+\<html common to TeX4ht and protex\><<<
+\def\get:href{\expandafter\get::href}
+\def\get::href#1-#2-{\ifnum #1=\file:id\space         \else
+      |<get html file name|>\fi
+   \:sharp |<make html addr|>}
+>>>
+
+
+
+\<html common to TeX4ht and protexNO\><<<
+\def\get:href{\expandafter\get::href}
+\def\get::href#1-#2-{\ifnum #1=\file:id\space         \else
+   \:HDir |<get html file name|>\fi
+   \:sharp |<make html addr|>}
+>>>
+
+\SubSection{Retrieving for NAME}
+
+\<html common to TeX4ht and protex\><<<
+\def\get:htag{\expandafter\get::htag}
+\def\get::htag#1-#2-{|<make html addr|>}
+>>>
+
+
+\SubSection{Generating}
+
+\<make html addr\><<<
+\make:addr{#2}>>>
+
+\<html protex\><<<
+\def\make:addr#1{%
+   \ifnum\clearcode:id>0 \romannumeral\clearcode:id Q\else PrTx\fi
+   |<tail for file name|>#1}
+\ifx\clearcode:id\:UnDef
+     \def\clearcode::id{0}  \def\clearcode:id{0}
+\fi
+>>>
+
+We had before \`'\space' after \`'#1'. It was not a problem because
+\`'|<tail...' was a \''\roman..' that absorbed the space. But
+now with no one absorbing it, it became a problem.
+
+
+\<html protexNO\><<<
+\def\make:addr#1{%
+   \ifnum\clearcode:id>0 \romannumeral\clearcode:id Q\fi
+   |<tail for file name|>#1\space}
+\ifx\clearcode:id\:UnDef
+     \def\clearcode::id{0}  \def\clearcode:id{0}
+\fi
+>>>
+
+
+
+
+\<tail for file name\><<<
+>>>
+
+Originally, we had \`'\romannumeral' for tail, but it created named
+that are too long, and cause memory overflow.
+
+
+The condition \`'\ifnum\clearcode:id>0' is set to hold only for
+references to code fragments.
+
+Romannumeral might be better tags then just numerals because they
+might be less likely to be generater manually.
+
+\SubSection{File Names}
+
+
+\`=\Ref= and \`=\Tag= are mechanisms to exchange information. The
+following can be used to connect locations. (Note, however, that
+\`=\Tag= may appear in more than one location sending a sequences of tags
+separated by comma. In such cases, we arbitrarily go for the first
+choise.)
+
+
+\<init XrefFile\><<<
+\ifx \aXrefFile\:UnDef \let\aXrefFile=\empty \fi
+>>>
+
+
+\<html common to TeX4ht and protex\><<<
+|<init XrefFile|>
+\def\get:hfile#1{%
+   \expandafter\ifx\csname
+               |<tag of Tag|>|<HTag tag|>#1\endcsname\relax
+      \get@hfile{#1}%
+   \else
+      \expandafter\expandafter\expandafter\get::hfile
+          \csname |<tag of Tag|>|<HTag tag|>#1\endcsname,//%
+   \fi  }
+\def\get::hfile#1,#2//{%
+   \ifnum \file:id=0#1  \else
+       |<get file name for tag|>%
+   \fi }
+\ifx\get@hfile\:Undef \let\get@hfile=\:gobble \fi
+>>>
+
+
+\<get file name for tag\><<<
+\expandafter\ifx
+   \csname |<tag of Tag|>|<auto file tag|>#1%
+                 |<Tag/Ref: file-id -> file-name|>\endcsname\relax \else
+      \:LikeRef{|<auto file tag|>#1|<Tag/Ref: file-id -> file-name|>}%
+\fi >>>
+
+
+\<get file name for tagNO\><<<
+\expandafter\ifx
+   \csname |<tag of Tag|>|<auto file tag|>#1%
+                 |<Tag/Ref: file-id -> file-name|>\endcsname\relax \else
+      \:HDir \:LikeRef{|<auto file tag|>#1|<Tag/Ref: file-id -> file-name|>}%
+\fi >>>
+
+
+
+\<get html file name\><<<
+\:LikeRef{|<auto file tag|>#1|<Tag/Ref: file-id -> file-name|>}>>>
+
+
+The following alternative can act as basis for retrieving all
+the file names, instead of just the first one.
+
+\<COMMENT\><<<
+\def\get:hfile#1{%
+   \expandafter\ifx\csname
+                cw:|<HTag tag|>#1\endcsname\relax
+      \get@hfile{#1}%
+   \else
+     \expandafter\expandafter\expandafter\get::hfile
+          \csname  cw:|<HTag tag|>#1\endcsname,\empty end:Links,/
+   \fi  }
+\def\end:Links#1//{}
+
+\def\get::hfile#1,#2//{%
+\expandafter \ifx \csname #1\endcsname\end:Links
+ \expandafter\end:Links
+\else
+  \ifnum \file:id=0#1 \FileName\else
+       \expandafter\ifx
+   \csname  cw:|<auto file tag|>#1%
+                 \empty F-\endcsname\relax \else
+      \:LikeRef{|<auto file tag|>#1\empty F-}%
+\fi %
+   \fi
+\expandafter\get::hfileA
+\fi #2//}
+
+\def\get::hfileA#1{%
+\ifx #1\space
+   \expandafter\get::hfile\else
+\ifx #1\empty \else \space\fi%
+ \expandafter\get::hfile\expandafter#1\fi}
+>>>
+
+
+
+
+\Section{Other}
+
+
+Dviht produce new line only after nonempty lines. The following
+can be used to force non empty lines.
+
+\<html common to TeX4ht and protex\><<<
+|%\def\HComment#1{\def\html:src{#1}}
+\HComment{} |%      \let\html:src=\empty
+\catcode`\#=12   \def\:sharp{#}   \catcode`\#=6
+>>>
+
+
+
+
+\<html protex\><<<
+\ifx \html:par\:UnDef \def\html:par{\HCode{<p>}} \fi
+\def\html:invisible{<!--x-->\string&\#x00A0;}
+>>>
+
+The \`'<!--x-->&nbsp;' is needed for blank lines in \`'<PRE>'
+within netscape. Opposite order of comment and non-breaking-space will
+not work, and the same if one of the entities is sliminates. On the
+other other, mosaic show the nobreaking space as strin. Well, ...
+
+\<nohtml common to TeX4ht and protex\><<<
+|%\def\HComment#1{}|%
+>>>
+
+\`'\HComment' seems to have no real value, unless we want to
+trace the input for debugging.
+
+
+\SubSection{Tags}
+
+\FreeCode\<tag of Tag\>  % to ensure agains duplication
+
+\<tag of Tag\><<<
+ cw:>>>
+
+\<HTag tag\><<<
+|<auto tag|>Q\aXrefFile >>>
+
+
+
+\<Tag/Ref: file-id -> file-name\><<<
+\empty F->>>
+
+\<auto tag\><<<
+)>>>
+
+\<auto file tag\><<<
+|<auto tag|>F\aXrefFile >>>
+
+
+\FreeCode\<par del\>
+
+\<par del\><<<
+!*?: >>>

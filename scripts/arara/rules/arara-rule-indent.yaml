@@ -1,0 +1,124 @@
+!config
+# Arara, the cool TeX automation tool
+# Copyright (c) 2022, Island of TeX
+# All rights reserved.
+#
+# This rule is part of arara.
+identifier: indent
+name: Indent
+authors:
+- Chris Hughes
+- Island of TeX
+commands:
+- name: The latexindent.pl script
+  command: >
+    @{
+        return getCommand('latexindent', silent, trace, screenlog, lines,
+               settings, cruft, overwrite, output, reference,
+               modifylinebreaks, check, replacement, options, logfile);
+    }
+arguments:
+- identifier: silent
+  flag: >
+    @{
+        isTrue(parameters.silent, '-s')
+    }
+- identifier: overwrite
+  flag: >
+    @{
+        isTrue(parameters.overwrite, '-w')
+    }
+- identifier: trace
+  flag: >
+    @{
+      if ([ 'default', 'complete' ].contains(parameters.trace)) {
+          return isTrue(parameters.trace == 'default', '-t', '-tt');
+      }
+      else {
+          throwError('You provided an invalid value for trace.');
+      }
+    }
+- identifier: screenlog
+  flag: >
+    @{
+        isTrue(parameters.screenlog, '-sl')
+    }
+- identifier: modifylinebreaks
+  flag: >
+    @{
+        isTrue(parameters.modifylinebreaks, '-m')
+    }
+- identifier: settings
+  flag: >
+    @{
+      check = parameters.containsKey('where');
+      location = check ? parameters.where : '';
+      if ([ 'local', 'onlydefault' ].contains(parameters.settings)) {
+          return isTrue(parameters.settings == 'local', isTrue(check,
+                 '-l='.concat(location), '-l'), '-d');
+      }
+      else {
+          throwError('You provided an invalid value for settings.');
+      }
+    }
+- identifier: cruft
+  flag: >
+    @{
+        '-c='.concat(parameters.cruft)
+    }
+- identifier: logfile
+  flag: >
+    @{
+        [ '-g', parameters.logfile ]
+    }
+- identifier: output
+  flag: >
+    @{
+        [ '-o', parameters.output ]
+    }
+- identifier: lines
+  flag: >
+    @{
+      [ '--lines', parameters.lines ]
+    }
+- identifier: where
+  flag: >
+    @{
+      check = parameters.containsKey('settings');
+      setting = check ? parameters.settings : '';
+      if (setting != 'local') {
+          throwError('This key requires a local setting.');
+      }
+    }
+- identifier: replacement
+  flag: >
+    @{
+      opts = [ 'full' : '-r', 'noverb' : '-rv', 'noindent' : '-rr' ];
+      if (opts.keySet().contains(parameters.replacement)) {
+          return opts[parameters.replacement];
+      }
+      else {
+          throwError('You provided an invalid value for replacement.');
+      }
+    }
+- identifier: check
+  flag: >
+    @{
+      opts = [ 'standard' : '--check', 'verbose' : '--checkv' ];
+      if (opts.keySet().contains(parameters.check)) {
+          return opts[parameters.check];
+      }
+      else {
+          throwError('You provided an invalid value for check.');
+      }
+    }
+- identifier: options
+  flag: >
+    @{
+        if (isList(parameters.options)) {
+            return parameters.options;
+        }
+        else {
+            throwError('I was expecting a list of options.');
+        }
+    }

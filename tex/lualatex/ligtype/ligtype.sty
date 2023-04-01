@@ -1,0 +1,53 @@
+% Copyright (c) 2022 Thomas Kelkel kelkel@emaileon.de
+
+% This file may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either
+% version 1.3c of this license or (at your option) any later
+% version. The latest version of this license is in
+
+%    http://www.latex-project.org/lppl.txt
+
+% and version 1.3c or later is part of all distributions of
+% LaTeX version 2009/09/24 or later.
+
+% The ligtype package makes use of the German language
+% ligature suppression rules of the selnolig package by
+% Mico Loretan. The selnolig package can be downloaded at
+
+%    https://www.ctan.org/pkg/selnolig
+
+% and may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License.
+
+\ProvidesPackage{ligtype}[2022/06/13 v0.1b Comprehensive ligature suppression functionalities]
+\RequirePackage{ifluatex,luatexbase}
+
+\ifluatex
+    \directlua{require ( "ligtype.lua" )}
+
+    \def\ligtypeon{\directlua{ligtype_on()}}
+    \def\ligtypeoff{\directlua{ligtype_off()}}
+
+    \ligtypeon
+
+    \newcommand\nolig[2]{%
+        \directlua{%
+            ligtype_parse_macro ( "\luatexluaescapestring{#1}", "\luatexluaescapestring{#2}", true )%
+        }%
+    }
+    \newcommand\keeplig[2]{%
+        \directlua{%
+            ligtype_parse_macro ( "\luatexluaescapestring{#1}", "\luatexluaescapestring{#2}", false )%
+        }%
+    }
+
+    \DeclareOption{noshortf}{\directlua{ligtype_no_short_f()}}
+    \DeclareOption{allshortf}{\directlua{ligtype_all_short_f()}}
+    \DeclareOption{makemarks}{\directlua{ligtype_make_marks()}}
+    \DeclareOption{kerntest}{\AtEndDocument{\directlua{ligtype_write_ligs()}}}
+    \DeclareOption{nodefault}{\directlua{ligtype_no_default()}}
+    \ProcessOptions
+\else
+    \errhelp{Compile with LuaLaTeX to be able to use the "ligtype" package.}
+    \errmessage{Package "ligtype" error: This package requires LuaLaTeX!}
+\fi

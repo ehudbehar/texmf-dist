@@ -1,0 +1,487 @@
+% $Id: tex4ht-options.tex 1169 2022-07-04 14:03:16Z michal_h21 $
+% latex tex4ht-options   or    xhlatex tex4ht-options
+%
+% Copyright 2009-2022 TeX Users Group
+% Copyright 2000-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\ifx \HTML\UnDef
+   \def\HTML{} 
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+%%%%%%%%%%%%%%%%%% definitions %%%%%%%%%%%%%%%%%%%%%%%%%
+
+\input{common.tex}
+\input{common-code.tex}
+\input{tex4ht-cpright.tex}
+
+\def\.{\string\a:mathml:\space}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Shared}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<par del\><<<
+!*?: >>>
+
+
+\<tag of Tag\><<<
+ cw:>>>
+
+\<tail\><<<
+tail>>>
+
+\<addr for Tag and Ref of Sec\><<<
+\xdef\:cursec{|<section html addr|>}%
+>>>
+
+
+
+
+
+\<tex4ht.4ht\><<<
+\ifnum\the\catcode`\%=14\else \expandafter\edef\csname
+  \string:RestoreCatcodes\endcsname{\catcode`\%|=\the
+  \catcode`\%}\catcode`\%|=14\fi
+% tex4ht.4ht (|version), generated from |jobname.tex
+% Copyright 2009-2022 TeX Users Group
+% Copyright |CopyYear.1997. Eitan M. Gurari
+|<TeX4ht copywrite|>
+|<save catcodes|>
+|<note about tex4ht.usr|>
+
+\:CheckOption{info}\if:Option
+               \Hinclude[*]{info4ht.4ht}
+   \Log:Note{For additional information,
+      compile `xhlatex mktex4ht.4ht'^^J and review the appropriate 
+      pointers under mktex4ht.html => index}
+\else
+   \Log:Note{for additional information, use 
+      the command line option `info'}
+\fi
+\writesixteen{::::::::::::::::::::::::::::::::::::::::::}
+\writesixteen{ TeX4ht info is available in the log file }
+\writesixteen{::::::::::::::::::::::::::::::::::::::::::}
+|<redefine Configure|>
+|<built-in settings|>
+|<user's configuration files|>
+|<recall Configure|>
+\:tempc
+
+\:RestoreCatcodes
+\endinput
+>>>  
+
+\<redefine Configure\><<<
+\let\:tempd|=\Configure
+\def\Configure#1#2{%
+   \:CheckOption{#1}\if:Option \def\:tempc{#2}\fi}
+>>>
+
+\<recall Configure\><<<
+\let\Configure|=\:tempd
+>>>
+
+
+\<user's configuration files\><<<
+\openin15=tex4ht.usr \ifeof15 \else \closein15 
+   \input tex4ht.usr
+\fi
+>>>
+
+\<note about tex4ht.usr\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% It is highly recommended NOT TO CHANGE THIS FILE. Options
+%                          ^^^^^^^^^^^^^^^^^^^^^^^
+% defined in this file may be redefined, and new ones may be 
+% added, within a user supplied file named tex4ht.usr.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+>>>
+
+
+\<built-in settings\><<<
+|<html4 settings|>
+|<0.0 and 3.2 settings|>
+|<mozilla settings|>
+|<html5 settings|>
+|<tei settings|>
+|<jats settings|>
+|<docbook settings|>
+|<html for word settings|>
+|<open office settings|>
+|<html mathltx settings|>
+|<html jsmath settings|>
+|<html emacspeak settings|>
+>>>
+
+
+
+\<html4 settings\><<<
+\def\:tempc{\:CheckOption{info}\if:Option
+                        \Hinclude[*]{infoht4.4ht}%
+            \:CheckOption{javahelp}\if:Option
+                        \Hinclude[*]{infojh.4ht}\fi
+            \fi
+            \Hinclude[*]{html4.4ht}%
+            \Hinclude[*]{html4-math.4ht}%
+            \:CheckOption{svg}%
+             \if:Option \else\:CheckOption{svg-}\fi
+             \if:Option \else\:CheckOption{svg-obj}\fi
+             \if:Option \else\:CheckOption{svg-inline}\fi
+             \if:Option
+                \Hinclude[*]{svg-option.4ht}%
+                \Hinclude[*]{html4-svg.4ht}%
+                \:CheckOption{info}\if:Option \Hinclude[*]{infosvg.4ht}\fi
+             \fi
+}
+\Configure{uni-html4}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infoht4.4ht}\fi
+   \Hinclude[*]{html4.4ht}%
+   \Hinclude[*]{html4-math.4ht}%
+   \Hinclude[*]{unicode.4ht}
+   \:CheckOption{svg}%
+             \if:Option \else\:CheckOption{svg-}\fi
+             \if:Option \else\:CheckOption{svg-obj}\fi
+             \if:Option \else\:CheckOption{svg-inline}\fi
+             \if:Option \Hinclude[*]{svg-option.4ht}%
+                        \:CheckOption{info}\if:Option \Hinclude[*]{infosvg.4ht}\fi
+             \fi
+   }
+\Configure{mathml}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infoht4.4ht}\fi            
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infomml.4ht}\fi
+   \Hinclude[*]{html4.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \Hinclude[*]{mathml.4ht}%
+   \Hinclude[*]{html-mml.4ht}%
+   \:CheckOption{svg}%
+             \if:Option \else\:CheckOption{svg-}\fi
+             \if:Option \else\:CheckOption{svg-obj}\fi
+             \if:Option \else\:CheckOption{svg-inline}\fi
+             \if:Option \Hinclude[*]{svg-option.4ht}%
+                        \:CheckOption{info}\if:Option \Hinclude[*]{infosvg.4ht}\fi
+             \fi
+   \:CheckOption{mathplayer}\if:Option
+      \:CheckOption{pmathml}\if:Option \else
+      \:CheckOption{pmathml-css}\if:Option \else
+         \Hinclude[*]{mathplayer.4ht}
+      \fi\fi
+   \else
+       \Log:Note{For MathML on MSIE + MathPlayer use
+           the command line option `mathplayer'}
+   \fi
+}
+>>>
+
+\<html for word settings\><<<
+\Configure{word}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infoht4.4ht}\fi
+   \Hinclude[*]{html4.4ht}%
+   \Hinclude[*]{html4-math.4ht}%
+   \Hinclude[*]{htmlw.4ht}%
+   \:CheckOption{svg}%
+             \if:Option \else\:CheckOption{svg-}\fi
+             \if:Option \else\:CheckOption{svg-obj}\fi
+             \if:Option \else\:CheckOption{svg-inline}\fi
+             \if:Option \Hinclude[*]{svg-option.4ht}%
+                        \:CheckOption{info}\if:Option \Hinclude[*]{infosvg.4ht}\fi
+             \fi
+}
+>>>
+
+\<0.0 and 3.2 settings\><<<
+\Configure{0.0}{%
+   \Hinclude[*]{html0.4ht}%
+}
+\Configure{3.2}{%
+   \:CheckOption{info}\if:Option
+       \:CheckOption{javahelp}\if:Option
+               \Hinclude[*]{infojh.4ht}\fi\fi
+   \Hinclude[*]{html32.4ht}%
+   \Hinclude[*]{html32-math.4ht}%
+   \:CheckOption{javahelp}\if:Option
+       |<option javahelp|>%
+   \fi
+   \:CheckOption{unicode}\if:Option \Hinclude[*]{unicode.4ht}\fi
+}
+>>>
+
+
+
+
+Allows cleanup using xtpipes.
+
+
+\<option javahelp\><<<
+\Hinclude[*]{javahelp.4ht}%
+\:CheckOption{jh-}     \if:Option 
+\else
+   \edef\Preamble{\Preamble,xml}%
+   \Log:Note{for sources failing to produce
+       XML versions of HTML, try the command line option `jh-'}%
+\fi
+>>>
+
+
+
+\<mozilla settings\><<<
+\Configure{mozilla}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infoht4.4ht}\fi
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infomml.4ht}\fi
+   \Hinclude[*]{html4.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \Hinclude[*]{mathml.4ht}%
+   \Hinclude[*]{html-mml.4ht}%
+   \Hinclude[*]{mozilla.4ht}%
+   \:CheckOption{svg}%
+             \if:Option \else\:CheckOption{svg-}\fi
+             \if:Option \else\:CheckOption{svg-obj}\fi
+             \if:Option \else\:CheckOption{svg-inline}\fi
+             \if:Option \Hinclude[*]{svg-option.4ht}%
+                        \:CheckOption{info}\if:Option \Hinclude[*]{infosvg.4ht}\fi
+             \fi
+   \:CheckOption{mathplayer}\if:Option
+       \Hinclude[*]{mathplayer.4ht}
+   \else
+       \Log:Note{For MathML on MSIE + MathPlayer use
+           the command line option `mathplayer'}
+   \fi
+}
+>>>
+
+
+\<html5 settings\><<<
+\Configure{html5}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infoht4.4ht}\fi
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infomml.4ht}\fi
+   \Hinclude[*]{html4.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \:CheckOption{mathml}\if:Option%
+   \else\:CheckOption{mathml-}\fi%
+   \if:Option%
+      \Hinclude[*]{mathml.4ht}%
+      \Hinclude[*]{html-mml.4ht}%
+   \else
+      \Hinclude[*]{html4-math.4ht}%
+   \fi
+   \:CheckOption{svg}%
+             \if:Option \else\:CheckOption{svg-}\fi
+             \if:Option \else\:CheckOption{svg-obj}\fi
+             \if:Option \else\:CheckOption{svg-inline}\fi
+             \if:Option \Hinclude[*]{svg-option.4ht}%
+                        \:CheckOption{info}\if:Option \Hinclude[*]{infosvg.4ht}\fi
+             \fi
+   \Hinclude[*]{html5.4ht}%
+}
+>>>
+
+\<tei settings\><<<
+\Configure{tei}{%
+   \Hinclude[*]{tei.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \:CheckOption{mathml}\if:Option%
+   \else\:CheckOption{mathml-}\fi%
+   \if:Option%
+      \Hinclude[*]{mathml.4ht}%
+      \Hinclude[*]{tei-mml.4ht}%
+   \else
+      \Hinclude[*]{tei-math.4ht}%
+   \fi
+   \:CheckOption{svg}%
+             \if:Option \else\:CheckOption{svg-}\fi
+             \if:Option \else\:CheckOption{svg-obj}\fi
+             \if:Option \else\:CheckOption{svg-inline}\fi
+             \if:Option \Hinclude[*]{svg-option.4ht}%
+                        \:CheckOption{info}\if:Option \Hinclude[*]{infosvg.4ht}\fi
+             \fi
+}
+\Configure{tei-mml}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infomml.4ht}\fi
+   \Hinclude[*]{tei.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \Hinclude[*]{mathml.4ht}%
+   \Hinclude[*]{tei-mml.4ht}%
+   \:CheckOption{svg}%
+             \if:Option \else\:CheckOption{svg-}\fi
+             \if:Option \else\:CheckOption{svg-obj}\fi
+             \if:Option \else\:CheckOption{svg-inline}\fi
+             \if:Option \Hinclude[*]{svg-option.4ht}%
+                        \:CheckOption{info}\if:Option \Hinclude[*]{infosvg.4ht}\fi
+             \fi
+}
+>>>
+
+\<jats settings\><<<
+\Configure{jats}{%
+   \Hinclude[*]{html4.4ht}% we will build upon HTML
+   \Hinclude[*]{jats.4ht}%
+   \Hinclude[*]{mathml.4ht}%
+   \Hinclude[*]{html-mml.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+}
+>>>
+
+\<docbook settings\><<<
+\Configure{docbook}{%
+   \Hinclude[*]{docbook.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \:CheckOption{mathml}\if:Option%
+   \else\:CheckOption{mathml-}\fi%
+   \if:Option%
+      \Hinclude[*]{mathml.4ht}%
+      \Hinclude[*]{docbook-mml.4ht}%
+   \else
+      \Hinclude[*]{docbook-math.4ht}%
+   \fi
+   \:CheckOption{svg}%
+             \if:Option \else\:CheckOption{svg-}\fi
+             \if:Option \else\:CheckOption{svg-obj}\fi
+             \if:Option \else\:CheckOption{svg-inline}\fi
+             \if:Option \Hinclude[*]{svg-option.4ht}%
+                        \:CheckOption{info}\if:Option \Hinclude[*]{infosvg.4ht}\fi
+             \fi
+}
+\Configure{docbook-mml}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infomml.4ht}\fi
+   \Hinclude[*]{docbook.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \Hinclude[*]{mathml.4ht}%
+   \Hinclude[*]{docbook-mml.4ht}%
+   \:CheckOption{svg}%
+             \if:Option \else\:CheckOption{svg-}\fi
+             \if:Option \else\:CheckOption{svg-obj}\fi
+             \if:Option \else\:CheckOption{svg-inline}\fi
+             \if:Option \Hinclude[*]{svg-option.4ht}%
+                        \:CheckOption{info}\if:Option \Hinclude[*]{infosvg.4ht}\fi
+             \fi
+}
+>>>
+
+
+\<open office settings\><<<
+\Configure{ooffice}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infoht4.4ht}%
+               \Hinclude[*]{infomml.4ht}%
+               \Hinclude[*]{infoof.4ht}\fi
+   \Hinclude[*]{ooffice.4ht}%
+   \:CheckOption{1}\if:Option\else
+      \:CheckOption{2}\if:Option\else
+      \:CheckOption{3}\if:Option\else
+      \:CheckOption{4}\if:Option\else
+      \:CheckOption{5}\if:Option\else
+      \:CheckOption{6}\if:Option\else
+      \:CheckOption{7}
+      \fi
+      \fi
+      \fi
+      \fi
+      \fi
+   \fi
+   \if:Option
+               \Hinclude[*]{ooimpress.4ht}%
+   \fi
+   \Hinclude[*]{unicode.4ht}%
+   \Hinclude[*]{mathml.4ht}%
+   \Hinclude[*]{ooffice-mml.4ht}%
+}
+>>>
+
+\<save catcodes\><<<
+\expandafter\edef\csname :RestoreCatcodes\endcsname{%
+   \expandafter\ifx \csname :RestoreCatcodes\endcsname\relax\else
+      \csname :RestoreCatcodes\endcsname \fi
+   \catcode`\noexpand :|=\the\catcode`:%
+   \ifnum \the\catcode`\#=6 \else
+      \catcode`\noexpand \#|=\the\catcode`\#\fi
+   \ifnum \the\catcode`\^=7 \else
+      \catcode`\noexpand \^|=\the\catcode`\^\fi
+   \let\expandafter\noexpand\csname :RestoreCatcodes\endcsname|=
+                                   \noexpand\UnDefcS}
+\catcode`\:|=11  \catcode`\#|=6   \catcode`\^|=7 
+>>>
+
+
+
+
+
+\<html mathltx settings\><<<
+\Configure{mathltx}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infoht4.4ht}\fi            
+   \Hinclude[*]{html4.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \Hinclude[*]{mathltx.4ht}%
+   \Hinclude[*]{html-mltx.4ht}%
+}
+>>>
+
+\<html jsmath settings\><<<
+\Configure{jsmath}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infoht4.4ht}\fi            
+   \Hinclude[*]{html4.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \Hinclude[*]{mathltx.4ht}%
+   \Hinclude[*]{html-mltx.4ht}%
+   \Hinclude[*]{jsmath.4ht}%
+   \Hinclude[*]{html-jsmath.4ht}%
+}
+>>>
+
+
+
+
+\<html emacspeak settings\><<<
+\Configure{emspk}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infoht4.4ht}\fi            
+   \Hinclude[*]{html4.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \Hinclude[*]{mathml.4ht}%
+   \Hinclude[*]{html-mml.4ht}%
+   \Hinclude[*]{html-speech.4ht}%
+   \Hinclude[*]{html-speech-math.4ht}%
+   \Hinclude[*]{emacspeak.4ht}%
+}
+>>>
+
+
+\<html emacspeak settings\><<<
+\Configure{jsml}{%
+   \:CheckOption{info}\if:Option
+               \Hinclude[*]{infoht4.4ht}\fi            
+   \Hinclude[*]{html4.4ht}%
+   \Hinclude[*]{unicode.4ht}%
+   \Hinclude[*]{mathml.4ht}%
+   \Hinclude[*]{html-mml.4ht}%
+   \Hinclude[*]{jsml.4ht}%
+   \Hinclude[*]{jsml-math.4ht}%
+}
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+  \OutputCodE\<tex4ht.4ht\>
+
+
+\endinput
+\subsection{Accents}

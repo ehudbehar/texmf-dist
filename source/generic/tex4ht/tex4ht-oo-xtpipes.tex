@@ -1,0 +1,1981 @@
+% $Id: tex4ht-oo-xtpipes.tex 740 2020-06-13 22:35:32Z karl $
+% htlatex tex4ht-oo-xtpipes "xhtml,next,3" "" "-d./"
+%
+% Copyright 2009-2020 TeX Users Group
+% Copyright 2001-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\documentclass{article}
+    \Configure{ProTex}{log,<<<>>>,title,list,`,[[]]}
+    \usepackage{url}
+\begin{document}
+
+\input{common}
+\input{tex4ht-cpright}
+\input{tex4ht-dir}
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Outline}
+%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+\subsection{Math}
+%%%%%%%%%%%%%
+
+
+\AtEndDocument{\OutputCodE\<oo-math.4xt\>}
+
+\Needs{"xmllint --valid --noout oo-math.4xt"} 
+
+
+
+
+
+\<oo-math.4xt\><<<
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE xtpipes SYSTEM "xtpipes.dtd" >
+<!-- oo-math.4xt (`version), generated from `jobname.tex
+     Copyright (C) 2009-2013 TeX Users Group
+     Copyright (C) `CopyYear.2006. Eitan M. Gurari
+`<TeX4ht copyright`> -->
+<xtpipes preamble="yes" signature="oo-math.4xt (`version)">
+   <sax content-handler="xtpipes.util.ScriptsManager,tex4ht.OomFilter" 
+        lexical-handler="xtpipes.util.ScriptsManagerLH" >
+      <script element="math:mtable" >
+         `<normalizing math tables`>
+      </script> 
+      <script element="math:math" >
+         `<handle mo elements`>
+         `<handle mrow elements`>
+         `<handle mspace elements`>
+      </script> 
+   </sax>
+</xtpipes>
+>>>
+
+
+
+
+
+
+
+\<handle mspace elements\><<<
+<set name="math:mspace" >
+   `<open mml xslt script`>
+   `<math:mspace templates`>
+   `<close xslt script`>
+</set>
+<xslt name="." xml="." xsl="math:mspace" />
+>>>
+
+
+\<math:mspace templates\><<<
+<xsl:template match="math:mspace" >
+  <math:mtext>  
+     <xsl:text> </xsl:text>
+  </math:mtext>
+</xsl:template> 
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Text}
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+\AtEndDocument{\OutputCodE\<oo-text.4xt\>}
+
+\Needs{"xmllint --valid --noout oo-text.4xt"} 
+
+
+
+
+
+\<oo-text.4xt\><<<
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE xtpipes SYSTEM "xtpipes.dtd" >
+<!-- oo-text.4xt (`version), generated from `jobname.tex
+     Copyright (C) 2009-2013 TeX Users Group
+     Copyright (C) `CopyYear.2006. Eitan M. Gurari
+`<TeX4ht copyright`> -->
+<xtpipes preamble="yes" signature="oo-text.4xt (`version)">
+   <sax content-handler="xtpipes.util.ScriptsManager,tex4ht.OoFilter" 
+        lexical-handler="xtpipes.util.ScriptsManagerLH" >
+      <script element="text:bibliography-mark" >
+         `<bib mark`>
+      </script> 
+      <script element="table:table" >
+         `<normalizing text tables`>
+      </script> 
+      <script element="text:p" >
+         `<clean paragraphs`>
+      </script> 
+      <script element="text:h" >
+         `<spaces for headers`>
+      </script> 
+   </sax>
+</xtpipes>
+>>>
+
+
+%%%%%%%%%%%%%
+\subsubsection{Cross References}
+%%%%%%%%%%%%%
+
+This is not used anymore, the make4ht-t4htlinks DOM filter is used instead. The
+following code may produce broken or empty links, so it is not really usable.
+
+\<cross references\><<<
+<set name="t4ht-link" >
+   `<open oo xslt script`>
+    `<handle t4htlink elements`>
+   `<close xslt script`>
+</set>
+<xslt name="." xml="." xsl="t4ht-link" />
+>>>
+
+\<bib mark\><<<
+<set name="bib-mark" >
+   `<open oo xslt script`>
+    `<handle bib mark elements`>
+   `<close xslt script`>
+</set>
+<xslt name="." xml="." xsl="bib-mark" />
+>>>
+
+
+
+\<handle t4htlink elements\><<<
+<xsl:template match="t4htlink[ @href = concat('#',@name) ]" >
+  <xsl:apply-templates select="*|text()|comment()" />
+  <text:reference-mark>
+     <xsl:attribute name="text:name">
+        <xsl:value-of select="@name"/>
+     </xsl:attribute>
+     <xsl:text> </xsl:text>
+  </text:reference-mark>
+</xsl:template> 
+>>>
+
+\<handle t4htlink elements\><<<
+<xsl:template match="t4htlink[ not(@name) 
+                           and
+                               starts-with(@href, '#') 
+]" >
+  <xsl:apply-templates select="*|text()|comment()" />
+   <text:span>
+        <xsl:attribute name="text:style-name">
+           <xsl:text>reference-ref</xsl:text>
+        </xsl:attribute>
+     <text:reference-ref>
+        <xsl:attribute name="text:ref-name">
+           <xsl:value-of select="substring( @href, 2 )"/>
+        </xsl:attribute>
+        <xsl:attribute name="text:reference-format">
+           <xsl:text>text</xsl:text>
+        </xsl:attribute>
+        <xsl:text> </xsl:text>   
+     </text:reference-ref>
+   </text:span>
+</xsl:template> 
+>>>
+
+
+
+
+
+
+
+\<handle t4htlink elements\><<<
+<xsl:template match="t4htlink[ not(@name) 
+                           and
+                               not(starts-with(@href, '#')) 
+]" >
+  <text:a>
+     <xsl:attribute name="xlink:type">
+        <xsl:text>simple</xsl:text>
+     </xsl:attribute>
+     <xsl:attribute name="xlink:href">
+        <xsl:value-of select="@href"/>
+     </xsl:attribute>
+     <xsl:apply-templates select="*|text()|comment()" />
+  </text:a>
+</xsl:template> 
+>>>
+
+
+
+
+
+\<handle bib mark elements\><<<
+<xsl:template match="text:bibliography-mark" >
+   <xsl:copy>
+     <xsl:attribute name="text:identifier">
+        <xsl:value-of select="normalize-space(.)" />    
+     </xsl:attribute>         
+     <xsl:apply-templates select="@*" />
+   </xsl:copy>
+   <text:span>
+      <xsl:attribute name="text:style-name">
+         <xsl:text>reference-ref</xsl:text>
+      </xsl:attribute>
+      <text:reference-ref> 
+        <xsl:attribute name="text:ref-name">
+              <xsl:value-of 
+                 select="text:span/text:reference-ref/@text:ref-name"/> 
+        </xsl:attribute> 
+        <xsl:attribute name="text:reference-format">
+              <xsl:text>text</xsl:text> 
+        </xsl:attribute>         
+        <xsl:text> </xsl:text>
+      </text:reference-ref> 
+   </text:span>
+</xsl:template> 
+>>>
+
+
+
+
+
+\begin{itemize}
+\item
+External
+\begin{verbatim}
+<text:a xlink:type="simple" 
+        xlink:href="http:....">...</text:a>
+\end{verbatim}
+
+
+\item internal
+\url{http://www.linuxjournal.com/article/8112}
+
+
+\begin{verbatim}
+<text:reference-mark-start text:name="xx"/>
+is 
+<text:reference-mark-end text:name="xx"/>
+
+<text:reference-ref text:reference-format="direction" text:ref-name="xx">
+above
+</text:reference-ref> 
+\end{verbatim}
+
+\end{itemize}
+
+
+%%%%%%%%%%%%%
+\subsection{Java Utilities}
+%%%%%%%%%%%%%
+
+
+
+\AtEndDocument{\OutputCodE\<OoUtilities.java\>}
+
+\ifdojava
+  \Needs{"
+    javac OoUtilities.java -d \XTPIPES
+"}
+\fi
+
+\<OoUtilities.java\><<<
+package tex4ht;
+/* OoUtilities.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2013 TeX Users Group
+   Copyright (C) `CopyYear.2006. Eitan M. Gurari
+`<TeX4ht copyright`> */
+import org.w3c.dom.*;
+public class OoUtilities {
+  `<static void mtable(dom)`>
+  `<static void table(dom)`>
+  `<static boolean justSpace(node)`>
+}
+>>>
+
+
+  `<static boolean paragraph(node)`>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Text Table}
+%%%%%%%%%%%%%%%%%%
+
+% 
+% 
+% 
+% \<handle mrow elements\><<<
+% <set name="math:mtd" >
+%    `<open oo xslt script`>
+%    `<math:mtd templates`>
+%    `<close xslt script`>
+% </set>
+% <xslt name="." xml="." xsl="math:mtd" />
+% >>>
+% 
+% \<math:mtd templates\><<<
+% <xsl:template match="math:mtd" >
+%   <xsl:copy>
+%       <xsl:apply-templates select="*|text()" />
+%   </xsl:copy>
+% </xsl:template> 
+% >>>
+% 
+% 
+% \<math:mtd templates\><<<
+% <xsl:template match="math:mtable">
+%   <math:mtable math:columnalign="right left">
+%       <xsl:apply-templates select="*|text()" />
+%   </math:mtable>
+% </xsl:template> 
+% >>>
+% 
+% 
+% 
+
+ %%%%%%%%%%%%%
+\subsection{Outline}
+%%%%%%%%%%%%%
+
+
+
+
+
+\<normalizing text tables\><<<
+<dom name="." xml="." method="table" class="tex4ht.OoUtilities" />
+>>>
+
+
+\<static void table(dom)\><<<
+public static void table(Node dom) {
+      Node tblRow, tblCell, d;
+//      int cols = 0;
+   Node node = dom.getFirstChild();
+   `<bind text namespace prefixes in the root element`>
+   `<tblRow -= empty trailing rows`>
+   if( (tblRow != null) && (tblRow.getPreviousSibling() != null) ){
+     `<bool = is ruler row?`>
+     if( !bool ){
+        `<remove child spaces from row`>
+        `<remove trailing non-content row`>
+        tblCell = tblRow.getFirstChild();            
+        if( (tblCell != null)
+            && (tblCell.getNextSibling() == null)
+            && justSpace(tblCell)
+        ){
+          node.removeChild(tblRow); 
+   } }  } 
+   `<n := max number of cols`>
+   `<remove extra col declarations`>
+}
+>>>
+
+
+
+\begin{verbatim}
+<table:table >
+  <table:table-column table:style-name="equ-col"/> 
+  <table:table-column table:style-name="equ-num-col"/> 
+
+  <table:table-row> 
+    <table:table-cell table:style-name="equ-cell"> 
+       ....
+    </table:table-cell> 
+  </table:table-row> 
+
+  <table:table-row> 
+       ....
+  </table:table-row> 
+
+</table:table> 
+\end{verbatim}
+
+
+%%%%%%%%%%%%%
+\subsection{Remove Rows}
+%%%%%%%%%%%%%
+
+
+
+
+
+\<tblRow -= empty trailing rows\><<<
+tblRow = node.getLastChild();
+while( (tblRow != null) 
+//       && (tblRow.getNodeType() == Node.TEXT_NODE)
+//       && tblRow.getNodeValue().trim().equals("")             
+       && tblRow.getTextContent().trim().equals("")             
+){
+   node.removeChild(tblRow); 
+   tblRow = node.getLastChild();
+}
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Remove Extra Column Declarations}
+%%%%%%%%%%%%%
+
+
+
+\<remove child spaces from row\><<<
+tblCell = tblRow.getFirstChild();    
+while( tblCell != null){
+  d = tblCell.getNextSibling();                
+  if( justSpace(tblCell) ){  tblRow.removeChild(tblCell);  }
+  tblCell = d;
+}
+>>>
+
+
+
+
+\<n := max number of cols\><<<
+int n = 0;
+tblRow = node.getFirstChild();
+while( tblRow != null ){
+   if( 
+       (tblRow.getNodeType() == Node.ELEMENT_NODE)
+     &&
+        tblRow.getNodeName().equals("table:table-row")             
+   ){
+      `<m := number of columns`>
+      if( m > n ){ n = m; }
+   }
+   tblRow = tblRow.getNextSibling();
+}  
+>>>
+
+\<m := number of columns\><<<
+int m = 0;
+tblCell = tblRow.getFirstChild();
+while( tblCell != null ){
+   if( 
+       (tblCell.getNodeType() == Node.ELEMENT_NODE)
+     &&
+        tblCell.getNodeName().equals("table:table-cell")             
+   ){
+      m++;
+      `<table:table-cell -= empty text:p`>
+   }
+   tblCell = tblCell.getNextSibling();
+}  
+>>>
+
+
+
+
+
+\<remove extra col declarations\><<<
+tblRow = node.getFirstChild();
+while( tblRow != null ){
+   d = tblRow.getNextSibling();
+   if( 
+       (tblRow.getNodeType() == Node.ELEMENT_NODE)
+     &&
+        tblRow.getNodeName().equals("table:table-column")             
+   ){
+      n--;
+      if( n < 0 ){
+        tblRow.getParentNode().removeChild(tblRow);
+  }  }  
+  tblRow = d;
+}
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Remove Empty Paragraphs within Table Cell}
+%%%%%%%%%%%%%
+
+
+There is an exception for paragraphs that are the only child elements.
+
+
+\<table:table-cell -= empty text:p\><<<
+Node child = tblCell.getLastChild();
+while( child != null ){
+   Node prevChild = child.getPreviousSibling();
+   if( 
+       (child.getNodeType() == Node.ELEMENT_NODE)
+     &&
+        child.getNodeName().equals("text:p")             
+   ){
+     Node sibling = child.getPreviousSibling();
+     while( (sibling != null)
+            &&
+            (sibling.getNodeType() != Node.ELEMENT_NODE)
+     ){
+       sibling = sibling.getPreviousSibling();
+     }
+     if( sibling == null ){
+       sibling = child.getNextSibling();
+       while( (sibling != null)
+              &&
+              (sibling.getNodeType() != Node.ELEMENT_NODE)
+       ){
+          sibling = sibling.getNextSibling();
+     } }        
+     if( (sibling != null)
+         && child.getTextContent().trim().equals("")             
+     ){
+         tblCell.removeChild(child); 
+   } }
+   child = prevChild;
+}  
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Test for Empty Nodes}
+%%%%%%%%%%%%%
+
+
+
+
+\<static boolean justSpace(node)\><<<
+static boolean justSpace(Node node){
+   if( node == null ){ return true; }
+   if( node.getNodeType() == Node.TEXT_NODE ){
+       if( !node.getNodeValue().trim().equals("") ){ return false; }
+   } else {
+       if( node.getNodeType() == Node.ELEMENT_NODE ){
+          String nm = node.getNodeName();
+          if( 
+                !nm.equals("table:table-cell")
+             && !nm.equals("text:p")
+          ){
+             return false;
+       }  }
+   }
+   if(!justSpace( node.getNextSibling() )){ return false; }
+   if(!justSpace( node.getFirstChild() )){ return false; }
+   return true;
+}
+>>>
+
+\<bool = is ruler row?\><<<
+boolean bool = false;
+if( tblRow.getNodeName().equals("table:table-row")
+    && tblRow.hasAttributes()      
+){
+   NamedNodeMap attributes = tblRow.getAttributes();
+   Node styleAttr = attributes.getNamedItem( "table:style-name" );
+   String style = (styleAttr==null)? null
+                                   : styleAttr.getNodeValue();
+   if( (style != null) 
+       && (   style.equals("hline-row")
+           || style.equals("cline-row")
+          )
+   ){
+     bool = true;
+}  }
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{Nested Paragraphs (OoUtilities)}
+%%%%%%%%%%%%%%%%%%
+
+
+
+
+\<clean paragraphs\><<<
+<set name="text-p" >
+   `<open oo xslt script`>
+   `<remove nested text:p`>
+   `<remove nested text:p in biblatex`>
+   `<multicolumn styles`>
+   `<close xslt script`>
+</set>
+<xslt name="." xml="." xsl="text-p" />
+>>>
+
+
+
+
+\<remove nested text:p2???\><<<
+<xsl:template match="text:p[ @text:style-name = 'start_subjclass'
+                           ]" >
+   <xsl:comment>
+       <xsl:text>start-subjclass</xsl:text>
+   </xsl:comment>
+   <xsl:apply-templates select="*|text()|comment()" />
+</xsl:template> 
+<xsl:template match="text:p[ @text:style-name = 'end_subjclass'>
+   <xsl:apply-templates select="*|text()|comment()" />
+   <xsl:comment>
+       <xsl:text>end-subjclass</xsl:text>
+   </xsl:comment>
+</xsl:template> 
+>>>
+
+
+
+\<remove nested text:p\><<<
+<xsl:template match="text:p[ (count(child::*)=1)  
+                             and child::draw:frame
+                             and parent::text:p
+                           ]" >
+    <xsl:apply-templates select="child::draw:frame" />
+</xsl:template> 
+>>>
+
+
+
+\<remove nested text:p\><<<
+<xsl:template match="text:p[
+     child::text:p
+   and
+     (count(child::text:p) = count(child::*))
+ ]" >
+   <!--xsl:copy>
+      <xsl:attribute name="text:style-name">
+          <xsl:text>start_</xsl:text>
+         <xsl:value-of select="@text:style-name" />
+      </xsl:attribute-->      
+      <xsl:comment>
+          <xsl:text>start </xsl:text>
+          <xsl:value-of select=" @text:style-name " />
+     </xsl:comment>
+   <!--/xsl:copy-->
+       <xsl:apply-templates select="*|text()|comment()" mode="nested-p" />
+   <!--xsl:copy>
+      <xsl:attribute name="text:style-name">
+          <xsl:text>end</xsl:text>
+         <xsl:value-of select="@text:style-name" />
+      </xsl:attribute-->      
+      <xsl:comment>
+          <xsl:text>end_</xsl:text>
+          <xsl:value-of select=" @text:style-name " />
+     </xsl:comment>
+   <!--/xsl:copy-->
+</xsl:template> 
+>>>
+
+\<remove nested text:p\><<<
+<xsl:template match="*[not(text:p)]|text()|comment()" mode="nested-p" >
+  <xsl:copy/>
+</xsl:template> 
+>>>
+
+\<remove nested text:p\><<<
+<xsl:template match="text:p" mode="nested-p" >
+  <xsl:copy>
+      <xsl:attribute name="text:style-name">
+         <xsl:value-of select="parent::text:p/@text:style-name" />
+         <xsl:text>_</xsl:text>
+         <xsl:value-of select="@text:style-name" />
+         <xsl:text>_</xsl:text>
+         <xsl:value-of select="child::*[1]/@text:style-name" />
+      </xsl:attribute>      
+      <xsl:apply-templates select="@*[ name() != 'text:style-name' ]" />
+      <xsl:apply-templates select="*|text()|comment()" />
+  </xsl:copy>
+</xsl:template> 
+>>>
+
+\<remove nested text:p in biblatex\><<<
+<xsl:template
+    match="text:p[
+              parent::text:p/@text:style-name='printthebibliography-dd'
+          ]" 
+    mode="nested-p" >
+  <xsl:copy>
+      <xsl:attribute name="text:style-name">
+         <xsl:value-of select="'printthebibliography-dd'" />
+      </xsl:attribute>      
+      <xsl:apply-templates select="@*[ name() != 'text:style-name' ]" />
+      <xsl:apply-templates select="*|text()|comment()" />
+  </xsl:copy>
+</xsl:template> 
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+\<multicolumn styles\><<<
+<xsl:template match="text:p[  child::text:span[ 
+                       starts-with(@text:style-name, 'multicolumn-') 
+                     ] ]" >
+   <xsl:copy>
+       <xsl:apply-templates 
+            select="child::text:span[ 
+                       starts-with(@text:style-name, 'multicolumn-') ]
+                    /@*
+                   " />
+       <xsl:apply-templates select="*|text()|comment()" />
+   </xsl:copy>
+</xsl:template> 
+<xsl:template match="text:span[ 
+                       starts-with(@text:style-name, 'multicolumn-') ]" />
+>>>
+
+
+\<handle mixed content\><<<
+System.out.println("handle mixed content " + name);
+      int i=0;
+      for( Node nd = first; nd != null; nd = nd.getNextSibling() ){ 
+        nodeType = nd.getNodeType();
+        `<trace mixed content`>
+        i++;
+      }
+System.out.println("end handle mixed content " + name);
+>>>
+
+\<text:p into text:section\><<<
+System.out.println("text:p into text:section");
+>>>
+
+
+
+
+\<trace mixed content\><<<
+System.out.println(
+i + "     "+  ((Boolean)v.get(i))
++
+
+((nodeType == Node.TEXT_NODE)? 
+    ("  TEXT: " + nd.getNodeValue() )
+   : 
+(
+(nodeType == Node.ELEMENT_NODE)? 
+     ("  " + nd.getNodeName())
+     :
+     ""
+)
+));
+>>>>
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Spaces for Headers}
+%%%%%%%%%%%%%%%%%%
+
+\<spaces for headers\><<<
+<set name="headers" >
+   `<open oo xslt script`>
+   `<algorithmic templates`>
+   `<biblatex bib templates`>
+   `<close xslt script`>
+</set>
+<xslt name="." xml="." xsl="headers" />
+>>>
+
+\<algorithmic templates\><<<
+<xsl:template match="text:h[@text:style-name='algorithmic-dt']" >
+  <xsl:copy>
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates select="*|text()|comment()" mode="algorithmic"/>
+  </xsl:copy>
+</xsl:template> 
+>>>
+
+
+\<algorithmic templates\><<<
+<xsl:template match="*|@*|comment()" mode="algorithmic" >
+  <xsl:copy>
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates select="*|text()|comment()" mode="algorithmic"/>
+  </xsl:copy>
+</xsl:template> 
+>>>
+
+
+
+\<algorithmic templates\><<<
+<xsl:template match="text()" mode="algorithmic" >
+   <xsl:value-of select="translate(.,' ','&#xA0;')"/>
+</xsl:template> 
+>>>
+
+
+\<biblatex bib templates\><<<
+<xsl:template match="text:h[
+     (@text:style-name='printthebibliography-dt')
+     and
+     (normalize-space()='')
+]" >
+</xsl:template> 
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{mo}
+%%%%%%%%%%%%%%%%%%
+
+\<handle mo elements\><<<
+<set name="math:mo" >
+   `<open mml xslt script`>
+   <xsl:template match=" math:mo" >
+   <xsl:choose>
+     `<xsl:when mo...`>
+     `<xsl:when mo length ...`>
+     <xsl:otherwise>
+        <math:mo>
+           <xsl:apply-templates select="@*" />
+           <xsl:value-of select="normalize-space(.)" />
+        </math:mo>
+     </xsl:otherwise>
+   </xsl:choose>
+   </xsl:template> 
+   `<close xslt script`>
+</set>
+<xslt name="." xml="." xsl="math:mo" />
+>>>
+
+
+
+
+
+A translation of
+
+\begin{verbatim}
+          <math:mrow> 
+            <math:mn>2</math:mn> 
+            <math:mo>+</math:mo> 
+          </math:mrow> 
+\end{verbatim}
+
+to
+
+\begin{verbatim}
+          <math:mrow> 
+            <math:mn>2</math:mn> 
+            <math:mo form="postfix">+</math:mo> 
+          </math:mrow> 
+\end{verbatim}
+
+fails to satisfy OO. So the following alternative is offered
+
+\begin{verbatim}
+          <math:mrow> 
+            <math:mn>2</math:mn> 
+            <math:mtext>+</math:mtext> 
+          </math:mrow> 
+\end{verbatim}
+
+
+\<xsl:when mo...\><<<
+<xsl:when test=" 
+   (preceding-sibling::math:mn or preceding-sibling::math:mi)
+   and not(following-sibling::*)
+" >
+   <math:mtext>
+      <xsl:apply-templates select="*|@*|text()" />
+   </math:mtext>
+</xsl:when> 
+>>>
+
+
+
+
+Isolated mo elements are problematic (e.g., 
+\verb'<mtd><mo form="...">=</mo></mtd>') in OpenOffice
+(\url{http://lists.w3.org/Archives/Public/www-math/2006Jul/0012.html})
+so they are converted into mtext elements.
+
+
+
+
+\<xsl:when mo...\><<<
+<xsl:when test=" 
+   not((preceding-sibling::*) or following-sibling::*)
+" >
+   <math:mtext>
+      <xsl:apply-templates select="*|@*|text()" />
+   </math:mtext>
+</xsl:when> 
+>>>
+
+The original condition 
+   `not(preceding-sibling::* or following-sibling::*)'
+failed with java 1.6 at a MS OS. 
+
+
+\begin{verbatim}
+<?xml version="1.0" encoding="UTF-8"?> 
+<xsl:stylesheet version="1.0"
+      xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+   >
+      <xsl:output omit-xml-declaration = "yes" />
+<xsl:template match="mo" >
+   <xsl:choose>
+      <xsl:when test="preceding-sibling::* or following-sibling::*" >
+      </xsl:when>
+    </xsl:choose>
+</xsl:template>
+</xsl:stylesheet>
+
+
+import java.io.*;
+import javax.xml.transform.*;
+import javax.xml.transform.stream.*;
+
+public class Test {
+   public static void main(String[] args)
+        throws TransformerConfigurationException,
+              TransformerException  {
+    try{
+       StreamSource xslt = new StreamSource(new File("test.xslt"));
+       TransformerFactory fc = TransformerFactory.newInstance();
+       Transformer transformer = fc.newTransformer( xslt );
+    } catch (javax.xml.transform.TransformerConfigurationException e){
+       
+    } catch (Exception e){
+       System.err.println(e);
+} } }
+\end{verbatim}
+
+
+
+
+Failes on braces within mo elements \verb+<math:mo>{</math:mo>+.
+Accepts them within mtext elements.
+
+
+\<xsl:when mo...\><<<
+<xsl:when test=" 
+   (.='{') or (.='}')
+" >
+   <math:mtext>
+      <xsl:apply-templates select="*|@*|text()" />
+   </math:mtext>
+</xsl:when> 
+>>>
+
+
+
+\begin{verbatim}
+A \begin{eqnarray}a&=&b\end{eqnarray} is translated by tex4ht into 
+ 
+    <mi>a</mi><mo>=</mo><mi>b</mi> 
+ 
+and is loaded as 
+ 
+     matrix {a # = # b} 
+ 
+by OO2 into a broken display.  The xtpipe phase `fixes' the problem by 
+producing improper mathml output 
+ 
+    <mi>a</mi><mtext>=</mtext><mi>b</mi> 
+ 
+which OO2 loads as 
+ 
+    matrix {a # "=" # b} 
+ 
+and provides proper display.  
+\end{verbatim}
+
+
+
+
+
+\<xsl:when mo...\><<<
+<xsl:when test="  . = '='" >
+  <xsl:choose>
+     <xsl:when test="   not(preceding-sibling::*)
+                     or not(following-sibling::*)
+                     or preceding-sibling::*[1] / self::math:mo
+     ">
+        <math:mtext>
+           <xsl:apply-templates select="*|@*|text()" />
+        </math:mtext>
+     </xsl:when>
+     <xsl:otherwise>
+        <math:mo>
+           <xsl:apply-templates select="*|@*|text()" />
+        </math:mo>
+     </xsl:otherwise>
+  </xsl:choose>
+
+</xsl:when> 
+>>>
+
+
+
+
+In cases like \verb!$m \bmod  n$!, OpenOffice swallos the characters following the first one.
+
+\<xsl:when mo length ...\><<<
+<xsl:when test=" string-length() &gt; 1 " >
+   <math:mtext>
+      <xsl:value-of select="normalize-space(.)" />
+   </math:mtext>
+</xsl:when> 
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{mrow}
+%%%%%%%%%%%%%%%%%%
+
+
+
+OpenOffice 2 loads
+
+\begin{verbatim}
+<math:msub> 
+    <math:mrow> 
+      <math:mi>x</math:mi> 
+    </math:mrow> 
+    <math:mrow> 
+      <math:msub> 
+        <math:mrow> 
+          <math:mi>i</math:mi> 
+        </math:mrow> 
+        <math:mrow> 
+          <math:mi>j</math:mi> 
+        </math:mrow> 
+      </math:msub> 
+    </math:mrow> 
+  </math:msub> 
+\end{verbatim}
+
+and 
+ 
+\begin{verbatim}
+    <math:msub>  
+      <math:mi>x</math:mi>  
+      <math:msub>  
+        <math:mi>i</math:mi>  
+        <math:mi>j</math:mi>  
+      </math:msub>  
+    </math:msub>  
+\end{verbatim}
+
+into \verb'x_i_j' which is a broken expression. Editing in OpenOffice the source
+into 
+\verb'x_{i_j}'
+or
+\verb'{x}_{{i}_{j}}'
+
+
+
+
+
+
+
+
+\<handle mrow elements NO\><<<
+<set name="math:mrow" >
+   `<open mml xslt script`>
+   `<math:mrow templates`>
+   `<close xslt script`>
+</set>
+<xslt name="." xml="." xsl="math:mrow" />
+>>>
+
+
+
+
+
+\<math:mrow templates\><<<
+<xsl:template match=" math:mrow[ count(child::*)=1 ]" >
+      <xsl:apply-templates select="*|@*|text()" />  
+</xsl:template> 
+>>>
+
+
+\begin{verbatim}
+The output of tex4ht on $x_{i_j}$ is  
+ 
+   <math:msub> 
+       <math:mrow> 
+         <math:mi>x</math:mi> 
+       </math:mrow> 
+       <math:mrow> 
+         <math:msub> 
+           <math:mrow> 
+             <math:mi>i</math:mi> 
+           </math:mrow> 
+           <math:mrow> 
+             <math:mi>j</math:mi> 
+           </math:mrow> 
+         </math:msub> 
+       </math:mrow> 
+     </math:msub> 
+    
+and OO2 loads the code into a broken format and view x_i_j.  The same 
+outcome occurs when tex4ht is modified to produce the following output. 
+        
+       <math:msub> 
+         <math:mi>x</math:mi> 
+         <math:msub> 
+           <math:mi>i</math:mi> 
+           <math:mi>j</math:mi> 
+         </math:msub> 
+       </math:msub> 
+ 
+A manual editing of x_i_j into {x}_{{i}_{j}} or x_{i_j} provides the 
+proper display (and identical mathml code). 
+\end{verbatim}
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Dimenstions of Math Tables}
+%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%
+\subsection{Background}
+%%%%%%%%%%%%%
+
+
+
+
+
+All columns explicitly require identical number of columns.
+
+Broken: 
+
+\begin{verbatim}
+<math:mtable > 
+  <math:mtr> 
+    <math:mtd columnalign="left"><math:mn>1</math:mn></math:mtd> 
+    <math:mtd columnalign="left"><math:mn>2</math:mn></math:mtd> 
+  </math:mtr> 
+  <math:mtr> 
+    <math:mtd columnalign="left"><math:mn>1</math:mn></math:mtd> 
+  </math:mtr> 
+</math:mtable> 
+\end{verbatim}
+
+Works:
+
+\begin{verbatim}
+<math:mtable > 
+  <math:mtr> 
+    <math:mtd columnalign="left"><math:mn>1</math:mn></math:mtd> 
+    <math:mtd columnalign="left"><math:mn>2</math:mn></math:mtd> 
+  </math:mtr> 
+  <math:mtr> 
+    <math:mtd columnalign="left"><math:mn>1</math:mn></math:mtd> 
+    <math:mtd columnalign="left"></math:mtd> 
+  </math:mtr> 
+</math:mtable> 
+\end{verbatim}
+
+
+The last \verb+\\+ produces extra line with single entry and no data.
+
+\begin{verbatim}
+$ 
+\begin{cases}  
+    1 & 2\\ 
+    3 & 4\\ 
+\end{cases} 
+$ 
+\end{verbatim}
+
+Singlton mspace breaks math tables:
+
+\begin{verbatim}
+<math:mtable> 
+  <math:mtr> 
+      <math:mtd><math:mn>1</math:mn></math:mtd> 
+      <math:mtd><math:mspace width="1em"/></math:mtd> 
+  </math:mtr> 
+</math:mtable> 
+\end{verbatim}
+
+%%%%%%%%%%%%%
+\subsection{Outline}
+%%%%%%%%%%%%%
+
+\<normalizing math tables\><<<
+<dom name="." xml="." method="mtable" class="tex4ht.OoUtilities" />
+>>>
+
+
+\<static void mtable(dom)\><<<
+public static void mtable(Node dom) {
+      Node mtr, mtd, d;
+      int cols = 0;
+  Node node = dom.getFirstChild();
+   `<remove trailing non-content entries`>
+   `<fill rows`>
+}
+>>>
+
+
+ 
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Remove Trailing Entries}
+%%%%%%%%%%%%%
+
+\<remove trailing non-content entries\><<<
+if (node.hasChildNodes()) {
+   mtr = node.getLastChild();
+   while( mtr != null){
+      if( mtr.getNodeType() == Node.ELEMENT_NODE ){
+         if (mtr.hasChildNodes()) {
+           mtd = mtr.getLastChild();            
+           int count = 0;
+           while( mtd != null){
+             if( mtd.getNodeType() == Node.ELEMENT_NODE ){
+                count++;
+                d = mtd.getFirstChild();                
+                if( d != null ){  
+                   `<remove mspace-only content`>
+                }
+                if( d != null ){  
+                   `<remove d, if white space text`>         
+             }  }
+             d = mtd;
+             mtd = mtd.getPreviousSibling();
+             `<remove d, if white space text`>
+             if( (d != null) 
+                  && (d.getNodeType() == Node.ELEMENT_NODE) ){
+               `<remove d, if trailing and childless node`>
+               if( d == null ){ count--; }
+           } } 
+           if( count > cols ){ cols = count; }
+      } }  
+      d = mtr;
+      mtr = mtr.getPreviousSibling();
+      `<remove d, if white space text`>         
+      if( d != null ){
+         `<remove d, if trailing and childless node`>
+}  }  }
+>>>
+
+
+\<remove d, if white space text\><<<
+if( 
+    (d.getNodeType() == Node.TEXT_NODE)
+    && d.getNodeValue().trim().equals("")
+){
+    d.getParentNode().removeChild(d); 
+    d = null;
+}
+>>>
+
+\<remove d, if trailing and childless node\><<<
+if( (d.getNextSibling()==null) 
+    && (d.getFirstChild()==null)  ){
+   d.getParentNode().removeChild(d); 
+   d = null;
+}
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Fill Rows}
+%%%%%%%%%%%%%
+
+
+
+
+
+\<fill rows\><<<
+if (node.hasChildNodes()) {
+   mtr = node.getFirstChild();
+   while( mtr != null){
+      if( mtr.getNodeType() == Node.ELEMENT_NODE ){
+         int count = 0;
+         if (mtr.hasChildNodes()) {
+           mtd = mtr.getFirstChild(); 
+           while( mtd != null){
+             if( mtd.getNodeType() == Node.ELEMENT_NODE ){
+                `<insert new line text node`>
+                count++;
+             }  
+             mtd = mtd.getNextSibling();
+           }
+         } 
+         if( count < cols ){ 
+            `<fill with empty mtd nodes`>
+      }  }
+      mtr = mtr.getNextSibling();
+}  }  
+>>>
+
+\<fill with empty mtd nodes\><<<
+for(int i = count; i < cols; i++){
+  mtr.appendChild( ((Document) dom).createElement("math:mtd") );
+}
+>>>
+
+\<insert new line text node\><<<
+mtr.insertBefore( ((Document) dom).createTextNode("\n"), mtd );
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{mspace}
+%%%%%%%%%%%%%
+
+
+\<remove mspace-only content\><<<
+boolean remove = true;
+for(Node i=d; i!=null; i=i.getNextSibling() ){
+   if( (i.getNodeType() == Node.ELEMENT_NODE)  
+       && !i.getNodeName().equals("math:mspace") ) {
+      remove = false; break;
+}  }
+if( remove ){
+   while( d != null ){
+     mtd.removeChild(d); 
+     d = mtd.getFirstChild();
+}  }
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{Shared}
+%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%
+\subsection{XSLT Setup}
+%%%%%%%%%%%%%
+
+
+
+
+
+\<open oo xslt script\><<<
+<![CDATA[ 
+   <xsl:stylesheet version="1.0"
+      xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+
+      xmlns:office="urn:oasis:names:tc:opendocument:xmlns:office:1.0"   
+      xmlns:style="urn:oasis:names:tc:opendocument:xmlns:style:1.0"   
+      xmlns:text="urn:oasis:names:tc:opendocument:xmlns:text:1.0"   
+      xmlns:table="urn:oasis:names:tc:opendocument:xmlns:table:1.0"   
+      xmlns:draw="urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"   
+      xmlns:fo="http://www.w3.org/1999/XSL/Format"   
+      xmlns:xlink="http://www.w3.org/1999/xlink"   
+      xmlns:dc="http://purl.org/dc/elements/1.1/"   
+      xmlns:meta="urn:oasis:names:tc:opendocument:xmlns:meta:1.0"   
+      xmlns:number="urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0"  
+      xmlns:svg="http://www.w3.org/2000/svg"   
+      xmlns:chart="urn:oasis:names:tc:opendocument:xmlns:chart:1.0"   
+      xmlns:dr3d="urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0"   
+      xmlns:math="http://www.w3.org/1998/Math/MathML"   
+      xmlns:form="urn:oasis:names:tc:opendocument:xmlns:form:1.0"   
+      xmlns:script="urn:oasis:names:tc:opendocument:xmlns:script:1.0"   
+      xmlns:ooo="http://openoffice.org/2004/office"   
+      xmlns:ooow="http://openoffice.org/2004/writer"   
+      xmlns:oooc="http://openoffice.org/2004/calc"   
+      xmlns:dom="http://www.w3.org/2001/xml-events"   
+      xmlns:xforms="http://www.w3.org/2002/xforms"   
+      xmlns:xsd="http://www.w3.org/2001/XMLSchema"   
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   >
+      <xsl:output omit-xml-declaration = "yes" />
+>>>
+
+
+
+\<open mml xslt script\><<<
+<![CDATA[ 
+   <xsl:stylesheet version="1.0"
+      xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+      xmlns:math="http://www.w3.org/1998/Math/MathML"   
+      xmlns:xlink="http://www.w3.org/1999/xlink"   
+   >
+      <xsl:output omit-xml-declaration = "yes" />
+>>>
+
+
+\<close xslt script\><<<
+      <xsl:template match="*|@*|text()|comment()" >
+        <xsl:copy>
+          <xsl:apply-templates select="*|@*|text()|comment()" />
+        </xsl:copy>
+      </xsl:template>
+   </xsl:stylesheet> 
+]]>
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Text Namespaces}
+%%%%%%%%%%%%%
+
+
+\<bind text namespace prefixes in the root elementNO\><<<
+((Element) node).setAttribute(
+      "xmlns:office",
+      "urn:oasis:names:tc:opendocument:xmlns:office:1.0"   
+);
+((Element) node).setAttribute(
+      "xmlns:style",
+      "urn:oasis:names:tc:opendocument:xmlns:style:1.0"   
+);
+((Element) node).setAttribute(
+      "xmlns:text",
+      "urn:oasis:names:tc:opendocument:xmlns:text:1.0"   
+);
+((Element) node).setAttribute(
+      "xmlns:table",
+      "urn:oasis:names:tc:opendocument:xmlns:table:1.0"   
+);
+((Element) node).setAttribute(
+      "xmlns:draw",
+      "urn:oasis:names:tc:opendocument:xmlns:drawing:1.0"   
+);
+((Element) node).setAttribute(
+      "xmlns:fo",
+      "http://www.w3.org/1999/XSL/Format"   
+);
+((Element) node).setAttribute(
+      "xmlns:xlink",
+      "http://www.w3.org/1999/xlink"   
+);
+((Element) node).setAttribute(
+      "xmlns:dc",
+      "http://purl.org/dc/elements/1.1/"   
+);
+((Element) node).setAttribute(
+      "xmlns:meta",
+      "urn:oasis:names:tc:opendocument:xmlns:meta:1.0"   
+);
+((Element) node).setAttribute(
+      "xmlns:number",
+      "urn:oasis:names:tc:opendocument:xmlns:datastyle:1.0"  
+);
+((Element) node).setAttribute(
+      "xmlns:svg",
+      "http://www.w3.org/2000/svg"   
+);
+((Element) node).setAttribute(
+      "xmlns:chart",
+      "urn:oasis:names:tc:opendocument:xmlns:chart:1.0"   
+);
+((Element) node).setAttribute(
+      "xmlns:dr3d",
+      "urn:oasis:names:tc:opendocument:xmlns:dr3d:1.0"   
+);
+((Element) node).setAttribute(
+      "xmlns:math",
+      "http://www.w3.org/1998/Math/MathML"   
+);
+((Element) node).setAttribute(
+      "xmlns:form",
+      "urn:oasis:names:tc:opendocument:xmlns:form:1.0"   
+);
+((Element) node).setAttribute(
+      "xmlns:script",
+      "urn:oasis:names:tc:opendocument:xmlns:script:1.0"   
+);
+((Element) node).setAttribute(
+      "xmlns:ooo",
+      "http://openoffice.org/2004/office"   
+);
+((Element) node).setAttribute(
+      "xmlns:ooow",
+      "http://openoffice.org/2004/writer"   
+);
+((Element) node).setAttribute(
+      "xmlns:oooc",
+      "http://openoffice.org/2004/calc"   
+);
+((Element) node).setAttribute(
+      "xmlns:dom",
+      "http://www.w3.org/2001/xml-events"   
+);
+((Element) node).setAttribute(
+      "xmlns:xforms",
+      "http://www.w3.org/2002/xforms"   
+);
+((Element) node).setAttribute(
+      "xmlns:xsd",
+      "http://www.w3.org/2001/XMLSchema"   
+);
+((Element) node).setAttribute(
+      "xmlns:xsi",
+      "http://www.w3.org/2001/XMLSchema-instance"
+);
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Unicode in mtex}
+%%%%%%%%%%%%%%%%%%
+
+Openoffice dies on non-breaking space characters \verb+&#xA0;+ within
+mtext.
+ 
+
+\begin{verbatim}
+\documentclass{amsart} 
+\begin{document} 
+  $\text{ the number of spanning trees of }$ 
+\end{document} 
+\end{verbatim}
+
+
+
+\AtEndDocument{\OutputCodE\<OomFilter.java\>}
+
+\ifdojava
+  \Needs{"
+    javac OomFilter.java     -d \XTPIPES
+"}
+\fi
+
+\<OomFilter.java\><<<
+package tex4ht;
+/* OomFilter.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+
+import org.xml.sax.helpers.*;
+import org.xml.sax.*;
+import java.io.PrintWriter;
+
+public class OomFilter extends XMLFilterImpl {
+     PrintWriter out = null;
+     boolean mtext = false;
+   public OomFilter( PrintWriter out, 
+                     PrintWriter log, boolean trace ){
+     this.out = out;
+   }
+   public void startElement(String ns, String sName,
+                           String qName, Attributes attr) {
+      if( qName.equals( "math:mtext" ) ){ mtext = true; }
+      try{
+           super.startElement(ns, sName, qName, attr);
+      } catch( Exception e ){
+        System.err.println( "--- OomFilter Error 1 --- " + e);
+      }  
+   }
+   public void endElement(String ns, String sName, String qName){
+      if( qName.equals( "math:mtext" ) ){ mtext = false; }
+      try{
+        super.endElement(ns, sName, qName);
+      } catch( Exception e ){
+        System.err.println( "--- OomFilter Error 2 --- " + e);
+   }  }
+   public void characters(char[] ch, int start, int length){
+      try{
+        if ( mtext ) {
+           for(int i = start; i<start+length; i++){
+              if( ch[i] == 160 ){ ch[i] = ' '; }
+        }  }
+        super.characters(ch, start, length);
+      } catch( Exception e ){
+        System.out.println( "--- OomFilter Error 3 --- " + e);
+}  }  }
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{OoFilter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+\subsection{Outline}
+%%%%%%%%%%%%%
+
+
+\AtEndDocument{\OutputCodE\<OoFilter.java\>}
+
+\ifdojava
+  \Needs{"
+    javac OoFilter.java      -d \XTPIPES
+"}
+\fi
+
+\<OoFilter.java\><<<
+package tex4ht;
+/* OoFilter.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+`<OoFilter imports`>
+public class OoFilter extends XMLFilterImpl {
+     PrintWriter out = null;
+   public OoFilter( PrintWriter out, 
+                    PrintWriter log, boolean trace ){
+     this.out = out;
+   }
+   public void startElement(String ns, String sName,
+                           String qName, Attributes attr) {
+      if( qName.equals( "draw:frame" ) ){ 
+        `<set dimensions of figures`>
+      }
+      try{
+           super.startElement(ns, sName, qName, attr);
+      } catch( Exception e ){
+        System.err.println( "--- OoFilter Error 1 --- " + e);      
+   }  }
+   public void processingInstruction(String target, String fileName) {
+      if( target.equals("tex4ht-lg") ){
+         fileName = fileName.trim();
+         if( fileName.replaceAll(" ","").startsWith("file=") ){
+            `<load font vars`>
+            `<load font styles`>
+   }  }  }
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Dimensions for Figures}
+%%%%%%%%%%%%%
+
+\<set dimensions of figures\><<<
+String name = attr.getValue("draw:name");
+if( (name != null) 
+    && (attr.getValue("svg:width") == null) 
+    && (attr.getValue("svg:height") == null) 
+){ 
+  java.awt.Image image = new javax.swing.ImageIcon(name).getImage(); 
+  int width = image.getWidth(null); 
+  int height = image.getHeight(null); 
+  if( (width>0) && (height>0) ){
+     org.xml.sax.helpers.AttributesImpl attrs = 
+                   new  org.xml.sax.helpers.AttributesImpl( attr );
+     attrs.addAttribute(null, "svg:width", "svg:width",
+                                 "String", (width * 72 / 110) + "pt");
+     attrs.addAttribute(null, "svg:width", "svg:height",
+                                 "String", (height * 72 / 110) + "pt");
+     attr = attrs; 
+} }
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Font Styles}
+%%%%%%%%%%%%%
+
+
+
+
+\<load font styles\><<<
+int length = fileName.length();
+int loc = fileName.indexOf(fileName.charAt(length-1));           
+fileName = fileName.substring(loc+1,length-1);
+try{ 
+   String s = "";
+   FileReader fr  = new FileReader( fileName ); 
+   BufferedReader in = new BufferedReader( fr ); 
+                      `<htfcss from lg`>
+   `<rewind lg file`> `<font=(...) from lg`>
+   `<rewind lg file`> `<Font-css-base: ...`>
+   `<rewind lg file`> `<process Font-Size: ...`>
+   `<rewind lg file`> `<process Font(...)`>
+} catch(Exception e){ 
+   System.err.println( "--- OoFilter Error 2 --- " + e);      
+}  
+>>>
+
+\<rewind lg file\><<<
+in.close();
+fr  = new FileReader( fileName ); 
+in = new BufferedReader( fr ); 
+>>>
+
+
+
+
+
+
+
+
+\<htfcss from lg\><<<
+try{
+   String key = "", body = "";
+   while( (s=in.readLine()) != null ){ 
+     if( s.startsWith("htfcss: ") ){
+        s = s.substring(8);
+        int idx = s.indexOf(' ');
+        if( idx == 0 ){
+           body += s;
+        } else {
+           `<map += (key, body)`>
+           if( idx == -1 ){
+              key = s; body = "";
+           } else {
+              key = s.substring(0,idx);
+              body = s.substring(idx);
+   } }  }  }
+   `<map += (key, body)`>
+} catch(java.lang.NumberFormatException e){ 
+   System.err.println( "--- OoFilter Error 3 --- Improper record: " + s);
+}
+>>>
+
+
+
+
+\<map += (key, body)\><<<
+body = body.trim();
+if( body.startsWith( "@media " ) ){   
+   body = body.substring(7).trim();
+   if( body.startsWith("print ") ){
+     body = body.substring(6).trim();
+   } else { key = ""; }
+}
+if( !key.equals("") ){
+   String [] property = body.split(";");
+   for( int i=0; i<property.length; i++ ){
+      if( !property[i].trim().equals("") ){
+         int indx = property[i].indexOf(":");
+         if( indx != -1 ){
+            String name = property[i].substring(0,indx).trim();
+            String value = (property[i]+' ').substring(indx+1).trim();
+            if( !name.equals("") && !value.equals("") ){
+               `<map[key] += (name,value)`>
+}  }  }  }  }
+>>>
+
+
+\<map[key] += (name,value)\><<<
+if( map.containsKey(key) ){
+   HashMap <String,String> entry = map.get(key);
+   entry.put(name,value);
+}
+else
+{
+   HashMap <String,String> entry = new HashMap <String,String>();
+   entry.put(name,value);
+   map.put(key,entry);
+}
+>>>
+
+
+\<load font vars\><<<
+HashMap <String,HashMap <String,String>> map
+       = new HashMap<String,HashMap <String,String>>();
+>>>
+
+
+
+
+
+
+
+\<Font-css-base: ...\><<<
+try{
+   while( (s=in.readLine()) != null ){ 
+     if( s.startsWith("Font_css_base: ") ){
+       int idx = s.indexOf("Font_css_mag: ");
+       if( idx != -1 ){
+          String [] pattern = s.substring(15,idx).trim().split("%s");
+          if( pattern.length == 3 ){ font_css_base = pattern; }
+          pattern = (s+' ').substring(idx).trim().split("%s");
+          if( pattern.length == 2 ){ font_css_mag = pattern; }
+   } } }
+} catch(Exception e){ 
+   System.err.println( "--- OoFilter Error 4 --- Improper record: " + s);
+}
+>>>
+
+
+
+
+\<process Font-Size: ...\><<<
+try{
+   while( (s=in.readLine()) != null ){ 
+     if( s.startsWith("Font_Size:") ){
+        base_font_size = Integer.parseInt( s.substring(10).trim() ); 
+   } } 
+} catch(java.lang.NumberFormatException e){ 
+   System.err.println( "--- OoFilter Error 5 --- Improper record: " + s);
+}
+>>>
+
+\<process Font(...)\><<<
+try{
+   while( (s=in.readLine()) != null ){ 
+     if( s.startsWith("Font(") ){
+        String [] match = s.split("\"");
+        match[1] = match[1].trim();
+        match[2] = match[3].trim();
+        match[3] = match[5].trim();
+        match[4] = match[7].trim();
+        `<get font size`>
+        `<get font style`>
+   } } 
+} catch(Exception e){ 
+   System.err.println( "--- OoFilter Error 6 --- Improper record: " + s);
+}
+>>>
+
+
+
+
+\<get font style\><<<
+HashMap <String,String> entry = map.get(match[1]);
+if( (entry != null) || (second < 98) || (second > 102) ){
+   String styleName = font_css_base[0] + match[1] +
+                      font_css_base[1] + match[2] +
+                      font_css_base[2];
+   if( !match[4].equals("100") ){ 
+      styleName += font_css_mag[0] + match[4] + font_css_mag[1]; 
+   }
+   `<attr[style:style] := ...`>
+   super.startElement(null, "style:style", "style:style", attr);
+   `<attr[style:text-properties] := ...`>
+   super.startElement(null, "style:text-properties", 
+                                 "style:text-properties", attr);
+   super.endElement(null, "style:text-properties",
+                                       "style:text-properties");
+   super.endElement(null, "style:style", "style:style");
+}
+>>>
+
+
+\<attr[style:style] := ...\><<<
+org.xml.sax.helpers.AttributesImpl attr =
+                      new org.xml.sax.helpers.AttributesImpl();
+attr.addAttribute("", "style:name", "style:name", "String", styleName);
+attr.addAttribute("", "style:family", "style:family", "String", "text");
+>>>
+
+\<attr[style:text-properties] := ...\><<<
+attr = new org.xml.sax.helpers.AttributesImpl();
+if( entry != null ){
+   Object [] name = entry.keySet().toArray();
+   for(int i=0; i < name.length; i++){
+      String value = entry.get(name[i]);
+      attr.addAttribute("", "fo:" + (String) name[i],
+                            "fo:" + (String) name[i],
+                                                "String", value);
+}  }
+if( (second < 98) || (second > 102) ){
+   attr.addAttribute("", "fo:font-size", "fo:font-size", 
+                                  "String", (second / 10.0) + "pt");
+}
+>>>
+
+    
+%                     style:font-family-generic=\"swiss\"  
+%                     style:font-pitch=\"variable\"
+
+\<load font vars\><<<
+String [] font_css_base = {"" , "-", ""};
+String [] font_css_mag = {"x-x-", ""};
+>>>
+
+
+\<print font style css\><<<
+(IGNORED) fprintf(css_file, 
+   (Font_css_base == NULL)? ".%s-%s" : Font_css_base,
+   match[1], match[2]);
+if( !eq_str(match[4],"100") ){ 
+   (IGNORED) fprintf(css_file,
+   (Font_css_mag == NULL)? "x-x-%s" : Font_css_mag,
+   match[4]);
+}
+(IGNORED) fprintf(css_file, "{");
+if( (second < 98) || (second > 102) ){
+   (IGNORED) fprintf(css_file, "font-size:%d%c;", second, '%');
+}
+if( font_sty  ) {
+   (IGNORED) fprintf(css_file, font_sty->body);
+}
+(IGNORED) fprintf(css_file, "}\n");
+>>>
+
+
+
+
+
+\<get font size\><<<
+{  
+   if( match[3].replaceAll("[0-9]","").equals("") ){
+      second =   (int) 
+              (  Integer.parseInt( match[3] )
+               * Long.parseLong( match[4] )
+               / base_font_size
+              );
+      while( second > 700 ){  second /= 10; }
+   } else { second = 100; }
+   `<inspect font-size argument`>
+}
+>>>
+
+The following case handles cases like that of 
+`\verb'Font("ecti","1095","10","100")'', where
+\verb=base_font_size= is 11.
+
+\<inspect font-size argument\><<<
+if(  (int) (  Double.parseDouble(match[2])
+            / Long.parseLong(match[4])
+            + 0.5
+           )
+      == base_font_size
+){
+   second = 100;
+};
+>>>
+
+
+
+\<load font vars\><<<
+int base_font_size = 10;
+int second;
+>>>
+
+
+\<OoFilter imports\><<<
+import java.util.*;
+import org.xml.sax.helpers.*;
+import org.xml.sax.*;
+import java.io.PrintWriter;
+import java.io.BufferedReader;
+import java.io.FileReader;
+>>>
+
+
+\ifdojava
+\AtEndDocument{\Needs{%
+    "pushd \XTPIPES || exit 1
+     ;  
+     jar cf tex4ht.jar *
+     ;
+     popd
+     ;
+     mv \XTPIPES tex4ht.jar \TEXMFTEXivBIN
+     ;
+     if [ ! -d \TEXMFTEXivXTPIPES\space]; then exit 1; fi
+     ;
+     cp \XTPIPES xtpipes/lib/* 
+        \TEXMFTEXivXTPIPES
+"}}
+\fi
+
+\end{document}

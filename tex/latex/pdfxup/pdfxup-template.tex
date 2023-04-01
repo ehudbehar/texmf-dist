@@ -1,0 +1,344 @@
+%
+% pdfxup template file
+%
+%% (c) 2021/04/25 Nicolas Markey <pdfxup at markey dot fr>
+%%
+%% This work may  be distributed and/or modified under  the conditions of
+%% the LaTeX Project  Public License, either version 1.3  of this license
+%% or (at  your option)  any later version.   The latest version  of this
+%% license is in
+%% 
+%%   http://www.latex-project.org/lppl.txt
+%% 
+%% and version 1.3 or later is part of all distributions of LaTeX version
+%% 2005/12/01 or later.
+%% 
+%% This work has the LPPL maintenance status `maintained'.
+%% The Current Maintainer of this work is Nicolas Markey.
+
+
+\expandafter\ifx\csname pdfxupfile\endcsname\relax
+\PackageError{pdfxup}{This file should not be compiled alone}
+             {File pdfxup-template.tex is not meant to be compiled alone.
+               \MessageBreak
+             It should only be used via the 'pdfxup' script.}
+\fi
+
+\documentclass{minimal}
+  \usepackage[margin=0pt,\pdfxupoutputpaper paper]{geometry}
+  \ifnum\pdfxupoutputlandscape=1\relax\geometry{landscape}\fi
+  \usepackage{graphicx}
+  \IfFileExists{grffile.sty}{\usepackage{grffile}}{}
+
+  \topskip=0pt
+  \parindent=0pt
+  
+  \makeatletter
+
+  %% define functions for parsing comma-separated lists of ranges of pages
+  \newcounter{result}%
+  \newif\iffound
+  \def\@parserange#1-#2-#3\@end#4\@end{%
+    \c@result=#4\relax%
+    \ifnum\c@result=1\relax
+      \foundtrue
+      \c@result=#1\relax%
+    \else
+      \advance\c@result by -1\relax%
+      \ifx\relax#3\relax%% means that range contains no -
+      \else
+        \advance\c@result by #1\relax%
+        \ifnum#2<\c@result\relax
+          \advance\c@result by -#2\relax%
+        \else
+          \foundtrue
+        \fi
+      \fi
+    \fi}
+  \def\parserange#1#2{\expandafter\@parserange#2-SINGLE-\@end#1\@end}
+  \def\@parsecsl#1,#2\@end#3\@end{%
+    \parserange{#3}{#1}%
+    \iffound\else
+    \ifx\relax#2\relax\else\@parsecsl#2\@end\c@result\@end\fi\fi}
+   %% \nthvalue#1#2 looks for #1-th value in list of intervals #2
+  \def\nthvalue#1#2{\foundfalse\expandafter\@parsecsl#2,\@end#1\@end}
+
+  %% perform various computations:
+  %% - width and height of image (\hresult and \vresult)
+  %% - width and height of frame containing image (\hboxsize and \vboxsize)
+  \newcounter{lastpage}
+  \newcounter{outpage}%%% nr of pages of output document
+  \c@outpage=\pdfxupnbpages\relax
+  \advance\c@outpage by -1\relax
+  \divide\c@outpage by \pdfxupnbhoriz
+  \divide\c@outpage by \pdfxupnbvert
+  \ifbooklet
+    \divide\c@outpage by 2\relax
+  \fi
+  \advance\c@outpage by 1\relax
+  \ifbooklet
+    \multiply\c@outpage by 2\relax
+  \fi
+  \c@lastpage=\c@outpage\relax
+  \multiply\c@lastpage by \pdfxupnbhoriz
+  \multiply\c@lastpage by \pdfxupnbvert
+  %
+  \newlength\outputvmargin
+  \newlength\outputhmargin
+  \outputvmargin=\pdfxupvmargin\relax
+  \outputhmargin=\pdfxuphmargin\relax
+  \newlength\innervmargin
+  \newlength\innerhmargin
+  \innervmargin=\pdfxupinnervmargin\relax
+  \innerhmargin=\pdfxupinnerhmargin\relax
+  \newlength\outputindivvmargin
+  \newlength\outputindivhmargin
+  \outputindivvmargin=\pdfxupintermvspace\relax
+  \outputindivhmargin=\pdfxupintermhspace\relax
+  %
+  \fboxrule=\pdfxupframewidth\relax
+  \fboxsep=-\fboxrule
+  \newlength\hresult
+  \newlength\vresult
+  \newlength\vboxsize
+  \newlength\hboxsize  
+  \hresult=\paperwidth
+  \advance\hresult by -\pdfxupnbhoriz\fboxrule
+  \advance\hresult by -\pdfxupnbhoriz\fboxrule
+  \advance\hresult by -\pdfxupnbhoriz\innerhmargin
+  \advance\hresult by -\pdfxupnbhoriz\innerhmargin
+  \vresult=\paperheight 
+  \advance\vresult by -\pdfxupnbvert\fboxrule
+  \advance\vresult by -\pdfxupnbvert\fboxrule
+  \advance\vresult by -\pdfxupnbvert\innervmargin
+  \advance\vresult by -\pdfxupnbvert\innervmargin
+  %
+  \advance\hresult by -2\outputhmargin
+  \advance\vresult by -2\outputvmargin
+  %
+  \advance\hresult by -\pdfxupnbhoriz \outputindivhmargin
+  \advance\vresult by -\pdfxupnbvert \outputindivvmargin
+  \advance\hresult by \outputindivhmargin
+  \advance\vresult by \outputindivvmargin
+  %
+  \divide\hresult by \pdfxupnbhoriz
+  \divide\vresult by \pdfxupnbvert
+
+  \vboxsize=\vresult
+  \advance\vboxsize by 2\fboxrule
+  \advance\vboxsize by 2\innervmargin
+  \hboxsize=\hresult
+  \advance\hboxsize by 2\fboxrule
+  \advance\hboxsize by 2\innerhmargin
+
+
+  \let\pdfxupnblines\pdfxupnbvert
+  \let\pdfxupnbcols\pdfxupnbhoriz
+  \ifnum\columnmode=0\relax
+  %% "row-mode"
+  \def\horizincr{\pdfxupnbhoriz}
+  \def\vertincr{1}
+  \else
+  %% "column-mode"
+  \def\horizincr{1}
+  \def\vertincr{\pdfxupnbvert}%
+  \fi
+
+%% compute actual scale by which PDF is shrunk (or extended)
+  \ifnum\pdfxupemptybb=0\relax
+  \newcounter{origx}
+  \c@origx=\pdfxupw\relax
+  \advance\c@origx by -\pdfxupx\relax
+  \newcounter{origy}
+  \c@origy=\pdfxuph\relax
+  \advance\c@origy by -\pdfxupy\relax
+  \newlength\finalx
+  \newlength\finaly
+  \finalx=\hresult
+  \finaly=\vresult
+  \divide\finalx by \value{origx}
+  \divide\finaly by \value{origy}
+  \newwrite\scale
+  \immediate\openout\scale=\pdfxupfilename.scl
+  \ifdim\finalx>\finaly
+    \multiply\finaly by 100
+    \immediate\write\scale{\the\finaly}
+  \else
+    \multiply\finalx by 100
+    \immediate\write\scale{\the\finalx}
+  \fi
+  \immediate\closeout\scale
+  \fi
+
+
+  %% start document
+  \begin{document}
+  %\tracingoutput=1
+  %\tracingpages=1
+  %\tracingparagraphs=1
+  \newcounter{curroutpage}%%%% counts pages nr  of output document
+  \c@curroutpage=0\relax
+  \newcounter{currpage}%%%%%%% page nr of input document
+  \newcounter{linecurrpage}%%% currpage at beginning of line
+  \newcounter{currcol}%
+  \newcounter{currline}%
+  \newcounter{realout}%
+  \newcounter{wmout}%
+  \newcounter{wmoutaux}%
+  \@whilenum \c@outpage>\c@curroutpage \do%
+    {\advance\c@curroutpage by 1\relax%
+    %% check if we are on last page, and if so, possibly balance last page
+    \if0\balancelast\relax\else
+    \c@currpage=\c@curroutpage\relax%
+    \multiply\c@currpage by \pdfxupnbhoriz\relax%
+    \multiply\c@currpage by \pdfxupnbvert\relax%
+    \ifnum\c@currpage>\pdfxupnbpages\relax
+      \c@currpage=-\c@curroutpage\relax%
+      \advance\c@currpage by 1 %
+      \multiply\c@currpage by \pdfxupnbhoriz\relax%
+      \multiply\c@currpage by \pdfxupnbvert\relax%
+      \advance\c@currpage by \pdfxupnbpages\relax
+      \ifnum\columnmode=0\relax
+        \advance\c@currpage by -1\relax
+        \divide\c@currpage by \pdfxupnbvert\relax%
+        \advance\c@currpage by 1\relax
+        \edef\horizincr{\thecurrpage}%
+        \edef\pdfxupnbcols{\thecurrpage}%
+      \else
+        \advance\c@currpage by -1\relax
+        \divide\c@currpage by \pdfxupnbhoriz\relax%
+        \advance\c@currpage by 1\relax
+        %\showthe\value{currpage}
+        \edef\vertincr{\thecurrpage}%
+        \edef\pdfxupnblines{\thecurrpage}%
+        %\show\vertincr
+        %\show\horizincr
+      \fi
+    \fi
+    \fi
+    %% start producing page
+    \c@currpage=\c@curroutpage%
+    \advance\c@currpage by -1\relax%
+    \multiply\c@currpage by \pdfxupnbhoriz\relax%
+    \multiply\c@currpage by \pdfxupnbvert\relax%
+    \c@linecurrpage=\c@currpage%
+    \hrule \@height\z@%
+    \c@currline=0\relax%
+    \vskip\outputvmargin%
+    \@whilenum\c@currline<\pdfxupnblines \do%
+      {\hrule \@height\z@%
+       \ifnum\value{currline}>0\relax%
+          \vskip \outputindivvmargin%
+          \advance\c@linecurrpage by \horizincr\relax%
+        \else%
+          \advance\c@linecurrpage by 1\relax%
+        \fi%
+        \advance\c@currline by 1\relax%
+        \c@currpage=\c@linecurrpage\relax%
+        \c@currcol=0\relax%
+        \hskip \outputhmargin%
+        \@whilenum\c@currcol<\pdfxupnbcols \do%
+          {\ifnum\c@currcol>0\relax%
+             \hskip\outputindivhmargin%
+             \advance\c@currpage by \vertincr\relax%
+            \fi%
+            \advance\c@currcol by 1\relax%
+            \ifnum\c@currpage>\c@lastpage\else
+	      %% computing page number corresponding to \currline and \currcol
+              \c@realout=\c@currpage%
+              \def\ang{0}%
+              \ifbooklet
+               \iflongedge
+                %% long edge:
+                %% 1->n, 2->1, 3->n-1 (rotated), 4->2(rotated)...
+                \ifodd\c@realout\relax%           -> 1 or 3
+                  \advance\c@realout by -1\relax%
+                  \divide\c@realout by 2\relax
+                  \ifodd\c@realout\relax%         -> 3
+                    \def\ang{180}%
+                  \else%                         -> 1
+                  \fi
+                  \c@realout=-\value{realout}\relax%
+                  \advance\c@realout by \c@outpage\relax%
+                  \advance\c@realout by \c@outpage\relax%
+                \else%                           -> 2 or 4
+                  \divide\c@realout by 2\relax
+                  \ifodd\c@realout%         -> 2
+                  \else%                         -> 4
+                    \def\ang{180}%
+                  \fi
+                \fi
+               \else 
+                %% short edge:
+                %% 1->n, 2->1, 3->2, 4->n-1, 5->n-2, 6->3, 7->4, 8->n-3
+                \ifodd\c@realout\relax%           -> 1 or 3
+                  \advance\c@realout by -1\relax%
+                  \divide\c@realout by 2\relax
+                  \ifodd\c@realout%         -> 3
+                    \advance\c@realout by 1\relax
+                  \else%                         -> 1
+                    \c@realout=-\c@realout%
+                    \advance\c@realout by \c@outpage\relax%
+                    \advance\c@realout by \c@outpage\relax%
+                  \fi
+                \else%                           -> 2 or 4
+                  \divide\c@realout by 2\relax
+                  \ifodd\c@realout\relax%         -> 2
+                  \else%                         -> 4
+                    \c@realout=-\c@realout\relax%
+                    \advance\c@realout by 1\relax
+                    \advance\c@realout by \c@outpage\relax%
+                    \advance\c@realout by \c@outpage\relax%
+                  \fi
+                \fi
+               \fi %% \iflongedge...\else
+              \fi %% \ifbooklet
+              \ifnum\c@realout>\pdfxupnbpages\relax
+	        %% if page above nb of pages, output blank page
+                %\hskip\hresult\hskip2\fboxrule
+		\hskip\hboxsize
+              \else
+                %% otherwise compute corresponding page to display
+	        %% first keep realout for watermarking...
+	        \c@wmoutaux=\c@realout\relax%
+	        \c@wmout=\c@realout\relax%
+                \nthvalue{\c@realout}{\pdfxuppagelist}%
+                \iffound\c@realout=\c@result\relax%
+                \else %% hmmm... problem
+                \message{I'm messed up counting pages...}%
+                \fi
+                %% compute watermarking page and display
+	        \ifx\pdfxupwatermark\@empty\else
+	  	  \ifnum\pdfxupnbwp<\c@wmoutaux\relax
+		    \advance\c@wmoutaux by -\pdfxupnbwp\relax%
+		    \advance\c@wmoutaux by -1\relax%
+		    \divide\c@wmoutaux by \pdfxupwperiod\relax
+                    \advance\c@wmoutaux by 1\relax%
+		    \multiply\c@wmoutaux by \pdfxupwperiod\relax
+		    \advance\c@wmout by -\c@wmoutaux%
+		  \fi
+		  \vbox to \vboxsize{\vfill
+	          \hbox to \hboxsize{\hfill
+		    \includegraphics[keepaspectratio,%
+		    height=\vresult,width=\hresult,angle=\ang,%
+                    page=\value{wmout}\pdfxupclipopt]{\pdfxupwatermark}\hfill}\vfill}%
+		    \hskip-\hboxsize\relax
+		\fi
+                %% display current page at correct size
+                \edef\pdfxupinclgr{\includegraphics[\pdfxupbbox,%
+                    keepaspectratio,height=\vresult,width=\hresult,angle=\ang,%
+                    page=\value{realout}\pdfxupclipopt]{\pdfxupfile}}%
+	        \pdfxupwidefbox{\vbox to \vboxsize{\vfill
+		\hbox to \hboxsize{\hfill
+                \pdfxuptightfbox{\hskip\innerhmargin\relax
+		    \sbox{0}{\pdfxupinclgr}%
+		    \ht0=\dimexpr\ht0 + \innervmargin\relax
+                    \dp0=\dimexpr\dp0 + \innervmargin\relax
+		    \usebox{0}\hskip\innerhmargin\relax}%
+                    \hfill}\vfill}}%
+              \fi
+            \fi}}%
+        \clearpage%
+  }%
+  \makeatother%
+  \end{document}

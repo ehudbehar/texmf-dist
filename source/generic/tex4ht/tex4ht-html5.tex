@@ -1,0 +1,422 @@
+% $Id: tex4ht-html5.tex 1284 2023-01-10 21:33:09Z karl $
+% compile 3 times: latex tex4ht-moz
+%           or   xhlatex tex4ht-moz "html,3,sections+"
+%
+% Copyright 2009-2023 TeX Users Group
+% Copyright 2000-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+%%%%%%%%%%%%%%%%%% load style files %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifx \HTML\UnDef
+   \def\HTML{html5}                   
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}         
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common.tex}
+\input{tex4ht-cpright.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Preamble}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<html5\><<<
+% html5.4ht (|version), generated from |jobname.tex
+% Copyright 2016-2023 TeX Users Group
+|<TeX4ht copywrite|>
+>>>
+
+  
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Basic configurations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{HTML5 structure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<configure html5 tex4ht\><<<
+|<patch charset|>
+\Configure{VERSION}{}
+\Configure{DOCTYPE}{\HCode{<!DOCTYPE html>\Hnewline}}
+\Configure{HTML}{\HCode{<html lang="\Get:Language" xml:lang="\Get:Language" \html:xmlns>\Hnewline}}{\HCode{\Hnewline</html>}}
+\Configure{@HEAD}{}
+\Configure{@HEAD}{\HCode{<meta \use:charset />\Hnewline}}
+\Configure{@HEAD}{\HCode{<meta name="generator" content="TeX4ht
+(https://tug.org/tex4ht/)" />\Hnewline}}
+\Configure{@HEAD}{\HCode{<meta name="viewport" content="width=device-width,initial-scale=1" />\Hnewline}}
+\Configure{@HEAD}{\HCode{<link
+             rel="stylesheet" type="text/css"
+                      href="\expandafter\csname aa:CssFile\endcsname" />\Hnewline}}
+\Configure{@HEAD}
+   {\HCode{<meta name="src"
+                 content="\jobname.tex"\xml:empty>\Hnewline}} 
+\:CheckOption{timestamp}\if:Option
+\Configure{@HEAD}
+   {\HCode{<meta name="date"
+                 content="\:today"\xml:empty>\Hnewline}} 
+\else
+  \Log:Note{To print a timestamp, use the command line option timestamp}
+\fi
+>>>
+
+\section{Default CSS style}
+
+This style fixes some common issues regarding size of sectioning commands,
+background of generated images in the dark mode, or line lenght. 
+
+
+\<configure html5 tex4ht\><<<
+\:CheckOption{nostyle}\if:Option
+\else
+\Log:Note{We use a default CSS style. Use the `nostyle' option if you want to use custom a CSS design}
+\Css{body{
+    margin:1em auto;
+    max-width:80ch;
+    padding:0 .62em;
+}}
+
+\Css{h1,h2,h3,h4,h5 {
+    line-height:1.2;
+}}
+\Css{@media print{
+    body{
+      max-width:none
+    }
+}}
+\Css{.partHead, likepartHead  { font-size: 2em; }}
+\Css{.chapterHead, likechapterHead  { font-size: 1.7411em; }}
+\Css{.sectionHead, likesectionHead  { font-size: 1.5157em; }}
+\Css{.subsectionHead, likesubsectionHead  { font-size: 1.3195em; }}
+\Css{.subsubsectionHead, likesubsubsectionHead  { font-size: 1.1487em; }}
+
+\Css{
+  @media (prefers-color-scheme: dark) {
+    img[src^="\jobname"]{filter: invert(1); }
+  }
+}
+\fi
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Language and charset setting}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Charset can be set using charset=charsetcode option for tex4ht.sty. It is saved in \verb|\a:charset| macro. 
+If charset oprion isn't used, \verb|\A:charset| is used instead. Bot of these macros store the charset information
+in charset=name form. We need to add quotes around name in html5, thus the following macro.
+
+\<patch charset\><<<
+
+\def\:charset:quotes#1=#2.{
+  #1="#2"%
+}
+\def\use:charset{%
+  \expandafter\ifx\csname a:charset\endcsname\relax%
+    \expandafter\expandafter\expandafter\:charset:quotes\csname A:charset\endcsname.
+  \else%
+    \expandafter\expandafter\expandafter\:charset:quotes\csname a:charset\endcsname.
+  \fi
+}
+>>>
+
+
+We can interfere the document language from \verb|\bbl@main@language| macro. It
+is supported by both Babel and Polyglossia.
+
+\<configure html5 tex4ht\><<<
+\def\Declare:Language#1#2{%
+\expandafter\gdef\csname rfclang#1\endcsname{#2}%
+}
+\def\Get:Language{%
+\ifx\bbl@main@language\@undefined en-US%  
+\else%
+\expandafter\ifdefined\csname rfclang\bbl@main@language\endcsname \csname rfclang\bbl@main@language\endcsname\fi%
+\fi%
+}
+
+\Declare:Language{UKenglish}{en}
+\Declare:Language{USenglish}{en}
+\Declare:Language{latex}{en}
+\Declare:Language{acadian}{fr}
+\Declare:Language{albanian}{sq}
+\Declare:Language{american}{en}
+\Declare:Language{amharic}{am}
+\Declare:Language{arabic}{ar}
+\Declare:Language{armenian}{hy}
+\Declare:Language{australian}{en}
+\Declare:Language{austrian}{de}
+\Declare:Language{basque}{eu}
+\Declare:Language{bengali}{bn}
+\Declare:Language{brazilian}{pt}
+\Declare:Language{brazil}{pt}
+\Declare:Language{breton}{br}
+\Declare:Language{british}{en}
+\Declare:Language{bulgarian}{bg}
+\Declare:Language{canadian}{en}
+\Declare:Language{canadien}{fr}
+\Declare:Language{catalan}{ca}
+\Declare:Language{croatian}{hr}
+\Declare:Language{czech}{cs}
+\Declare:Language{danish}{da}
+\Declare:Language{divehi}{dv}
+\Declare:Language{dutch}{nl}
+\Declare:Language{english}{en}
+\Declare:Language{esperanto}{eo}
+\Declare:Language{estonian}{et}
+\Declare:Language{finnish}{f\/i}
+\Declare:Language{francais}{fr}
+\Declare:Language{french}{fr}
+\Declare:Language{galician}{gl}
+\Declare:Language{germanb}{de}
+\Declare:Language{german}{de}
+\Declare:Language{greek}{el}
+\Declare:Language{hebrew}{he}
+\Declare:Language{hindi}{hi}
+\Declare:Language{hungarian}{hu}
+\Declare:Language{icelandic}{is}
+\Declare:Language{interlingua}{ia}
+\Declare:Language{irish}{ga}
+\Declare:Language{italian}{it}
+\Declare:Language{kannada}{kn}
+\Declare:Language{khmer}{km}
+\Declare:Language{korean}{ko}
+\Declare:Language{lao}{lo}
+\Declare:Language{latin}{la}
+\Declare:Language{latvian}{lv}
+\Declare:Language{lithuanian}{lt}
+\Declare:Language{lowersorbian}{dsb}
+\Declare:Language{magyar}{hu}
+\Declare:Language{malayalam}{ml}
+\Declare:Language{marathi}{mr}
+\Declare:Language{naustrian}{de}
+\Declare:Language{newzealand}{en}
+\Declare:Language{ngerman}{de}
+\Declare:Language{norsk}{no}
+\Declare:Language{norwegiannynorsk}{nn}
+\Declare:Language{nynorsk}{no}
+\Declare:Language{occitan}{oc}
+\Declare:Language{oldchurchslavonic}{cu}
+\Declare:Language{persian}{fa}
+\Declare:Language{polish}{pl}
+\Declare:Language{polutonikogreek}{el}
+\Declare:Language{portuges}{pt}
+\Declare:Language{portuguese}{pt}
+\Declare:Language{romanian}{ro}
+\Declare:Language{romansh}{rm}
+\Declare:Language{russian}{ru}
+\Declare:Language{samin}{se}
+\Declare:Language{sanskrit}{sa}
+\Declare:Language{scottish}{gd}
+\Declare:Language{serbian}{sr}
+\Declare:Language{serbo-croatian}{sh}
+\Declare:Language{slovak}{sk}
+\Declare:Language{slovene}{sl}
+\Declare:Language{slovenian}{sl}
+\Declare:Language{spanish}{es}
+\Declare:Language{swedish}{sv}
+\Declare:Language{tamil}{ta}
+\Declare:Language{telugu}{te}
+\Declare:Language{thai}{th}
+\Declare:Language{tibetan}{bo}
+\Declare:Language{turkish}{tr}
+\Declare:Language{turkmen}{tk}
+\Declare:Language{ukrainian}{uk}
+\Declare:Language{uppersorbian}{hsb}
+\Declare:Language{urdu}{ur}
+\Declare:Language{vietnamese}{vi}
+\Declare:Language{welsh}{cy}
+>>>
+
+Support for xml name spaces. It must be configured after
+\verb|\begin{document}| in the configuration file.
+
+\<configure html5 tex4ht\><<<
+\edef\html:xmlns{}
+\NewConfigure{xmlns}[2]{%
+  \ifx\relax#2\relax%
+    \edef\html:xmlns{}%
+  \else%
+    \edef\html:xmlns{\html:xmlns xmlns\ifx\relax#1\relax\else :#1\fi="#2"}%
+  \fi%
+}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{LaTeX and classes configurations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\section{LaTeX}
+
+\<configure html5 latex\><<<
+|<tabular fixes|>
+>>>
+
+\section{Article, book and report classes}
+\<configure html5 article\><<<
+|<article,report,book|>
+|<article,report|>
+>>>
+
+\<configure html5 book\><<<
+|<article,report,book|>
+>>>
+
+\<configure html5 report\><<<
+|<article,report,book|>
+|<article,report|>
+>>>
+
+Shared configurations for base LaTeX classes.
+
+\<article,report,book\><<<
+|<figcaption|>
+>>>
+
+Configurations that are shared only for article and report
+
+\<article,report\><<<
+|<abstract|>
+>>>
+
+
+\section{Configurations for Koma Script}
+
+\<configure html5 scrartcl\><<<
+|<scr article,report,book|>
+>>>
+
+\<configure html5 scrbook\><<<
+|<scr article,report,book|>
+>>>
+
+\<configure html5 scrreprt\><<<
+|<scr article,report,book|>
+>>>
+
+\<scr article,report,book\><<<
+|<figcaption|>
+>>>
+
+\section{Configurations for AMS classes}
+
+\<configure html5 amsart\><<<
+|<ams art,proc,book|>
+>>>
+
+\<configure html5 amsproc\><<<
+|<ams art,proc,book|>
+>>>
+
+\<configure html5 amsbook\><<<
+|<ams art,proc,book|>
+>>>
+
+
+\<ams art,proc,book\><<<
+|<figcaption|>
+>>>
+
+\section{Configurations for Memoir}
+
+\<configure html5 memoir\><<<
+|<figcaption|>
+|<abstract|>
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Packages configuration}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Logical structure configurations}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Tables}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+cellspacing and cellpading attributes are prohibited in html5
+
+\<tabular fixes\><<<
+\Configure{halignTB<>}{tabular}{\HCode{id="TBL-\TableNo"  class="tabular"\Hnewline \GROUPS\Hnewline
+   }<>\HAlign}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Figures}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Configure HTML5 figures. Floats are converted as captions too.
+
+\<figcaption\><<<
+\Configure{float}
+   {\ifOption{refcaption}{}{\csname par\endcsname\ShowPar \leavevmode}}
+     {\:xhtml{\IgnorePar\EndP}\HCode{<figure class="float"\Hnewline>}}
+   {\ifvmode \IgnorePar \fi\EndP
+     \HCode{</figure>}\csname par\endcsname\ShowPar}
+
+\ConfigureEnv{figure}
+{\:xhtml{\IgnorePar\EndP}\HCode{<figure class="figure">\Hnewline}%
+    \bgroup \Configure{float}{\ShowPar}{}{}%    
+   }
+   {\egroup
+   \:xhtml{\IgnorePar\EndP}\HCode{</figure>}|<try env inline par|>\par}
+   {}{}
+
+\ConfigureEnv{figure*}
+{\:xhtml{\IgnorePar\EndP}\HCode{<figure class="figure">\Hnewline}%
+    \bgroup \Configure{float}{\ShowPar}{}{}%    
+   }
+   {\egroup
+   \:xhtml{\IgnorePar\EndP}\HCode{</figure>}|<try env inline par|>\par}
+   {}{}
+
+\Css{figure.float, div.figure {margin-left: auto; margin-right: auto;}}
+\Css{figure.figure {text-align:center;}}
+
+\Configure{caption}{\:xhtml{\IgnorePar\EndP}\HCode{<figcaption class="caption" ><span class="id">}}
+   {: } {\HCode{</span><span \Hnewline class="content">}}
+   {\HCode{</span></figcaption>}\HCode{<!--tex4ht:label?:
+   \cur:th\:currentlabel\space-->}%
+}
+\Css{figcaption.caption {text-indent:-2em; margin-left:3em; margin-right:1em;
+                  text-align:center;}}
+\Css{figcaption.caption span.id{font-weight: bold; white-space: nowrap; }}
+\Css{p + figcaption, img + figcaption{margin-top: 1em;}}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Abstracts}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<abstract\><<<
+\ConfigureEnv{abstract}
+{\ifvmode\IgnorePar\fi\EndP\HCode{<section role="doc-abstract" class="abstract">\Hnewline}}
+{\ifvmode\IgnorePar\fi\EndP\HCode{</section>}\par}{}{}
+
+\Css{.abstract{margin:1em;}}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Utilities}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<try env inline par\><<<
+\ShowPar 
+>>>
+
+\endinput

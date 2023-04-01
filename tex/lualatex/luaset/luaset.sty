@@ -1,0 +1,142 @@
+% luaset package
+% version 1.0
+% Authors: Chetan Shirore and Ajit Kumar
+% Licensed under LaTeX Project Public License v1.3c or later. The complete license text is available at http://www.latex-project.org/lppl.txt.
+
+
+\ProvidesPackage{luaset}[1.0]
+\RequirePackage{xkeyval}
+\RequirePackage{amsmath}
+\RequirePackage{luacode}
+\RequirePackage{luamaths}
+\begin{luacode*}
+sets = {}
+Set = {} 
+local mt = {
+    __tostring = function(self)
+        return "\\{" .. table.concat(table.sortedkeys(self), ", ") .. "\\}"
+    end
+}
+
+function Set.new(str)
+    str = str or ""
+    local set = {}
+    for v in utilities.parsers.iterator(str) do
+        set[v] = true
+    end
+    return setmetatable(set, mt)
+end
+
+function Set.union (a, b)
+        local union = {}
+        for k in pairs(a) do union[k] = true end
+        for k in pairs(b) do union[k] = true end
+        return setmetatable(union, mt)
+      end
+
+function Set.intersection (a, b)
+        local intersection = {}
+        for k in pairs(a) do
+          intersection[k] = b[k]
+            end
+        return setmetatable(intersection, mt)
+        end
+
+function Set.difference (a, b)
+        local difference = {}
+        for k in pairs(a) do
+        if b[k]~= true then
+          difference[k] = true
+        end
+        end
+         setmetatable(difference, mt)
+        return difference
+      end
+
+function Set.cardinal (a)
+        local len = 0
+        for k in pairs(a) do
+          len = len + 1
+          end
+        return len
+      end
+
+function Set.subseteq(a, b)
+        for k in pairs(a) do
+          if not b[k] then return false end
+        end
+        return true
+    end
+
+function Set.subset (a, b)
+        return Set.subseteq(a, b)  and not (Set.subseteq(b, a) )
+    end
+
+    function Set.equal (a, b)
+        return Set.subseteq(a, b)  and  (Set.subseteq(b, a) )
+    end
+
+
+function Set.belongsto (x, s)
+        if s[x] then
+        return true
+      else
+        return false
+        end
+    end
+
+\end{luacode*}
+
+\newcommand\luaSetNew[2]{%
+    \directlua{%
+        sets[\luastringN{#1}] = Set.new(\luastringN{#2})
+    }%
+}
+
+\newcommand\luaSetUnion[3]{%
+    \directlua{%
+        sets[\luastringN{#1}] = Set.union(sets[\luastringN{#2}],
+                                          sets[\luastringN{#3}])
+    }%
+}
+
+\newcommand\luaSetIntersection[3]{%
+    \directlua{%
+        sets[\luastringN{#1}] = Set.intersection(sets[\luastringN{#2}],
+                                          sets[\luastringN{#3}])
+    }%
+}
+
+\newcommand\luaSetDifference[3]{%
+    \directlua{%
+        sets[\luastringN{#1}] = Set.difference(sets[\luastringN{#2}],
+                                          sets[\luastringN{#3}])
+    }%
+}
+
+
+\newcommand\luaSetPrint[1]{%
+    \directlua{tex.sprint(tostring(sets[\luastringN{#1}]))}%
+}
+
+\newcommand\luaSetCardinal[1]{%
+    \directlua{tex.sprint(tostring(Set.cardinal(sets[\luastringN{#1}])))}%
+}
+
+\newcommand\luaSetSubseteq[2]{%
+    \directlua{tex.sprint(tostring(Set.subseteq(sets[\luastringN{#1}],sets[\luastringN{#2}])))}%
+}
+
+\newcommand\luaSetSubset[2]{%
+    \directlua{tex.sprint(tostring(Set.subset(sets[\luastringN{#1}],sets[\luastringN{#2}])))}%
+}
+
+\newcommand\luaSetEqual[2]{%
+    \directlua{tex.sprint(tostring(Set.equal(sets[\luastringN{#1}],sets[\luastringN{#2}])))}%
+}
+
+\newcommand\luaSetBelongsto[2]{%
+    \directlua{tex.sprint(tostring(Set.belongsto("#1",sets[\luastringN{#2}])))}%
+}
+
+\endinput

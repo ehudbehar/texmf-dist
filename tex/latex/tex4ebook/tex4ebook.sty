@@ -1,0 +1,179 @@
+% Package tex4ebook. Author Michal Hoftich <michal.h21@gmail.com>
+% This package is subject of LPPL license, version 1.3 
+\ProvidesPackage{tex4ebook}[2016/03/31 version 0.1d]
+\RequirePackage{etoolbox}
+\RequirePackage{kvoptions}
+\RequirePackage{graphicx}
+% Command for generating NCX file. The hard work is done in the file
+% tex4ebook.4ht
+\def\ncxtable{}
+% Command for generating OPF file 
+\def\opftable{}
+
+%Declare RFC3066 language code for babel language name
+\def\DeclareLanguageEbook#1#2{%
+\csgdef{rfclang#1}{#2}%
+}
+\def\GetLanguage{%
+\ifx\bbl@main@language\@undefined en-US%  
+\else%
+\ifcsdef{rfclang\bbl@main@language}{\csuse{rfclang\bbl@main@language}}{}%
+\fi%
+}
+
+\DeclareLanguageEbook{UKenglish}{en-GB}
+\DeclareLanguageEbook{USenglish}{en-US}
+\DeclareLanguageEbook{acadian}{fr}
+\DeclareLanguageEbook{albanian}{sq}
+\DeclareLanguageEbook{american}{en-US}
+\DeclareLanguageEbook{amharic}{am}
+\DeclareLanguageEbook{arabic}{ar}
+\DeclareLanguageEbook{armenian}{hy}
+\DeclareLanguageEbook{australian}{en-US}
+\DeclareLanguageEbook{austrian}{de}
+\DeclareLanguageEbook{basque}{eu}
+\DeclareLanguageEbook{bengali}{bn}
+\DeclareLanguageEbook{brazilian}{pt}
+\DeclareLanguageEbook{brazil}{pt}
+\DeclareLanguageEbook{breton}{br}
+\DeclareLanguageEbook{british}{en-GB}
+\DeclareLanguageEbook{bulgarian}{bg}
+\DeclareLanguageEbook{canadian}{en-US}
+\DeclareLanguageEbook{canadien}{fr}
+\DeclareLanguageEbook{catalan}{ca}
+\DeclareLanguageEbook{croatian}{hr}
+\DeclareLanguageEbook{czech}{cs-CZ}
+\DeclareLanguageEbook{danish}{da}
+\DeclareLanguageEbook{divehi}{dv}
+\DeclareLanguageEbook{dutch}{nl}
+\DeclareLanguageEbook{english}{en}
+\DeclareLanguageEbook{esperanto}{eo}
+\DeclareLanguageEbook{estonian}{et}
+\DeclareLanguageEbook{finnish}{f\/i}
+\DeclareLanguageEbook{francais}{fr}
+\DeclareLanguageEbook{french}{fr}
+\DeclareLanguageEbook{galician}{gl}
+\DeclareLanguageEbook{germanb}{de}
+\DeclareLanguageEbook{german}{de}
+\DeclareLanguageEbook{greek}{el}
+\DeclareLanguageEbook{hebrew}{he}
+\DeclareLanguageEbook{hindi}{hi}
+\DeclareLanguageEbook{hungarian}{hu}
+\DeclareLanguageEbook{icelandic}{is}
+\DeclareLanguageEbook{interlingua}{ia}
+\DeclareLanguageEbook{irish}{ga}
+\DeclareLanguageEbook{italian}{it}
+\DeclareLanguageEbook{kannada}{kn}
+\DeclareLanguageEbook{khmer}{km}
+\DeclareLanguageEbook{korean}{ko}
+\DeclareLanguageEbook{lao}{lo}
+\DeclareLanguageEbook{latin}{la}
+\DeclareLanguageEbook{latvian}{lv}
+\DeclareLanguageEbook{lithuanian}{lt}
+\DeclareLanguageEbook{lowersorbian}{dsb}
+\DeclareLanguageEbook{magyar}{hu}
+\DeclareLanguageEbook{malayalam}{ml}
+\DeclareLanguageEbook{marathi}{mr}
+\DeclareLanguageEbook{naustrian}{de}
+\DeclareLanguageEbook{newzealand}{en}
+\DeclareLanguageEbook{ngerman}{de}
+\DeclareLanguageEbook{norsk}{no}
+\DeclareLanguageEbook{norwegiannynorsk}{nn}
+\DeclareLanguageEbook{nynorsk}{no}
+\DeclareLanguageEbook{occitan}{oc}
+\DeclareLanguageEbook{oldchurchslavonic}{cu}
+\DeclareLanguageEbook{persian}{fa}
+\DeclareLanguageEbook{polish}{pl-PL}
+\DeclareLanguageEbook{polutonikogreek}{el}
+\DeclareLanguageEbook{portuges}{pt}
+\DeclareLanguageEbook{portuguese}{pt}
+\DeclareLanguageEbook{romanian}{ro}
+\DeclareLanguageEbook{romansh}{rm}
+\DeclareLanguageEbook{russian}{ru}
+\DeclareLanguageEbook{samin}{se}
+\DeclareLanguageEbook{sanskrit}{sa}
+\DeclareLanguageEbook{scottish}{gd}
+\DeclareLanguageEbook{serbian}{sr}
+\DeclareLanguageEbook{serbo-croatian}{sh}
+\DeclareLanguageEbook{slovak}{sk}
+\DeclareLanguageEbook{slovene}{sl}
+\DeclareLanguageEbook{slovenian}{sl}
+\DeclareLanguageEbook{spanish}{es}
+\DeclareLanguageEbook{swedish}{sv}
+\DeclareLanguageEbook{tamil}{ta}
+\DeclareLanguageEbook{telugu}{te}
+\DeclareLanguageEbook{thai}{th}
+\DeclareLanguageEbook{tibetan}{bo}
+\DeclareLanguageEbook{turkish}{tr}
+\DeclareLanguageEbook{turkmen}{tk}
+\DeclareLanguageEbook{ukrainian}{uk}
+\DeclareLanguageEbook{uppersorbian}{hsb}
+\DeclareLanguageEbook{urdu}{ur}
+\DeclareLanguageEbook{vietnamese}{vi}
+\DeclareLanguageEbook{welsh}{cy}
+
+\AtEndDocument{%
+\ncxtable
+\opftable
+}
+
+% Default empty values
+\def\Title{Unnamed}
+\def\Author{Anonymous}
+
+% We need to save values of title, author etc.
+\let\tf@orig@title\title
+
+% normal \title
+\newcommand\tf@title[1]{%
+  \tf@orig@title{#1}%
+  \let\Title\@title%
+}
+
+% \title with optional argument
+\newcommand\tf@opttitle[2][]{%
+  \tf@orig@title[#1]{#2}%
+  \let\Title\@title%
+}
+
+% some classes (amsart) define \title command with optional argument
+\renewcommand\title{%
+\@ifnextchar[\tf@opttitle\tf@title%
+}
+
+\let\tf@orig@author\author
+\newcommand\tf@author[1]{%
+  \tf@orig@author{#1}%
+  \def\Author{#1}%
+}
+
+\newcommand\tf@optauthor[2][]{%
+  \tf@orig@author[#1]{#2}%
+  \def\Author{#2}%
+}
+
+% support optiona argument for \author as well
+\renewcommand\author{%
+\@ifnextchar[\tf@optauthor\tf@author%
+}
+
+%\let\Author\@author
+\let\Date\today
+\let\origdate\date
+\renewcommand\date[1]{%
+  \origdate{#1}%
+  \let\Date\@date%
+}
+%}
+
+
+% Fixes for AMS classess
+\AddToHook{class/after}{%
+  \ifx\authors\@empty%
+  \def\@maketitle@hook{
+  \global\let\Author\authors
+  }
+  \fi%
+}
+
+\newcommand\coverimage[2][]{\includegraphics[#1]{#2}}

@@ -1,0 +1,6637 @@
+% $Id: tex4ht-fonts-mnsymbol.tex 1176 2022-07-10 14:24:03Z karl $
+% etex {nameofthefile.tex}
+%
+% Copyright 2022 TeX Users Group.
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+
+\input tex4ht.sty    
+   \Preamble{xhtml,th4,sections+}
+\EndPreamble
+\input ProTex.sty          
+%\AlProTex{c,<<<>>>,`,title,list,ClearCode,_^}
+\AlProTex{c,<<<>>>,`,title,list,`,ClearCode,_^}
+
+
+\def\HOME{./tex4ht.dir/}
+\def\DTDS{./dtd.dir/}           
+\def\SOURCE{./html.dir/}
+
+\def\MYdir{\HOME texmf/tex4ht/ht-fonts}
+
+
+\newwrite\dbcs     
+\newwrite\unicode  
+
+\def\AddFont{\futurelet\ext\AddFontA}
+\def\AddFontA{%
+   \if [\ext \def\ext[##1]{\def\ext{##1}\AddFontB}%
+   \else     \def\ext{\def\ext{htf}\AddFontB}\fi
+   \ext}
+\def\AddFontB#1#2{%
+   \Comment{}{}\OutputCode[\ext]\<#1\>%
+   \let\StartDir=\empty  \def\EndDir{#2}\MakeDir
+   \ifx \WWWdir\Undef \else
+      \Needs{"cp #1.\ext\space \WWWdir /#2.\ext"}%
+      \Needs{"chmod 644 \WWWdir /#2.\ext"}%
+   \fi
+   \Needs{"mv #1.\ext\space \MYdir /#2.\ext"}%
+   }
+\def\MakeDir{\relax
+   \expandafter \ifx  \csname !\StartDir\endcsname\relax
+      \expandafter\let\csname !\StartDir\endcsname=\empty
+      \Needs{"mkdir -p \MYdir/\StartDir"}%     
+      \ifx \WWWdir\Undef \else
+         \Needs{"mkdir -p \MYdir/\StartDir"}%     
+         \Needs{"chmod 711 \WWWdir /StartDir"}%
+      \fi
+   \fi
+   \ifx \EndDir\empty \else
+       \expandafter\AppendDir \EndDir////*%
+       \expandafter\MakeDir
+   \fi
+}
+\def\AppendDir#1/#2/#3/*{%
+   \def\temp{#2}\ifx \temp\empty  \let\EndDir=\empty 
+   \else
+      \edef\StartDir{\ifx \StartDir\empty\else \StartDir/\fi
+                     #1}\def\EndDir{#2/#3}%
+   \fi
+}
+
+% writing MnSymbolA-Bold10.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA-Bold10\><<<
+MnSymbolA-Bold10 0 255
+'&#x2192;' '' arrowright 0      % generated from MnSymbolA-Bold10, 2022-07-07-15:12
+'&#x2191;' '' arrowup 1         % Copyright 2022 TeX Users Group
+'&#x2190;' '' arrowleft 2       %
+'&#x2193;' '' arrowdown 3       % This work may be distributed and/or modified under the
+'&#x2197;' '' arrowupright 4    % conditions of the LaTeX Project Public License, either
+'&#x2196;' '' arrowupleft 5     % version 1.3c of this license or (at your option) any
+'&#x2199;' '' arrowdownleft 6   % later version. The latest version of this license is in
+'&#x2198;' '' arrowdownright 7  %   http://www.latex-project.org/lppl.txt
+'&#x21D2;' '' arrowdblright 8   % and version 1.3c or later is part of all distributions
+'&#x21D1;' '' arrowdblup 9      % of LaTeX version 2005/12/01 or later.
+'&#x21D0;' '' arrowdblleft 10   %
+'&#x21D3;' '' arrowdbldown 11   % This work has the LPPL maintenance status "maintained".
+'&#x21D7;' '' uni21D7 12        %
+'&#x21D6;' '' uni21D6 13        % The Current Maintainer of this work
+'&#x21D9;' '' uni21D9 14        % is the TeX4ht Project <http://tug.org/tex4ht>.
+'&#x21D8;' '' uni21D8 15        %
+'&#x2194;' '' arrowboth 16      % If you modify this program, changing the
+'&#x2195;' '' arrowupdn 17      % version identification would be appreciated.
+'&#x2921;' '' uni2921 18
+'&#x2922;' '' uni2922 19
+'&#x21D4;' '' arrowdblboth 20
+'&#x21D5;' '' uni21D5 21
+'' '' Neswarrow 22
+'' '' Nwsearrow 23
+'&#x21A0;' '' uni21A0 24
+'&#x219F;' '' uni219F 25
+'&#x219E;' '' uni219E 26
+'&#x21A1;' '' uni21A1 27
+'' '' twoheadnearrow 28
+'' '' twoheadnwarrow 29
+'' '' twoheadswarrow 30
+'' '' twoheadsearrow 31
+'&#x21A3;' '' uni21A3 32
+'' '' uparrowtail 33
+'&#x21A2;' '' uni21A2 34
+'' '' downarrowtail 35
+'' '' nearrowtail 36
+'' '' nwarrowtail 37
+'' '' swarrowtail 38
+'' '' searrowtail 39
+'&#x21A6;' '' uni21A6 40
+'&#x21A5;' '' uni21A5 41
+'&#x21A4;' '' uni21A4 42
+'&#x21A7;' '' uni21A7 43
+'' '' nemapsto 44
+'' '' nwmapsto 45
+'' '' swmapsto 46
+'' '' semapsto 47
+'&#x21AA;' '' uni21AA 48
+'' '' lhookuparrow 49
+'' '' lhookleftarrow 50
+'' '' lhookdownarrow 51
+'' '' lhooknearrow 52
+'&#x2923;' '' uni2923 53
+'' '' lhookswarrow 54
+'&#x2925;' '' uni2925 55
+'' '' rhookrightarrow 56
+'' '' rhookuparrow 57
+'&#x21A9;' '' uni21A9 58
+'' '' rhookdownarrow 59
+'&#x2924;' '' uni2924 60
+'' '' rhooknwarrow 61
+'&#x2926;' '' uni2926 62
+'' '' rhooksearrow 63
+'&#x21C0;' '' harpoonrightbarbup 64
+'&#x21BF;' '' uni21BF 65
+'&#x21BD;' '' uni21BD 66
+'&#x21C2;' '' uni21C2 67
+'' '' neharpoonup 68
+'' '' nwharpoonup 69
+'' '' swharpoonup 70
+'' '' seharpoonup 71
+'&#x21C1;' '' uni21C1 72
+'&#x21BE;' '' uni21BE 73
+'&#x21BC;' '' harpoonleftbarbup 74
+'&#x21C3;' '' uni21C3 75
+'' '' neharpoondown 76
+'' '' nwharpoondown 77
+'' '' swharpoondown 78
+'' '' seharpoondown 79
+'&#x294B;' '' uni294B 80
+'&#x294D;' '' updownharpoonleftright 81
+'' '' neswharpoonnwse 82
+'' '' senwharpoonnesw 83
+'&#x294A;' '' uni294A 84
+'&#x294C;' '' updownharpoonrightleft 85
+'' '' neswharpoonsenw 86
+'' '' nwseharpoonswne 87
+'&#x21CC;' '' uni21CC 88
+'&#x296E;' '' uni296E 89
+'' '' neswharpoons 90
+'' '' senwharpoons 91
+'&#x21CB;' '' uni21CB 92
+'&#x296F;' '' uni296F 93
+'' '' swneharpoons 94
+'' '' nwseharpoons 95
+'&#x21E2;' '' arrowdashright 96
+'&#x21E1;' '' arrowdashup 97
+'&#x21E0;' '' arrowdashleft 98
+'&#x21E3;' '' arrowdashdown 99
+'' '' dashednearrow 100
+'' '' dashednwarrow 101
+'' '' dashedswarrow 102
+'' '' dashedsearrow 103
+'&#x22B8;' '' uni22B8 104
+'&#x2AEF;' '' uni2AEF 105
+'&#x27DC;' '' uni27DC 106
+'&#x2AF0;' '' uni2AF0 107
+'' '' nespoon 108
+'' '' nwspoon 109
+'' '' swspoon 110
+'' '' sespoon 111
+'' '' rightfilledspoon 112
+'' '' upfilledspoon 113
+'' '' leftfilledspoon 114
+'' '' downfilledspoon 115
+'' '' nefilledspoon 116
+'' '' nwfilledspoon 117
+'' '' swfilledspoon 118
+'' '' sefilledspoon 119
+'' '' rightfootline 120
+'' '' upfootline 121
+'' '' leftfootline 122
+'' '' downfootline 123
+'' '' nefootline 124
+'' '' nwfootline 125
+'' '' swfootline 126
+'' '' sefootline 127
+'' '' rightfree 128
+'' '' upfree 129
+'' '' leftfree 130
+'&#x2ADD;' '' uni2ADD 131
+'' '' nefree 132
+'' '' nwfree 133
+'' '' swfree 134
+'' '' sefree 135
+'' '' rightpitchfork 136
+'&#x22D4;' '' uni22D4 137
+'' '' leftpitchfork 138
+'&#x2ADB;' '' uni2ADB 139
+'' '' nepitchfork 140
+'' '' nwpitchfork 141
+'' '' swpitchfork 142
+'' '' sepitchfork 143
+'&#x21C9;' '' uni21C9 144
+'&#x21C8;' '' uni21C8 145
+'&#x21C7;' '' uni21C7 146
+'&#x21CA;' '' uni21CA 147
+'' '' nenearrows 148
+'' '' nwnwarrows 149
+'' '' swswarrows 150
+'' '' sesearrows 151
+'&#x21C4;' '' arrowrightoverleft 152
+'&#x21C5;' '' updownarrows 153
+'' '' neswarrows 154
+'' '' nwsearrows 155
+'&#x21C6;' '' uni21C6 156
+'&#x21F5;' '' downuparrows 157
+'' '' swnearrows 158
+'' '' senwarrows 159
+'&#x219D;' '' uni219D 160
+'' '' uplsquigarrow 161
+'' '' leftlsquigarrow 162
+'' '' downlsquigarrow 163
+'' '' nelsquigarrow 164
+'' '' nwlsquigarrow 165
+'' '' swlsquigarrow 166
+'' '' selsquigarrow 167
+'' '' rightrsquigarrow 168
+'' '' uprsquigarrow 169
+'&#x219C;' '' uni219C 170
+'' '' downrsquigarrow 171
+'' '' nersquigarrow 172
+'' '' nwrsquigarrow 173
+'' '' swrsquigarrow 174
+'' '' sersquigarrow 175
+'&#x21AD;' '' uni21AD 176
+'' '' squigarrowupdown 177
+'' '' squigarrowrightleft 178
+'' '' squigarrowdownup 179
+'' '' squigarrownesw 180
+'' '' squigarrownwse 181
+'' '' squigarrowswne 182
+'' '' squigarrowsenw 183
+'&#x21B7;' '' uni21B7 184
+'' '' lcurvearrowup 185
+'' '' lcurvearrowleft 186
+'&#x2938;' '' uni2938 187
+'' '' lcurvearrowne 188
+'' '' lcurvearrownw 189
+'' '' lcurvearrowsw 190
+'' '' lcurvearrowse 191
+'' '' rcurvearrowright 192
+'' '' rcurvearrowup 193
+'&#x21B6;' '' uni21B6 194
+'&#x2939;' '' uni2939 195
+'' '' rcurvearrowne 196
+'' '' rcurvearrownw 197
+'' '' rcurvearrowsw 198
+'' '' rcurvearrowse 199
+'' '' curvearrowleftright 200
+'' '' curvearrowupdown 201
+'' '' curvearrowrightleft 202
+'' '' curvearrowdownup 203
+'' '' curvearrownesw 204
+'' '' curvearrownwse 205
+'' '' curvearrowswne 206
+'' '' curvearrowsenw 207
+'' '' leftrightline 208
+'&#x2223;' '' divides 209
+'' '' neswline 210
+'' '' nwseline 211
+'' '' Leftrightline 212
+'&#x2225;' '' parallel 213
+'' '' Neswline 214
+'' '' Nwseline 215
+'&#x22A2;' '' uni22A2 216
+'&#x22A5;' '' perpendicular 217
+'&#x22A3;' '' uni22A3 218
+'&#x22A4;' '' uni22A4 219
+'' '' nevdash 220
+'' '' nwvdash 221
+'' '' swvdash 222
+'' '' sevdash 223
+'&#x22A7;' '' uni22A7 224
+'' '' upmodels 225
+'' '' leftmodels 226
+'' '' downmodels 227
+'' '' nemodels 228
+'' '' nwmodels 229
+'' '' swmodels 230
+'' '' semodels 231
+'&#x22A9;' '' uni22A9 232
+'&#x234A;' '' uni234A 233
+'' '' leftVdash 234
+'&#x2351;' '' uni2351 235
+'' '' neVdash 236
+'' '' nwVdash 237
+'' '' swVdash 238
+'' '' seVdash 239
+'&#x22AB;' '' uni22AB 240
+'' '' upModels 241
+'' '' leftModels 242
+'' '' downModels 243
+'' '' neModels 244
+'' '' nwModels 245
+'' '' swModels 246
+'' '' seModels 247
+'&#x293F;' '' uni293F 248
+'&#x21BA;' '' uni21BA 249
+'&#x27F2;' '' uni27F2 250
+'' '' rcirclearrowdown 251
+'&#x27F3;' '' uni27F3 252
+'&#x21BB;' '' uni21BB 253
+'&#x293E;' '' uni293E 254
+'' '' lcirclearrowdown 255
+MnSymbolA-Bold10 0 255
+htfcss:  MnSymbolA-Bold10  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA-Bold10}{unicode/MnSymbol/MnSymbolA-Bold10}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA-Bold12.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA-Bold12\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA-Bold12  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA-Bold12}{alias/MnSymbol/MnSymbolA-Bold12}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA-Bold5.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA-Bold5\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA-Bold5  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA-Bold5}{alias/MnSymbol/MnSymbolA-Bold5}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA-Bold6.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA-Bold6\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA-Bold6  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA-Bold6}{alias/MnSymbol/MnSymbolA-Bold6}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA-Bold7.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA-Bold7\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA-Bold7  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA-Bold7}{alias/MnSymbol/MnSymbolA-Bold7}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA-Bold8.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA-Bold8\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA-Bold8  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA-Bold8}{alias/MnSymbol/MnSymbolA-Bold8}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA-Bold9.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA-Bold9\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA-Bold9  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA-Bold9}{alias/MnSymbol/MnSymbolA-Bold9}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA10.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA10\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA10  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA10}{alias/MnSymbol/MnSymbolA10}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA12.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA12\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA12  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA12}{alias/MnSymbol/MnSymbolA12}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA5.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA5\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA5  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA5}{alias/MnSymbol/MnSymbolA5}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA6.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA6\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA6  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA6}{alias/MnSymbol/MnSymbolA6}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA7.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA7\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA7  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA7}{alias/MnSymbol/MnSymbolA7}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA8.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA8\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA8  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA8}{alias/MnSymbol/MnSymbolA8}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolA9.htf hash: 18d1965359553e398dc2551c57666c13
+\<MnSymbolA9\><<<
+.MnSymbolA-Bold10
+htfcss:  MnSymbolA9  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolA9}{alias/MnSymbol/MnSymbolA9}{}
+Missing glyph	Neswarrow
+Missing glyph	Nwsearrow
+Missing glyph	twoheadnearrow
+Missing glyph	twoheadnwarrow
+Missing glyph	twoheadswarrow
+Missing glyph	twoheadsearrow
+Missing glyph	uparrowtail
+Missing glyph	downarrowtail
+Missing glyph	nearrowtail
+Missing glyph	nwarrowtail
+Missing glyph	swarrowtail
+Missing glyph	searrowtail
+Missing glyph	nemapsto
+Missing glyph	nwmapsto
+Missing glyph	swmapsto
+Missing glyph	semapsto
+Missing glyph	lhookuparrow
+Missing glyph	lhookleftarrow
+Missing glyph	lhookdownarrow
+Missing glyph	lhooknearrow
+Missing glyph	lhookswarrow
+Missing glyph	rhookrightarrow
+Missing glyph	rhookuparrow
+Missing glyph	rhookdownarrow
+Missing glyph	rhooknwarrow
+Missing glyph	rhooksearrow
+Missing glyph	neharpoonup
+Missing glyph	nwharpoonup
+Missing glyph	swharpoonup
+Missing glyph	seharpoonup
+Missing glyph	neharpoondown
+Missing glyph	nwharpoondown
+Missing glyph	swharpoondown
+Missing glyph	seharpoondown
+Missing glyph	neswharpoonnwse
+Missing glyph	senwharpoonnesw
+Missing glyph	neswharpoonsenw
+Missing glyph	nwseharpoonswne
+Missing glyph	neswharpoons
+Missing glyph	senwharpoons
+Missing glyph	swneharpoons
+Missing glyph	nwseharpoons
+Missing glyph	dashednearrow
+Missing glyph	dashednwarrow
+Missing glyph	dashedswarrow
+Missing glyph	dashedsearrow
+Missing glyph	nespoon
+Missing glyph	nwspoon
+Missing glyph	swspoon
+Missing glyph	sespoon
+Missing glyph	rightfilledspoon
+Missing glyph	upfilledspoon
+Missing glyph	leftfilledspoon
+Missing glyph	downfilledspoon
+Missing glyph	nefilledspoon
+Missing glyph	nwfilledspoon
+Missing glyph	swfilledspoon
+Missing glyph	sefilledspoon
+Missing glyph	rightfootline
+Missing glyph	upfootline
+Missing glyph	leftfootline
+Missing glyph	downfootline
+Missing glyph	nefootline
+Missing glyph	nwfootline
+Missing glyph	swfootline
+Missing glyph	sefootline
+Missing glyph	rightfree
+Missing glyph	upfree
+Missing glyph	leftfree
+Missing glyph	nefree
+Missing glyph	nwfree
+Missing glyph	swfree
+Missing glyph	sefree
+Missing glyph	rightpitchfork
+Missing glyph	leftpitchfork
+Missing glyph	nepitchfork
+Missing glyph	nwpitchfork
+Missing glyph	swpitchfork
+Missing glyph	sepitchfork
+Missing glyph	nenearrows
+Missing glyph	nwnwarrows
+Missing glyph	swswarrows
+Missing glyph	sesearrows
+Missing glyph	neswarrows
+Missing glyph	nwsearrows
+Missing glyph	swnearrows
+Missing glyph	senwarrows
+Missing glyph	uplsquigarrow
+Missing glyph	leftlsquigarrow
+Missing glyph	downlsquigarrow
+Missing glyph	nelsquigarrow
+Missing glyph	nwlsquigarrow
+Missing glyph	swlsquigarrow
+Missing glyph	selsquigarrow
+Missing glyph	rightrsquigarrow
+Missing glyph	uprsquigarrow
+Missing glyph	downrsquigarrow
+Missing glyph	nersquigarrow
+Missing glyph	nwrsquigarrow
+Missing glyph	swrsquigarrow
+Missing glyph	sersquigarrow
+Missing glyph	squigarrowupdown
+Missing glyph	squigarrowrightleft
+Missing glyph	squigarrowdownup
+Missing glyph	squigarrownesw
+Missing glyph	squigarrownwse
+Missing glyph	squigarrowswne
+Missing glyph	squigarrowsenw
+Missing glyph	lcurvearrowup
+Missing glyph	lcurvearrowleft
+Missing glyph	lcurvearrowne
+Missing glyph	lcurvearrownw
+Missing glyph	lcurvearrowsw
+Missing glyph	lcurvearrowse
+Missing glyph	rcurvearrowright
+Missing glyph	rcurvearrowup
+Missing glyph	rcurvearrowne
+Missing glyph	rcurvearrownw
+Missing glyph	rcurvearrowsw
+Missing glyph	rcurvearrowse
+Missing glyph	curvearrowleftright
+Missing glyph	curvearrowupdown
+Missing glyph	curvearrowrightleft
+Missing glyph	curvearrowdownup
+Missing glyph	curvearrownesw
+Missing glyph	curvearrownwse
+Missing glyph	curvearrowswne
+Missing glyph	curvearrowsenw
+Missing glyph	leftrightline
+Missing glyph	neswline
+Missing glyph	nwseline
+Missing glyph	Leftrightline
+Missing glyph	Neswline
+Missing glyph	Nwseline
+Missing glyph	nevdash
+Missing glyph	nwvdash
+Missing glyph	swvdash
+Missing glyph	sevdash
+Missing glyph	upmodels
+Missing glyph	leftmodels
+Missing glyph	downmodels
+Missing glyph	nemodels
+Missing glyph	nwmodels
+Missing glyph	swmodels
+Missing glyph	semodels
+Missing glyph	leftVdash
+Missing glyph	neVdash
+Missing glyph	nwVdash
+Missing glyph	swVdash
+Missing glyph	seVdash
+Missing glyph	upModels
+Missing glyph	leftModels
+Missing glyph	downModels
+Missing glyph	neModels
+Missing glyph	nwModels
+Missing glyph	swModels
+Missing glyph	seModels
+Missing glyph	rcirclearrowdown
+Missing glyph	lcirclearrowdown
+% writing MnSymbolB-Bold10.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB-Bold10\><<<
+MnSymbolB-Bold10 0 255
+'&#x219B;' '' uni219B 0               % generated from MnSymbolB-Bold10, 2022-07-07-15:12
+'&#x2191;&#x0338;' '' uni21910338 1   % Copyright 2022 TeX Users Group
+'&#x219A;' '' uni219A 2               %
+'&#x2193;&#x0338;' '' uni21930338 3   % This work may be distributed and/or modified under the
+'&#x2197;&#x0338;' '' uni21970338 4   % conditions of the LaTeX Project Public License, either
+'&#x2196;&#x0338;' '' uni21960338 5   % version 1.3c of this license or (at your option) any
+'&#x2199;&#x0338;' '' uni21990338 6   % later version. The latest version of this license is in
+'&#x2198;&#x0338;' '' uni21980338 7   %   http://www.latex-project.org/lppl.txt
+'&#x21CF;' '' arrowrightdblstroke 8   % and version 1.3c or later is part of all distributions
+'&#x21D1;&#x0338;' '' uni21D10338 9   % of LaTeX version 2005/12/01 or later.
+'&#x21CD;' '' uni21CD 10              %
+'&#x21D3;&#x0338;' '' uni21D30338 11  % This work has the LPPL maintenance status "maintained".
+'&#x21D7;&#x0338;' '' uni21D70338 12  %
+'&#x21D6;&#x0338;' '' uni21D60338 13  % The Current Maintainer of this work
+'&#x21D9;&#x0338;' '' uni21D90338 14  % is the TeX4ht Project <http://tug.org/tex4ht>.
+'&#x21D8;&#x0338;' '' uni21D80338 15  %
+'&#x21AE;' '' uni21AE 16              % If you modify this program, changing the
+'&#x2195;&#x0338;' '' uni21950338 17  % version identification would be appreciated.
+'&#x2921;&#x0338;' '' uni29210338 18
+'&#x2922;&#x0338;' '' uni29220338 19
+'&#x21CE;' '' uni21CE 20
+'&#x21D5;&#x0338;' '' uni21D50338 21
+'&#x0338;' '' Neswarrow_uni0338 22
+'&#x0338;' '' Nwsearrow_uni0338 23
+'&#x21A0;&#x0338;' '' uni21A00338 24
+'&#x219F;&#x0338;' '' uni219F0338 25
+'&#x219E;&#x0338;' '' uni219E0338 26
+'&#x21A1;&#x0338;' '' uni21A10338 27
+'&#x0338;' '' twoheadnearrow_uni0338 28
+'&#x0338;' '' twoheadnwarrow_uni0338 29
+'&#x0338;' '' twoheadswarrow_uni0338 30
+'&#x0338;' '' twoheadsearrow_uni0338 31
+'&#x21A3;&#x0338;' '' uni21A30338 32
+'&#x0338;' '' uparrowtail_uni0338 33
+'&#x21A2;&#x0338;' '' uni21A20338 34
+'&#x0338;' '' downarrowtail_uni0338 35
+'&#x0338;' '' nearrowtail_uni0338 36
+'&#x0338;' '' nwarrowtail_uni0338 37
+'&#x0338;' '' swarrowtail_uni0338 38
+'&#x0338;' '' searrowtail_uni0338 39
+'&#x21A6;&#x0338;' '' uni21A60338 40
+'&#x21A5;&#x0338;' '' uni21A50338 41
+'&#x21A4;&#x0338;' '' uni21A40338 42
+'&#x21A7;&#x0338;' '' uni21A70338 43
+'&#x0338;' '' nemapsto_uni0338 44
+'&#x0338;' '' nwmapsto_uni0338 45
+'&#x0338;' '' swmapsto_uni0338 46
+'&#x0338;' '' semapsto_uni0338 47
+'&#x21AA;&#x0338;' '' uni21AA0338 48
+'&#x0338;' '' lhookuparrow_uni0338 49
+'&#x0338;' '' lhookleftarrow_uni0338 50
+'&#x0338;' '' lhookdownarrow_uni0338 51
+'&#x0338;' '' lhooknearrow_uni0338 52
+'&#x2923;&#x0338;' '' uni29230338 53
+'&#x0338;' '' lhookswarrow_uni0338 54
+'&#x2925;&#x0338;' '' uni29250338 55
+'&#x0338;' '' rhookrightarrow_uni0338 56
+'&#x0338;' '' rhookuparrow_uni0338 57
+'&#x21A9;&#x0338;' '' uni21A90338 58
+'&#x0338;' '' rhookdownarrow_uni0338 59
+'&#x2924;&#x0338;' '' uni29240338 60
+'&#x0338;' '' rhooknwarrow_uni0338 61
+'&#x2926;&#x0338;' '' uni29260338 62
+'&#x0338;' '' rhooksearrow_uni0338 63
+'&#x21C0;&#x0338;' '' uni21C00338 64
+'&#x21BF;&#x0338;' '' uni21BF0338 65
+'&#x21BD;&#x0338;' '' uni21BD0338 66
+'&#x21C2;&#x0338;' '' uni21C20338 67
+'&#x0338;' '' neharpoonup_uni0338 68
+'&#x0338;' '' nwharpoonup_uni0338 69
+'&#x0338;' '' swharpoonup_uni0338 70
+'&#x0338;' '' seharpoonup_uni0338 71
+'&#x21C1;&#x0338;' '' uni21C10338 72
+'&#x21BE;&#x0338;' '' uni21BE0338 73
+'&#x21BC;&#x0338;' '' uni21BC0338 74
+'&#x21C3;&#x0338;' '' uni21C30338 75
+'&#x0338;' '' neharpoondown_uni0338 76
+'&#x0338;' '' nwharpoondown_uni0338 77
+'&#x0338;' '' swharpoondown_uni0338 78
+'&#x0338;' '' seharpoondown_uni0338 79
+'&#x294B;&#x0338;' '' uni294B0338 80
+'&#x0338;' '' updownharpoonleftright_uni0338 81
+'&#x0338;' '' neswharpoonnwse_uni0338 82
+'&#x0338;' '' senwharpoonnesw_uni0338 83
+'&#x294A;&#x0338;' '' uni294A0338 84
+'&#x0338;' '' updownharpoonrightleft_uni0338 85
+'&#x0338;' '' neswharpoonsenw_uni0338 86
+'&#x0338;' '' nwseharpoonswne_uni0338 87
+'&#x21CC;&#x0338;' '' uni21CC0338 88
+'&#x296E;&#x0338;' '' uni296E0338 89
+'&#x0338;' '' neswharpoons_uni0338 90
+'&#x0338;' '' senwharpoons_uni0338 91
+'&#x21CB;&#x0338;' '' uni21CB0338 92
+'&#x296F;&#x0338;' '' uni296F0338 93
+'&#x0338;' '' swneharpoons_uni0338 94
+'&#x0338;' '' nwseharpoons_uni0338 95
+'&#x21E2;&#x0338;' '' uni21E20338 96
+'&#x21E1;&#x0338;' '' uni21E10338 97
+'&#x21E0;&#x0338;' '' uni21E00338 98
+'&#x21E3;&#x0338;' '' uni21E30338 99
+'&#x0338;' '' dashednearrow_uni0338 100
+'&#x0338;' '' dashednwarrow_uni0338 101
+'&#x0338;' '' dashedswarrow_uni0338 102
+'&#x0338;' '' dashedsearrow_uni0338 103
+'&#x22B8;&#x0338;' '' uni22B80338 104
+'&#x2AEF;&#x0338;' '' uni2AEF0338 105
+'&#x27DC;&#x0338;' '' uni27DC0338 106
+'&#x2AF0;&#x0338;' '' uni2AF00338 107
+'&#x0338;' '' nespoon_uni0338 108
+'&#x0338;' '' nwspoon_uni0338 109
+'&#x0338;' '' swspoon_uni0338 110
+'&#x0338;' '' sespoon_uni0338 111
+'&#x0338;' '' rightfilledspoon_uni0338 112
+'&#x0338;' '' upfilledspoon_uni0338 113
+'&#x0338;' '' leftfilledspoon_uni0338 114
+'&#x0338;' '' downfilledspoon_uni0338 115
+'&#x0338;' '' nefilledspoon_uni0338 116
+'&#x0338;' '' nwfilledspoon_uni0338 117
+'&#x0338;' '' swfilledspoon_uni0338 118
+'&#x0338;' '' sefilledspoon_uni0338 119
+'&#x0338;' '' rightfootline_uni0338 120
+'&#x0338;' '' upfootline_uni0338 121
+'&#x0338;' '' leftfootline_uni0338 122
+'&#x0338;' '' downfootline_uni0338 123
+'&#x0338;' '' nefootline_uni0338 124
+'&#x0338;' '' nwfootline_uni0338 125
+'&#x0338;' '' swfootline_uni0338 126
+'&#x0338;' '' sefootline_uni0338 127
+'&#x0338;' '' rightfree_uni0338 128
+'&#x0338;' '' upfree_uni0338 129
+'&#x0338;' '' leftfree_uni0338 130
+'&#x2ADC;' '' uni2ADC 131
+'&#x0338;' '' nefree_uni0338 132
+'&#x0338;' '' nwfree_uni0338 133
+'&#x0338;' '' swfree_uni0338 134
+'&#x0338;' '' sefree_uni0338 135
+'&#x0338;' '' rightpitchfork_uni0338 136
+'&#x22D4;&#x0338;' '' uni22D40338 137
+'&#x0338;' '' leftpitchfork_uni0338 138
+'&#x2ADB;&#x0338;' '' uni2ADB0338 139
+'&#x0338;' '' nepitchfork_uni0338 140
+'&#x0338;' '' nwpitchfork_uni0338 141
+'&#x0338;' '' swpitchfork_uni0338 142
+'&#x0338;' '' sepitchfork_uni0338 143
+'&#x21C9;&#x0338;' '' uni21C90338 144
+'&#x21C8;&#x0338;' '' uni21C80338 145
+'&#x21C7;&#x0338;' '' uni21C70338 146
+'&#x21CA;&#x0338;' '' uni21CA0338 147
+'&#x0338;' '' nenearrows_uni0338 148
+'&#x0338;' '' nwnwarrows_uni0338 149
+'&#x0338;' '' swswarrows_uni0338 150
+'&#x0338;' '' sesearrows_uni0338 151
+'&#x21C4;&#x0338;' '' uni21C40338 152
+'&#x0338;' '' updownarrows_uni0338 153
+'&#x0338;' '' neswarrows_uni0338 154
+'&#x0338;' '' nwsearrows_uni0338 155
+'&#x21C6;&#x0338;' '' uni21C60338 156
+'&#x0338;' '' downuparrows_uni0338 157
+'&#x0338;' '' swnearrows_uni0338 158
+'&#x0338;' '' senwarrows_uni0338 159
+'&#x219D;&#x0338;' '' uni219D0338 160
+'&#x0338;' '' uplsquigarrow_uni0338 161
+'&#x0338;' '' leftlsquigarrow_uni0338 162
+'&#x0338;' '' downlsquigarrow_uni0338 163
+'&#x0338;' '' nelsquigarrow_uni0338 164
+'&#x0338;' '' nwlsquigarrow_uni0338 165
+'&#x0338;' '' swlsquigarrow_uni0338 166
+'&#x0338;' '' selsquigarrow_uni0338 167
+'&#x0338;' '' rightrsquigarrow_uni0338 168
+'&#x0338;' '' uprsquigarrow_uni0338 169
+'&#x219C;&#x0338;' '' uni219C0338 170
+'&#x0338;' '' downrsquigarrow_uni0338 171
+'&#x0338;' '' nersquigarrow_uni0338 172
+'&#x0338;' '' nwrsquigarrow_uni0338 173
+'&#x0338;' '' swrsquigarrow_uni0338 174
+'&#x0338;' '' sersquigarrow_uni0338 175
+'&#x0338;' '' squigarrowleftright_uni0338 176
+'&#x0338;' '' squigarrowupdown_uni0338 177
+'&#x0338;' '' squigarrowrightleft_uni0338 178
+'&#x0338;' '' squigarrowdownup_uni0338 179
+'&#x0338;' '' squigarrownesw_uni0338 180
+'&#x0338;' '' squigarrownwse_uni0338 181
+'&#x0338;' '' squigarrowswne_uni0338 182
+'&#x0338;' '' squigarrowsenw_uni0338 183
+'&#x21B7;&#x0338;' '' uni21B70338 184
+'&#x0338;' '' lcurvearrowup_uni0338 185
+'&#x0338;' '' lcurvearrowleft_uni0338 186
+'&#x2938;&#x0338;' '' uni29380338 187
+'&#x0338;' '' lcurvearrowne_uni0338 188
+'&#x0338;' '' lcurvearrownw_uni0338 189
+'&#x0338;' '' lcurvearrowsw_uni0338 190
+'&#x0338;' '' lcurvearrowse_uni0338 191
+'&#x0338;' '' rcurvearrowright_uni0338 192
+'&#x0338;' '' rcurvearrowup_uni0338 193
+'&#x21B6;&#x0338;' '' uni21B60338 194
+'&#x2939;&#x0338;' '' uni29390338 195
+'&#x0338;' '' rcurvearrowne_uni0338 196
+'&#x0338;' '' rcurvearrownw_uni0338 197
+'&#x0338;' '' rcurvearrowsw_uni0338 198
+'&#x0338;' '' rcurvearrowse_uni0338 199
+'&#x0338;' '' curvearrowleftright_uni0338 200
+'&#x0338;' '' curvearrowupdown_uni0338 201
+'&#x0338;' '' curvearrowrightleft_uni0338 202
+'&#x0338;' '' curvearrowdownup_uni0338 203
+'&#x0338;' '' curvearrownesw_uni0338 204
+'&#x0338;' '' curvearrownwse_uni0338 205
+'&#x0338;' '' curvearrowswne_uni0338 206
+'&#x0338;' '' curvearrowsenw_uni0338 207
+'&#x0338;' '' leftrightline_uni0338 208
+'&#x2224;' '' uni2224 209
+'&#x0338;' '' neswline_uni0338 210
+'&#x0338;' '' nwseline_uni0338 211
+'&#x0338;' '' Leftrightline_uni0338 212
+'&#x2226;' '' notparallel 213
+'&#x0338;' '' Neswline_uni0338 214
+'&#x0338;' '' Nwseline_uni0338 215
+'&#x22AC;' '' uni22AC 216
+'&#x0338;' '' perpendicular_uni0338 217
+'&#x22A3;&#x0338;' '' uni22A30338 218
+'&#x22A4;&#x0338;' '' uni22A40338 219
+'&#x0338;' '' nevdash_uni0338 220
+'&#x0338;' '' nwvdash_uni0338 221
+'&#x0338;' '' swvdash_uni0338 222
+'&#x0338;' '' sevdash_uni0338 223
+'&#x22AD;' '' uni22AD 224
+'&#x0338;' '' upmodels_uni0338 225
+'&#x0338;' '' leftmodels_uni0338 226
+'&#x0338;' '' downmodels_uni0338 227
+'&#x0338;' '' nemodels_uni0338 228
+'&#x0338;' '' nwmodels_uni0338 229
+'&#x0338;' '' swmodels_uni0338 230
+'&#x0338;' '' semodels_uni0338 231
+'&#x22AE;' '' uni22AE 232
+'&#x234A;&#x0338;' '' uni234A0338 233
+'&#x0338;' '' leftVdash_uni0338 234
+'&#x2351;&#x0338;' '' uni23510338 235
+'&#x0338;' '' neVdash_uni0338 236
+'&#x0338;' '' nwVdash_uni0338 237
+'&#x0338;' '' swVdash_uni0338 238
+'&#x0338;' '' seVdash_uni0338 239
+'&#x22AF;' '' uni22AF 240
+'&#x0338;' '' upModels_uni0338 241
+'&#x0338;' '' leftModels_uni0338 242
+'&#x0338;' '' downModels_uni0338 243
+'&#x0338;' '' neModels_uni0338 244
+'&#x0338;' '' nwModels_uni0338 245
+'&#x0338;' '' swModels_uni0338 246
+'&#x0338;' '' seModels_uni0338 247
+'&#x293F;&#x0338;' '' uni293F0338 248
+'&#x21BA;&#x0338;' '' uni21BA0338 249
+'&#x27F2;&#x0338;' '' uni27F20338 250
+'&#x0338;' '' rcirclearrowdown_uni0338 251
+'&#x27F3;&#x0338;' '' uni27F30338 252
+'&#x21BB;&#x0338;' '' uni21BB0338 253
+'&#x293E;&#x0338;' '' uni293E0338 254
+'&#x0338;' '' lcirclearrowdown_uni0338 255
+MnSymbolB-Bold10 0 255
+htfcss:  MnSymbolB-Bold10  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB-Bold10}{unicode/MnSymbol/MnSymbolB-Bold10}{}
+% writing MnSymbolB-Bold12.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB-Bold12\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB-Bold12  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB-Bold12}{alias/MnSymbol/MnSymbolB-Bold12}{}
+% writing MnSymbolB-Bold5.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB-Bold5\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB-Bold5  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB-Bold5}{alias/MnSymbol/MnSymbolB-Bold5}{}
+% writing MnSymbolB-Bold6.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB-Bold6\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB-Bold6  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB-Bold6}{alias/MnSymbol/MnSymbolB-Bold6}{}
+% writing MnSymbolB-Bold7.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB-Bold7\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB-Bold7  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB-Bold7}{alias/MnSymbol/MnSymbolB-Bold7}{}
+% writing MnSymbolB-Bold8.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB-Bold8\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB-Bold8  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB-Bold8}{alias/MnSymbol/MnSymbolB-Bold8}{}
+% writing MnSymbolB-Bold9.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB-Bold9\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB-Bold9  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB-Bold9}{alias/MnSymbol/MnSymbolB-Bold9}{}
+% writing MnSymbolB10.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB10\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB10  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB10}{alias/MnSymbol/MnSymbolB10}{}
+% writing MnSymbolB12.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB12\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB12  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB12}{alias/MnSymbol/MnSymbolB12}{}
+% writing MnSymbolB5.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB5\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB5  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB5}{alias/MnSymbol/MnSymbolB5}{}
+% writing MnSymbolB6.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB6\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB6  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB6}{alias/MnSymbol/MnSymbolB6}{}
+% writing MnSymbolB7.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB7\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB7  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB7}{alias/MnSymbol/MnSymbolB7}{}
+% writing MnSymbolB8.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB8\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB8  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB8}{alias/MnSymbol/MnSymbolB8}{}
+% writing MnSymbolB9.htf hash: fabb91cdf63abe74d5c82a50dd176204
+\<MnSymbolB9\><<<
+.MnSymbolB-Bold10
+htfcss:  MnSymbolB9  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolB9}{alias/MnSymbol/MnSymbolB9}{}
+% writing MnSymbolC-Bold10.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC-Bold10\><<<
+MnSymbolC-Bold10 0 255
+'&#x22C5;' '' dotmath 0           % generated from MnSymbolC-Bold10, 2022-07-07-15:12
+'' '' hdotdot 1                   % Copyright 2022 TeX Users Group
+'&#x2236;' '' ratio 2             %
+'&#xd;' '' udotdot 3              % This work may be distributed and/or modified under the
+'' '' ddotdot 4                   % conditions of the LaTeX Project Public License, either
+'&#x22EF;' '' uni22EF 5           % version 1.3c of this license or (at your option) any
+'&#x22EE;' '' ellipsisvertical 6  % later version. The latest version of this license is in
+'&#x22F0;' '' uni22F0 7           %   http://www.latex-project.org/lppl.txt
+'&#x22F1;' '' uni22F1 8           % and version 1.3c or later is part of all distributions
+'' '' righttherefore 9            % of LaTeX version 2005/12/01 or later.
+'&#x2234;' '' therefore 10        %
+'' '' lefttherefore 11            % This work has the LPPL maintenance status "maintained".
+'&#x2235;' '' because 12          %
+'' '' diamonddots 13              % The Current Maintainer of this work
+'&#x2237;' '' proportion 14       % is the TeX4ht Project <http://tug.org/tex4ht>.
+'' '' fivedots 15                 %
+'&#x2212;' '' minus 16            % If you modify this program, changing the
+'&#x2223;' '' divides.alt 17      % version identification would be appreciated.
+'&#x2215;' '' divisionslash 18
+'&#x2216;' '' uni2216 19
+'+' '' plus 20
+'&#x00D7;' '' multiply 21
+'&#x00B1;' '' plusminus 22
+'&#x2213;' '' minusplus 23
+'&#x2238;' '' dotminus 24
+'' '' dotmedvert 25
+'&#x2A2A;' '' minusdot 26
+'' '' medvertdot 27
+'&#x00F7;' '' divide 28
+'' '' slashdiv 29
+'' '' vertdiv 30
+'' '' backslashdiv 31
+'&#x00AC;' '' logicalnot 32
+'&#x2310;' '' revlogicalnot 33
+'' '' dtimes 34
+'&#x22CA;' '' uni22CA 35
+'' '' utimes 36
+'&#x22C9;' '' uni22C9 37
+'&#x22C8;' '' bowtie 38
+'&#x29D6;' '' uni29D6 39
+'' '' rightY 40
+'' '' upY 41
+'' '' leftY 42
+'' '' downY 43
+'&#x2227;' '' logicaland 44
+'&#x2228;' '' logicalor 45
+'&#x27D1;' '' wedgedot 46
+'&#x27C7;' '' veedot 47
+'&#x2A55;' '' uni2A55 48
+'&#x2A54;' '' uni2A54 49
+'&#x22CF;' '' curlyand 50
+'&#x22CE;' '' curlyor 51
+'' '' curlywedgedot 52
+'' '' curlyveedot 53
+'&#xb;' '' doublecurlywedge 54
+'&#xb;' '' doublecurlyvee 55
+'&#x222A;' '' union 56
+'&#x2229;' '' intersection 57
+'&#x22D3;' '' uni22D3 58
+'&#x22D2;' '' uni22D2 59
+'&#x228D;' '' uni228D 60
+'&#x2A40;' '' uni2A40 61
+'&#x228E;' '' uni228E 62
+'' '' capplus 63
+'&#x2294;' '' uni2294 64
+'&#x2293;' '' uni2293 65
+'&#x2A4F;' '' uni2A4F 66
+'&#x2A4E;' '' uni2A4E 67
+'' '' sqcupdot 68
+'' '' sqcapdot 69
+'' '' sqcupplus 70
+'' '' sqcapplus 71
+'&#x25B9;' '' whiterightpointingsmalltriangle 72
+'&#x25B5;' '' whiteuppointingsmalltriangle 73
+'&#x25C3;' '' whiteleftpointingsmalltriangle 74
+'&#x25BF;' '' whitedownpointingsmalltriangle 75
+'&#x25B8;' '' uni25B8 76
+'&#x25B4;' '' blackuppointingsmalltriangle 77
+'&#x25C2;' '' uni25C2 78
+'&#x25BE;' '' uni25BE 79
+'&#x25B7;' '' whiterightpointingtriangle 80
+'&#x25B3;' '' whiteuppointingtriangle 81
+'&#x25C1;' '' whiteleftpointingtriangle 82
+'&#x25BD;' '' whitedownpointingtriangle 83
+'&#x25B7;' '' whiterightpointingtriangle.alt1 84
+'&#x25B3;' '' whiteuppointingtriangle.alt1 85
+'&#x25C1;' '' whiteleftpointingtriangle.alt1 86
+'&#x25BD;' '' whitedownpointingtriangle.alt1 87
+'&#x25CB;' '' circle 88
+'&#x25CF;' '' blackcircle 89
+'&#x25EF;' '' largecircle 90
+'&#x25EF;' '' largecircle.alt1 91
+'&#x2296;' '' minuscircle 92
+'&#x29B6;' '' uni29B6 93
+'&#x2298;' '' uni2298 94
+'&#x29B8;' '' uni29B8 95
+'&#x2295;' '' circleplus 96
+'&#x2297;' '' circlemultiply 97
+'&#x2299;' '' circleot 98
+'&#x229A;' '' uni229A 99
+'' '' otriangle 100
+'&#x229B;' '' uni229B 101
+'&#x235F;' '' uni235F 102
+'&#x2205;' '' uni2205 103
+'&#x25FD;' '' uni25FD 104
+'&#x25FE;' '' uni25FE 105
+'&#x25FB;' '' uni25FB 106
+'&#x25FB;' '' uni25FB.alt1 107
+'&#x25C7;' '' whitediamond 108
+'&#x25C6;' '' blackdiamond 109
+'&#x25C7;' '' whitediamond.alt1 110
+'&#x25C7;' '' whitediamond.alt2 111
+'&#x229F;' '' uni229F 112
+'' '' boxvert 113
+'&#x29C4;' '' uni29C4 114
+'&#x29C5;' '' uni29C5 115
+'&#x229E;' '' uni229E 116
+'&#x22A0;' '' uni22A0 117
+'&#x22A1;' '' uni22A1 118
+'&#x29C8;' '' uni29C8 119
+'' '' diamondminus 120
+'' '' diamondvert 121
+'' '' diamondslash 122
+'' '' diamondbackslash 123
+'' '' diamondplus 124
+'' '' diamondtimes 125
+'&#x27D0;' '' uni27D0 126
+'' '' diamonddiamond 127
+'&#x2606;' '' whitestar 128
+'&#x2605;' '' blackstar 129
+'&#x2606;' '' whitestar.alt1 130
+'&#x2606;' '' whitestar.alt2 131
+'' '' pentagram 132
+'' '' largepentagram 133
+'&#x22C6;' '' uni22C6 134
+'&#x2217;' '' asteriskmath 135
+'' '' hbipropto 136
+'' '' neswbipropto 137
+'' '' vbipropto 138
+'' '' nwsebipropto 139
+'&#x221D;' '' proportional 140
+'' '' downpropto 141
+'' '' rightpropto 142
+'' '' uppropto 143
+'' '' hcrossing 144
+'' '' neswcrossing 145
+'' '' vcrossing 146
+'' '' nwsecrossing 147
+'&#x226C;' '' between 148
+'' '' separated 149
+'&#x22A5;' '' bot 150
+'&#x22BA;' '' uni22BA 151
+'&#x2240;' '' uni2240 152
+'&#x2220;' '' angle 153
+'&#x2221;' '' uni2221 154
+'&#x2222;' '' uni2222 155
+'&#x2032;' '' minute 156
+'&#x2035;' '' primereversed 157
+'&#xc;' '' product.small 158
+'&#x2210;' '' uni2210.small 159
+'&#x2713;' '' checkmark 160
+'&#x2607;' '' uni2607 161
+'&#x2662;' '' diamondsuitwhite 162
+'&#x2661;' '' heartsuitwhite 163
+'&#x2660;' '' spade 164
+'&#x2663;' '' club 165
+'&#x2200;' '' universal 166
+'&#x2203;' '' existential 167
+'&#x2204;' '' uni2204 168
+'&#x2207;' '' gradient 169
+'&#x221E;' '' infinity 170
+'&#x222B;' '' integral.small 171
+'&#x266D;' '' musicflatsign 172
+'&#x266E;' '' uni266E 173
+'&#x266F;' '' musicsharpsign 174
+'&#x2135;' '' aleph 175
+'&#x2136;' '' uni2136 176
+'&#x2137;' '' uni2137 177
+'&#x2138;' '' uni2138 178
+'&#x2118;' '' weierstrass 179
+'&#x2118;' '' weierstrass.alt 180
+'&#x2A3C;' '' uni2A3C 181
+'&#x2A3D;' '' uni2A3D 182
+'&#x231E;' '' uni231E 183
+'&#x231F;' '' uni231F 184
+'&#x231C;' '' uni231C 185
+'&#x231D;' '' uni231D 186
+'&#xcc;' '' closedsucc 187
+'' '' closedcurlywedge 188
+'' '' closedprec 189
+'' '' closedcurlyvee 190
+'&#x2AA7;' '' uni2AA7 191
+'' '' upslice 192
+'&#x2AA6;' '' uni2AA6 193
+'' '' downslice 194
+'&#x25CA;' '' lozenge 195
+'&#x29EB;' '' uni29EB 196
+'&#x25CA;' '' lozenge.alt1 197
+'&#x29EB;' '' uni29EB.alt1 198
+'&#x25CA;' '' lozenge.alt2 199
+'&#x25B6;' '' blackrightpointingtriangle 200
+'&#x25B2;' '' blackuppointingtriangle 201
+'&#x25C0;' '' blackleftpointingtriangle 202
+'&#x25BC;' '' blackdownpointingtriangle 203
+'&#x220E;' '' uni220E 204
+'&#x2600;' '' uni2600 205
+'&#x2721;' '' uni2721 206
+'&#x2721;' '' uni2721.alt 207
+'&#x2720;' '' uni2720 208
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'&#xa;' '' closedequal 220
+'&#xa;' '' equalclosed 221
+'' '' equivclosed 222
+'&#x2272;' '' uni2272 223
+'&#x2273;' '' uni2273 224
+'&#x2A85;' '' uni2A85 225
+'&#x2A86;' '' uni2A86 226
+'&#x2A95;' '' uni2A95 227
+'&#x2A96;' '' uni2A96 228
+'&#x22DE;' '' uni22DE 229
+'&#x22DF;' '' uni22DF 230
+'&#x21DB;' '' uni21DB 231
+'&#x21DA;' '' uni21DA 232
+'&#xa;' '' closedequal_uni0338 233
+'&#xa;' '' equalclosed_uni0338 234
+'&#x0338;' '' equivclosed_uni0338 235
+'&#x2274;' '' uni2274 236
+'&#x2275;' '' uni2275 237
+'&#x2A89;' '' uni2A89 238
+'&#x2A8A;' '' uni2A8A 239
+'&#x2A95;&#x0338;' '' uni2A950338 240
+'&#x2A96;&#x0338;' '' uni2A960338 241
+'&#x22DE;&#x0338;' '' uni22DE0338 242
+'&#x22DF;&#x0338;' '' uni22DF0338 243
+'&#x21DB;&#x0338;' '' uni21DB0338 244
+'&#x21DA;&#x0338;' '' uni21DA0338 245
+'&#x21B1;' '' uni21B1 246
+'&#x21B0;' '' uni21B0 247
+'&#x21AC;' '' uni21AC 248
+'&#x21AB;' '' uni21AB 249
+'&#x22CB;' '' uni22CB 250
+'&#x22CC;' '' uni22CC 251
+'&#x22AA;' '' uni22AA 252
+'&#x2224;' '' uni2224.short 253
+'&#x2225;' '' parallel.short 254
+'&#x2226;' '' notparallel.short 255
+MnSymbolC-Bold10 0 255
+htfcss:  MnSymbolC-Bold10  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC-Bold10}{unicode/MnSymbol/MnSymbolC-Bold10}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC-Bold12.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC-Bold12\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC-Bold12  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC-Bold12}{alias/MnSymbol/MnSymbolC-Bold12}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC-Bold5.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC-Bold5\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC-Bold5  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC-Bold5}{alias/MnSymbol/MnSymbolC-Bold5}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC-Bold6.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC-Bold6\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC-Bold6  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC-Bold6}{alias/MnSymbol/MnSymbolC-Bold6}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC-Bold7.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC-Bold7\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC-Bold7  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC-Bold7}{alias/MnSymbol/MnSymbolC-Bold7}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC-Bold8.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC-Bold8\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC-Bold8  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC-Bold8}{alias/MnSymbol/MnSymbolC-Bold8}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC-Bold9.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC-Bold9\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC-Bold9  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC-Bold9}{alias/MnSymbol/MnSymbolC-Bold9}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC10.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC10\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC10  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC10}{alias/MnSymbol/MnSymbolC10}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC12.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC12\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC12  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC12}{alias/MnSymbol/MnSymbolC12}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC5.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC5\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC5  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC5}{alias/MnSymbol/MnSymbolC5}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC6.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC6\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC6  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC6}{alias/MnSymbol/MnSymbolC6}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC7.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC7\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC7  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC7}{alias/MnSymbol/MnSymbolC7}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC8.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC8\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC8  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC8}{alias/MnSymbol/MnSymbolC8}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolC9.htf hash: a15f7dfe49c1d954cd054b6a0397a978
+\<MnSymbolC9\><<<
+.MnSymbolC-Bold10
+htfcss:  MnSymbolC9  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolC9}{alias/MnSymbol/MnSymbolC9}{}
+Missing glyph	hdotdot
+Missing glyph	ddotdot
+Missing glyph	righttherefore
+Missing glyph	lefttherefore
+Missing glyph	diamonddots
+Missing glyph	fivedots
+Missing glyph	dotmedvert
+Missing glyph	medvertdot
+Missing glyph	slashdiv
+Missing glyph	vertdiv
+Missing glyph	backslashdiv
+Missing glyph	dtimes
+Missing glyph	utimes
+Missing glyph	rightY
+Missing glyph	upY
+Missing glyph	leftY
+Missing glyph	downY
+Missing glyph	curlywedgedot
+Missing glyph	curlyveedot
+Missing glyph	capplus
+Missing glyph	sqcupdot
+Missing glyph	sqcapdot
+Missing glyph	sqcupplus
+Missing glyph	sqcapplus
+Missing glyph	otriangle
+Missing glyph	boxvert
+Missing glyph	diamondminus
+Missing glyph	diamondvert
+Missing glyph	diamondslash
+Missing glyph	diamondbackslash
+Missing glyph	diamondplus
+Missing glyph	diamondtimes
+Missing glyph	diamonddiamond
+Missing glyph	pentagram
+Missing glyph	largepentagram
+Missing glyph	hbipropto
+Missing glyph	neswbipropto
+Missing glyph	vbipropto
+Missing glyph	nwsebipropto
+Missing glyph	downpropto
+Missing glyph	rightpropto
+Missing glyph	uppropto
+Missing glyph	hcrossing
+Missing glyph	neswcrossing
+Missing glyph	vcrossing
+Missing glyph	nwsecrossing
+Missing glyph	separated
+Missing glyph	closedcurlywedge
+Missing glyph	closedprec
+Missing glyph	closedcurlyvee
+Missing glyph	upslice
+Missing glyph	downslice
+Missing glyph	equivclosed
+% writing MnSymbolD-Bold10.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD-Bold10\><<<
+MnSymbolD-Bold10 0 255
+'=' '' equal 0               % generated from MnSymbolD-Bold10, 2022-07-07-15:12
+'&#x2261;' '' equivalence 1  % Copyright 2022 TeX Users Group
+'&#x223C;' '' similar 2      %
+'&#x223D;' '' uni223D 3      % This work may be distributed and/or modified under the
+'&#x2248;' '' approxequal 4  % conditions of the LaTeX Project Public License, either
+'' '' backapprox 5           % version 1.3c of this license or (at your option) any
+'&#x224B;' '' uni224B 6      % later version. The latest version of this license is in
+'' '' backtriplesim 7        %   http://www.latex-project.org/lppl.txt
+'&#x2243;' '' uni2243 8      % and version 1.3c or later is part of all distributions
+'&#x22CD;' '' uni22CD 9      % of LaTeX version 2005/12/01 or later.
+'&#x2242;' '' uni2242 10     %
+'' '' backeqsim 11           % This work has the LPPL maintenance status "maintained".
+'&#x2245;' '' congruent 12   %
+'&#x224C;' '' uni224C 13     % The Current Maintainer of this work
+'&#x224A;' '' uni224A 14     % is the TeX4ht Project <http://tug.org/tex4ht>.
+'' '' backapproxeq 15        %
+'&#x224F;' '' uni224F 16     % If you modify this program, changing the
+'' '' eqbump 17              % version identification would be appreciated.
+'&#x224E;' '' uni224E 18
+'&#x2250;' '' uni2250 19
+'&#x2A66;' '' uni2A66 20
+'&#x2251;' '' uni2251 21
+'&#x2252;' '' uni2252 22
+'&#x2253;' '' uni2253 23
+'&#x2323;' '' uni2323 24
+'&#x2322;' '' uni2322 25
+'&#xb;' '' doublesmile 26
+'&#xb;' '' doublefrown 27
+'' '' triplesmile 28
+'' '' triplefrown 29
+'&#x224D;' '' uni224D 30
+'' '' frownsmile 31
+'' '' smileeq 32
+'' '' frowneq 33
+'' '' eqsmile 34
+'' '' eqfrown 35
+'&#xb;' '' doublesmileeq 36
+'&#xb;' '' doublefrowneq 37
+'' '' smileeqfrown 38
+'' '' frowneqsmile 39
+'' '' smilefrowneq 40
+'' '' frownsmileeq 41
+'' '' sqsmile 42
+'' '' sqfrown 43
+'&#xb;' '' sqdoublesmile 44
+'&#xb;' '' sqdoublefrown 45
+'' '' sqtriplesmile 46
+'' '' sqtriplefrown 47
+'' '' sqsmilefrown 48
+'' '' sqfrownsmile 49
+'' '' sqsmileeq 50
+'' '' sqfrowneq 51
+'' '' sqeqsmile 52
+'' '' sqeqfrown 53
+'&#xb;' '' sqdoublesmileeq 54
+'&#xb;' '' sqdoublefrowneq 55
+'' '' sqsmileeqfrown 56
+'' '' sqfrowneqsmile 57
+'&#x2256;' '' uni2256 58
+'&#x2257;' '' uni2257 59
+'&#x225C;' '' uni225C 60
+'&#x2259;' '' uni2259 61
+'&#x2208;' '' element 62
+'&#x220B;' '' suchthat 63
+'&lt;' '' less 64
+'&gt;' '' greater 65
+'&#x2264;' '' lessequal 66
+'&#x2265;' '' greaterequal 67
+'&#x2A7D;' '' uni2A7D 68
+'&#x2A7E;' '' uni2A7E 69
+'&#x2266;' '' uni2266 70
+'&#x2267;' '' uni2267 71
+'&#x2276;' '' uni2276 72
+'&#x2277;' '' uni2277 73
+'&#x22DA;' '' uni22DA 74
+'&#x22DB;' '' uni22DB 75
+'&#x2A8B;' '' uni2A8B 76
+'&#x2A8C;' '' uni2A8C 77
+'' '' lesseqgtrslant 78
+'' '' gtreqlessslant 79
+'&#x226A;' '' uni226A 80
+'&#x226B;' '' uni226B 81
+'&#x22D8;' '' uni22D8 82
+'&#x22D9;' '' uni22D9 83
+'&#x22B2;' '' uni22B2 84
+'&#x22B3;' '' uni22B3 85
+'&#x22B4;' '' uni22B4 86
+'&#x22B5;' '' uni22B5 87
+'&#x228F;' '' uni228F 88
+'&#x2290;' '' uni2290 89
+'&#x2291;' '' uni2291 90
+'&#x2292;' '' uni2292 91
+'&#xb;' '' sqsubseteqq 92
+'' '' sqsupseteqq 93
+'&#xb;' '' Sqsubset 94
+'' '' Sqsupset 95
+'&#x2282;' '' propersubset 96
+'&#x2283;' '' propersuperset 97
+'&#x2286;' '' reflexsubset 98
+'&#x2287;' '' reflexsuperset 99
+'&#x2AC5;' '' uni2AC5 100
+'&#x2AC6;' '' uni2AC6 101
+'&#x22D0;' '' uni22D0 102
+'&#x22D1;' '' uni22D1 103
+'&#x227A;' '' uni227A 104
+'&#x227B;' '' uni227B 105
+'&#x2AAF;' '' uni2AAF 106
+'&#x2AB0;' '' uni2AB0 107
+'&#x227C;' '' uni227C 108
+'&#x227D;' '' uni227D 109
+'&#x227E;' '' uni227E 110
+'&#x227F;' '' uni227F 111
+'&#x2AB7;' '' uni2AB7 112
+'&#x2AB8;' '' uni2AB8 113
+'&#x22D6;' '' uni22D6 114
+'&#x22D7;' '' uni22D7 115
+'' '' leqdot 116
+'' '' geqdot 117
+'&#x2A7F;' '' uni2A7F 118
+'&#x2A80;' '' uni2A80 119
+'&#x2260;' '' notequal 120
+'&#x2262;' '' uni2262 121
+'&#x2241;' '' uni2241 122
+'&#x223D;&#x0338;' '' uni223D0338 123
+'&#x2249;' '' uni2249 124
+'&#x0338;' '' backapprox_uni0338 125
+'&#x224B;&#x0338;' '' uni224B0338 126
+'&#x0338;' '' backtriplesim_uni0338 127
+'&#x2244;' '' uni2244 128
+'&#x22CD;&#x0338;' '' uni22CD0338 129
+'&#x2242;&#x0338;' '' uni22420338 130
+'&#x0338;' '' backeqsim_uni0338 131
+'&#x2247;' '' uni2247 132
+'&#x224C;&#x0338;' '' uni224C0338 133
+'&#x224A;&#x0338;' '' uni224A0338 134
+'&#x0338;' '' backapproxeq_uni0338 135
+'&#x224F;&#x0338;' '' uni224F0338 136
+'&#x0338;' '' eqbump_uni0338 137
+'&#x224E;&#x0338;' '' uni224E0338 138
+'&#x2250;&#x0338;' '' uni22500338 139
+'&#x2A66;&#x0338;' '' uni2A660338 140
+'&#x2251;&#x0338;' '' uni22510338 141
+'&#x2252;&#x0338;' '' uni22520338 142
+'&#x2253;&#x0338;' '' uni22530338 143
+'&#x2323;&#x0338;' '' uni23230338 144
+'&#x2322;&#x0338;' '' uni23220338 145
+'&#xb;' '' doublesmile_uni0338 146
+'&#xb;' '' doublefrown_uni0338 147
+'&#x0338;' '' triplesmile_uni0338 148
+'&#x0338;' '' triplefrown_uni0338 149
+'&#x226D;' '' uni226D 150
+'&#x0338;' '' frownsmile_uni0338 151
+'&#x0338;' '' smileeq_uni0338 152
+'&#x0338;' '' frowneq_uni0338 153
+'&#x0338;' '' eqsmile_uni0338 154
+'&#x0338;' '' eqfrown_uni0338 155
+'&#xb;' '' doublesmileeq_uni0338 156
+'&#xb;' '' doublefrowneq_uni0338 157
+'&#x0338;' '' smileeqfrown_uni0338 158
+'&#x0338;' '' frowneqsmile_uni0338 159
+'&#x0338;' '' smilefrowneq_uni0338 160
+'&#x0338;' '' frownsmileeq_uni0338 161
+'&#x0338;' '' sqsmile_uni0338 162
+'&#x0338;' '' sqfrown_uni0338 163
+'&#xb;' '' sqdoublesmile_uni0338 164
+'&#xb;' '' sqdoublefrown_uni0338 165
+'&#x0338;' '' sqtriplesmile_uni0338 166
+'&#x0338;' '' sqtriplefrown_uni0338 167
+'&#x0338;' '' sqsmilefrown_uni0338 168
+'&#x0338;' '' sqfrownsmile_uni0338 169
+'&#x0338;' '' sqsmileeq_uni0338 170
+'&#x0338;' '' sqfrowneq_uni0338 171
+'&#x0338;' '' sqeqsmile_uni0338 172
+'&#x0338;' '' sqeqfrown_uni0338 173
+'&#xb;' '' sqdoublesmileeq_uni0338 174
+'&#xb;' '' sqdoublefrowneq_uni0338 175
+'&#x0338;' '' sqsmileeqfrown_uni0338 176
+'&#x0338;' '' sqfrowneqsmile_uni0338 177
+'&#x2256;&#x0338;' '' uni22560338 178
+'&#x2257;&#x0338;' '' uni22570338 179
+'&#x225C;&#x0338;' '' uni225C0338 180
+'&#x2259;&#x0338;' '' uni22590338 181
+'&#x2209;' '' notelement 182
+'&#x220C;' '' uni220C 183
+'&#x226E;' '' uni226E 184
+'&#x226F;' '' uni226F 185
+'&#x2270;' '' uni2270 186
+'&#x2271;' '' uni2271 187
+'&#x2270;' '' uni2270.alt1 188
+'&#x2271;' '' uni2271.alt1 189
+'&#x2266;&#x0338;' '' uni22660338 190
+'&#x2267;&#x0338;' '' uni22670338 191
+'&#x2278;' '' uni2278 192
+'&#x2279;' '' uni2279 193
+'&#x22DA;&#x0338;' '' uni22DA0338 194
+'&#x22DB;&#x0338;' '' uni22DB0338 195
+'&#x2A8B;&#x0338;' '' uni2A8B0338 196
+'&#x2A8C;&#x0338;' '' uni2A8C0338 197
+'&#x0338;' '' lesseqgtrslant_uni0338 198
+'&#x0338;' '' gtreqlessslant_uni0338 199
+'&#x226A;&#x0338;' '' uni226A0338 200
+'&#x226B;&#x0338;' '' uni226B0338 201
+'&#x22D8;&#x0338;' '' uni22D80338 202
+'&#x22D9;&#x0338;' '' uni22D90338 203
+'&#x22EA;' '' uni22EA 204
+'&#x22EB;' '' uni22EB 205
+'&#x22EC;' '' uni22EC 206
+'&#x22ED;' '' uni22ED 207
+'&#x228F;&#x0338;' '' uni228F0338 208
+'&#x2290;&#x0338;' '' uni22900338 209
+'&#x22E2;' '' uni22E2 210
+'&#x22E3;' '' uni22E3 211
+'&#xb;' '' sqsubseteqq_uni0338 212
+'&#x0338;' '' sqsupseteqq_uni0338 213
+'&#xb;' '' Sqsubset_uni0338 214
+'&#x0338;' '' Sqsupset_uni0338 215
+'&#x2284;' '' notsubset 216
+'&#x2285;' '' uni2285 217
+'&#x2288;' '' uni2288 218
+'&#x2289;' '' uni2289 219
+'&#x2AC5;&#x0338;' '' uni2AC50338 220
+'&#x2AC6;&#x0338;' '' uni2AC60338 221
+'&#x22D0;&#x0338;' '' uni22D00338 222
+'&#x22D1;&#x0338;' '' uni22D10338 223
+'&#x2280;' '' uni2280 224
+'&#x2281;' '' uni2281 225
+'&#x2AAF;&#x0338;' '' uni2AAF0338 226
+'&#x2AB0;&#x0338;' '' uni2AB00338 227
+'&#x22E0;' '' uni22E0 228
+'&#x22E1;' '' uni22E1 229
+'&#x227E;&#x0338;' '' uni227E0338 230
+'&#x227F;&#x0338;' '' uni227F0338 231
+'&#x2AB7;&#x0338;' '' uni2AB70338 232
+'&#x2AB8;&#x0338;' '' uni2AB80338 233
+'&#x22D6;&#x0338;' '' uni22D60338 234
+'&#x22D7;&#x0338;' '' uni22D70338 235
+'&#x0338;' '' leqdot_uni0338 236
+'&#x0338;' '' geqdot_uni0338 237
+'&#x2A7F;&#x0338;' '' uni2A7F0338 238
+'&#x2A80;&#x0338;' '' uni2A800338 239
+'&#x2268;' '' uni2268 240
+'&#x2269;' '' uni2269 241
+'' '' lessneqqgtr 242
+'' '' gtrneqqless 243
+'&#x22E4;' '' uni22E4 244
+'&#x22E5;' '' uni22E5 245
+'&#xb;' '' sqsubsetneqq 246
+'' '' sqsupsetneqq 247
+'&#x228A;' '' uni228A 248
+'&#x228B;' '' uni228B 249
+'&#x2ACB;' '' uni2ACB 250
+'&#x2ACC;' '' uni2ACC 251
+'&#x22E8;' '' uni22E8 252
+'&#x22E9;' '' uni22E9 253
+'&#x2AB9;' '' uni2AB9 254
+'&#x2ABA;' '' uni2ABA 255
+MnSymbolD-Bold10 0 255
+htfcss:  MnSymbolD-Bold10  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD-Bold10}{unicode/MnSymbol/MnSymbolD-Bold10}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD-Bold12.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD-Bold12\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD-Bold12  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD-Bold12}{alias/MnSymbol/MnSymbolD-Bold12}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD-Bold5.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD-Bold5\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD-Bold5  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD-Bold5}{alias/MnSymbol/MnSymbolD-Bold5}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD-Bold6.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD-Bold6\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD-Bold6  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD-Bold6}{alias/MnSymbol/MnSymbolD-Bold6}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD-Bold7.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD-Bold7\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD-Bold7  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD-Bold7}{alias/MnSymbol/MnSymbolD-Bold7}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD-Bold8.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD-Bold8\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD-Bold8  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD-Bold8}{alias/MnSymbol/MnSymbolD-Bold8}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD-Bold9.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD-Bold9\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD-Bold9  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD-Bold9}{alias/MnSymbol/MnSymbolD-Bold9}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD10.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD10\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD10  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD10}{alias/MnSymbol/MnSymbolD10}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD12.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD12\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD12  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD12}{alias/MnSymbol/MnSymbolD12}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD5.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD5\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD5  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD5}{alias/MnSymbol/MnSymbolD5}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD6.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD6\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD6  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD6}{alias/MnSymbol/MnSymbolD6}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD7.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD7\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD7  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD7}{alias/MnSymbol/MnSymbolD7}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD8.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD8\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD8  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD8}{alias/MnSymbol/MnSymbolD8}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolD9.htf hash: 460d3b435b9183bc8a7eac575df3b13f
+\<MnSymbolD9\><<<
+.MnSymbolD-Bold10
+htfcss:  MnSymbolD9  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolD9}{alias/MnSymbol/MnSymbolD9}{}
+Missing glyph	backapprox
+Missing glyph	backtriplesim
+Missing glyph	backeqsim
+Missing glyph	backapproxeq
+Missing glyph	eqbump
+Missing glyph	triplesmile
+Missing glyph	triplefrown
+Missing glyph	frownsmile
+Missing glyph	smileeq
+Missing glyph	frowneq
+Missing glyph	eqsmile
+Missing glyph	eqfrown
+Missing glyph	smileeqfrown
+Missing glyph	frowneqsmile
+Missing glyph	smilefrowneq
+Missing glyph	frownsmileeq
+Missing glyph	sqsmile
+Missing glyph	sqfrown
+Missing glyph	sqtriplesmile
+Missing glyph	sqtriplefrown
+Missing glyph	sqsmilefrown
+Missing glyph	sqfrownsmile
+Missing glyph	sqsmileeq
+Missing glyph	sqfrowneq
+Missing glyph	sqeqsmile
+Missing glyph	sqeqfrown
+Missing glyph	sqsmileeqfrown
+Missing glyph	sqfrowneqsmile
+Missing glyph	lesseqgtrslant
+Missing glyph	gtreqlessslant
+Missing glyph	sqsupseteqq
+Missing glyph	Sqsupset
+Missing glyph	leqdot
+Missing glyph	geqdot
+Missing glyph	lessneqqgtr
+Missing glyph	gtrneqqless
+Missing glyph	sqsupsetneqq
+% writing MnSymbolE-Bold10.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE-Bold10\><<<
+MnSymbolE-Bold10 0 218
+'[' '' bracketleft 0           % generated from MnSymbolE-Bold10, 2022-07-07-15:12
+'[' '' bracketleft.alt1 1      % Copyright 2022 TeX Users Group
+'[' '' bracketleft.alt2 2      %
+'[' '' bracketleft.alt3 3      % This work may be distributed and/or modified under the
+'[' '' bracketleft.alt4 4      % conditions of the LaTeX Project Public License, either
+']' '' bracketright 5          % version 1.3c of this license or (at your option) any
+']' '' bracketright.alt 6      % later version. The latest version of this license is in
+']' '' bracketright.alt2 7     %   http://www.latex-project.org/lppl.txt
+']' '' bracketright.alt3 8     % and version 1.3c or later is part of all distributions
+']' '' bracketright.alt4 9     % of LaTeX version 2005/12/01 or later.
+'&#x230A;' '' uni230A 10       %
+'&#x230A;' '' uni230A.alt1 11  % This work has the LPPL maintenance status "maintained".
+'&#x230A;' '' uni230A.alt2 12  %
+'&#x230A;' '' uni230A.alt3 13  % The Current Maintainer of this work
+'&#x230A;' '' uni230A.alt4 14  % is the TeX4ht Project <http://tug.org/tex4ht>.
+'&#x230B;' '' uni230B 15       %
+'&#x230B;' '' uni230B.alt1 16  % If you modify this program, changing the
+'&#x230B;' '' uni230B.alt2 17  % version identification would be appreciated.
+'&#x230B;' '' uni230B.alt3 18
+'&#x230B;' '' uni230B.alt4 19
+'&#x2308;' '' uni2308 20
+'&#x2308;' '' uni2308.alt1 21
+'&#x2308;' '' uni2308.alt2 22
+'&#x2308;' '' uni2308.alt3 23
+'&#x2308;' '' uni2308.alt4 24
+'&#x2309;' '' uni2309 25
+'&#x2309;' '' uni2309.alt1 26
+'&#x2309;' '' uni2309.alt2 27
+'&#x2309;' '' uni2309.alt3 28
+'&#x2309;' '' uni2309.alt4 29
+'&#x231C;' '' uni231C.alt1 30
+'&#x231C;' '' uni231C.alt2 31
+'&#x231C;' '' uni231C.alt3 32
+'&#x231C;' '' uni231C.alt4 33
+'&#x231C;' '' uni231C.alt5 34
+'&#x231D;' '' uni231D.alt1 35
+'&#x231D;' '' uni231D.alt2 36
+'&#x231D;' '' uni231D.alt3 37
+'&#x231D;' '' uni231D.alt4 38
+'&#x231D;' '' uni231D.alt5 39
+'&#x231E;' '' uni231E.alt1 40
+'&#x231E;' '' uni231E.alt2 41
+'&#x231E;' '' uni231E.alt3 42
+'&#x231E;' '' uni231E.alt4 43
+'&#x231E;' '' uni231E.alt5 44
+'&#x231F;' '' uni231F.alt1 45
+'&#x231F;' '' uni231F.alt2 46
+'&#x231F;' '' uni231F.alt3 47
+'&#x231F;' '' uni231F.alt4 48
+'&#x231F;' '' uni231F.alt5 49
+'' '' ullcorner 50
+'' '' ullcorner.alt1 51
+'' '' ullcorner.alt2 52
+'' '' ullcorner.alt3 53
+'' '' ullcorner.alt4 54
+'' '' ulrcorner 55
+'' '' ulrcorner.alt1 56
+'' '' ulrcorner.alt2 57
+'' '' ulrcorner.alt3 58
+'' '' ulrcorner.alt4 59
+'&#x23A1;' '' uni23A1 60
+'&#x23A4;' '' uni23A4 61
+'&#x23A3;' '' uni23A3 62
+'&#x23A6;' '' uni23A6 63
+'&#x23A2;' '' uni23A2 64
+'&#x23A5;' '' uni23A5 65
+'&#x27E6;' '' uni27E6 66
+'&#x27E6;' '' uni27E6.alt1 67
+'&#x27E6;' '' uni27E6.alt2 68
+'&#x27E6;' '' uni27E6.alt3 69
+'&#x27E6;' '' uni27E6.alt4 70
+'&#x27E7;' '' uni27E7 71
+'&#x27E7;' '' uni27E7.alt1 72
+'&#x27E7;' '' uni27E7.alt2 73
+'&#x27E7;' '' uni27E7.alt3 74
+'&#x27E7;' '' uni27E7.alt4 75
+'' '' lsemtop 76
+'' '' rsemtop 77
+'' '' lsembot 78
+'' '' rsembot 79
+'' '' lsemmod 80
+'' '' rsemmod 81
+'' '' arrowvert 82
+'|' '' divides.alt0 83
+'&#x2223;' '' divides.alt1 84
+'&#x2223;' '' divides.alt2 85
+'&#x2223;' '' divides.alt3 86
+'&#x2223;' '' divides.alt4 87
+'' '' Arrowvert 88
+'&#x2225;' '' parallel.alt1 89
+'&#x2225;' '' parallel.alt2 90
+'&#x2225;' '' parallel.alt3 91
+'&#x2225;' '' parallel.alt4 92
+'&#x2225;' '' parallel.alt5 93
+'' '' wavy 94
+'' '' Wavy 95
+'&#x27E8;' '' uni27E8 96
+'&#x27E8;' '' uni27E8.alt 97
+'&#x27E8;' '' uni27E8.alt2 98
+'&#x27E8;' '' uni27E8.alt3 99
+'&#x27E8;' '' uni27E8.alt4 100
+'&#x27E9;' '' uni27E9 101
+'&#x27E9;' '' uni27E9.alt1 102
+'&#x27E9;' '' uni27E9.alt2 103
+'&#x27E9;' '' uni27E9.alt3 104
+'&#x27E9;' '' uni27E9.alt4 105
+'' '' anglebar.left 106
+'' '' anglebar.left.alt1 107
+'' '' anglebar.left.alt2 108
+'' '' anglebar.left.alt3 109
+'' '' anglebar.left.alt4 110
+'' '' anglebar.right 111
+'' '' anglebar.right.alt1 112
+'' '' anglebar.right.alt2 113
+'' '' anglebar.right.alt3 114
+'' '' anglebar.right.alt4 115
+'&#x27EA;' '' uni27EA 116
+'&#x27EA;' '' uni27EA.alt1 117
+'&#x27EA;' '' uni27EA.alt2 118
+'&#x27EA;' '' uni27EA.alt3 119
+'&#x27EA;' '' uni27EA.alt4 120
+'&#x27EB;' '' uni27EB 121
+'&#x27EB;' '' uni27EB.alt1 122
+'&#x27EB;' '' uni27EB.alt2 123
+'&#x27EB;' '' uni27EB.alt3 124
+'&#x27EB;' '' uni27EB.alt4 125
+'/' '' slash.left 126
+'/' '' slash.left.alt1 127
+'/' '' slash.left.alt2 128
+'/' '' slash.left.alt3 129
+'/' '' slash.left.alt4 130
+'/' '' slash.right 131
+'/' '' slash.right.alt1 132
+'/' '' slash.right.alt2 133
+'/' '' slash.right.alt3 134
+'/' '' slash.right.alt4 135
+'(' '' parenleft 136
+'(' '' parenleft.alt1 137
+'(' '' parenleft.alt2 138
+'(' '' parenleft.alt3 139
+'(' '' parenleft.alt4 140
+')' '' parenright 141
+')' '' parenright.alt1 142
+')' '' parenright.alt2 143
+')' '' parenright.alt3 144
+')' '' parenright.alt4 145
+'&#x239B;' '' uni239B 146
+'&#x239E;' '' uni239E 147
+'&#x239D;' '' uni239D 148
+'&#x23A0;' '' uni23A0 149
+'&#x239C;' '' uni239C 150
+'&#x239F;' '' uni239F 151
+'{' '' braceleft 152
+'{' '' braceleft.alt1 153
+'{' '' braceleft.alt2 154
+'{' '' braceleft.alt3 155
+'{' '' braceleft.alt4 156
+'}' '' braceright 157
+'}' '' braceright.alt1 158
+'}' '' braceright.alt2 159
+'}' '' braceright.alt3 160
+'}' '' braceright.alt4 161
+'&#x23A7;' '' uni23A7 162
+'&#x23AB;' '' uni23AB 163
+'&#x23A9;' '' uni23A9 164
+'&#x23AD;' '' uni23AD 165
+'&#x23A8;' '' uni23A8 166
+'&#x23AC;' '' uni23AC 167
+'&#x23AA;' '' uni23AA 168
+'&#xc;' '' ucurly 169
+'&#xc;' '' ucurly.alt1 170
+'&#xc;' '' ucurly.alt2 171
+'&#xc;' '' ucurly.alt3 172
+'&#xc;' '' ucurly.alt4 173
+'' '' dcurly 174
+'' '' dcurly.alt1 175
+'' '' dcurly.alt2 176
+'' '' dcurly.alt3 177
+'' '' dcurly.alt4 178
+'&#xc;' '' ucurlyleft 179
+'' '' dcurlyleft 180
+'&#xc;' '' ucurlyright 181
+'' '' dcurlyright 182
+'&#xc;' '' ucurlymid 183
+'' '' dcurlymid 184
+'&#xdc;' '' udcurlymod 185
+'&#x221A;' '' radical 186
+'&#x221A;' '' radical.alt1 187
+'&#x221A;' '' radical.alt2 188
+'&#x221A;' '' radical.alt3 189
+'&#x221A;' '' radical.alt4 190
+'' '' roottop 191
+'' '' rootbot 192
+'' '' rootmod 193
+'&#x0302;' '' circumflexcmb 194
+'&#x0302;' '' circumflexcmb.alt1 195
+'&#x0302;' '' circumflexcmb.alt2 196
+'&#x0302;' '' circumflexcmb.alt3 197
+'&#x0302;' '' circumflexcmb.alt4 198
+'&#x0303;' '' tildecomb 199
+'&#x0303;' '' tildecomb.alt1 200
+'&#x0303;' '' tildecomb.alt2 201
+'&#x0303;' '' tildecomb.alt3 202
+'&#x0303;' '' tildecomb.alt4 203
+'' '' wideparen1 204
+'' '' wideparen2 205
+'' '' wideparen3 206
+'' '' wideparen4 207
+'' '' wideparen5 208
+'&#x20D7;' '' uni20D7 209
+'&#x0335;' '' uni0335 210
+'&#x0337;' '' uni0337 211
+'&#x0338;' '' uni0338 212
+'&#x2191;' '' uparrow 213
+'&#x2193;' '' downarrow 214
+'' '' arrowmod 215
+'' '' uparrowdbl 216
+'' '' downarrowdbl 217
+'' '' arrowmoddbl 218
+MnSymbolE-Bold10 0 218
+htfcss:  MnSymbolE-Bold10  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE-Bold10}{unicode/MnSymbol/MnSymbolE-Bold10}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE-Bold12.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE-Bold12\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE-Bold12  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE-Bold12}{alias/MnSymbol/MnSymbolE-Bold12}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE-Bold5.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE-Bold5\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE-Bold5  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE-Bold5}{alias/MnSymbol/MnSymbolE-Bold5}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE-Bold6.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE-Bold6\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE-Bold6  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE-Bold6}{alias/MnSymbol/MnSymbolE-Bold6}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE-Bold7.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE-Bold7\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE-Bold7  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE-Bold7}{alias/MnSymbol/MnSymbolE-Bold7}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE-Bold8.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE-Bold8\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE-Bold8  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE-Bold8}{alias/MnSymbol/MnSymbolE-Bold8}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE-Bold9.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE-Bold9\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE-Bold9  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE-Bold9}{alias/MnSymbol/MnSymbolE-Bold9}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE10.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE10\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE10  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE10}{alias/MnSymbol/MnSymbolE10}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE12.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE12\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE12  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE12}{alias/MnSymbol/MnSymbolE12}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE5.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE5\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE5  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE5}{alias/MnSymbol/MnSymbolE5}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE6.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE6\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE6  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE6}{alias/MnSymbol/MnSymbolE6}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE7.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE7\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE7  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE7}{alias/MnSymbol/MnSymbolE7}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE8.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE8\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE8  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE8}{alias/MnSymbol/MnSymbolE8}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolE9.htf hash: a021dc78d734329b544a56f78f7d51a6
+\<MnSymbolE9\><<<
+.MnSymbolE-Bold10
+htfcss:  MnSymbolE9  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolE9}{alias/MnSymbol/MnSymbolE9}{}
+Missing glyph	ullcorner
+Missing glyph	ullcorner.alt1
+Missing glyph	ullcorner.alt2
+Missing glyph	ullcorner.alt3
+Missing glyph	ullcorner.alt4
+Missing glyph	ulrcorner
+Missing glyph	ulrcorner.alt1
+Missing glyph	ulrcorner.alt2
+Missing glyph	ulrcorner.alt3
+Missing glyph	ulrcorner.alt4
+Missing glyph	lsemtop
+Missing glyph	rsemtop
+Missing glyph	lsembot
+Missing glyph	rsembot
+Missing glyph	lsemmod
+Missing glyph	rsemmod
+Missing glyph	arrowvert
+Missing glyph	Arrowvert
+Missing glyph	wavy
+Missing glyph	Wavy
+Missing glyph	anglebar.left
+Missing glyph	anglebar.left.alt1
+Missing glyph	anglebar.left.alt2
+Missing glyph	anglebar.left.alt3
+Missing glyph	anglebar.left.alt4
+Missing glyph	anglebar.right
+Missing glyph	anglebar.right.alt1
+Missing glyph	anglebar.right.alt2
+Missing glyph	anglebar.right.alt3
+Missing glyph	anglebar.right.alt4
+Missing glyph	dcurly
+Missing glyph	dcurly.alt1
+Missing glyph	dcurly.alt2
+Missing glyph	dcurly.alt3
+Missing glyph	dcurly.alt4
+Missing glyph	dcurlyleft
+Missing glyph	dcurlyright
+Missing glyph	dcurlymid
+Missing glyph	roottop
+Missing glyph	rootbot
+Missing glyph	rootmod
+Missing glyph	wideparen1
+Missing glyph	wideparen2
+Missing glyph	wideparen3
+Missing glyph	wideparen4
+Missing glyph	wideparen5
+Missing glyph	arrowmod
+Missing glyph	uparrowdbl
+Missing glyph	downarrowdbl
+Missing glyph	arrowmoddbl
+% writing MnSymbolF-Bold10.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF-Bold10\><<<
+MnSymbolF-Bold10 0 135
+'+' '' plus.big 0                   % generated from MnSymbolF-Bold10, 2022-07-07-15:12
+'+' '' plus.big.disp 1              % Copyright 2022 TeX Users Group
+'&#x2A09;' '' uni2A09 2             %
+'&#x2A09;' '' uni2A09.disp 3        % This work may be distributed and/or modified under the
+'&#x22C0;' '' uni22C0 4             % conditions of the LaTeX Project Public License, either
+'&#x22C0;' '' uni22C0.disp 5        % version 1.3c of this license or (at your option) any
+'&#x22C1;' '' uni22C1 6             % later version. The latest version of this license is in
+'&#x22C1;' '' uni22C1.disp 7        %   http://www.latex-project.org/lppl.txt
+'&#x27D1;' '' wedgedot.big 8        % and version 1.3c or later is part of all distributions
+'&#x27D1;' '' wedgedot.big.disp 9   % of LaTeX version 2005/12/01 or later.
+'&#x27C7;' '' veedot.big 10         %
+'&#x27C7;' '' veedot.big.disp 11    % This work has the LPPL maintenance status "maintained".
+'&#x2A55;' '' uni2A55.big 12        %
+'&#x2A55;' '' uni2A55.big.disp 13   % The Current Maintainer of this work
+'&#x2A54;' '' uni2A54.big 14        % is the TeX4ht Project <http://tug.org/tex4ht>.
+'&#x2A54;' '' uni2A54.big.disp 15   %
+'&#x22CF;' '' curlyand.big 16       % If you modify this program, changing the
+'&#x22CF;' '' curlyand.big.disp 17  % version identification would be appreciated.
+'&#x22CE;' '' curlyor.big 18
+'&#x22CE;' '' curlyor.big.disp 19
+'' '' curlywedgedot.big 20
+'' '' curlywedgedot.big.disp 21
+'' '' curlyveedot.big 22
+'' '' curlyveedot.big.disp 23
+'&#xb;' '' doublecurlywedge.big 24
+'&#xb;' '' doublecurlywedge.big.disp 25
+'&#xb;' '' doublecurlyvee.big 26
+'&#xb;' '' doublecurlyvee.big.disp 27
+'&#x22C2;' '' uni22C2 28
+'&#x22C2;' '' uni22C2.disp 29
+'&#x22C3;' '' uni22C3 30
+'&#x22C3;' '' uni22C3.disp 31
+'&#x2A40;' '' uni2A40.big 32
+'&#x2A40;' '' uni2A40.big.disp 33
+'&#x228D;' '' uni228D.big 34
+'&#x228D;' '' uni228D.big.disp 35
+'' '' capplus.big 36
+'' '' capplus.big.disp 37
+'&#x228E;' '' uni228E.big 38
+'&#x228E;' '' uni228E.big.disp 39
+'&#x2293;' '' uni2293.big 40
+'&#x2293;' '' uni2293.big.disp 41
+'&#x2294;' '' uni2294.big 42
+'&#x2294;' '' uni2294.big.disp 43
+'' '' sqcapdot.big 44
+'' '' sqcapdot.big.disp 45
+'' '' sqcupdot.big 46
+'' '' sqcupdot.big.disp 47
+'' '' sqcapplus.big 48
+'' '' sqcapplus.big.disp 49
+'' '' sqcupplus.big 50
+'' '' sqcupplus.big.disp 51
+'&#x25EF;' '' uni25EF.big 52
+'&#x25EF;' '' uni25EF.big.disp 53
+'&#x2296;' '' uni2296.big 54
+'&#x2296;' '' uni2296.big.disp 55
+'&#x29B6;' '' uni29B6.big 56
+'&#x29B6;' '' uni29B6.big.disp 57
+'&#x2298;' '' uni2298.big 58
+'&#x2298;' '' uni2298.big.disp 59
+'&#x29B8;' '' uni29B8.big 60
+'&#x29B8;' '' uni29B8.big.disp 61
+'&#x2295;' '' uni2295.big 62
+'&#x2295;' '' uni2295.big.disp 63
+'&#x2297;' '' uni2297.big 64
+'&#x2297;' '' uni2297.big.disp 65
+'&#x2299;' '' uni2299.big 66
+'&#x2299;' '' uni2299.big.disp 67
+'&#x229A;' '' uni229A.big 68
+'&#x229A;' '' uni229A.big.disp 69
+'' '' otriangle.big 70
+'' '' otriangle.big.disp 71
+'&#x229B;' '' uni229B.big 72
+'&#x229B;' '' uni229B.big.disp 73
+'&#x235F;' '' uni235F.big 74
+'&#x235F;' '' uni235F.big.disp 75
+'&#x220F;' '' product 76
+'&#xc;' '' product.disp 77
+'&#x2210;' '' uni2210 78
+'&#x2210;' '' uni2210.disp 79
+'&#x2211;' '' summation 80
+'&#x2211;' '' summation.disp 81
+'&#x222B;' '' integral 82
+'&#x222B;' '' integral.disp 83
+'&#x222C;' '' uni222C 84
+'&#x222C;' '' uni222C.disp 85
+'&#x222D;' '' uni222D 86
+'&#x222D;' '' uni222D.disp 87
+'&#x2A0C;' '' uni2A0C 88
+'&#x2A0C;' '' uni2A0C.disp 89
+'&#x222B;&#x2026;&#x222B;' '' uni222B2026222B 90
+'&#x222B;&#x2026;&#x222B;' '' uni222B2026222B.disp 91
+'&#x2A19;' '' uni2A19 92
+'&#x2A19;' '' uni2A19.disp 93
+'&#x2A1A;' '' uni2A1A 94
+'&#x2A1A;' '' uni2A1A.disp 95
+'&#x2A0F;' '' uni2A0F 96
+'&#x2A0F;' '' uni2A0F.disp 97
+'&#x222E;' '' uni222E 98
+'&#x222E;' '' uni222E.disp 99
+'&#x222F;' '' uni222F 100
+'&#x222F;' '' uni222F.disp 101
+'&#x2233;' '' uni2233 102
+'&#x2233;' '' uni2233.disp 103
+'&#x2232;' '' uni2232.alt1 104
+'&#x2232;' '' uni2232.disp.alt1 105
+'&#x2233;' '' uni2233.alt1 106
+'&#x2233;' '' uni2233.disp.alt1 107
+'&#x2232;' '' uni2232 108
+'&#x2232;' '' uni2232.disp 109
+'&#x2A0B;' '' uni2A0B 110
+'&#x2A0B;' '' uni2A0B.disp 111
+'&#x222B;&#x2026;&#x222B;' '' uni222B2026222B.part 112
+'&#x222B;&#x2026;&#x222B;' '' uni222B2026222B.part.disp 113
+'&#x2A19;' '' uni2A19.part 114
+'&#x2A19;' '' uni2A19.part.disp 115
+'&#x2A1A;' '' uni2A1A.part 116
+'&#x2A1A;' '' uni2A1A.part.disp 117
+'&#x2A0F;' '' uni2A0F.part 118
+'&#x2A0F;' '' uni2A0F.part.disp 119
+'&#x222E;' '' uni222E.part 120
+'&#x222E;' '' uni222E.part.disp 121
+'&#x222F;' '' uni222F.part 122
+'&#x222F;' '' uni222F.part.disp 123
+'&#x2233;' '' uni2233.part 124
+'&#x2233;' '' uni2233.part.disp 125
+'&#x2232;' '' uni2232.part.alt1 126
+'&#x2232;' '' uni2232.part.disp.alt1 127
+'&#x2233;' '' uni2233.part.alt1 128
+'&#x2233;' '' uni2233.part.disp.alt1 129
+'&#x2232;' '' uni2232.part 130
+'&#x2232;' '' uni2232.part.disp 131
+'&#x2A0B;' '' uni2A0B.part 132
+'&#x2A0B;' '' uni2A0B.part.disp 133
+'&#x2201;' '' uni2201 134
+'&#x2201;' '' uni2201.disp 135
+MnSymbolF-Bold10 0 135
+htfcss:  MnSymbolF-Bold10  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF-Bold10}{unicode/MnSymbol/MnSymbolF-Bold10}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF-Bold12.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF-Bold12\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF-Bold12  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF-Bold12}{alias/MnSymbol/MnSymbolF-Bold12}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF-Bold5.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF-Bold5\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF-Bold5  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF-Bold5}{alias/MnSymbol/MnSymbolF-Bold5}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF-Bold6.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF-Bold6\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF-Bold6  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF-Bold6}{alias/MnSymbol/MnSymbolF-Bold6}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF-Bold7.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF-Bold7\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF-Bold7  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF-Bold7}{alias/MnSymbol/MnSymbolF-Bold7}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF-Bold8.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF-Bold8\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF-Bold8  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF-Bold8}{alias/MnSymbol/MnSymbolF-Bold8}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF-Bold9.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF-Bold9\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF-Bold9  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF-Bold9}{alias/MnSymbol/MnSymbolF-Bold9}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF10.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF10\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF10  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF10}{alias/MnSymbol/MnSymbolF10}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF12.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF12\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF12  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF12}{alias/MnSymbol/MnSymbolF12}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF5.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF5\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF5  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF5}{alias/MnSymbol/MnSymbolF5}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF6.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF6\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF6  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF6}{alias/MnSymbol/MnSymbolF6}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF7.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF7\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF7  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF7}{alias/MnSymbol/MnSymbolF7}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF8.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF8\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF8  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF8}{alias/MnSymbol/MnSymbolF8}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolF9.htf hash: c80f2adc69314bd1a375928d4a1c2cbe
+\<MnSymbolF9\><<<
+.MnSymbolF-Bold10
+htfcss:  MnSymbolF9  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolF9}{alias/MnSymbol/MnSymbolF9}{}
+Missing glyph	curlywedgedot.big
+Missing glyph	curlywedgedot.big.disp
+Missing glyph	curlyveedot.big
+Missing glyph	curlyveedot.big.disp
+Missing glyph	capplus.big
+Missing glyph	capplus.big.disp
+Missing glyph	sqcapdot.big
+Missing glyph	sqcapdot.big.disp
+Missing glyph	sqcupdot.big
+Missing glyph	sqcupdot.big.disp
+Missing glyph	sqcapplus.big
+Missing glyph	sqcapplus.big.disp
+Missing glyph	sqcupplus.big
+Missing glyph	sqcupplus.big.disp
+Missing glyph	otriangle.big
+Missing glyph	otriangle.big.disp
+% writing MnSymbolS-Bold10.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS-Bold10\><<<
+MnSymbolS-Bold10 0 90
+'' '' .notdef 0  % generated from MnSymbolS-Bold10, 2022-07-07-15:12
+'' ''            % Copyright 2022 TeX Users Group
+'' ''            %
+'' ''            % This work may be distributed and/or modified under the
+'' ''            % conditions of the LaTeX Project Public License, either
+'' ''            % version 1.3c of this license or (at your option) any
+'' ''            % later version. The latest version of this license is in
+'' ''            %   http://www.latex-project.org/lppl.txt
+'' ''            % and version 1.3c or later is part of all distributions
+'' ''            % of LaTeX version 2005/12/01 or later.
+'' ''            %
+'' ''            % This work has the LPPL maintenance status "maintained".
+'' ''            %
+'' ''            % The Current Maintainer of this work
+'' ''            % is the TeX4ht Project <http://tug.org/tex4ht>.
+'' ''            %
+'' ''            % If you modify this program, changing the
+'' ''            % version identification would be appreciated.
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+MnSymbolS-Bold10 0 90
+htfcss:  MnSymbolS-Bold10  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS-Bold10}{unicode/MnSymbol/MnSymbolS-Bold10}{}
+% writing MnSymbolS-Bold12.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS-Bold12\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS-Bold12  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS-Bold12}{alias/MnSymbol/MnSymbolS-Bold12}{}
+% writing MnSymbolS-Bold5.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS-Bold5\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS-Bold5  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS-Bold5}{alias/MnSymbol/MnSymbolS-Bold5}{}
+% writing MnSymbolS-Bold6.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS-Bold6\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS-Bold6  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS-Bold6}{alias/MnSymbol/MnSymbolS-Bold6}{}
+% writing MnSymbolS-Bold7.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS-Bold7\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS-Bold7  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS-Bold7}{alias/MnSymbol/MnSymbolS-Bold7}{}
+% writing MnSymbolS-Bold8.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS-Bold8\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS-Bold8  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS-Bold8}{alias/MnSymbol/MnSymbolS-Bold8}{}
+% writing MnSymbolS-Bold9.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS-Bold9\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS-Bold9  font-weight: bold; font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS-Bold9}{alias/MnSymbol/MnSymbolS-Bold9}{}
+% writing MnSymbolS10.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS10\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS10  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS10}{alias/MnSymbol/MnSymbolS10}{}
+% writing MnSymbolS12.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS12\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS12  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS12}{alias/MnSymbol/MnSymbolS12}{}
+% writing MnSymbolS5.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS5\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS5  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS5}{alias/MnSymbol/MnSymbolS5}{}
+% writing MnSymbolS6.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS6\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS6  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS6}{alias/MnSymbol/MnSymbolS6}{}
+% writing MnSymbolS7.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS7\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS7  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS7}{alias/MnSymbol/MnSymbolS7}{}
+% writing MnSymbolS8.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS8\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS8  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS8}{alias/MnSymbol/MnSymbolS8}{}
+% writing MnSymbolS9.htf hash: 437bba8e0bf58337674f4539e75186ac
+\<MnSymbolS9\><<<
+.MnSymbolS-Bold10
+htfcss:  MnSymbolS9  font-family: 'MnSymbol', serif;
+
+>>>
+\AddFont{MnSymbolS9}{alias/MnSymbol/MnSymbolS9}{}
+\bye
+

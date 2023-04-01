@@ -1,0 +1,342 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2019 by Lanchares Sanchez, Ernesto
+%
+% This file may be distributed and/or modified under the
+% conditions of the GNU General Public License as published by
+% the Free Software Foundation; either version 3, or (at your option)
+% any later version.
+%
+% This program is distributed in the hope that it will be useful,
+% but WITHOUT ANY WARRANTY; without even the implied warranty of
+% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+% GNU General Public License for more details.
+%
+% You should have received a copy of the GNU General Public License
+% along with this program.  If not, see <http://www.gnu.org/licenses/>.
+%
+% \fi
+%
+% \iffalse
+%<package>\NeedsTeXFormat{LaTeX2e}[2005/12/01]
+%<package>\ProvidesPackage{clojure-pamphlet}[2019/07/08 v1.o .dtx clojure pamphlet file]
+%
+%<*driver>
+\documentclass{ltxdoc}
+\usepackage{clojure-pamphlet}
+\usepackage{hyperref}
+\usepackage{csquotes}
+\EnableCrossrefs
+\CodelineIndex
+\RecordChanges
+\begin{document}
+    \DocInput{clojure-pamphlet.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \CheckSum{175}
+%
+% \CharacterTable
+%   {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+% \changes{v1.0}{2019/07/14}{Initial version}
+% \changes{v1.1}{2019/07/20}{Added support for indented code}
+% \changes{v1.2}{2019/07/25}{Moved tangler over to Perl}
+% \changes{v1.3}{2019/09/08}{Fixed small bug in tangler}
+%
+% \GetFileInfo{clojure-pamphlet.sty}
+% 
+% \DoNotIndex{\bgroup,\egoup,\ ,\advance,\begin,\bf,\big,\closeout,\csname}
+% \DoNotIndex{\def,\do,\edef,\else,\end,\endcsname,\endinput,\expandafter}
+% \DoNotIndex{\fi,\global,\hbox,\hskip,\hyperlink,\hypertarget,\if,\ifcsname}
+% \DoNotIndex{\ifdefined,\iffalse,\iftrue,\immediate,\it,\jobname,\label,\let}
+% \DoNotIndex{\lstnewenvironment,\lstset,\nameref,\newcommand,\newenvironment}
+% \DoNotIndex{\newline,\newwrite,\next,\noindent,\openout,\relax,\string,\the}
+% \DoNotIndex{\unexpanded,\write,\xdef,\\,\{,\},\@for,\@input,\@empty}
+% \DoNotIndex{\@currentlabelname}
+%
+% \title{The \textsf{clojure-pamphlet} package\thanks{This document
+%   corresponds to \textsf{clojure-pamphlet}~\fileversion,
+%   dated~\filedate.}}
+% \author{Ernesto Lanchares Sanchez\\ \texttt{e.lancha98@gmail.com}}
+%
+% \maketitle
+%
+% \begin{abstract}
+%   A package to make beautiful literate programming documents. The system is
+%   based on clojure's pamphelt files.
+% \end{abstract}
+%
+% \section{Introduction}
+%
+% \href{http://www.literateprogramming.com/}{Literate Programming} is a
+% programming paradigm that changes the goal of the program:
+% \begin{displayquote}
+%   Let us change our traditional attitude to the construction of programs:
+%   Instead of imagining that our main task is to instruct a computer what to do,
+%   let us concentrate rather on explaining to human beings what we want a
+%   computer to do.
+% \end{displayquote}
+% 
+% Since it's creation, many systems have been created to accomplish this goal,
+% systems like \texttt{WEB}, \texttt{CWEB}, \texttt{noweb}, \ldots This systems
+% all share the same structure: There is one source file and two programs
+% needed, one that extracts the code to be compiled and other that extracts the
+% literature (usually a \TeX/\LaTeX file) to be compiled.
+%
+% This is the reason that we preffer clojure's system where there is one \LaTeX
+% source file that can be compiled and one program to extract the code to be
+% compiled. Although the clojure system is fine as it is, we think the resulting
+% documentation can be a bit prettier hence this package. The difference in
+% using this package or the clojure system as a developer is non-existent,
+% however we think the documentation with our system is a bit more readable. It
+% also automaticly adds hyperlinks to the output in order to make it easier to
+% navigate when viewing in a computer.
+%
+% \section{Usage}
+%
+% The \texttt{clojure-pamphlet} system is designed to be as simple as possible,
+% so this package only provides one environment and one command. The system is
+% based arround code chunks. This chunks are the part of the documents that
+% contain code and can be extracted. The chunks also contain a name so that they
+% can be referenced in the document and in other chunk blocks. The name is also
+% needed for the tangler to extract the chunk.
+%
+% \subsection{\texttt{chunk} environment}
+% \DescribeEnv{chunk}
+% The chunk environment is used to define code blocks. This code blocks have a
+% name and are what the tangler will actually output. It is based on the
+% \href{https://www.ctan.org/pkg/listings}{listings} package, so all style
+% formats that yo can apply to \texttt{lstlisting} environments, you can also
+% apply to chunk environments by simply using the command \texttt{lstset}.
+%
+% Here's an example of a code usage and it's output
+% \begin{verbatim}
+% \begin{chunk}{main-routine}
+% int main(int argc, char* argv[]) {
+%   printf("Hello World.\n");
+% }
+% \end{chunk}
+% \end{verbatim}
+%
+% \iffalse
+%<*test>
+% \fi
+\begin{chunk}{main-routine}
+ int main(int argc, char* argv[]) {
+   printf("Hello World.\n");
+ }
+\end{chunk}
+% \iffalse
+%</test>
+% \fi
+%
+% \DescribeMacro{\getchunk}
+% Also, inside the \texttt{chunk} environment, you can use the \verb|\getchunk|
+% command, which includes the referenced chunk at that exact same spot. The \verb|\getchunk|
+% command requires to be in it's own separate line. Let's
+% illustrate this with an example:
+%
+% \begin{verbatim}
+% \begin{chunk}{onechunk}
+% CHUNK ONE
+% \end{chunk}
+% \begin{chunk}{otherchunk}
+% PREVIOUS
+% \getchunk{onechunk}
+% POST
+% \end{chunk}
+% \end{verbatim}
+%
+% \iffalse
+%<*test>
+% \fi
+\begin{chunk}{print}
+printf("Hello World");
+\end{chunk}
+\begin{chunk}{main}
+int main(int argc, char* argv[]) {
+    \getchunk{print}
+}
+\end{chunk}
+% \iffalse
+%</test>
+% \fi
+%
+% \subsection{The tangler}
+% The tangler is designed to be as simple to use as possible. You just need
+% to provide it with a \LaTeX \texttt{clojure-pamphlet} file and a code chunk to
+% extract. Then the tangler will output the code to be compiled in the standard
+% output. For example in order to extract the main chunk of code we will need to
+% run
+% \begin{verbatim}
+% pamphletangler [filename.tex] main
+% \end{verbatim}
+%
+% And the output will be
+% \begin{verbatim}
+% int main(int argc, char* argv[]) {
+%       printf("Hello World");
+% }
+% \end{verbatim}
+%
+% \StopEventually{}
+%
+% \section{Implementation}
+%
+% We need to import the listings package to create the code blocks
+% and the hyperref package to create the clickable links
+%    \begin{macrocode}
+\RequirePackage{listings}
+\RequirePackage{hyperref}
+%    \end{macrocode}
+%
+% We need to import the referecences, a.k.a. the ``used by'' text
+% below the code
+%    \begin{macrocode}
+\@input{\jobname.pam}
+%    \end{macrocode}
+%
+% We initialize a counter, needed to define a unique csname in each
+% \verb|getchunk| call.
+%    \begin{macrocode}
+\newcount\pam@references
+%    \end{macrocode}
+%
+% We define commands to write and compare the \{ and \} characters
+% Solution from \url{https://tex.stackexchange.com/a/47453}
+%    \begin{macrocode}
+\edef\wbgroup{\iftrue\string{\else}\fi}
+\edef\wegroup{\iffalse{\else\string}\fi}
+%    \end{macrocode}
+% \begin{macro}{\pam@storetext}
+% This macro is used inside getchunkenv. This will consume tokens
+% and store them inside \verb|pam@tex| macro until it reads a ``\}'' macro
+% (defined by lst), then it calls the \verb|\getchunk| command on the stored
+% text. Finally, calls the ``\}'' macro needed by lst to finish processing the
+% code block.
+%    \begin{macrocode}
+\def\pam@storetext#1{%
+    \expandafter\if\string#1\wegroup%
+        \getchunk{\pam@text}%
+        #1%
+    \else%
+        \edef\pam@text{\pam@text#1}%
+        \expandafter\pam@storetext% This expandafter is so the input of
+                                  % \pam@storetext is not \fi
+    \fi%
+}
+%    \end{macrocode}
+% \end{macro}
+% \begin{environment}{pam@getchunkenv}
+% This environment is not ment to be used outside this document and it's only
+% purpose it's to wrap the \verb|pam@storetext| macro inside an environment.
+%    \begin{macrocode}
+\newenvironment{pam@getchunkenv}{\def\pam@text{}%
+\expandafter\pam@storetext}{}
+%    \end{macrocode}
+% \end{environment}
+%
+% \begin{environment}{chunk}
+% Here is the main environment.
+%    \begin{macrocode}
+\lstnewenvironment{chunk}[1]{%
+    \hypertarget{#1}%
+    {\ }\newline\noindent%
+    \hbox{\hskip 2.0cm}{\bf --- #1 ---}%
+    \edef\@currentlabelname{#1}%
+    \lstset{alsodigit={.-},alsoletter={\\}}%
+    \lstset{escapebegin=\begin{pam@getchunkenv}}%
+    \lstset{escapeend=\end{pam@getchunkenv}}%
+    \lstset{escapeinside={\\getchunk\{}{\}}}%
+}{
+    {\ }\newline\noindent%
+    \hbox{\hskip 2.0cm}%
+    {\it ---\csname referenced#1\endcsname---}%
+}
+%    \end{macrocode}
+% \end{environment}
+% \begin{macro}{\getchunk}
+% We run into the most complicated command. First, we preparate the label so it
+% can be referenced and place the text.
+%    \begin{macrocode}
+\newcommand{\getchunk}[1]{%
+    {\big<}\hyperlink{#1}{#1}{\big>}%
+    \edef\pam@label{reference-\the\pam@references}%
+    \label{\pam@label}%
+    \ifcsname used#1\endcsname\else%
+        \expandafter\def\csname used#1\endcsname{Used by}%
+    \fi%
+%    \end{macrocode}
+% Here we expand the Used by command two times, this is so we fully expand
+% the \verb|\csname| and the command but we don't expand the refs
+%    \begin{macrocode}
+    \edef\pam@tmp{\unexpanded\expandafter\expandafter%
+    \expandafter{\csname used#1\endcsname}}%
+%    \end{macrocode}
+% We add to the used by command, adding a space and the new reference. Also, we
+% increase the global counter and mark the chunk as referenced.
+%    \begin{macrocode}
+\expandafter\xdef\csname used#1\expandafter\endcsname\expandafter{%
+    \expandafter\unexpanded\expandafter{\pam@tmp},%
+    \ \unexpanded\expandafter{\expandafter\nameref\expandafter{\pam@label}}%
+}%
+\global\advance\pam@references 1\relax%
+\ifdefined\pam@chunks%
+    \xdef\pam@chunks{\pam@chunks,#1}%
+\else%
+    \xdef\pam@chunks{#1}%
+\fi%
+}
+%    \end{macrocode}
+% \end{macro}
+% Here we will write the used by commands and references. This will only be
+% done if there are chunks referenced.
+%    \begin{macrocode}
+\AtEndDocument{%
+    \ifdefined\pam@chunks%
+       \newwrite\@pamfile%
+       \immediate\openout\@pamfile=\jobname.pam%
+%    \end{macrocode}
+% Then, we loop through the list and write out the used by commands
+% but the list may contain duplicates so we need to account for it.
+% loop based on \url{https://tex.stackexchange.com/a/16695}
+%    \begin{macrocode}
+\@for\next:=\pam@chunks\do{%
+    \ifcsname lstel@\next\endcsname%
+    \else%
+        \expandafter\let\csname lstel@\next\endcsname\@empty%
+        \immediate\write\@pamfile{%
+            \unexpanded{\expandafter\def\csname }%
+            referenced\next\unexpanded{\endcsname}%
+            \wbgroup%
+            \unexpanded\expandafter\expandafter\expandafter%
+            {\csname used\next\endcsname}%
+            \wegroup%
+        }%
+    \fi%
+}%
+%    \end{macrocode}
+% Finally, we close the auxiliary file
+%    \begin{macrocode}
+       \immediate\closeout\@pamfile%
+   \fi%
+}
+\endinput
+%    \end{macrocode}
+% \Finale
+\endinput

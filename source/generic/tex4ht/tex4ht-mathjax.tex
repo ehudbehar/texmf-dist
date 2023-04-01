@@ -1,0 +1,288 @@
+% $Id: tex4ht-mathjax.tex 1302 2023-02-27 22:21:51Z karl $
+% compile: latex tex4ht-mathjax
+%
+% Copyright 2018-2023 TeX Users Group
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\ifx \HTML\UnDef
+   \def\HTML{mathjax-latex-4ht} 
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Michal Hoftich}}
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common-code}
+\input{common}
+\input{tex4ht-cpright}
+
+\<mathjax-latex-4ht\><<<
+% mathjax-latex-4ht.4ht (|version), generated from |jobname.tex
+% Copyright 2018-2023 TeX Users Group
+|<TeX4ht copywrite|>
+|<required packages|>
+|<defined commands|>
+\AtBeginDocument{%
+|<configurations|>
+|<mhchem configurations|>
+|<restore environments|>
+}
+\endinput
+>>>
+
+We don't require additional packages anymore, as everything necessary is included
+in LaTeX kernel now.
+% \RequirePackage{etoolbox,expl3,environ}
+\<required packages\><<<
+>>>
+
+The \verb|\alteqtoks| command saves the used command in HTML. It uses detokenize command
+to insert arguments verbatim. The side effect of this is that detokeize inserts space
+after each control sequence. This is completely valid TeX code, but earlier versions of
+MathJax didn't like that, rendering resulted in error.
+
+Fortunatelly, MathJax 3 supports these spaces, so we can remove regular expressions for space handling.
+The original code was this:
+
+% % convert \ { to \:{ 
+% \regex_replace_all:nnN { \x{5C} \x{20} \x{7B} } { \x{5C} \x{3A} \x{7B} } \l_tmpa_tl
+% % delete spaces before left brackets
+% \regex_replace_all:nnN { \x{20} \x{7B} } { \x{7B} } \l_tmpa_tl
+% % replace \\:{ back to \\ { -- this can be introduced by the previous regex
+% \regex_replace_all:nnN { \x{5C} \x{5C}  \x{3A} \x{7B} } { \x{5C} \x{5C} \x{20} \x{7B} } \l_tmpa_tl
+
+
+We still use regula expressions to escape invalid XML characters to entities, so it works only with LaTeX.
+
+\<defined commands\><<<
+\ExplSyntaxOn
+\cs_new_protected:Npn \alteqtoks #1
+{
+  \tl_set:Nx \l_tmpa_tl {\detokenize{#1}}
+  % % replace < > and & with xml entities
+  \regex_replace_all:nnN { \x{26} } { &amp; } \l_tmpa_tl
+  \regex_replace_all:nnN { \x{3C} } { &lt; } \l_tmpa_tl 
+  \regex_replace_all:nnN { \x{3E} } { &gt; } \l_tmpa_tl
+  % replace \par command with blank lines
+  \regex_replace_all:nnN { \x{5C}par\b } {\x{A}\x{A}} \l_tmpa_tl
+  \tl_set:Nx \l_tmpb_tl{ \l_tmpa_tl }
+  \HCode{\l_tmpb_tl}
+}
+\ExplSyntaxOff
+
+>>>
+
+Provide configuration for MathJax
+
+\<defined commands\><<<
+\NewConfigure{MathJaxConfig}{1}
+>>>
+
+The MathJaxMacros configuration includes a file with TeX macro 
+definitions, and include them at the beginning of each HTML page.
+MathJax then interprets them, so they are available in math. 
+This is an alternative to JavaScript method using MathJaxConfig.
+
+The file cannot contain any other commands than newcommand,
+all characters that could cause issues in the HTML parsing must
+be escaped, so \verb|<| should became \verb|&lt;|, for example.
+
+\<defined commands\><<<
+\NewConfigure{MathJaxMacros}[1]{%
+\Configure{@BODY}{\bgroup\NoFonts\ttfamily\detokenize{\(}%
+  \special{t4ht*<#1}%
+\detokenize{\)}\EndNoFonts\egroup}%
+}
+>>>
+
+The following commands are used for patching of the standard math commands and
+environments. They will then keep the LaTeX code unchanged.
+
+\<defined commands\><<<
+
+\long\def\AltlMath#1\){\expandafter\alteqtoks{\(#1\)}\)}
+\long\def\AltlDisplay#1\]{\alteqtoks{\[#1\]}\]}
+\long\def\AltMathOne#1${\alteqtoks{\(#1\)}$}
+% this seems a bit hacky -- we need to skip some code inserted at the 
+% beginning of each display math
+\long\def\AltlDisplayDollars#1$${\alteqtoks{\[#1\]}$$}
+
+\newcommand\VerbMathToks[2]{%
+  \alteqtoks{\begin{#2}
+    #1
+  \end{#2}}%
+}
+>>>
+
+In pictures, we want to use the original version of the math environments. Because we use
+an agressive verbatim method for the environments, we cannot use the usual \verb'\HLet' method.
+Instead, we save the original meaning, and user needs to restore it manually, using
+the \verb'\RestoreMathJaxEnvironments' command.
+
+\<defined commands\><<<
+\ExplSyntaxOn
+\seq_new:N\:savedmathjaxenvs
+
+\newcommand\:savemathjaxenv[1]{%
+  \seq_gput_right:Nn\:savedmathjaxenvs{#1}
+  \expandafter\let\csname mathjax-#1\expandafter\endcsname\csname #1\endcsname%
+  \expandafter\let\csname mathjax-end#1\expandafter\endcsname\csname end#1\endcsname%
+}
+
+% we must not reintroduce the matrix environmeint in TikZ, because it interferes with the \matrix command
+\newcommand\:ignoretikzmatrix{\seq_remove_all:Nn\:savedmathjaxenvs{matrix}}
+
+\newcommand\RestoreMathJaxEnvironment[1]{%
+  \expandafter\let\csname #1\expandafter\endcsname\csname mathjax-#1\endcsname%
+  \expandafter\let\csname end#1\expandafter\endcsname\csname mathjax-end#1\endcsname%
+}
+
+\newcommand\RestoreMathJaxEnvironments{%
+  \seq_map_function:NN\:savedmathjaxenvs\RestoreMathJaxEnvironment%
+}
+\ExplSyntaxOff
+>>>
+
+The \verb|\VerbMath| command redefines environments to pass their content
+verbatim to the HTML output.
+
+The optional command can contain name of the counter that should be updated.
+It will also use LaTeX 3 regular expressions to search for label commands.
+Thanks to that, cross-referencing to the math environments should work.
+It is a bit limited, for example subequations cannot work. There can be also
+issues in books, where equation numbers are based on chapters, but MathJax
+numbers them consecutively. In these cases, other mechanisms may be necessary.
+
+\<defined commands\><<<
+\ExplSyntaxOn
+\cs_generate_variant:Nn \regex_extract_once:nnNTF {nV}
+\newcommand\VerbMath[2][]{%
+  \cs_if_exist:cTF{#2}{
+    \:savemathjaxenv{#2}%
+    \RenewDocumentEnvironment{#2}{+!b}{%
+      \NoFonts\expandafter\VerbMathToks\expandafter{\detokenize{##1}}{#2}\EndNoFonts%
+      \ifx\relax#1\relax\else%
+      \refstepcounter{#1}%
+      \regex_extract_once:nVNTF { label\s* \x{7B}([^\x{7D}]*)\x{7D}} {\l_tmpb_tl} \l_tmp_seq {\label{\seq_item:Nn\l_tmp_seq{2}}} {}%
+      \fi
+    }{}
+  }{}%
+}
+\ExplSyntaxOff
+>>>
+
+The \verb|\fixmathjaxtoc| command is used for patching commands which should
+keep their verbatim appearance in the TOC
+
+\<defined commands\><<<
+\def\fixmathjaxtoc#1{\Configure{writetoc}{\def#1{\detokenize{#1}}}}
+>>>
+
+This was meant to fix some commands in sectioning commands, but it is not
+a good solution. Better is to define the problematic commands as robust.
+
+\<not defined commands\><<<
+\def\fixmathjaxsec#1{\def#1{\detokenize{#1}}}
+\fixmathjaxsec\right
+\fixmathjaxsec\left
+>>>
+
+Require verbatim math environments.
+
+\<configurations\><<<
+\VerbMath{subarray}
+\VerbMath{smallmatrix}
+\VerbMath{matrix}
+\VerbMath{pmatrix}
+\VerbMath{bmatrix}
+\VerbMath{Bmatrix}
+\VerbMath{vmatrix}
+\VerbMath{Vmatrix}
+\VerbMath{cases}
+\VerbMath{subequations}
+\VerbMath{aligned}
+\VerbMath{alignedat}
+\VerbMath{gathered}
+\VerbMath{gather}
+\VerbMath{gather*}
+\VerbMath{alignat}
+\VerbMath{alignat*}
+\VerbMath{xalignat}
+\VerbMath{xalignat*}
+\VerbMath{xxalignat}
+\VerbMath{align}
+\VerbMath{align*}
+\VerbMath{flalign}
+\VerbMath{flalign*}
+\VerbMath{split}
+\VerbMath{multline}
+\VerbMath{multline*}
+\VerbMath[equation]{equation}
+\VerbMath{equation*}
+\VerbMath{math}
+\VerbMath{displaymath}
+\VerbMath{eqnarray}
+\VerbMath{eqnarray*}
+>>>
+
+It is necessary to reset env configurations for multiline 
+environments, because default TeX4ht configurations turn
+them into pictures.
+
+\<configurations\><<<
+\ConfigureEnv{gather}{}{}{}{}
+\ConfigureEnv{gather*}{}{}{}{}
+\ConfigureEnv{multline}{}{}{}{}
+\ConfigureEnv{multline*}{}{}{}{}
+>>>
+
+
+Fixes for tables of contents.
+
+\<configurations\><<<
+\fixmathjaxtoc\int
+\fixmathjaxtoc\,
+\fixmathjaxtoc\sin
+\fixmathjaxtoc\cos
+\fixmathjaxtoc\tan
+\fixmathjaxtoc\arcsin
+\fixmathjaxtoc\arccos
+\fixmathjaxtoc\arctan
+\fixmathjaxtoc\csc
+\fixmathjaxtoc\sec
+\fixmathjaxtoc\cot
+\fixmathjaxtoc\sinh
+\fixmathjaxtoc\cosh
+\fixmathjaxtoc\tanh
+\fixmathjaxtoc\coth
+\fixmathjaxtoc\log
+\fixmathjaxtoc\ln
+\fixmathjaxtoc\sum
+\fixmathjaxtoc\(
+\fixmathjaxtoc\)
+\fixmathjaxtoc\begin
+\fixmathjaxtoc\end
+\fixmathjaxtoc\\
+\fixmathjaxtoc\exp
+\fixmathjaxtoc\left
+\fixmathjaxtoc\right
+>>>
+
+\<mhchem configurations\><<<
+\@ifpackageloaded{mhchem}{%
+\def\ce#1{\texttt{\detokenize{\(\ce{#1}\)}}}
+}{}
+>>>
+
+Restore environments redefined to produce verbatim output to their
+original meaning in the picture mode. Otherwise math cannot work
+inside TikZ etc.
+
+\<restore environments\><<<
+\@ifpackageloaded{tikz}{%
+\tikzset{every picture/.append code={\:ignoretikzmatrix\RestoreMathJaxEnvironments}} 
+}{}
+>>>
+
+\endinput

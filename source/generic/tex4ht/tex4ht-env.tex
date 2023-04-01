@@ -1,0 +1,1729 @@
+% $Id: tex4ht-env.tex 418 2018-07-03 17:37:07Z karl $
+%      latex tex4ht-env
+% or htlatex tex4ht-env "xhtml,3"
+%
+% Copyright 2009-2018 TeX Users Group
+% Copyright 1997-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\documentclass{article}
+
+\usepackage{url}
+\input tex4ht-dir.tex
+
+\ifx \HCode\Undef
+    \usepackage[xhtml,2,sections+]{tex4ht}
+    \input ProTex.sty
+    \AlProTex{env,<<<>>>,@,title,list}
+\else
+    \Configure{ProTex}{env,<<<>>>,@,title,list}
+\fi
+
+\input{common}
+
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Outline of Scripts}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Note: The `-c...' calls are executed in the order of the prsence of
+the scripts within tex4ht.env.  Hence, place the xtpipe translations
+before validations.
+
+
+\<tex4ht.env-unix\><<<
+@<unix copyright@>%
+@<unix opening comment@>%
+@<generic note fonts@>%
+@<unix texmf dir@>%
+@<unix tfm fonts@>%
+@<win32 htf fonts@>%
+@<unix G script@>%
+@<unix tex4ht.fls@>%
+@<unix t4ht commands@>%
+@<xtpipes: unix java help@>
+@<xtpipes: unix emacspeak@>
+@<xtpipes: unix jsml@>
+@<xtpipes: unix docbk@>
+@<xtpipes: unix xhtml@> 
+@<xtpipes: unix xhtmml@> @%before validate@%
+@<xtpipes: unix oo@>%
+@<unix validate@> %
+@<unix openoffice@>%
+% end of file
+>>>
+
+
+\<tex4ht.env-win32\><<<
+@<win32 copyright@>%
+@<win32 opening comment@>%
+@<generic note fonts@>%
+@<win32 texmf dir@>%
+@<win32 tfm fonts@>%
+@<win32 htf fonts@>%
+@<win32 G script@>%
+@<dos t4ht commands@>%
+@<win32 tex4ht.fls@>%
+@<xtpipes: win32 java help@>
+@<xtpipes: win32 emacspeak@>
+@<xtpipes: win32 jsml@>
+@<xtpipes: win32 docbk@>
+@<xtpipes: win32 xhtml@> 
+@<xtpipes: win32 xhtmml@> @%before validate@%
+@<xtpipes: win32 oo@>%
+@<win32 validate@> %
+@<win32 openoffice@>%
+% end of file
+>>>
+
+
+
+\<tex4ht\><<<
+@<private copyright@>%
+@<unix opening comment@>%
+@<generic note fonts@>%
+@<my texmf dir@>%
+@<my tfm fonts@>%
+@<win32 htf fonts@>%
+@<my G script@>%
+@<my shared@>%
+@<my t4ht commands@>%
+@<my tex4ht.fls@>%
+@<xtpipes: my java help@>
+@<xtpipes: my emacspeak@>
+@<xtpipes: my jsml@>
+@<xtpipes: my docbk@>
+@<xtpipes: my xhtml@>
+@<xtpipes: my xhtmml@>  @%before validate@%
+@<xtpipes: my oo@>
+@<my validate@> %
+@<unix openoffice@>%
+% end of file
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Opening Comments}
+%%%%%%%%%%%%%%%%%%%
+
+\<unix opening comment\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% Notes:                                                            %
+%  1. Empty lines might be harmful                                  %
+%  2. Tagged script segments <tag>...</tag> are scanned only if     %
+%     their names are specified within -ctag switches of tex4ht.c   %
+%     and t4ht.c. When -c switches are not supplied, a -cdefault    %
+%     is implicitly assumed.                                        % 
+%        The tags <tag> and </tag>, but not their bodies, are       %
+%     ignored if they are not located at the start of their lines.  %
+%  3. Place this file in your work directory and/or root directory  %
+%     and/or in directory `xxx' of your choice. In the latest case, %
+%     compile tex4ht.c and t4ht.c with `#define ENVFILE xxx', or    %
+%     provide the address of the file to tex4ht and t4ht throught   %
+%     the -e switch                                                 %
+%  4. Under kpathsea, the substring `%%~' may be employed in        %
+%     commands to obtain the value of ${TEXMFDIST}.                 %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+>>>
+
+
+\<win32 opening comment\><<<
+% See comments in the Unix tex4ht.env for how this file gets found,
+% except on Windows, we also look in the directory of tex4ht.exe/t4ht.exe.
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Fonts}
+%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\subsection{TFM Files}
+%%%%%%%%%%%%%%%%%%%
+
+
+
+\<unix tfm fonts\><<<
+tpath/tex/texmf/fonts/tfm/!
+>>>
+
+
+\<win32 tfm fonts\><<<
+tc:\path\tfm!
+>>>
+
+\<my tfm fonts\><<<
+t/usr/local/teTeX/share/texmf/fonts/tfm/!
+t/var/tmp/texfonts/tfm/!
+ t/usr/local/teTeX/texmf/fonts/vf/! 
+>>>
+
+The \verb't/var/tmp/texfonts/tfm/!' are for fonts created on the fly
+during the compilation by tex.
+
+
+
+%%%%%%%%%%%%%%%%%%
+\subsection{HTF Files}
+%%%%%%%%%%%%%%%%%%%
+
+The structure of htf fonts is the same on Windows and Unix, so it
+doesn't make sense to keep two versions.
+
+
+
+\<win32 htf fonts\><<<
+@<win32 iso1 htf@>
+@<win32 moz htf@>
+@<win32 iso2 htf@>
+@<win32 iso5 htf@>
+@<win32 iso7 htf@>
+@<win32 iso8 htf@>
+@<win32 iso15 htf@>
+@<win32 koi8r htf@>
+@<win32 sym htf@>
+@<win32 win1251 htf@>
+@<win32 uni htf@>
+@<win32 emspk htf@>
+@<win32 jsml htf@>
+>>>
+
+
+
+\<win32 iso1 htf\><<<
+<default>
+i%%~/tex4ht/ht-fonts/iso8859/1/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+i%%~/tex4ht/ht-fonts/mozilla/!
+i%%~/tex4ht/ht-fonts/unicode/!
+</default>
+>>>
+
+
+\<win32 moz htf\><<<
+<mozhtf>
+i%%~/tex4ht/ht-fonts/mozilla/!
+i%%~/tex4ht/ht-fonts/unicode/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+</mozhtf>
+>>>
+
+
+
+\<win32 uni htf\><<<
+<unihtf>
+i%%~/tex4ht/ht-fonts/unicode/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+</unihtf>
+>>>
+
+
+
+\<win32 emspk htf\><<<
+<emspkhtf>
+i%%~/tex4ht/ht-fonts/html-speech/!
+i%%~/tex4ht/ht-fonts/unicode/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+i%%~/tex4ht/ht-fonts/css/emacspeak/!
+</emspkhtf>
+>>>
+
+
+\<win32 jsml htf\><<<
+<jsmlhtf>
+i%%~/tex4ht/ht-fonts/jsml/!
+i%%~/tex4ht/ht-fonts/unicode/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+</jsmlhtf>
+>>>
+
+
+\<win32 iso2 htf\><<<
+<iso2htf>
+i%%~/tex4ht/ht-fonts/iso8859/2/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+i%%~/tex4ht/ht-fonts/unicode/!
+</iso2htf>
+>>>
+
+
+\<win32 iso5 htf\><<<
+<iso5htf>
+i%%~/tex4ht/ht-fonts/iso8859/5/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+i%%~/tex4ht/ht-fonts/unicode/!
+</iso5htf>
+>>>
+
+
+
+\<win32 iso7 htf\><<<
+<iso7htf>
+i%%~/tex4ht/ht-fonts/iso8859/7/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+i%%~/tex4ht/ht-fonts/unicode/!
+</iso7htf>
+>>>
+
+
+
+\<win32 iso8 htf\><<<
+<iso8htf>
+i%%~/tex4ht/ht-fonts/iso8859/8/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+i%%~/tex4ht/ht-fonts/unicode/!
+</iso8htf>
+>>>
+
+
+\<win32 iso15 htf\><<<
+<iso15htf>
+i%%~/tex4ht/ht-fonts/iso8859/15/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+i%%~/tex4ht/ht-fonts/unicode/!
+</iso15htf>
+>>>
+
+
+
+\<win32 koi8r htf\><<<
+<koi8rhtf>
+i%%~/tex4ht/ht-fonts/koi/8r/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+i%%~/tex4ht/ht-fonts/unicode/!
+</koi8rhtf>
+>>>
+
+
+\<win32 sym htf\><<<                                                     %
+<symhtf>
+i%%~/tex4ht/ht-fonts/symbol/!
+i%%~/tex4ht/ht-fonts/unicode/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+</symhtf>
+>>>
+
+
+
+\<win32 win1251 htf\><<<                                                     %
+<win1251htf>
+i%%~/tex4ht/ht-fonts/win/1251/!
+i%%~/tex4ht/ht-fonts/unicode/!
+i%%~/tex4ht/ht-fonts/ascii/!
+i%%~/tex4ht/ht-fonts/alias/!
+</win1251htf>
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\subsection{Bookkeeping tex4ht.fls}
+%%%%%%%%%%%%%%%%%%%
+
+Currently broken and Disabled.
+
+
+\<my tex4ht.fls\><<<
+% * Address for an automatically created bookkeeping file           %
+% * The work directory is assumed for a default                     %
+l~/tex4ht.dir/tex4ht.fls
+>>>
+
+
+
+
+\<unix tex4ht.fls\><<<
+% * Address for an automatically created bookkeeping file           %
+% * Ignored under kpathsea                                          %
+% * The work directory is assumed for a default                     %
+ l~/tex4ht.dir/tex4ht.fls
+>>>
+
+
+
+\<win32 tex4ht.fls\><<<
+% * Address for an automatically created bookkeeping file           %
+% * Ignored under kpathsea                                          %
+% * The work directory is assumed for a default                     %
+lc:\tex4ht\tex4ht.fls
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\subsection{Notes}
+%%%%%%%%%%%%%%%%%%%
+
+\<generic note fonts\><<<
+% * Replace `path', and possibly what follows, with appropriate     %
+%   content                                                         %
+% * A path may start with:                                          %
+%   ~ for environment variable HOME                                 %
+%   ~~ for environment variable TEX4HTTFM                           %
+%   %%~ for ${TEXMFDIST} of KPATHSEA                                %
+% * A ! requests recursive search into subdirectories               %
+% * Multiple t and i entries are allowed                            %
+% * When supported by kpathsea                                      %
+%   + t entries are ignored                                         %
+%   + the path before /ht-fonts/ is ignored in i records that don't %
+%     represent real addresses                                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Bitmap Conversion Scripts}
+%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%
+\subsection{Unix}
+%%%%%%%%%%%%%
+
+
+
+
+\<unix G script\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% dvi-to-xxx                                                        %
+%   choose one G-script                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% dvips options                                                     %
+%   magnification: -x mag  (e.g., -x 1200)                          %
+%   page size:     -T x,y  (e.g., -T 14in,14in)                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<netpbm>
+@<unix netpbm@>
+</netpbm>
+<convert>
+@<unix png gs@>
+@<unix svg@>
+G.
+@<unix dvips convert@>
+@<variants of convert@>
+</convert>    
+@<dvipng@>
+@<request scripts@> %
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Windows}
+%%%%%%%%%%%%%
+
+
+
+\<win32 G script\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% dvi-to-xxx                                                        %
+%   choose one G-script                                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% dvips options                                                     %
+%   magnification: -x mag  (e.g., -x 1200)                          %
+%   page size:     -T x,y  (e.g., -T 14in,14in)                     %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+@<variants of convert@>
+<netpbm>
+@<dos netpbm@>
+</netpbm>
+@<win gs@>
+<convert>
+@<dos png gs@>
+@<win32 svg@>
+G.
+@<dos dvips convert@>
+</convert>
+@<dvipng@>
+@<request scripts@> %
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Private (on SUN)}
+%%%%%%%%%%%%%
+
+
+
+\<my G script\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% Select one of the G scripts                                       %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% dvips options                                                     %
+%   magnification: -x mag  (e.g., -x 1200)                          %
+%   page size:     -T x,y  (e.g., -T 14in,14in)                     %
+%   gs fonts:      -Pfont  (e.g., -Pcmz -Pamz)                      %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+<convert-old>
+@<unix png gs@>
+@<unix svg@>
+G.
+@<old dvips + gs + convert (personal)@> 
+</convert-old>
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+<netpbm>
+@<unix netpbm@>
+</netpbm>
+@<dvipng@>
+ <convert>
+@<dvips convert (personal)@>
+ </convert>
+@<request scripts@> %
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Script: dvips + gs}
+% duplicated below, as well as twice here.  must fixx!
+% we don't want to use convert for the sake of simplifying mactex.
+%%%%%%%%%%%%%
+
+\<dvips convert (personal)\><<<
+Gdvips -E -q -Ppdf -f %%1 -pp %%2 > zz%%4.ps
+Ggs -sDEVICE=pngalpha -sOutputFile=%%3 -r110x110 -dEPSCrop -dBackgroundColor=16#ffffff -dTextAlphaBits=2 -dGraphicsAlphaBits=2 -q -dbatch -dNOPAUSE zz%%4.ps -c quit 
+Grm zz%%4.ps >>>
+
+\<unix dvips convert\><<<
+%echo "dbg: got to dvips to png via gs (unix dvips convert)"
+Gdvips -E -q -Ppdf -f %%1 -pp %%2 > zz%%4.ps
+Ggs -sDEVICE=pngalpha -sOutputFile=%%3 -r110x110 -dEPSCrop -dBackgroundColor=16#ffffff -dTextAlphaBits=2 -dGraphicsAlphaBits=2 -q -dbatch -dNOPAUSE zz%%4.ps -c quit 
+Grm zz%%4.ps >>>
+
+
+\<dos dvips convert\><<<
+Gif exist zz%%4.ps DEL zz%%4.ps >nul
+Gif exist %%3 DEL %%3 >nul
+Gdvips -E -Ppdf -mode ibmvga -D 110 -f %%1 -pp %%2 > zz%%4.ps
+Gconvert -trim +repage -density 110x110 -transparent "#FFFFFF" zz%%4.ps %%3
+Gif exist zz%%4.ps DEL zz%%4.ps >nul   >>>
+
+
+
+\<variants of convert\><<<
+%--------- alternative instructions for old versions of convert
+% Gconvert -trim -density 110x110 -transparent "#FFFFFF" zz%%4.ps %%3 
+% Gconvert -crop 0x0 +repage -density 110x110 -transparent "#FFFFFF" zz%%4.ps %%3
+% Gconvert -crop 0x0 +page -density 110x110 -transparent "#FFFFFF" zz%%4.ps %%3
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  >>>
+
+The `-E' option is required for dvips to produce a tight bounding box.
+
+
+%%%%%%%%%%%%%
+\subsection{Script: dvips + gs + convert}
+%%%%%%%%%%%%%
+
+\<old dvips + gs + convert (unix)\><<<
+<convert-old>
+Gdvips -Ppdf -mode ibmvga -D 110 -f %%1 -pp %%2 > zz%%4.ps
+Ggs -sDEVICE=ppm -sOutputFile=zz%%4.ppm -r110x110 -dTextAlphaBits=2 -dGraphicsAlphaBits=2 -q -dbatch -dNOPAUSE zz%%4.ps -c quit
+Gconvert zz%%4.ppm -trim +repage -density 110x110 -transparent '#FFFFFF' %%3
+Grm zz%%4.ps
+Grm zz%%4.ppm
+</convert-old>  >>>
+
+
+The intermediate ppm step is to overcome cropping and other problems
+in convert.
+
+
+
+\<old dvips + gs + convert (personal)\><<<
+Gdvips -Ppdf -mode ibmvga -D 110 -f %%1 -pp %%2 > zz%%4.ps
+Ggs -sDEVICE=ppm -sOutputFile=zz%%4.ppm -r110x110 -dTextAlphaBits=2 -dGraphicsAlphaBits=2 -q -dbatch -dNOPAUSE zz%%4.ps -c quit
+Gconvert zz%%4.ppm -crop 0x0 +page -density 110x110 -transparent '#FFFFFF' %%3
+Grm zz%%4.ps
+Grm zz%%4.ppm    >>>
+
+\<old dvips + gs + convert (windows)\><<<
+<convert-old>
+Gif exist zz%%4.ps DEL zz%%4.ps >nul
+Gif exist zz%%4.ppm DEL zz%%4.ppm >nul
+Gif exist %%3 DEL %%3 >nul
+Gdvips -Ppdf -mode ibmvga -D 110 -f %%1 -pp %%2 > zz%%4.ps
+Ggswin32c -dNOPAUSE -sDEVICE=ppmraw -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r110x110 -sOutputFile=zz%%4.ppm -q zz%%4.ps -c quit
+Gconvert zz%%4.ppm -trim +repage -density 110x110 -transparent #FFFFFF %%3
+Gif exist zz%%4.ps DEL zz%%4.ps >nul
+Gif exist zz%%4.ppm DEL zz%%4.ppm >nul
+</convert-old>   >>>
+
+The command line options \verb'-Pcmz -Pamz' of dvips requests type 1
+postscript format for the standard Computer Modern fonts of \TeX.
+
+
+TextAlphaBits, GraphicsAlphaBits: The number of bits of anti-aliasing
+information for text or graphics respectively. Legal values are 1 (no
+anti-aliasing, the default for most devices), 2, or 4.
+
+-x: magnification * 1000.  A variant of \verb'\magnification'. Should use
+values for which the printers can support the font sizes. Typically,
+\verb'1.2{\tt\string^}i * 1000'. 
+
+%%%%%%%%%%%%%
+\subsection{PNG Script: dvi + gs}
+%%%%%%%%%%%%%
+
+
+
+\<unix png gs\><<<
+ G.png
+ Gdvips -E -q -Ppdf -f %%1 -pp %%2 > zz%%4.ps
+ Ggs -sDEVICE=pngalpha -sOutputFile=%%3 -r110x110 -dEPSCrop -dBackgroundColor=16#ffffff -dTextAlphaBits=2 -dGraphicsAlphaBits=2 -q -dbatch -dNOPAUSE zz%%4.ps -c quit 
+ Grm zz%%4.ps    >>>
+
+A piping of the conversion as in
+
+\begin{verbatim}
+dvips -E -q -Ppdf -f %%1 -pp %%2 | Ggs -sDEVICE=pngalpha -sOutputFile=- ...
+\end{verbatim}
+
+provides faster compilations, but error messages might get lost if
+they happen to be directed to the standard output stream.
+
+
+\<dos png gs\><<<
+ G.png
+ Gif exist zz%%4.ps DEL zz%%4.ps >nul
+ Gif exist %%3 DEL %%3 >nul
+ Gdvips -E -q -Ppdf -f %%1 -pp %%2 > zz%%4.ps
+ Ggswin32c -sDEVICE=pngalpha -sOutputFile=%%3 -r110x110 -dEPSCrop -dBackgroundColor=16#ffffff -dTextAlphaBits=2 -dGraphicsAlphaBits=2 -q -dbatch -dNOPAUSE zz%%4.ps -c quit 
+ Gif exist zz%%4.ps DEL zz%%4.ps >nul >>>
+
+
+
+
+ImageMagic comes with an `identify' utility for inspecting image
+files.  For instance, try `identify -verbatim foo.png'. For additional
+information, try `identify' or `man identify'.
+
+
+%%%%%%%%%%%%%
+\subsection{Script: netpbm}
+%%%%%%%%%%%%%
+
+
+
+\<unix netpbm\><<<
+Gdvips -Ppdf -mode ibmvga -D 110 -f %%1 -pp %%2  > zz%%4.ps
+Ggs -sDEVICE=ppm -r110 -sOutputFile=zz%%4.ppm -q -dbatch -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dNOPAUSE zz%%4.ps -c quit
+Gmv zz%%4.ppm temp.ppm
+Gpnmcrop  temp.ppm > zz%%4.ppm
+Gpnmtopng -interlace -transparent 1,1,1 zz%%4.ppm > %%3
+ Gppmtopng -interlace -transparent 1,1,1 zz%%4.ppm > %%3
+Grm zz%%4.ps
+Grm zz%%4.ppm
+Grm temp.ppm
+% Gppmtogif -interlace -transparent 1,1,1 zz%%4.ppm > %%3 >>>
+
+
+\<dos netpbm\><<<
+Gif exist  zz%%4.ps DEL zz%%4.ps  
+Gif exist zz%%4.ppm DEL zz%%4.ppm  
+Gif exist temp.ppm DEL temp.ppm  
+Gdvips -Ppdf -mode ibmvga -D 110 -f %%1 -pp %%2  > zz%%4.ps 
+Ggswin32c -sDEVICE=ppm -r110 -sOutputFile=zz%%4.ppm -q -dbatch -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -dNOPAUSE zz%%4.ps -c quit  
+Gmove /y zz%%4.ppm temp.ppm  
+Gpnmcrop  temp.ppm > zz%%4.ppm  
+Gif exist %%3 DEL %%3  
+Gppmtopng -interlace -transparent 1,1,1 zz%%4.ppm > %%3  
+Gif exist  zz%%4.ps DEL zz%%4.ps  
+Gif exist zz%%4.ppm DEL zz%%4.ppm  
+Gif exist temp.ppm DEL temp.ppm  
+% Gppmtogif -interlace -transparent 1,1,1 zz%%4.ppm > %%3   >>>
+
+%%%%%%%%%%%%%
+\subsection{Script: dvipng}
+%%%%%%%%%%%%%
+
+ \<dvipng\><<<
+ <dvipng>
+G.png
+%echo "dbg: got to dvi to png via (dvipng)"
+Gdvipng -T tight -D 144 -bg Transparent -pp %%2:%%2 %%1 -o %%3
+G.gif
+Gdvipng -T tight -D 144 -bg Transparent -gif -pp %%2:%%2 %%1 -o %%3
+@<unix svg@>
+G.
+Gdvipng -T tight -D 144 -bg Transparent -pp %%2:%%2 %%1 -o %%3
+% avoiding convert for mactex.
+% Gdvips -Ppdf -mode ibmvga -D 110 -f %%1 -pp %%2 > zz%%4.ps
+% Gconvert -crop 0x0 -density 110x110 -transparent '#FFFFFF' zz%%4.ps %%3
+%Grm zz%%4.ps
+  </dvipng>
+>>>
+
+
+%%%%%%%%%%%%%%%%%% 
+\subsection{SVG Bitmap Conversion Scripts} 
+%%%%%%%%%%%%%%%%%%% 
+
+\<unix svg\><<<
+G.svg
+Gdvisvgm -n -p %%2 --exact -c 1.4,1.4 -s %%1 > %%3  >>>
+
+
+\<win32 svg\><<<
+G.svg
+Gdvisvgm -n -p %%2 --exact -c 1.4,1.4 -s %%1 > %%3 >>>
+
+dvisvgm is included with all \TeX\ distributions nowadays and the
+conversion is quite fast and efficient.
+
+
+%%%%%%%%%%%%%
+\subsection{Request Scripts}
+%%%%%%%%%%%%%
+
+\<request scripts\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% Default scripts, shifted rightward 1 pos
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+ s--- needs --- %%1.idv[%%2] ==> %%3 ---
+ b--- characters ---
+ g.png
+% empty bitmaps                                                     %
+ Ecopy  empty.png %%1%%2
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Alternative Scripts}
+%%%%%%%%%%%%%
+
+
+
+
+
+
+\begin{itemize}
+\item
+\begin{verbatim}
+ Gdvips -T 14in,14in -Ppdf  -mode  epstypro -D 360 -f %%1 -pp %%2  > zz%%4.ps
+\end{verbatim}
+
+\item
+\begin{verbatim}
+Gtest ! -f %%3  
+Gdvips -pp %%2 -R -E %%1 -o - | convert -transparent '#FFFFFF' -quality 100   
+-density 110 ps:- %%3  
+\end{verbatim}
+
+\item
+{A 
+Netpbm-based script
+(\Link[ftp://ftp.x.org/R5contrib/netpbm-1mar1994.tar.gz]{}{}src\EndLink{})}
+
+\begin{verbatim}
+ Ggs -sDEVICE=ppm -sOutputFile=zz%%4.ppm -q -dbatch -dNOPAUSE zz%%4.ps -c quit
+ Gmv zz%%4.ppm yz%%4.ppm
+ Gpnmcrop  yz%%4.ppm > zz%%4.ppm
+ Gppmtopng -interlace -transparent 1,1,1 zz%%4.ppm > %%3
+\end{verbatim}
+
+\item
+{A 
+PDF-based script
+(\Link[http://www.cs.wisc.edu/\string
+   ~ghost/doc/AFPL/6.50/Ps2pdf.htm]{}{}ps2pdf\EndLink{})}
+\begin{verbatim}
+Gdvips -mode ibmvga -D 110 -f %%1 -pp %%2  > zz%%4.ps
+Gps2pdf zz%%4.ps zz%%4.pdf
+Gconvert zz%%4.pdf -trim -density 110x110 -transparent '#FFFFFF' %%3
+\end{verbatim}
+
+
+\item
+
+\<win gs\><<<
+<gs>
+Gif exist zz%%4.ps DEL zz%%4.ps >nul
+Gif exist %%3 DEL %%3 >nul
+Gdvips -E -q -Ppdf -D 110 -mode ibmvga -f %%1 -pp %%2 -o zz%%4.ps
+Ggswin32c -dbatch -dNOPAUSE -sDEVICE=pngalpha -dEPSCrop ``-dBackgroundColor=16#ffffff'' -dTextAlphaBits=4 -dGraphicsAlphaBits=4 -r110x110 -sOutputFile=%%3 -q zz%%4.ps -c quit
+Gif exist zz%%4.ps DEL zz%%4.ps >nul
+</gs>
+>>>
+
+
+\end{itemize}
+
+
+
+\begin{itemize}
+
+
+
+\item{A variant of the given script}
+\begin{verbatim}
+GDEL zz%%4.ps
+Gdvips -T 14in,14in -Ppdf -mode  epstypro -D 360 -f %%1 -pp %%2  > zz%%4.ps
+GDEL %%3
+Gc:/imagemagic/convert zz%%4.ps -trim -density 110x110 -transparent #FFFFFF %%3
+\end{verbatim}
+\item{A 
+Netpbm-based script
+(\Link[ftp://ftp.x.org/R5contrib/netpbm-1mar1994.tar.gz]{}{}src\EndLink{} /
+binaries for Win 95/98/NT:
+\Link[http://sourceforge.net/projects/netpbm/]{}{}Netpbm project\EndLink,
+\Link[ftp://miktex.sourceforge.net/pub/miktex/util/]{}{}MiK\TeX\EndLink
+)}
+
+\begin{verbatim}
+ Gif exist  zz%%4.ps DEL zz%%4.ps
+ Gif exist zz%%4.ppm DEL zz%%4.ppm
+ Gdvips -T 14in,14in -Ppdf -f %%1 -pp %%2  -o zz%%4.ps
+ Ggswin32c -sDEVICE=ppm -sOutputFile=zz%%4.ppm -q -dbatch -dNOPAUSE zz%%4.ps -c quit
+ Gmove zz%%4.ppm yz%%4.ppm
+ Gpnmcrop  yz%%4.ppm > zz%%4.ppm
+ Gif exist %%3 DEL %%3
+ Gppmtopng -interlace -transparent 1,1,1 zz%%4.ppm > %%3
+\end{verbatim}
+ 
+or similarly
+
+% on dvips: -D 600
+% on gs :  -r600x600
+
+\begin{verbatim}
+ Gif exist  zz%%4.ps DEL zz%%4.eps
+ Gif exist zz%%4.ppm DEL zz%%4.ppm
+ Gdvips -E -f %%1 -pp %%2  -o zz%%4.eps
+ Ggswin32c -dEPSCrop -dBATCH -dNOPAUSE -sDEVICE=pbm -q -sOutputFile=zz%%4.ppm zz%%4.eps -c quit
+ Gmove zz%%4.ppm yz%%4.ppm
+ Gpnmcrop  yz%%4.ppm > zz%%4.ppm
+ Gppmtopng -interlace -transparent 1,1,1 zz%%4.ppm > %%3
+\end{verbatim}
+
+\item {IrfanView}
+\Link[http://www.irfanview.com]{}{}IrfanView\EndLink{}
+offers a possible alternative for the
+\`'convert' utility of ImageMagick.
+
+\item{PDF-based script}
+\Link{}{pdf-based}\EndLink {A 
+(\Link[http://www.cs.wisc.edu/\string
+   ~ghost/doc/AFPL/6.50/Ps2pdf.htm]{}{}ps2pdf\EndLink{})}
+\begin{verbatim}
+Gdvips -mode ibmvga -D 110 -f %%1 -pp %%2  > zz%%4.ps
+Gps2pdf zz%%4.ps zz%%4.pdf
+Gconvert zz%%4.pdf -trim -density 110x110 -transparent '#FFFFFF' %%3
+\end{verbatim}
+
+
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Open Office}
+%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\subsection{Unix}
+%%%%%%%%%%%%%%%%%%%%
+
+
+A `.foo command' record in the script asks to execute the given 
+command for each entry 'File: abc.foo' in the .lg file.  A \verb=%%0=
+stands for the job name, a \verb=%%1= stands for the file name
+(e.g., 'abc') without  the extension. A \verb=%%~= stands for the
+value  of \verb=${TEXMFDIST}= under KPATHSEA, and `\verb=~=' (home dir)
+when such a value is unavailable.
+
+
+\<unix openoffice\><<<
+<oo>
+%%% openoffice                                                      %
+.4oo mkdir sxw-%%0.dir
+.4os mkdir sxw-%%0.dir/Pictures
+.4os mv    %%1.4os         sxw-%%0.dir/settings.xml
+.4oo mv    %%0.4oo         sxw-%%0.dir/content.xml
+%                                                                   %
+.4om mkdir sxw-%%0.dir/%%1
+.4om mv    %%1.4om         sxw-%%0.dir/%%1/content.xml
+.4om cp    sxw-%%0.dir/settings.xml  sxw-%%0.dir/%%1/settings.xml
+%                                                                   %
+.4of mkdir sxw-%%0.dir/META-INF
+.4of mv    %%1.4of         sxw-%%0.dir/META-INF/manifest.xml
+%                                                                   %
+.4ot mv    %%1.4ot         sxw-%%0.dir/meta.xml
+.4oy mv    %%1.4oy         sxw-%%0.dir/styles.xml
+% .4og cp  --parents %%1   Pictures    
+% .4og mkdir -p              sxw-%%0.dir/Pictures/%%1 
+% .4og rmdir                 sxw-%%0.dir/Pictures/%%1 
+.4og cp    %%1             sxw-%%0.dir/Pictures/
+%-- sxw --                                                          %
+.4ox cd sxw-%%0.dir; zip -r %%0.sxw * ; cd ..
+%                                                                   %
+.4ox mv    sxw-%%0.dir/%%0.sxw .
+%                                                                   %
+.4ox rm    %%1.4ox 
+.4ox rm -r -f sxw-%%0.dir
+%-- odt --                                                          %
+.4od cd sxw-%%0.dir; zip -r %%0.odt * ; cd ..
+%                                                                   %
+.4od mv    sxw-%%0.dir/%%0.odt .
+%                                                                   %
+.4od rm    %%1.4od 
+.4od rm -r -f sxw-%%0.dir
+%%% end openoffice                                                  %
+</oo>
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Win32}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\<win32 openoffice\><<<
+<oo> 
+%%% openoffice                                                     %
+.4oo if exist sxw-%%0.dir rmdir /Q /S sxw-%%0.dir
+.4oo mkdir sxw-%%0.dir
+.4os mkdir sxw-%%0.dir\Pictures
+.4os move  %%1.4os                  sxw-%%0.dir\settings.xml
+.4oo move  %%0.4oo                  sxw-%%0.dir\content.xml
+%
+.4om mkdir sxw-%%0.dir\%%1
+.4om move  %%1.4om                  sxw-%%0.dir\%%1\content.xml
+.4om copy  sxw-%%0.dir\settings.xml sxw-%%0.dir\%%1\settings.xml
+%
+.4of mkdir sxw-%%0.dir\META-INF
+.4of move  %%1.4of sxw-%%0.dir\META-INF\manifest.xml
+%
+.4ot move  %%1.4ot    sxw-%%0.dir\meta.xml
+.4oy move  %%1.4oy    sxw-%%0.dir\styles.xml
+.4og copy  %%1        sxw-%%0.dir\Pictures\
+.4od cd    sxw-%%0.dir & zip -r -m  %%0.zip * & cd ..
+% .4od cd    sxw-%%0.dir & 7za a -y  %%0.zip * & cd ..
+.4od move sxw-%%0.dir\%%0.zip %%0.odt
+% 
+.4od del %%1.4od
+.4od if exist sxw-%%0.dir rmdir /Q /S sxw-%%0.dir
+%%% end openoffice      
+</oo> 
+>>>
+
+7za: \url{http://sourceforge.net/projects/sevenzip/}
+
+Windows uses ampersand character '\verb=&=' as command separator.
+There are also conditional separators '\verb=&&=' (execute if previous
+command successful) and '\verb=||=' (execute if previous command
+failed). It was added in NT so it's not portable to win95(98).
+
+
+
+\<win32 openoffice-DELETE\><<<
+%%% openoffice                                                     % 
+.4oo mkdir sxw-%%0.dir
+.4os mkdir sxw-%%0.dir\Pictures
+.4os move  %%1.4os                  sxw-%%0.dir\settings.xml
+.4oo move  %%0.4oo                  sxw-%%0.dir\content.xml
+%
+.4om mkdir sxw-%%0.dir\%%1
+.4om move  %%1.4om                  sxw-%%0.dir\%%1\content.xml
+.4om copy  sxw-%%0.dir\settings.xml sxw-%%0.dir\%%1\settings.xml
+%
+.4of mkdir sxw-%%0.dir\META-INF
+.4of move  %%1.4of sxw-%%0.dir\META-INF\manifest.xml
+%
+.4ot move  %%1.4ot    sxw-%%0.dir\meta.xml
+.4oy move  %%1.4oy    sxw-%%0.dir\styles.xml
+.4og copy  %%1        sxw-%%0.dir\Pictures\%%1
+%-- sxw --
+.4ox cd    sxw-%%0.dir\
+.4ox cd    sxw-%%0.dir\META-INF
+.4ox zip   sxw-%%0.dir\%%0.sxw        sxw-%%0.dir\META-INF\*.*
+.4ox cd    ..
+.4ox cd    sxw-%%0.dir\Pictures
+.4ox zip   sxw-%%0.dir\%%0.sxw        sxw-%%0.dir\Pictures
+.4ox cd ..
+.4ox zip -j sxw-%%0.dir\%%0.sxw       sxw-%%0.dir\*
+.4ox cd ..
+%
+.4ox move sxw-%%0.dir\%%0.sxw .
+%
+.4ox del %%1.4ox
+.4ox echo y | del sxw-%%0.dir\Pictures\*.*
+.4ox rd sxw-%%0.dir\Pictures
+.4ox echo y | del sxw-%%0.dir\META-INF\*.*
+.4ox rd sxw-%%0.dir\META-INF
+.4ox echo y | del sxw-%%0.dir\*.*
+.4ox rd /S sxw-%%0.dir
+%-- odt --
+.4od cd    sxw-%%0.dir\
+.4od cd    sxw-%%0.dir\META-INF
+.4od zip   sxw-%%0.dir\%%0.odt        sxw-%%0.dir\META-INF\*.*
+.4od cd    ..
+.4od cd    sxw-%%0.dir\Pictures
+.4od zip   sxw-%%0.dir\%%0.odt        sxw-%%0.dir\Pictures
+.4od cd ..
+.4od zip -j sxw-%%0.dir\%%0.odt       sxw-%%0.dir\*
+.4od cd ..
+%
+.4od move sxw-%%0.dir\%%0.odt .
+%
+.4od del %%1.4od
+.4od echo y | del sxw-%%0.dir\Pictures\*.*
+.4od rd sxw-%%0.dir\Pictures
+.4od echo y | del sxw-%%0.dir\META-INF\*.*
+.4od rd sxw-%%0.dir\META-INF
+.4od echo y | del sxw-%%0.dir\*.*
+.4od rd sxw-%%0.dir
+% (1) if  'echo y | del ...'  does not work try  'del /Q ...'  instead
+% (2) if rd fails to do the job, try replacing 'rd' with 'rd /s /q' 
+%%% end openoffice                                                  % 
+</oo> 
+>>> 
+
+
+t.m.trzeciak (Tolmek):
+
+\begin{verbatim}
+'rd' won't remove non-empty directory. It should be: 
+rd /s /q sxw-test-tex4ht.dir 
+\end{verbatim}
+
+
+
+Contributed by Hans-Peter Kohler:
+
+\<win32 openofficeDELETE\><<<
+%
+% Activate the following non-concurent sub script, if the previous
+% one does not work. That is, interchange <oo> with <oo-alt>
+% and </oo> with </oo-alt>.
+%
+<oo-alt>
+%%% openoffice                                                     %
+.4os mkdir Pictures
+.4os move  %%1.4os settings.xml
+.4oo move  %%0.4oo content.xml
+%
+.4om mkdir %%1
+.4om move  %%1.4om      %%1\content.xml
+.4om copy  settings.xml %%1\settings.xml
+%
+.4of mkdir META-INF
+.4of move  %%1.4of META-INF\manifest.xml
+%
+.4ot move  %%1.4ot    meta.xml
+.4oy move  %%1.4oy    styles.xml
+.4og copy  %%1        Pictures\%%1
+%-- sxw ---
+.4ox zip -m %%0.sxw Pictures
+.4ox zip -m %%0.sxw settings.xml
+.4ox zip -m %%0.sxw content.xml
+.4ox zip -m -r %%0.sxw %%0-m*
+.4ox zip -m -r %%0.sxw META-INF
+.4ox zip -m %%0.sxw meta.xml
+.4ox zip -m %%0.sxw styles.xml
+.4ox zip -m -r %%0.sxw Pictures/*
+%-- odt ---
+.4od zip -m %%0.odt Pictures
+.4od zip -m %%0.odt settings.xml
+.4od zip -m %%0.odt content.xml
+.4od zip -m -r %%0.odt %%0-m*
+.4od zip -m -r %%0.odt META-INF
+.4od zip -m %%0.odt meta.xml
+.4od zip -m %%0.odt styles.xml
+.4od zip -m -r %%0.odt Pictures/*
+%%% end openoffice                                                  %
+</oo-alt>
+>>>
+
+
+
+
+
+
+
+Contributed: Andrzej Or\l{}owski-Skoczyk; Modified: Wilfried Hennings:
+
+\<win32 openofficeDELETE\><<<
+<oo-alt-2>
+%%% openoffice                                                     %
+.4os mkdir sxw-%%0.dir
+.4os mkdir Pictures
+.4os move  %%1.4os                  sxw-%%0.dir\settings.xml
+.4os move  %%0.4oo                  sxw-%%0.dir\content.xml
+%
+.4om mkdir %%1
+.4om move  %%1.4om                  %%1\content.xml
+.4om copy  sxw-%%0.dir\settings.xml %%1\settings.xml
+.4om zip  %%0.zip       %%1\*
+.4om del /Q %%1\*
+.4om rmdir %%1
+%
+.4of mkdir META-INF
+.4of move  %%1.4of META-INF\manifest.xml
+%
+.4ot move  %%1.4ot    sxw-%%0.dir\meta.xml
+.4oy move  %%1.4oy    sxw-%%0.dir\styles.xml
+.4og copy  %%1        Pictures\%%1
+%-- sxw --
+.4ox move %%0.zip %%0.sxw
+.4ox zip   %%0.sxw        META-INF\*.*
+.4ox zip   %%0.sxw        Pictures
+.4ox zip -j %%0.sxw       sxw-%%0.dir\*
+%
+.4ox del %%1.4ox
+.4ox del /Q Pictures\*.*
+.4ox rd Pictures
+.4ox del /Q META-INF\*.*
+.4ox rd META-INF
+.4ox del /Q sxw-%%0.dir\*.*
+.4ox rd /S sxw-%%0.dir
+.4ox del /Q *.tmp
+%-- odt --
+.4od move %%0.zip %%0.odt
+.4od zip %%0.odt       META-INF\*.*
+.4od zip %%0.odt       Pictures
+.4od zip -j %%0.odt    sxw-%%0.dir\*
+%
+.4od del %%1.4od
+.4od del /Q Pictures\*.*
+.4od rd Pictures
+.4od del /Q META-INF\*.*
+.4od rd META-INF
+.4od del /Q sxw-%%0.dir\*.*
+.4od rd sxw-%%0.dir
+.4od del /Q *.tmp
+% if rd fails to do the job, try replacing 'rd' with 'rd /s /q' 
+%%% end openoffice    
+</oo-alt-2>
+>>>
+
+
+\<win32 openoffice-AndrzejDELETE\><<<
+<oo-alt-2>
+%%% openoffice                                                     %
+.4os mkdir sxw-%%0.dir
+.4os mkdir Pictures
+.4os move  %%1.4os                  sxw-%%0.dir\settings.xml
+.4os move  %%0.4oo                  sxw-%%0.dir\content.xml
+%
+.4om mkdir %%1
+.4om move  %%1.4om                  %%1\content.xml
+.4om copy  sxw-%%0.dir\settings.xml %%1\settings.xml
+%
+.4of mkdir META-INF
+.4of move  %%1.4of META-INF\manifest.xml
+%
+.4ot move  %%1.4ot    sxw-%%0.dir\meta.xml
+.4oy move  %%1.4oy    sxw-%%0.dir\styles.xml
+.4og copy  %%1        Pictures\%%1
+%-- sxw --
+.4ox zip   %%0.sxw        META-INF\*.*
+.4ox zip   %%0.sxw        Pictures
+.4ox zip -j %%0.sxw       sxw-%%0.dir\*
+%
+.4ox del %%1.4ox
+.4ox del /Q Pictures\*.*
+.4ox rd Pictures
+.4ox del /Q META-INF\*.*
+.4ox rd META-INF
+.4ox del /Q sxw-%%0.dir\*.*
+.4ox rd /S sxw-%%0.dir
+%-- odt --
+.4od zip %%0.odt       META-INF\*.*
+.4od zip %%0.odt       Pictures
+.4od zip -j %%0.odt    sxw-%%0.dir\*
+%
+.4od del %%1.4od
+.4od del /Q Pictures\*.*
+.4od rd Pictures
+.4od del /Q META-INF\*.*
+.4od rd META-INF
+.4od del /Q sxw-%%0.dir\*.*
+.4od rd sxw-%%0.dir
+% if rd fails to do the job, try replacing 'rd' with 'rd /s /q' 
+%%% end openoffice            
+</oo-alt-2>
+>>>
+
+
+
+
+
+Contributed by Andreas Gobel:
+
+
+\<win32 openoffice\><<<
+%
+% Platforms (e.g.,  cygwin) with cp and mv utilities of
+% http://www.mingw.org/msys.shtml may use the following script.
+% It is capable of moving pictures from subdirectories required,
+% for instance, by \includegraphics{bitmaps/test.eps}
+%
+<oo-msys> 
+%%% openoffice                                                     %  
+.4os mkdir Pictures  
+.4os mv  %%1.4os settings.xml             
+.4oo mv  %%0.4oo content.xml  
+%  
+.4om mkdir %%1  
+.4om mv  %%1.4om      %%1\content.xml  
+.4om cp  settings.xml %%1\settings.xml    
+%  
+.4of mkdir META-INF  
+.4of mv  %%1.4of META-INF\manifest.xml  
+%  
+.4ot mv  %%1.4ot    meta.xml  
+.4oy mv  %%1.4oy    styles.xml  
+.4og cp   %%1        Pictures\
+%-- sxw --  
+.4ox zip  %%0.sxw Pictures  
+.4ox zip  %%0.sxw settings.xml            
+.4ox zip  %%0.sxw content.xml  
+.4ox zip  -r %%0.sxw %%0-m*  
+.4ox zip  -r %%0.sxw META-INF  
+.4ox zip  %%0.sxw meta.xml  
+.4ox zip  %%0.sxw styles.xml  
+.4ox zip  -r %%0.sxw Pictures/*           
+%-- odt --  
+.4od zip  %%0.odt Pictures  
+.4od zip  %%0.odt settings.xml            
+.4od zip  %%0.odt content.xml  
+.4od zip  -r %%0.odt %%0-m*  
+.4od zip  -r %%0.odt META-INF  
+.4od zip  %%0.odt meta.xml  
+.4od zip  %%0.odt styles.xml  
+.4od zip  -r %%0.odt Pictures/*           
+%  
+%%% end openoffice                                          % 
+</oo-msys> 
+>>> 
+ 
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{xtpipes}
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+\<xtpipes: my oo\><<<
+<ooxtpipes>
+.4oo mv %%0.4oo %%0.tmp 
+.4oo java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%0.4oo %%0.tmp 
+.4om mv %%1.4om %%1.tmp
+.4om java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.4om %%1.tmp
+</ooxtpipes>
+>>>
+
+
+\<xtpipes: unix oo\><<<
+<ooxtpipes>
+.4oo mv %%0.4oo %%0.tmp 
+.4oo java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%0.4oo %%0.tmp 
+.4om mv %%1.4om %%1.tmp
+.4om java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.4om %%1.tmp
+</ooxtpipes>
+>>>
+
+
+\<xtpipes: win32 oo\><<<
+<ooxtpipes>
+.4oo move %%0.4oo %%0.tmp
+.4oo java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%0.4oo %%0.tmp
+.4om move %%1.4om %%1.tmp
+.4om java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.4om %%1.tmp
+</ooxtpipes>
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{JavaHelp}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<xtpipes: my java help\><<<
+<javahelp>
+.html mv %%1.html %%1.tmp
+.html java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s javahelp.4xt -o %%1.html %%1.tmp 
+.jhm echo "java -jar ${HOME}/javahelp.dir/jh2.0/javahelp/bin/jhindexer.jar -db %%0-doc/%%1-jhs %%1*.html"
+.jhm echo "--- Warning --- Beware of leftover %%1*.html files from other compilations"
+.jhm java -jar ${HOME}/javahelp.dir/jh2.0/javahelp/bin/jhindexer.jar -db %%0-doc/%%1-jhs %%1*.html
+</javahelp>
+<javahelp-prog>
+.java rm -r -f %%0-java.dir
+.java mkdir %%0-java.dir
+.java cp *.java %%0-java.dir/.
+.java javac -classpath ${HOME}/javahelp.dir/jh2.0/javahelp/lib/jh.jar %%0-java.dir/%%1.java
+.java chdir %%0-java.dir; jar -cf %%1.jar *.class ;  chdir  ..
+.java mv %%0-java.dir/%%1.jar .
+.java rm -r -f %%0-java.dir
+.java zip -r %%1 %%0-doc %%1.jar
+</javahelp-prog>
+>>>
+
+
+\<xtpipes: my java help\><<<
+<javahelp1>
+.jhm java -jar ${HOME}/javahelp.dir/jh1.1.3/javahelp/bin/jhindexer.jar -db %%0-doc/%%1-jhs %%1*.html
+</javahelp1>
+<javahelp1-prog>
+.java rm -r -f %%0-java.dir
+.java mkdir %%0-java.dir
+.java cp *.java %%0-java.dir/.
+.java javac -classpath ${HOME}/javahelp.dir/jh1.1.3/javahelp/lib/jh.jar %%0-java.dir/%%1.java
+.java chdir %%0-java.dir; jar -cf %%1.jar *.class ;  chdir  ..
+.java mv %%0-java.dir/%%1.jar .
+.java rm -r -f %%0-java.dir
+.java zip -r %%1 %%0-doc %%1.jar
+</javahelp1-prog>
+>>>
+
+
+\begin{verbatim}
+jhlatex jhprog "html,3,xml,xmldtd"
+ javac -classpath ${HOME}/javahelp.dir/jh2.0/javahelp/lib/jh.jar jhprog.java 
+
+jh1latex jhprog "html,3,xml,xmldtd"
+javac -classpath ${HOME}/javahelp.dir/jh1.1.3/javahelp/lib/jh.jar jhprog.java 
+\end{verbatim}
+
+
+\<xtpipes: unix java help\><<<
+<javahelp>
+.html mv %%1.html %%1.tmp
+.html java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s javahelp.4xt -o %%1.html %%1.tmp
+.jhm echo "java -jar ${HOME}/jh2.0/javahelp/bin/jhindexer.jar -db %%0-doc/%%1-jhs %%1*.html"
+.jhm echo "--- Warning ---  Beware of leftover %%1*.html files from other compilations"
+.jhm java -jar ${HOME}/jh2.0/javahelp/bin/jhindexer.jar -db %%0-doc/%%1-jhs %%1*.html
+</javahelp>
+<javahelp1>
+.jhm java -jar ${HOME}/jh1.1.3/javahelp/bin/jhindexer.jar -db %%0-doc/%%1-jhs %%1*.html
+</javahelp1>
+>>>
+
+
+\<xtpipes: win32 java help\><<<
+<javahelp>
+.html move %%1.html %%1.tmp
+.html java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s javahelp.4xt -o %%1.html %%1.tmp
+.jhm java -jar c:\jh2.0\javahelp\bin\jhindexer.jar -db %%0-doc\%%1-jhs %%1*.html
+</javahelp>
+<javahelp1>
+.jhm java -jar c:\jh1.1.3\javahelp\bin\jhindexer.jar -db %%0-doc\%%1-jhs %%1*.html
+</javahelp1>
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{Access to OS}
+%%%%%%%%%%%%%%%%%%
+
+\<unix t4ht commands\><<<
+% t4ht -d%%2                                                        %
+Mmv %%1 %%2%%3
+Ccp %%1 %%2%%3
+% t4ht -d%%2 -m%%1                                                  %
+Achmod %%1 %%2%%3
+% removed protection                                                %
+S*
+>>>
+
+
+\<my t4ht commands\><<<
+% t4ht -d%%2                                                        %
+Mmv %%1 %%2%%3
+Ccp %%1 %%2%%3
+% t4ht -e%%1 -d%%2                                                  %
+Ecp empty.png %%1%%2
+% t4ht -d%%2 -m%%1                                                  %
+Achmod %%1 %%2%%3
+% removed protection                                                %
+S*
+>>>
+
+\<dos t4ht commands\><<<
+% t4ht -d%%2                                                        %
+Mmove %%1 %%2%%3
+Ccopy %%1 %%2%%3
+% removed protection                                                %
+S*
+>>>
+
+Note: the permission option `S' takes into account also trailing spaces.
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Validation}
+%%%%%%%%%%%%%%%%%%
+
+
+
+\<unix validate\><<<
+<validatehtml>
+ .html xmllint --noout --valid --html %%1.html
+</validatehtml>
+<validate>
+ .xml xmllint --noout --valid %%1.xml
+ .html xmllint --noout --valid %%1.html
+ .css mycssparser %%1.css
+</validate>
+>>>
+
+%  Xmake -f NSGMLS name=%%1  ext=%%2
+
+
+\<win32 validate\><<<
+<validatehtml>
+</validatehtml>
+<validate>
+ .xml xmllint --noout --valid %%1.xml
+ .html xmllint --noout --valid %%1.html
+ .css mycssparser %%1.css
+</validate>
+>>>
+
+
+% Xif "%%2"=="html" nsgmls -wxml -wall -c catalog -s xml.dcl %%1.%%2
+% Xecho "*****************************************"
+
+
+
+
+\def\.#1.{\csname #1\endcsname}
+
+
+\<my validate\><<<
+<validatehtml>
+.html xmllint --noout --valid --html %%1.html
+.xml xmllint --noout --valid %%1.xml
+ .hs java -cp @.HOME.texmf/tex4ht/bin/xv4ht.jar xv4ht %%1.hs @.HOME.texmf/tex4ht/base/solaris/xv4ht.cat
+ .jhm java -cp @.HOME.texmf/tex4ht/bin/xv4ht.jar xv4ht %%1.jhm @.HOME.texmf/tex4ht/base/solaris/xv4ht.cat
+.css vcss %%1.css
+</validatehtml>
+<validate>
+.xml xmllint --noout --valid %%1.xml
+.html xmllint --noout --valid %%1.html
+.css vcss %%1.css
+ .4om echo "rxp -V -s -e %%1.4om"   
+ .4om rxp -V -s -e %%1.4om
+ .4oo xmllint --relaxng ~/dtd.dir/openoffice/relaxng.dir/OpenDocument-schema-v1.0-os.rng -noout %%0.4oo
+.4oo xmllint --relaxng  ~/dtd.dir/openoffice/relaxng.dir/OpenDocument-schema-v1.1.rng -noout %%0.4oo
+ .4oy xmllint --relaxng ~/dtd.dir/openoffice/relaxng.dir/OpenDocument-schema-v1.0-os.rng -noout %%0-styles.4oy
+.4oy xmllint --relaxng  ~/dtd.dir/openoffice/relaxng.dir/OpenDocument-schema-v1.1.rng -noout %%0-styles.4oy
+.4om perl -pe 's/math://g' %%1.4om | perl -pe 's/xmlns:[^=]*="[^"]*"//g' | perl -pe 's/xlink:[^=]*="[^"]*"//g' > tmp.tmp ; xmllint --valid --noout --catalogs tmp.tmp
+</validate>
+ Xmake -f \HOME texmf/base/NSGMLS name=%%1  ext=%%2 %%3
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Emacspeak}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<xtpipes: my emacspeak\><<<
+<emspk>
+.html mv %%1.html %%1.tmp
+.html java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.html %%1.tmp
+.html xmllint --noout %%1.html 
+</emspk>
+>>>
+
+
+\<xtpipes: unix emacspeak\><<<
+<emspk>
+.html mv %%1.html %%1.tmp
+.html java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.html %%1.tmp
+</emspk>
+>>>
+
+
+\<xtpipes: win32 emacspeak\><<<
+<emspk>
+.html move %%1.html %%1.tmp
+.html java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.html %%1.tmp
+</emspk>
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{JSML}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<xtpipes: my jsml\><<<
+<jsml>
+.jsml mv %%1.jsml %%1.tmp
+.jsml java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.jsml %%1.tmp
+.jsml xmllint --noout %%1.jsml 
+</jsml>
+>>>
+
+
+\<xtpipes: unix jsml\><<<
+<jsml>
+.jsml mv %%1.jsml %%1.tmp
+.jsml java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.jsml %%1.tmp
+</jsml>
+>>>
+
+
+\<xtpipes: win32 jsml\><<<
+<jsml>
+.jsml move %%1.jsml %%1.tmp
+.jsml java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.jsml %%1.tmp
+</jsml>
+>>>
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{DocBook}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<xtpipes: my docbk\><<<
+<docbk>
+.xml cp %%1.xml %%1.tmp
+.xml java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.xml %%1.tmp
+.xml xmllint --relaxng /home/4/gurari/dtd.dir/docbook.dir/docbook-5.0/rng/docbook.rng -noout -dropdtd -nonet %%0.xml
+</docbk>
+>>>
+
+
+\<xtpipes: unix docbk\><<<
+<docbk>
+.xml cp %%1.xml %%1.tmp
+.xml java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.xml %%1.tmp
+</docbk>
+>>>
+
+
+\<xtpipes: win32 docbk\><<<
+<docbk>
+.xml copy %%1.xml %%1.tmp
+.xml java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -o %%1.xml %%1.tmp
+</docbk>
+>>>
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{XHTML}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<xtpipes: my xhtml\><<<
+<xhtml>
+.html mv %%1.html %%1.tmp
+.html java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtml.4xt -o %%1.html %%1.tmp 
+.html xmllint --noout %%1.html 
+.xht mv %%1.xht %%1.tmp
+.xht java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtml.4xt -o %%1.xht %%1.tmp 
+.xht xmllint --noout %%1.xht 
+.xml mv %%1.xml %%1.tmp
+.xml java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtml.4xt -o %%1.xml %%1.tmp 
+.xml xmllint --noout %%1.xml 
+</xhtml>
+>>>
+
+
+\<xtpipes: unix xhtml\><<<
+<xhtml>
+.html mv %%1.html %%1.tmp
+.html java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtml.4xt -o %%1.html %%1.tmp
+.xht mv %%1.xht %%1.tmp
+.xht java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtml.4xt -o %%1.xht %%1.tmp
+.xml mv %%1.xml %%1.tmp
+.xml java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtml.4xt -o %%1.xml %%1.tmp
+</xhtml>
+>>>
+
+
+\<xtpipes: win32 xhtml\><<<
+<xhtml>
+.html move %%1.html %%1.tmp
+.html java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtml.4xt -o %%1.html %%1.tmp
+.xht move %%1.xht %%1.tmp
+.xht java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtml.4xt -o %%1.xht %%1.tmp
+.xml move %%1.xml %%1.tmp
+.xml java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtml.4xt -o %%1.xml %%1.tmp
+</xhtml>
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{XHTML + MathML}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<xtpipes: my xhtmml\><<<
+<xhtmml>
+.html mv %%1.html %%1.tmp
+.html java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtmml.4xt -o %%1.html %%1.tmp 
+.html xmllint --noout %%1.html 
+.xht mv %%1.xht %%1.tmp
+.xht java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtmml.4xt -o %%1.xht %%1.tmp 
+.xht xmllint --noout %%1.xht 
+.xml mv %%1.xml %%1.tmp
+.xml java -classpath %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtmml.4xt -o %%1.xml %%1.tmp 
+.xml xmllint --noout %%1.xml 
+</xhtmml>
+>>>
+
+
+\<xtpipes: unix xhtmml\><<<
+<xhtmml>
+.html mv %%1.html %%1.tmp
+.html java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtmml.4xt -o %%1.html %%1.tmp
+.xht mv %%1.xht %%1.tmp
+.xht java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtmml.4xt -o %%1.xht %%1.tmp
+.xml mv %%1.xml %%1.tmp
+.xml java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtmml.4xt -o %%1.xml %%1.tmp
+</xhtmml>
+>>>
+
+
+\<xtpipes: win32 xhtmml\><<<
+<xhtmml>
+.html move %%1.html %%1.tmp
+.html java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtmml.4xt -o %%1.html %%1.tmp
+.xht move %%1.xht %%1.tmp
+.xht java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtmml.4xt -o %%1.xht %%1.tmp
+.xml move %%1.xml %%1.tmp
+.xml java -classpath  %%~/tex4ht/bin/tex4ht.jar xtpipes -i %%~/tex4ht/xtpipes/ -s xhtmml.4xt -o %%1.xml %%1.tmp
+</xhtmml>
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Copyright}
+%%%%%%%%%%%%%%%%%%
+
+\input{tex4ht-cpright}
+
+
+\<unix copyright\><<<
+% tex4ht.env-unix (@version), generated from @jobname.tex
+% (can be used as ~/.tex4ht)
+% Copyright 2009-2018 TeX Users Group
+% Copyright @CopyYear.1997. Eitan M. Gurari
+@<TeX4ht copyright@>>>>
+
+\<private copyright\><<<
+% tex4ht.env (private) (@version), generated from @jobname.tex
+% (can be used as ~/.tex4ht)
+% Copyright 2009-2018 TeX Users Group
+% Copyright @CopyYear.1997. Eitan M. Gurari
+@<TeX4ht copyright@>>>>
+
+\<win32 copyright\><<<
+% tex4ht.env-win32 (@version), generated from @jobname.tex
+% Copyright 2009-2018 TeX Users Group
+% Copyright @CopyYear.1997. Eitan M. Gurari
+@<TeX4ht copyright@>>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\OutputCode\<tex4ht\>
+\OutputCodE\<tex4ht.env-unix\>
+\OutputCodE\<tex4ht.env-win32\>
+
+\end{document}
+
+Date: Thu, 14 Nov 2013 13:08:12 -0800
+From: Richard Koch <koch@math.uoregon.edu>
+To: Karl Berry <karl@freefriends.org>
+
+[...]
+
+The syntax of tex4ht.env is certainly unclear. Eitan says at the top
+that <tag> is ignored if it doesn't start a line, and then has a vague
+comment about defaults.
+
+Looking at the <convert> section, everything here seems to call dvips to get a
+ps, and then output a graphic, either png or svg. The section has
+
+	G.png prefaced by a space
+	G.svg prefaced by no space
+	G. prefaced by no space
+
+I guessed this meant that output of either a png or svg was acceptable, and
+the preferred method is G.
+
+So as a test, I left everything alone except the existing "G." section, which I
+commented out. Then I added my own "G." section, containing the existing
+G.png code, because it calls ghostscript rather than convert.
+
+Next there is a netpbm section. The Mac doesn't have netpbm, so this section
+seems to do no harm and I left it alone.
+
+The final graphic section has tag <dvipng> and the programs inside seem to
+all start with a dvi, skip the ps step, and get either a png or a gif. The
+section has
+
+	G.png with no initial space
+	G.gif with no initial space
+	G. with no initial space
+
+With little evidence, I took this to mean that conversion starting with a dvi
+file can end with either a png or a gif, but that the preferred method is in G.
+As before, I commented out the old "G." because it used convert, and replaced
+it with a "G." section containing the contents of G.png because it uses
+Gdvipng instead of convert.
+
+Then I tried a sample file. It worked fine, even when I disabled
+convert.  Earlier attempts to change tex4ht.env resulted in no png files
+and lots "missing picture" icons in the html, but this time all those
+png files were created and the html output looked fine on a browser.
+
+This evidence suggests, but does not prove, that Ghostscript itself
+would be a satisfactory conversion method. The change seems to take more
+time, but perhaps this is startup time and large projects wouldn't see
+much difference.
+
+END OF TODAY'S HOBBY SESSION
+
+Dick

@@ -1,0 +1,101 @@
+\iffalse meta-comment
+
+Project: expkv-bundle Copyright (C) 2020-2023 Jonathan P. Spratte
+
+This work  may be  distributed and/or  modified under  the conditions  of the
+LaTeX Project Public License (LPPL),  either version 1.3c  of this license or
+(at your option) any later version.  The latest version of this license is in
+the file:
+
+  http://www.latex-project.org/lppl.txt
+
+-----------------------------------------------------------------------------
+
+This file is part of the  "expkv bundle" (The Work in LPPL)  and all files in
+that bundle must be distributed together.
+
+The released version of this bundle is available from CTAN.
+
+-----------------------------------------------------------------------------
+
+The development version of the bundle can be found at
+
+   https://gitlab.com/islandoftex/texmf/expkv-bundle
+
+for those people who are interested.
+
+-----------------------------------------------------------------------------
+
+\fi
+
+\input l3docstrip.tex
+\askforoverwritefalse
+\preamble
+
+----------------------------------------------------------------
+expkv-bundle -- an expandable key=val implementation and friends
+E-mail: jspratte@yahoo.de
+Released under the LaTeX Project Public License v1.3c or later
+See http://www.latex-project.org/lppl.txt
+----------------------------------------------------------------
+
+Copyright (C) 2020-2023 Jonathan P. Spratte
+
+This  work may be  distributed and/or  modified under  the conditions  of the
+LaTeX Project Public License (LPPL),  either version 1.3c  of this license or
+(at your option) any later version.  The latest version of this license is in
+the file:
+
+  http://www.latex-project.org/lppl.txt
+
+This work is "maintained" (as per LPPL maintenance status) by
+  Jonathan P. Spratte.
+
+This work consists of the files  expkv-bundle.ins
+                                 expkv.dtx
+                                 expkv-cs.dtx
+                                 expkv-def.dtx
+                                 expkv-opt.dtx
+                                 expkv-pop.dtx
+and the derived files            expkv.sty
+                                 expkv.tex
+                                 t-expkv.tex
+                                 expkv-cs.sty
+                                 expkv-cs.tex
+                                 t-expkv-cs.tex
+                                 expkv-def.sty
+                                 expkv-def.tex
+                                 t-expkv-def.tex
+                                 expkv-opt.sty
+                                 expkv-pop.sty
+                                 expkv-pop.tex
+                                 t-expkv-pop.tex
+
+as well as any documentation files shipped with it.
+
+\endpreamble
+\postamble
+\endpostamble
+
+\keepsilent
+
+\ifdefined\expkvDocNoGenerate\endinput\fi
+
+\generate
+  {%
+    \file  {expkv.sty}    {\from{expkv.dtx}    {pkg}}%
+    \file  {expkv.tex}    {\from{expkv.dtx}    {tex}}%
+    \file{t-expkv.tex}    {\from{expkv.dtx}    {ctx}}%
+    \file  {expkv-cs.sty} {\from{expkv-cs.dtx} {pkg}}%
+    \file  {expkv-cs.tex} {\from{expkv-cs.dtx} {tex}}%
+    \file{t-expkv-cs.tex} {\from{expkv-cs.dtx} {ctx}}%
+    \file  {expkv-def.sty}{\from{expkv-def.dtx}{pkg}}%
+    \file  {expkv-def.tex}{\from{expkv-def.dtx}{tex}}%
+    \file{t-expkv-def.tex}{\from{expkv-def.dtx}{ctx}}%
+    \file  {expkv-pop.sty}{\from{expkv-pop.dtx}{pkg}}%
+    \file  {expkv-pop.tex}{\from{expkv-pop.dtx}{tex}}%
+    \file{t-expkv-pop.tex}{\from{expkv-pop.dtx}{ctx}}%
+    \file  {expkv-opt.sty}{\from{expkv-opt.dtx}{pkg}}%
+  }
+
+\endbatchfile

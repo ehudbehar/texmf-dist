@@ -1,0 +1,36 @@
+% luaoptions support package.
+%
+% Copyright (C) 2015-2022 the lualatex-tools Project
+% License: MIT
+% This file is part of luaoptions.
+
+\NeedsTeXFormat{LaTeX2e}%
+\ProvidesPackage{luaoptions}[2022/10/30 v0.8]
+
+% Dependencies
+\RequirePackage{luatexbase}
+\RequirePackage{luaotfload}
+\RequirePackage{xkeyval}
+
+\directlua{
+  lua_options = require(kpse.find_file("luaoptions.lua") or "luaoptions.lua")
+}
+
+% Set an option in a registered client
+\newcommand{\setluaoption}[3]{%
+  \directlua{
+    lua_options.set_option(
+      '\luatexluaescapestring{#1}',
+      '\luatexluaescapestring{#2}',
+      '\luatexluaescapestring{#3}')
+  }
+}
+
+% Use an option and directly write it to LaTeX
+\newcommand{\useluaoption}[2]{%
+  \directlua{
+    lua_options.use_option(
+      '\luatexluaescapestring{#1}',
+      '\luatexluaescapestring{#2}')
+  }%
+}

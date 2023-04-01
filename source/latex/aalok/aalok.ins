@@ -1,0 +1,81 @@
+% File: aalok.ins
+\input l3docstrip.tex
+
+\keepsilent
+\askforoverwritefalse
+
+\preamble
+
+--------------------------------------------------------------------------
+लाटेक्-वर्ग आलोक आवृत्ती ०.६
+प्रतिमुद्राधिकार © २०२१ निरंजन, आलोक मराठी नियतकालिक
+
+ह्या सामग्रीच्या वितरणाचे व प्रतिमुद्रणाचे अधिकार आलोक नित्यमुक्त परवान्यासह मुक्त करण्यात येत
+आहेत. ह्या सामग्रीची यथामूल अथवा परिवर्तित प्रतिमुद्रणे व्यावसायिक अथवा अव्यावसायिक स्वरूपात
+वितरित करण्यास प्रतिमुद्राधिकारधारक संमती देत आहे, परंतु असे करताना वितरकाने
+प्रतिमुद्राधिकारांचा योग्य श्रेयनिर्देश करणे व सामग्री परिवर्तित असल्यास ती ह्याच अटींसह वितरित
+करणे बंधनकारक आहे. ही सामग्री जशी आहे तशी पुरवण्यात येत आहे, पुरवणारा/पुरवणारी हिच्याबाबत
+कोणतीही हमी देत नाही. ह्या (व ह्यावर आधारित) सामग्रीचे अमुक्त वितरण बेकायदेशीर मानले
+जाईल. आलोक नित्यमुक्त परवान्याचा संपूर्ण मसुदा पुढील दुव्यावर वाचता येईल.
+
+https://gitlab.com/aalok/nityamukta-parwana
+--------------------------------------------------------------------------
+LaTeX Class aalok v0.6
+Copyright © 2021 निरंजन, आलोक मराठी नियतकालिक
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+--------------------------------------------------------------------------
+लाटेक्-वर्ग:       आलोक
+लेखक:          निरंजन
+आवृत्ती:          ०.६
+वर्णन:           आलोक मराठी नियतकालिकाच्या अक्षरजुळणीकरिता लाटेक्-वर्ग.
+संग्राहिका:        https://git.gnu.org.ua/aalok.git
+अडचणी:         https://puszcza.gnu.org.ua/bugs/?group=aalok
+परवाना:          आलोक नित्यमुक्त परवाना. आवृत्ती १.०+
+               ग्नू पब्लिक परवाना. आवृत्ती ३.०+
+               ग्नू फ्री डॉक्युमेन्टेशन परवाना. आवृत्ती १.३+
+               दुवे:
+               https://gitlab.com/aalok/nityamukta-parwana
+               https://www.gnu.org/licenses/gpl
+               https://www.gnu.org/licenses/fdl-1.3
+---------------------------------------------------------------------------
+हे काम आलोक नित्यमुक्त परवान्याच्या (आवृत्ती १.० अथवा त्यापुढील) अटींचे पालन करून वितरित केले
+जाऊ शकते तसेच सुधारले जाऊ शकते.
+
+ह्या परवान्याची नवीनतम प्रत खालील गिट-संग्राहिकेवर उपलब्ध आहे.
+
+https://gitlab.com/aalok/nityamukta-parwana
+
+ह्या लाटेक्-वर्गाची लाटेक्-प्रकल्पाच्या नियमांनुसार देखरेख केली जात आहे.
+
+ह्या लाटेक्-वर्गाचा लेखक व पालक निरंजन आहे.
+
+ह्या कामात aalok.dtx, aalok.ins तसेच त्यांपासून निर्माण केलेली
+aalok.cls ही धारिका समाविष्ट आहे.
+---------------------------------------------------------------------------
+
+\endpreamble
+
+\usedir{tex/latex/\jobname}
+\generate{
+  \file{\jobname.cls}{\from{\jobname.dtx}{class}}
+}
+
+\nopreamble\nopostamble
+\usedir{doc/latex/\jobname}
+\generate{
+  \file{README.txt}{\from{\jobname.dtx}{readme}}
+}
+
+\endbatchfile

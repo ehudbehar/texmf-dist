@@ -1,0 +1,55 @@
+!config
+# Arara, the cool TeX automation tool
+# Copyright (c) 2022, Island of TeX
+# All rights reserved.
+#
+# This rule is part of arara.
+identifier: animate
+name: Animate
+authors:
+- Chris Hughes
+- Island of TeX
+commands:
+- name: The Convert program
+  command: >
+    @{
+        input = getBasename(reference.fileName).concat('.pdf');
+        output = getBasename(reference.fileName).concat('.gif');
+        return getCommand(program, '-delay', delay, '-loop',
+               loop, '-density', density, options, input, output);
+    }
+arguments:
+- identifier: delay
+  flag: >
+    @{
+        parameters.delay
+    }
+  default: 10
+- identifier: loop
+  flag: >
+    @{
+        parameters.loop
+    }
+  default: 0
+- identifier: density
+  flag: >
+    @{
+        parameters.density
+    }
+  default: 300
+- identifier: program
+  flag: >
+    @{
+        parameters.program
+    }
+  default: convert
+- identifier: options
+  flag: >
+    @{
+        if (isList(parameters.options)) {
+            return parameters.options;
+        }
+        else {
+            throwError('I was expecting a list of options.');
+        }
+    }

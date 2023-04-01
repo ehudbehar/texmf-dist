@@ -1,0 +1,4650 @@
+% $Id: tex4ht-fonts-fourier.tex 1057 2022-01-18 09:17:45Z michal_h21 $
+% etex tex4ht-fonts-fourier.tex
+%
+% Copyright 2020 TeX Users Group.
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\input tex4ht.sty    
+   \Preamble{xhtml,th4,sections+}
+\EndPreamble
+\input ProTex.sty          
+%\AlProTex{c,<<<>>>,`,title,list,ClearCode,_^}
+\AlProTex{c,<<<>>>,`,title,list,`,ClearCode,_^}
+
+
+\def\HOME{./tex4ht.dir/}
+\def\DTDS{./dtd.dir/}           
+\def\SOURCE{./html.dir/}
+
+\def\MYdir{\HOME texmf/tex4ht/ht-fonts}
+
+
+\newwrite\dbcs     
+\newwrite\unicode  
+
+\def\AddFont{\futurelet\ext\AddFontA}
+\def\AddFontA{%
+   \if [\ext \def\ext[##1]{\def\ext{##1}\AddFontB}%
+   \else     \def\ext{\def\ext{htf}\AddFontB}\fi
+   \ext}
+\def\AddFontB#1#2{%
+   \Comment{}{}\OutputCode[\ext]\<#1\>%
+   \let\StartDir=\empty  \def\EndDir{#2}\MakeDir
+   \ifx \WWWdir\Undef \else
+      \Needs{"cp #1.\ext\space \WWWdir /#2.\ext"}%
+      \Needs{"chmod 644 \WWWdir /#2.\ext"}%
+   \fi
+   \Needs{"mv #1.\ext\space \MYdir /#2.\ext"}%
+   }
+\def\MakeDir{\relax
+   \expandafter \ifx  \csname !\StartDir\endcsname\relax
+      \expandafter\let\csname !\StartDir\endcsname=\empty
+      \Needs{"mkdir -p \MYdir/\StartDir"}%     
+      \ifx \WWWdir\Undef \else
+         \Needs{"mkdir -p \MYdir/\StartDir"}%     
+         \Needs{"chmod 711 \WWWdir /StartDir"}%
+      \fi
+   \fi
+   \ifx \EndDir\empty \else
+       \expandafter\AppendDir \EndDir////*%
+       \expandafter\MakeDir
+   \fi
+}
+\def\AppendDir#1/#2/#3/*{%
+   \def\temp{#2}\ifx \temp\empty  \let\EndDir=\empty 
+   \else
+      \edef\StartDir{\ifx \StartDir\empty\else \StartDir/\fi
+                     #1}\def\EndDir{#2/#3}%
+   \fi
+}
+
+% writing futmi.htf hash: 0e1ea0c61097f39b59ffe8e9fd617b9b
+\<futmi\><<<
+futmi 0 131
+'&#x0393;' '' Gamma 0
+'&#x2206;' '' Delta 1
+'&#x0398;' '' Theta 2
+'&#x039B;' '' Lambda 3
+'&#x039E;' '' Xi 4
+'&#x03A0;' '' Pi 5
+'&#x03A3;' '' Sigma 6
+'&#x03A5;' '' Upsilon 7
+'&#x03A6;' '' Phi 8
+'&#x03A8;' '' Psi 9
+'&#x2126;' '' Omega 10
+'&#x03B1;' '' alpha 11
+'&#x03B2;' '' beta 12
+'&#x03B3;' '' gamma 13
+'&#x03B4;' '' delta 14
+'&#x03F5;' '' epsilon1 15
+'&#x03B6;' '' zeta 16
+'&#x03B7;' '' eta 17
+'&#x03B8;' '' theta 18
+'&#x03B9;' '' iota 19
+'&#x03BA;' '' kappa 20
+'&#x03BB;' '' lambda 21
+'&#x00B5;' '' mu 22
+'&#x03BD;' '' nu 23
+'&#x03BE;' '' xi 24
+'&#x03C0;' '' pi 25
+'&#x03C1;' '' rho 26
+'&#x03C3;' '' sigma 27
+'&#x03C4;' '' tau 28
+'&#x03C5;' '' upsilon 29
+'&#x03D5;' '' phi 30
+'&#x03C7;' '' chi 31
+'&#x03C8;' '' psi 32
+'&#x03C9;' '' omega 33
+'&#x03B5;' '' epsilon 34
+'&#x03D1;' '' theta1 35
+'&#x03D6;' '' pi1 36
+'&#x03F1;' '' rho1 37
+'&#x03C2;' '' sigma1 38
+'&#x03C6;' '' phi1 39
+'&#x21BC;' '' harpoonleftup 40
+'&#x21BD;' '' harpoonleftdown 41
+'&#x21C0;' '' harpoonrightup 42
+'&#x21C1;' '' harpoonrightdown 43
+'&#x21AA;' '' hookrightchar 44
+'&#x21A9;' '' hookleftchar 45
+'&#x25C3;' '' triangleright 46
+'&#x25B9;' '' triangleleft 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+'.' '' period 58
+',' '' comma 59
+'&lt;' '' less 60
+'/' '' slash 61
+'&gt;' '' greater 62
+'&#x22C6;' '' star 63
+'&#x2202;' '' partialdiff 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'&#x266D;' '' flat 91
+'&#x266E;' '' natural 92
+'&#x266F;' '' sharp 93
+'&#x2323;' '' slurbelow 94
+'&#x2322;' '' slurabove 95
+'&#x2113;' '' lscript 96
+'a' '' a 97
+'b' '' b 98
+'c' '' c 99
+'d' '' d 100
+'e' '' e 101
+'f' '' f 102
+'g' '' g 103
+'h' '' h 104
+'i' '' i 105
+'j' '' j 106
+'k' '' k 107
+'l' '' l 108
+'m' '' m 109
+'n' '' n 110
+'o' '' o 111
+'p' '' p 112
+'q' '' q 113
+'r' '' r 114
+'s' '' s 115
+'t' '' t 116
+'u' '' u 117
+'v' '' v 118
+'w' '' w 119
+'x' '' x 120
+'y' '' y 121
+'z' '' z 122
+'&#x0131;' '' dotlessi 123
+'&#x0237;' '' dotlessj 124
+'&#x2118;' '' weierstrass 125
+'&#x20D7;' '' vector 126
+'&#x2040;' '' tie 127
+'&#xD835;&#xDF18;' '' kappa1 128
+'&#x03F1;' '' rho2 129
+'&#xD835;&#xDF15;' '' partialdiff1 130
+'&#x03D6;' '' pi2 131
+futmi 0 131
+htfcss:  futmi  font-family: 'Fourier-Math-Letters', serif;
+
+>>>
+\AddFont{futmi}{unicode/Fourier-Math-Letters/futmi}{}
+% writing futmib.htf hash: 0e1ea0c61097f39b59ffe8e9fd617b9b
+\<futmib\><<<
+.futmi
+htfcss:  futmib  font-weight: bold; font-family: 'Fourier-Math-Letters', serif;
+
+>>>
+\AddFont{futmib}{alias/Fourier-Math-Letters/futmib}{}
+% writing futmii.htf hash: 0e1ea0c61097f39b59ffe8e9fd617b9b
+\<futmii\><<<
+.futmi
+htfcss:  futmii  font-style: italic; font-family: 'Fourier-Math-Letters', serif;
+
+>>>
+\AddFont{futmii}{alias/Fourier-Math-Letters/futmii}{}
+% writing futmiib.htf hash: 0e1ea0c61097f39b59ffe8e9fd617b9b
+\<futmiib\><<<
+.futmi
+htfcss:  futmiib  font-weight: bold; font-style: italic; font-family: 'Fourier-Math-Letters', serif;
+
+>>>
+\AddFont{futmiib}{alias/Fourier-Math-Letters/futmiib}{}
+% writing futsy.htf hash: 251bee2d5dc75011d4aba69609a8e1c0
+\<futsy\><<<
+futsy 0 165
+'&#x2212;' '' minus 0
+'&#x00B7;' '' periodcentered 1
+'&#x00D7;' '' multiply 2
+'&#x2217;' '' asteriskmath 3
+'&#x00F7;' '' divide 4
+'&#x22C4;' '' diamondmath 5
+'&#x00B1;' '' plusminus 6
+'&#x2213;' '' minusplus 7
+'&#x2295;' '' circleplus 8
+'&#x2296;' '' circleminus 9
+'&#x2297;' '' circlemultiply 10
+'&#x2298;' '' circledivide 11
+'&#x2299;' '' circledot 12
+'&#x20DD;' '' circlecopyrt 13
+'&#x25E6;' '' openbullet 14
+'&#x2022;' '' bullet 15
+'&#x224D;' '' equivasymptotic 16
+'&#x2261;' '' equivalence 17
+'&#x2286;' '' reflexsubset 18
+'&#x2287;' '' reflexsuperset 19
+'&#x2264;' '' lessequal 20
+'&#x2265;' '' greaterequal 21
+'&#x227C;' '' precedesequal 22
+'&#x227D;' '' followsequal 23
+'&#x223C;' '' similar 24
+'&#x2248;' '' approxequal 25
+'&#x2282;' '' propersubset 26
+'&#x2283;' '' propersuperset 27
+'&#x226A;' '' lessmuch 28
+'&#x226B;' '' greatermuch 29
+'&#x227A;' '' precedes 30
+'&#x227B;' '' follows 31
+'&#x2190;' '' arrowleft 32
+'&#x2192;' '' arrowright 33
+'&#x2191;' '' arrowup 34
+'&#x2193;' '' arrowdown 35
+'&#x2194;' '' arrowboth 36
+'&#x2197;' '' arrownortheast 37
+'&#x2198;' '' arrowsoutheast 38
+'&#x2243;' '' similarequal 39
+'&#x21D0;' '' arrowdblleft 40
+'&#x21D2;' '' arrowdblright 41
+'&#x21D1;' '' arrowdblup 42
+'&#x21D3;' '' arrowdbldown 43
+'&#x21D4;' '' arrowdblboth 44
+'&#x2196;' '' arrownorthwest 45
+'&#x2199;' '' arrowsouthwest 46
+'&#x221D;' '' proportional 47
+'&#x2032;' '' prime 48
+'&#x221E;' '' infinity 49
+'&#x2208;' '' element 50
+'&#x220B;' '' owner 51
+'&#x25B3;' '' triangle 52
+'&#x25BD;' '' triangleinv 53
+'&#x0338;' '' negationslash 54
+'&#x21A6;' '' mapstochar 55
+'&#x2200;' '' universal 56
+'&#x2203;' '' existential 57
+'&#x00AC;' '' logicalnot 58
+'&#x2205;' '' emptysetstress 59
+'&#x211C;' '' Rfraktur 60
+'&#x2111;' '' Ifraktur 61
+'&#x22A4;' '' latticetop 62
+'&#x22A5;' '' perpendicular 63
+'&#x2135;' '' aleph 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'&#x222A;' '' union 91
+'&#x2229;' '' intersection 92
+'&#x228E;' '' unionmulti 93
+'&#x2227;' '' logicaland 94
+'&#x2228;' '' logicalor 95
+'&#x22A2;' '' turnstileleft 96
+'&#x22A3;' '' turnstileright 97
+'&#x230A;' '' floorleft 98
+'&#x230B;' '' floorright 99
+'&#x2308;' '' ceilingleft 100
+'&#x2309;' '' ceilingright 101
+'{' '' braceleft 102
+'}' '' braceright 103
+'&#x2329;' '' angleleft 104
+'&#x27E9;' '' angleright 105
+'|' '' bar 106
+'&#x2225;' '' bardbl 107
+'&#x2195;' '' arrowbothv 108
+'&#x21D5;' '' arrowdblbothv 109
+'\' '' backslash 110
+'&#x2240;' '' wreathproduct 111
+'&#x23B7;' '' radicallow 112
+'&#x2A3F;' '' coproduct 113
+'&#x2207;' '' gradient 114
+'&#x222B;' '' integral 115
+'&#x2294;' '' unionsq 116
+'&#x2293;' '' intersectionsq 117
+'&#x2291;' '' subsetsqequal 118
+'&#x2292;' '' supersetsqequal 119
+'&#x00A7;' '' section 120
+'&#x2020;' '' dagger 121
+'&#x2021;' '' daggerdbl 122
+'&#x00B6;' '' paragraph 123
+'&#x2663;' '' club 124
+'&#x2662;' '' diamond 125
+'&#x2661;' '' heart 126
+'&#x2660;' '' spade 127
+'+' '' plus 128
+'=' '' equal 129
+'&lt;' '' less 130
+'&gt;' '' greater 131
+'&#x02A7D;' '' leqslant 132
+'&#x02A7E;' '' geqslant 133
+'&#x2225;' '' parallelslanted 134
+'&#x1F60E;' '' barcino 135
+'&#x022A8;' '' vDash 136
+'&#x025C0;' '' blacktriangleleft 137
+'&#x025B6;' '' blacktriangleright 138
+'&#x2A7D;&#x0338;' '' notleqslant 139
+'&#x2A7E;&#x0338;' '' notgeqslant 140
+'&#x2225;' '' parallel 141
+'&#x2226;' '' notparallel 142
+'&#x2226;' '' notparallelslanted 143
+'&#x22AD;' '' notvDash 144
+'&#x1D40;' '' intercal 145
+'&#x0210F;' '' hslash 146
+'&#x2204;' '' notexists 147
+'&#x02201;' '' complement 148
+'&#x228A;' '' varsubsetneq 149
+'&#x2694;' '' swords 150
+'&#x2694;' '' swordsdown 151
+'&#x2AF4;' '' bartriple 152
+'&#x27E6;' '' bracketdoubleleft 153
+'&#x27E7;' '' bracketdoubleright 154
+'&#x2209;' '' notelement 155
+'&#x220C;' '' notowner 156
+'&#x0127;' '' hbar 157
+'&#x02216;' '' smallsetminus 158
+'&#x02ACB;' '' subsetneqq 159
+'&#x021C9;' '' rightrightarrows 160
+'&#x021C7;' '' leftleftarrows 161
+'&#x25a1;' '' square 162
+'&#x021B6;' '' curvearrowleft 163
+'&#x021B7;' '' curvearrowright 164
+'&#x25A0;' '' blacksquare 165
+futsy 0 165
+htfcss:  futsy  font-family: 'Fourier-Math-Symbols', serif;
+
+>>>
+\AddFont{futsy}{unicode/Fourier-Math-Symbols/futsy}{}
+% font parser error: Cannot find pfb file for: putr8x.pfb
+% writing futr9c.htf hash: ba073690971f1322b26b04cc1ef6e17b
+\<futr9c\><<<
+futr9c 0 246
+'&#x60;' '' grave 0
+'&#x00B4;' '' acute 1
+'&#x02C6;' '' circumflex 2
+'&#x02DC;' '' tilde 3
+'&#x00A8;' '' dieresis 4
+'&#x02DD;' '' hungarumlaut 5
+'&#x02DA;' '' ring 6
+'&#x02C7;' '' caron 7
+'&#x02D8;' '' breve 8
+'&#x00AF;' '' macron 9
+'&#x02D9;' '' dotaccent 10
+'&#x00B8;' '' cedilla 11
+'&#x02DB;' '' ogonek 12
+'&#x201A;' '' quotesinglbase 13
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'&#x201E;' '' quotedblbase 18
+'' ''  
+'' ''  
+'&#x2013;&#x2013;' '' endash endash 21
+'=' '' equal 22
+'&#x221E;' '' infinity 23
+'&#x2264;' '' lessequal 24
+'&#x2265;' '' greaterequal 25
+'&#x2202;' '' partialdiff 26
+'&#x2211;' '' summation 27
+'&#x220F;' '' product 28
+'&#x03C0;' '' pi 29
+'' ''  
+'&#x0027;' '' quotesingle 31
+' ' '' space 32
+'' ''  
+'' ''  
+'' ''  
+'$' '' dollar 36
+'' ''  
+'' ''  
+'&#x0027;' '' quotesingle 39
+'' ''  
+'' ''  
+'*' '' asterisk 42
+'' ''  
+',' '' comma 44
+'-' '' hyphen 45
+'.' '' period 46
+'&#x2044;' '' fraction 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+'' ''  
+'' ''  
+'&lt;' '' less 60
+'&#x2212;' '' minus 61
+'&gt;' '' greater 62
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'M' '' M 77
+'' ''  
+'O' '' O 79
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'W' '' W 87
+'' ''  
+'' ''  
+'' ''  
+'[[' '' bracketleft bracketleft 91
+'' ''  
+']]' '' bracketright bracketright 93
+'^' '' asciicircum 94
+'_' '' underscore 95
+'&#x60;' '' grave 96
+'' ''  
+'b' '' b 98
+'c' '' c 99
+'d' '' d 100
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  108
+'m' '' m 109
+'n' '' n 110
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'~' '' asciitilde 126
+'' '' .notdef 127
+'&#x02D8;' '' breve 128
+'&#x02C7;' '' caron 129
+'&#x00B4;&#x00B4;' '' acute acute 130
+'&#x60;&#x60;' '' grave grave 131
+'&#x2020;' '' dagger 132
+'&#x2021;' '' daggerdbl 133
+'&#x0304;&#x0304;' '' bar bar 134
+'&#x2030;' '' perthousand 135
+'&#x2022;' '' bullet 136
+'&#x00B0;C' '' degree C 137
+'$' '' dollar 138
+'&#x00A2;' '' cent 139
+'&#x0192;' '' florin 140
+'{' '' braceleft 141
+'&#x221A;' '' radical 142
+'&#x2248;' '' approxequal 143
+'' '' .notdef 144
+'' '' .notdef 145
+'' '' .notdef 146
+'&#x201C;' '' quotedblleft 147
+'&#xe;' '' exclam question 148
+'&#xe;' '' exclamdown questiondown 149
+'&#x2013;' '' endash 150
+'&#x2122;' '' trademark 151
+'&#x02DC;' '' tilde 152
+'' '' aldinethree 153
+'&#x0161;' '' scaron 154
+'&#x203A;' '' guilsinglright 155
+'&#x0153;' '' oe 156
+'&#x2206;' '' Delta 157
+'&#x25CA;' '' lozenge 158
+'&#x0178;' '' Ydieresis 159
+'' '' .notdef 160
+'&#x00A1;' '' exclamdown 161
+'&#x00A2;' '' cent 162
+'&#x00A3;' '' sterling 163
+'&#x00A4;' '' currency 164
+'&#x00A5;' '' yen 165
+'&#x00A6;' '' brokenbar 166
+'&#x00A7;' '' section 167
+'&#x00A8;' '' dieresis 168
+'&#x00A9;' '' copyright 169
+'&#x00AA;' '' ordfeminine 170
+'&#x00AB;' '' guillemotleft 171
+'&#x00AC;' '' logicalnot 172
+'-' '' hyphen 173
+'&#x00AE;' '' registered 174
+'&#x00AF;' '' macron 175
+'&#x00B0;' '' degree 176
+'&#x00B1;' '' plusminus 177
+'&#x00B2;' '' twosuperior 178
+'&#x00B3;' '' threesuperior 179
+'&#x00B4;' '' acute 180
+'&#x00B5;' '' mu 181
+'&#x00B6;' '' paragraph 182
+'&#x00B7;' '' periodcentered 183
+'&#x00B8;' '' cedilla 184
+'&#x00B9;' '' onesuperior 185
+'&#x00BA;' '' ordmasculine 186
+'&#x00BB;' '' guillemotright 187
+'&#x00BC;' '' onequarter 188
+'&#x00BD;' '' onehalf 189
+'&#x00BE;' '' threequarters 190
+'&#x20AC;' '' euro 191
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'&#x00D7;' '' multiply 214
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'&#x00F7;' '' divide 246
+futr9c 0 246
+htfcss:  futr9c  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futr9c}{unicode/Utopia/futr9c}{}
+Missing glyph	aldinethree
+% font parser error: Cannot find pfb file for: putri8x.pfb
+% writing futri9c.htf hash: ba073690971f1322b26b04cc1ef6e17b
+\<futri9c\><<<
+.futr9c
+htfcss:  futri9c  font-style: italic; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futri9c}{alias/Utopia/futri9c}{}
+Missing glyph	aldinethree
+% font parser error: Cannot find pfb file for: puts8x.pfb
+% writing futs9c.htf hash: ba073690971f1322b26b04cc1ef6e17b
+\<futs9c\><<<
+.futr9c
+htfcss:  futs9c  font-family: 'nil', serif;
+
+>>>
+\AddFont{futs9c}{alias/futs9c/futs9c}{}
+Missing glyph	aldinethree
+% font parser error: Cannot find pfb file for: putsi8x.pfb
+% writing futsi9c.htf hash: ba073690971f1322b26b04cc1ef6e17b
+\<futsi9c\><<<
+.futr9c
+htfcss:  futsi9c  font-family: 'nil', serif;
+
+>>>
+\AddFont{futsi9c}{alias/futsi9c/futsi9c}{}
+Missing glyph	aldinethree
+% font parser error: Cannot find pfb file for: putb8x.pfb
+% writing futb9c.htf hash: ba073690971f1322b26b04cc1ef6e17b
+\<futb9c\><<<
+.futr9c
+htfcss:  futb9c  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futb9c}{alias/Utopia/futb9c}{}
+Missing glyph	aldinethree
+% font parser error: Cannot find pfb file for: putbi8x.pfb
+% writing futbi9c.htf hash: ba073690971f1322b26b04cc1ef6e17b
+\<futbi9c\><<<
+.futr9c
+htfcss:  futbi9c  font-weight: bold; font-style: italic; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbi9c}{alias/Utopia/futbi9c}{}
+Missing glyph	aldinethree
+% font parser error: Cannot find pfb file for: putc8x.pfb
+% writing futc9c.htf hash: ba073690971f1322b26b04cc1ef6e17b
+\<futc9c\><<<
+.futr9c
+htfcss:  futc9c  font-family: 'nil', serif;
+
+>>>
+\AddFont{futc9c}{alias/futc9c/futc9c}{}
+Missing glyph	aldinethree
+% font parser error: Cannot find pfb file for: putr8x.pfb
+% writing futro9c.htf hash: ba073690971f1322b26b04cc1ef6e17b
+\<futro9c\><<<
+.futr9c
+htfcss:  futro9c  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futro9c}{alias/Utopia/futro9c}{}
+Missing glyph	aldinethree
+% font parser error: Cannot find pfb file for: puts8x.pfb
+% writing futso9c.htf hash: ba073690971f1322b26b04cc1ef6e17b
+\<futso9c\><<<
+.futr9c
+htfcss:  futso9c  font-family: 'nil', serif;
+
+>>>
+\AddFont{futso9c}{alias/futso9c/futso9c}{}
+Missing glyph	aldinethree
+% font parser error: Cannot find pfb file for: putb8x.pfb
+% writing futbo9c.htf hash: ba073690971f1322b26b04cc1ef6e17b
+\<futbo9c\><<<
+.futr9c
+htfcss:  futbo9c  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbo9c}{alias/Utopia/futbo9c}{}
+Missing glyph	aldinethree
+% writing futr8c.htf hash: 425253ab75b5224050572e8b37234139
+\<futr8c\><<<
+futr8c 0 246
+'&#x60;' '' grave 0
+'&#x00B4;' '' acute 1
+'&#x02C6;' '' circumflex 2
+'&#x02DC;' '' tilde 3
+'&#x00A8;' '' dieresis 4
+'&#x02DD;' '' hungarumlaut 5
+'&#x02DA;' '' ring 6
+'&#x02C7;' '' caron 7
+'&#x02D8;' '' breve 8
+'&#x00AF;' '' macron 9
+'&#x02D9;' '' dotaccent 10
+'&#x00B8;' '' cedilla 11
+'&#x02DB;' '' ogonek 12
+'&#x201A;' '' quotesinglbase 13
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'&#x201E;' '' quotedblbase 18
+'' ''  
+'' ''  
+'&#x2013;&#x2013;' '' endash endash 21
+'&#x2013;&#x2013;' '' endash endash 22
+'&#x221E;' '' infinity 23
+'&#x2264;' '' lessequal 24
+'&#x2265;' '' greaterequal 25
+'&#x2202;' '' partialdiff 26
+'&#x2211;' '' summation 27
+'&#x220F;' '' product 28
+'&#x03C0;' '' pi 29
+'' ''  
+'&#x0027;' '' quotesingle 31
+' ' '' space 32
+'' ''  
+'' ''  
+'' ''  
+'$' '' dollar 36
+'' ''  
+'' ''  
+'&#x0027;' '' quotesingle 39
+'' ''  
+'' ''  
+'*' '' asterisk 42
+'' ''  
+',' '' comma 44
+'-' '' hyphen 45
+'.' '' period 46
+'&#x2044;' '' fraction 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+'' ''  
+'' ''  
+'&lt;' '' less 60
+'&#x2212;' '' minus 61
+'&gt;' '' greater 62
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'M' '' M 77
+'' ''  
+'O' '' O 79
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'W' '' W 87
+'' ''  
+'' ''  
+'' ''  
+'[[' '' bracketleft bracketleft 91
+'' ''  
+']]' '' bracketright bracketright 93
+'^' '' asciicircum 94
+'_' '' underscore 95
+'&#x60;' '' grave 96
+'' ''  
+'b' '' b 98
+'c' '' c 99
+'d' '' d 100
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  108
+'m' '' m 109
+'n' '' n 110
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'~' '' asciitilde 126
+'' '' .notdef 127
+'&#x02D8;' '' breve 128
+'&#x02C7;' '' caron 129
+'&#x00B4;&#x00B4;' '' acute acute 130
+'&#x60;&#x60;' '' grave grave 131
+'&#x2020;' '' dagger 132
+'&#x2021;' '' daggerdbl 133
+'&#x0304;&#x0304;' '' bar bar 134
+'&#x2030;' '' perthousand 135
+'&#x2022;' '' bullet 136
+'&#x00B0;C' '' degree C 137
+'&#x0160;' '' Scaron 138
+'&#x2039;' '' guilsinglleft 139
+'&#x0192;' '' florin 140
+'&#x2126;' '' Omega 141
+'&#x221A;' '' radical 142
+'&#x2248;' '' approxequal 143
+'' '' .notdef 144
+'' '' .notdef 145
+'' '' .notdef 146
+'&#x201C;' '' quotedblleft 147
+'&#xe;' '' exclam question 148
+'&#xe;' '' exclamdown questiondown 149
+'&#x2013;' '' endash 150
+'&#x2122;' '' trademark 151
+'&#x02DC;' '' tilde 152
+'' '' aldinethree 153
+'&#x0161;' '' scaron 154
+'&#x203A;' '' guilsinglright 155
+'&#x0153;' '' oe 156
+'&#x2206;' '' Delta 157
+'&#x25CA;' '' lozenge 158
+'&#x0178;' '' Ydieresis 159
+'' '' .notdef 160
+'&#x00A1;' '' exclamdown 161
+'&#x00A2;' '' cent 162
+'&#x00A3;' '' sterling 163
+'&#x00A4;' '' currency 164
+'&#x00A5;' '' yen 165
+'&#x00A6;' '' brokenbar 166
+'&#x00A7;' '' section 167
+'&#x00A8;' '' dieresis 168
+'&#x00A9;' '' copyright 169
+'&#x00AA;' '' ordfeminine 170
+'&#x00AB;' '' guillemotleft 171
+'&#x00AC;' '' logicalnot 172
+'-' '' hyphen 173
+'&#x00AE;' '' registered 174
+'&#x00AF;' '' macron 175
+'&#x00B0;' '' degree 176
+'&#x00B1;' '' plusminus 177
+'&#x00B2;' '' twosuperior 178
+'&#x00B3;' '' threesuperior 179
+'&#x00B4;' '' acute 180
+'&#x00B5;' '' mu 181
+'&#x00B6;' '' paragraph 182
+'&#x00B7;' '' periodcentered 183
+'&#x00B8;' '' cedilla 184
+'&#x00B9;' '' onesuperior 185
+'&#x00BA;' '' ordmasculine 186
+'&#x00BB;' '' guillemotright 187
+'&#x00BC;' '' onequarter 188
+'&#x00BD;' '' onehalf 189
+'&#x00BE;' '' threequarters 190
+'&#x20AC;' '' euro 191
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'&#x00D7;' '' multiply 214
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'&#x00F7;' '' divide 246
+futr8c 0 246
+htfcss:  futr8c  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futr8c}{unicode/Utopia/futr8c}{}
+Missing glyph	aldinethree
+% writing futri8c.htf hash: 425253ab75b5224050572e8b37234139
+\<futri8c\><<<
+.futr8c
+htfcss:  futri8c  font-style: italic; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futri8c}{alias/Utopia/futri8c}{}
+Missing glyph	aldinethree
+% writing futb8c.htf hash: 425253ab75b5224050572e8b37234139
+\<futb8c\><<<
+.futr8c
+htfcss:  futb8c  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futb8c}{alias/Utopia/futb8c}{}
+Missing glyph	aldinethree
+% writing futbi8c.htf hash: 425253ab75b5224050572e8b37234139
+\<futbi8c\><<<
+.futr8c
+htfcss:  futbi8c  font-weight: bold; font-style: italic; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbi8c}{alias/Utopia/futbi8c}{}
+Missing glyph	aldinethree
+% writing futro8c.htf hash: 425253ab75b5224050572e8b37234139
+\<futro8c\><<<
+.futr8c
+htfcss:  futro8c  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futro8c}{alias/Utopia/futro8c}{}
+Missing glyph	aldinethree
+% writing futbo8c.htf hash: 425253ab75b5224050572e8b37234139
+\<futbo8c\><<<
+.futr8c
+htfcss:  futbo8c  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbo8c}{alias/Utopia/futbo8c}{}
+Missing glyph	aldinethree
+% writing futr9d.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futr9d\><<<
+futr9d 0 255
+'&#x60;' '' grave 0
+'&#x00B4;' '' acute 1
+'&#x02C6;' '' circumflex 2
+'&#x02DC;' '' tilde 3
+'&#x00A8;' '' dieresis 4
+'&#x02DD;' '' hungarumlaut 5
+'&#x02DA;' '' ring 6
+'&#x02C7;' '' caron 7
+'&#x02D8;' '' breve 8
+'&#x00AF;' '' macron 9
+'&#x02D9;' '' dotaccent 10
+'&#x00B8;' '' cedilla 11
+'&#x02DB;' '' ogonek 12
+'&#x201A;' '' quotesinglbase 13
+'&#x2039;' '' guilsinglleft 14
+'&#x203A;' '' guilsinglright 15
+'&#x201C;' '' quotedblleft 16
+'&#x201D;' '' quotedblright 17
+'&#x201E;' '' quotedblbase 18
+'&#x00AB;' '' guillemotleft 19
+'&#x00BB;' '' guillemotright 20
+'&#x2013;' '' endash 21
+'&#x2014;' '' emdash 22
+'&#x221E;' '' infinity 23
+'&#x2080;' '' perthousandzero 24
+'&#x0131;' '' dotlessi 25
+'&#x0237;' '' dotlessj 26
+'V' '' V 27
+'&#xFB01;' '' fi 28
+'&#xFB02;' '' fl 29
+'Y' '' Y 30
+'Z' '' Z 31
+' ' '' space 32
+'!' '' exclam 33
+'"' '' quotedbl 34
+'#' '' numbersign 35
+'$' '' dollar 36
+'%' '' percent 37
+'&amp;' '' ampersand 38
+'&#x2019;' '' quoteright 39
+'(' '' parenleft 40
+')' '' parenright 41
+'*' '' asterisk 42
+'+' '' plus 43
+',' '' comma 44
+'-' '' hyphen 45
+'.' '' period 46
+'/' '' slash 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+':' '' colon 58
+';' '' semicolon 59
+'&lt;' '' less 60
+'=' '' equal 61
+'&gt;' '' greater 62
+'?' '' question 63
+'@' '' at 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'[' '' bracketleft 91
+'\' '' backslash 92
+']' '' bracketright 93
+'^' '' asciicircum 94
+'_' '' underscore 95
+'&#x2018;' '' quoteleft 96
+'a' '' a 97
+'b' '' b 98
+'c' '' c 99
+'d' '' d 100
+'e' '' e 101
+'f' '' f 102
+'g' '' g 103
+'h' '' h 104
+'i' '' i 105
+'j' '' j 106
+'k' '' k 107
+'l' '' l 108
+'m' '' m 109
+'n' '' n 110
+'o' '' o 111
+'p' '' p 112
+'q' '' q 113
+'r' '' r 114
+'s' '' s 115
+'t' '' t 116
+'u' '' u 117
+'v' '' v 118
+'w' '' w 119
+'x' '' x 120
+'y' '' y 121
+'z' '' z 122
+'{' '' braceleft 123
+'|' '' bar 124
+'}' '' braceright 125
+'~' '' asciitilde 126
+'-' '' hyphen 127
+'&#x0102;' '' breve A 128
+'&#x0104;' '' ogonek A 129
+'&#x0106;' '' acute C 130
+'&#x010C;' '' caron C 131
+'&#x010E;' '' caron D 132
+'&#x011A;' '' caron E 133
+'&#x0118;' '' ogonek E 134
+'&#x011E;' '' breve G 135
+'&#x0139;' '' acute L 136
+'&#x013D;' '' L quoteright 137
+'&#x0141;' '' Lslash 138
+'&#x0143;' '' acute N 139
+'&#x0147;' '' caron N 140
+'&#x014A;' '' Eng 141
+'&#x0150;' '' hungarumlaut O 142
+'&#x0154;' '' acute R 143
+'&#x0158;' '' caron R 144
+'&#x015A;' '' acute S 145
+'&#x0160;' '' Scaron 146
+'&#x015E;' '' cedilla S 147
+'&#x0164;' '' caron T 148
+'&#x0162;' '' cedilla T 149
+'&#x0170;' '' hungarumlaut U 150
+'&#x016E;' '' ring U 151
+'&#x0178;' '' Ydieresis 152
+'&#x0179;' '' acute Z 153
+'&#x017D;' '' Zcaron 154
+'&#x017B;' '' dotaccent Z 155
+'&#x0132;' '' I J 156
+'&#x0130;' '' dotaccent I 157
+'&#x0111;' '' macron d 158
+'&#x00A7;' '' section 159
+'&#x0103;' '' breve a 160
+'&#x0105;' '' ogonek a 161
+'&#x0107;' '' acute c 162
+'&#x010D;' '' caron c 163
+'&#x010F;' '' d quoteright 164
+'&#x011B;' '' caron e 165
+'&#x0119;' '' ogonek e 166
+'&#x011F;' '' breve g 167
+'&#x013A;' '' acute l 168
+'&#x013E;' '' l quoteright 169
+'&#x0142;' '' lslash 170
+'&#x0144;' '' acute n 171
+'&#x0148;' '' caron n 172
+'&#x014B;' '' eng 173
+'&#x0151;' '' hungarumlaut o 174
+'&#x0155;' '' acute r 175
+'&#x0159;' '' caron r 176
+'&#x015B;' '' acute s 177
+'&#x0161;' '' scaron 178
+'&#x015F;' '' cedilla s 179
+'&#x0165;' '' t quoteright 180
+'&#x0163;' '' cedilla t 181
+'&#x0171;' '' hungarumlaut u 182
+'&#x016F;' '' ring u 183
+'&#x00FF;' '' ydieresis 184
+'&#x017A;' '' acute z 185
+'&#x017E;' '' zcaron 186
+'&#x017C;' '' dotaccent z 187
+'&#x0133;' '' i j 188
+'&#x00A1;' '' exclamdown 189
+'&#x00BF;' '' questiondown 190
+'&#x00A3;' '' sterling 191
+'&#x00C0;' '' Agrave 192
+'&#x00C1;' '' Aacute 193
+'&#x00C2;' '' Acircumflex 194
+'&#x00C3;' '' Atilde 195
+'&#x00C4;' '' Adieresis 196
+'&#x00C5;' '' Aring 197
+'&#x00C6;' '' AE 198
+'&#x00C7;' '' Ccedilla 199
+'&#x00C8;' '' Egrave 200
+'&#x00C9;' '' Eacute 201
+'&#x00CA;' '' Ecircumflex 202
+'&#x00CB;' '' Edieresis 203
+'&#x00CC;' '' Igrave 204
+'&#x00CD;' '' Iacute 205
+'&#x00CE;' '' Icircumflex 206
+'&#x00CF;' '' Idieresis 207
+'&#x00D0;' '' Eth 208
+'&#x00D1;' '' Ntilde 209
+'&#x00D2;' '' Ograve 210
+'&#x00D3;' '' Oacute 211
+'&#x00D4;' '' Ocircumflex 212
+'&#x00D5;' '' Otilde 213
+'&#x00D6;' '' Odieresis 214
+'&#x0152;' '' OE 215
+'&#x00D8;' '' Oslash 216
+'&#x00D9;' '' Ugrave 217
+'&#x00DA;' '' Uacute 218
+'&#x00DB;' '' Ucircumflex 219
+'&#x00DC;' '' Udieresis 220
+'&#x00DD;' '' Yacute 221
+'&#x00DE;' '' Thorn 222
+'SS' '' S S 223
+'&#x00E0;' '' agrave 224
+'&#x00E1;' '' aacute 225
+'&#x00E2;' '' acircumflex 226
+'&#x00E3;' '' atilde 227
+'&#x00E4;' '' adieresis 228
+'&#x00E5;' '' aring 229
+'&#x00E6;' '' ae 230
+'&#x00E7;' '' ccedilla 231
+'&#x00E8;' '' egrave 232
+'&#x00E9;' '' eacute 233
+'&#x00EA;' '' ecircumflex 234
+'&#x00EB;' '' edieresis 235
+'&#x00EC;' '' igrave 236
+'&#x00ED;' '' iacute 237
+'&#x00EE;' '' icircumflex 238
+'&#x00EF;' '' idieresis 239
+'&#x00F0;' '' eth 240
+'&#x00F1;' '' ntilde 241
+'&#x00F2;' '' ograve 242
+'&#x00F3;' '' oacute 243
+'&#x00F4;' '' ocircumflex 244
+'&#x00F5;' '' otilde 245
+'&#x00F6;' '' odieresis 246
+'&#x0153;' '' oe 247
+'&#x00F8;' '' oslash 248
+'&#x00F9;' '' ugrave 249
+'&#x00FA;' '' uacute 250
+'&#x00FB;' '' ucircumflex 251
+'&#x00FC;' '' udieresis 252
+'&#x00FD;' '' yacute 253
+'&#x00FE;' '' thorn 254
+'&#x00DF;' '' germandbls 255
+futr9d 0 255
+htfcss:  futr9d  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futr9d}{unicode/Utopia/futr9d}{}
+% writing futri9d.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futri9d\><<<
+.futr9d
+htfcss:  futri9d  font-style: italic; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futri9d}{alias/Utopia/futri9d}{}
+% writing futs9d.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futs9d\><<<
+.futr9d
+htfcss:  futs9d  font-family: 'nil', serif;
+
+>>>
+\AddFont{futs9d}{alias/futs9d/futs9d}{}
+% writing futsi9d.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futsi9d\><<<
+.futr9d
+htfcss:  futsi9d  font-family: 'nil', serif;
+
+>>>
+\AddFont{futsi9d}{alias/futsi9d/futsi9d}{}
+% writing futb9d.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futb9d\><<<
+.futr9d
+htfcss:  futb9d  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futb9d}{alias/Utopia/futb9d}{}
+% writing futbi9d.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futbi9d\><<<
+.futr9d
+htfcss:  futbi9d  font-weight: bold; font-style: italic; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbi9d}{alias/Utopia/futbi9d}{}
+% writing futc9d.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futc9d\><<<
+.futr9d
+htfcss:  futc9d  font-family: 'nil', serif;
+
+>>>
+\AddFont{futc9d}{alias/futc9d/futc9d}{}
+% writing futrc9d.htf hash: 662e976328bd3a21c934aa3455becb64
+\<futrc9d\><<<
+futrc9d 0 255
+'&#x60;' '' grave 0
+'&#x00B4;' '' acute 1
+'&#x02C6;' '' circumflex 2
+'&#x02DC;' '' tilde 3
+'&#x00A8;' '' dieresis 4
+'&#x02DD;' '' hungarumlaut 5
+'&#x02DA;' '' ring 6
+'&#x02C7;' '' caron 7
+'&#x02D8;' '' breve 8
+'&#x00AF;' '' macron 9
+'&#x02D9;' '' dotaccent 10
+'&#x00B8;' '' cedilla 11
+'&#x02DB;' '' ogonek 12
+'&#x201A;' '' quotesinglbase 13
+'&#x2039;' '' guilsinglleft 14
+'&#x203A;' '' guilsinglright 15
+'&#x201C;' '' quotedblleft 16
+'&#x201D;' '' quotedblright 17
+'&#x201E;' '' quotedblbase 18
+'&#x00AB;' '' guillemotleft 19
+'&#x00BB;' '' guillemotright 20
+'&#x2013;' '' endash 21
+'&#x2014;' '' emdash 22
+'&#x221E;' '' infinity 23
+'&#x2080;' '' perthousandzero 24
+'&#x0131;' '' dotlessi 25
+'j' '' j 26
+'&#xFB00;' '' f f 27
+'&#xFB01;' '' fi 28
+'&#xFB02;' '' fl 29
+'&#xFB03;' '' f fi 30
+'&#xFB04;' '' f fl 31
+' ' '' space 32
+'!' '' exclam 33
+'"' '' quotedbl 34
+'#' '' numbersign 35
+'$' '' dollar 36
+'%' '' percent 37
+'&amp;' '' ampersand 38
+'&#x2019;' '' quoteright 39
+'(' '' parenleft 40
+')' '' parenright 41
+'*' '' asterisk 42
+'+' '' plus 43
+',' '' comma 44
+'-' '' hyphen 45
+'.' '' period 46
+'/' '' slash 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+':' '' colon 58
+';' '' semicolon 59
+'&lt;' '' less 60
+'=' '' equal 61
+'&gt;' '' greater 62
+'?' '' question 63
+'@' '' at 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'[' '' bracketleft 91
+'\' '' backslash 92
+']' '' bracketright 93
+'^' '' asciicircum 94
+'_' '' underscore 95
+'&#x2018;' '' quoteleft 96
+'a' '' a 97
+'b' '' b 98
+'c' '' c 99
+'d' '' d 100
+'e' '' e 101
+'f' '' f 102
+'g' '' g 103
+'h' '' h 104
+'i' '' i 105
+'j' '' j 106
+'k' '' k 107
+'l' '' l 108
+'m' '' m 109
+'n' '' n 110
+'o' '' o 111
+'p' '' p 112
+'q' '' q 113
+'r' '' r 114
+'s' '' s 115
+'t' '' t 116
+'u' '' u 117
+'v' '' v 118
+'w' '' w 119
+'x' '' x 120
+'y' '' y 121
+'z' '' z 122
+'{' '' braceleft 123
+'|' '' bar 124
+'}' '' braceright 125
+'~' '' asciitilde 126
+'-' '' hyphen 127
+'&#x0102;' '' breve A 128
+'&#x0104;' '' ogonek A 129
+'&#x0106;' '' acute C 130
+'&#x010C;' '' caron C 131
+'&#x010E;' '' caron D 132
+'&#x011A;' '' caron E 133
+'&#x0118;' '' ogonek E 134
+'&#x011E;' '' breve G 135
+'&#x0139;' '' acute L 136
+'&#x013D;' '' L quoteright 137
+'&#x0141;' '' Lslash 138
+'&#x0143;' '' acute N 139
+'&#x0147;' '' caron N 140
+'&#x014A;' '' Eng 141
+'&#x0150;' '' hungarumlaut O 142
+'&#x0154;' '' acute R 143
+'&#x0158;' '' caron R 144
+'&#x015A;' '' acute S 145
+'&#x0160;' '' Scaron 146
+'&#x015E;' '' cedilla S 147
+'&#x0164;' '' caron T 148
+'&#x0162;' '' cedilla T 149
+'&#x0170;' '' hungarumlaut U 150
+'&#x016E;' '' ring U 151
+'&#x0178;' '' Ydieresis 152
+'&#x0179;' '' acute Z 153
+'&#x017D;' '' Zcaron 154
+'&#x017B;' '' dotaccent Z 155
+'&#x0132;' '' I J 156
+'&#x0130;' '' dotaccent I 157
+'&#x00F0;' '' eth 158
+'&#x00A7;' '' section 159
+'&#x0103;' '' breve a 160
+'&#x0105;' '' ogonek a 161
+'&#x0107;' '' acute c 162
+'&#x010D;' '' caron c 163
+'&#x010F;' '' d quoteright 164
+'&#x011B;' '' caron e 165
+'&#x0119;' '' ogonek e 166
+'&#x011F;' '' breve g 167
+'&#x013A;' '' acute l 168
+'&#x013E;' '' l quoteright 169
+'&#x0142;' '' lslash 170
+'&#x0144;' '' acute n 171
+'&#x0148;' '' caron n 172
+'' '' Engsmall 173
+'&#x0151;' '' hungarumlaut o 174
+'&#x0155;' '' acute r 175
+'&#x0159;' '' caron r 176
+'&#x015B;' '' acute s 177
+'&#x0161;' '' scaron 178
+'&#x015F;' '' cedilla s 179
+'&#x0165;' '' t quoteright 180
+'&#x0163;' '' cedilla t 181
+'&#x0171;' '' hungarumlaut u 182
+'&#x016F;' '' ring u 183
+'&#x00FF;' '' ydieresis 184
+'&#x017A;' '' acute z 185
+'&#x017E;' '' zcaron 186
+'&#x017C;' '' dotaccent z 187
+'&#x0133;' '' i j 188
+'&#x00A1;' '' exclamdown 189
+'&#x00BF;' '' questiondown 190
+'&#x00A3;' '' sterling 191
+'&#x00C0;' '' Agrave 192
+'&#x00C1;' '' Aacute 193
+'&#x00C2;' '' Acircumflex 194
+'&#x00C3;' '' Atilde 195
+'&#x00C4;' '' Adieresis 196
+'&#x00C5;' '' Aring 197
+'&#x00C6;' '' AE 198
+'&#x00C7;' '' Ccedilla 199
+'&#x00C8;' '' Egrave 200
+'&#x00C9;' '' Eacute 201
+'&#x00CA;' '' Ecircumflex 202
+'&#x00CB;' '' Edieresis 203
+'&#x00CC;' '' Igrave 204
+'&#x00CD;' '' Iacute 205
+'&#x00CE;' '' Icircumflex 206
+'&#x00CF;' '' Idieresis 207
+'&#x00D0;' '' Eth 208
+'&#x00D1;' '' Ntilde 209
+'&#x00D2;' '' Ograve 210
+'&#x00D3;' '' Oacute 211
+'&#x00D4;' '' Ocircumflex 212
+'&#x00D5;' '' Otilde 213
+'&#x00D6;' '' Odieresis 214
+'&#x0152;' '' OE 215
+'&#x00D8;' '' Oslash 216
+'&#x00D9;' '' Ugrave 217
+'&#x00DA;' '' Uacute 218
+'&#x00DB;' '' Ucircumflex 219
+'&#x00DC;' '' Udieresis 220
+'&#x00DD;' '' Yacute 221
+'&#x00DE;' '' Thorn 222
+'SS' '' S S 223
+'&#x00E0;' '' agrave 224
+'&#x00E1;' '' aacute 225
+'&#x00E2;' '' acircumflex 226
+'&#x00E3;' '' atilde 227
+'&#x00E4;' '' adieresis 228
+'&#x00E5;' '' aring 229
+'&#x00E6;' '' ae 230
+'&#x00E7;' '' ccedilla 231
+'&#x00E8;' '' egrave 232
+'&#x00E9;' '' eacute 233
+'&#x00EA;' '' ecircumflex 234
+'&#x00EB;' '' edieresis 235
+'&#x00EC;' '' igrave 236
+'&#x00ED;' '' iacute 237
+'&#x00EE;' '' icircumflex 238
+'&#x00EF;' '' idieresis 239
+'&#x00F0;' '' eth 240
+'&#x00F1;' '' ntilde 241
+'&#x00F2;' '' ograve 242
+'&#x00F3;' '' oacute 243
+'&#x00F4;' '' ocircumflex 244
+'&#x00F5;' '' otilde 245
+'&#x00F6;' '' odieresis 246
+'&#x0153;' '' oe 247
+'&#x00F8;' '' oslash 248
+'&#x00F9;' '' ugrave 249
+'&#x00FA;' '' uacute 250
+'&#x00FB;' '' ucircumflex 251
+'&#x00FC;' '' udieresis 252
+'&#x00FD;' '' yacute 253
+'&#x00FE;' '' thorn 254
+'&#x00DF;' '' germandbls 255
+futrc9d 0 255
+htfcss:  futrc9d  font-family: 'nil', serif;
+
+>>>
+\AddFont{futrc9d}{unicode/futrc9d/futrc9d}{}
+Missing glyph	Engsmall
+% writing futsc9d.htf hash: 662e976328bd3a21c934aa3455becb64
+\<futsc9d\><<<
+.futrc9d
+htfcss:  futsc9d  font-variant: small-caps; font-family: 'nil', serif;
+
+>>>
+\AddFont{futsc9d}{alias/futsc9d/futsc9d}{}
+Missing glyph	Engsmall
+% writing futrci9d.htf hash: 662e976328bd3a21c934aa3455becb64
+\<futrci9d\><<<
+.futrc9d
+htfcss:  futrci9d  font-family: 'nil', serif;
+
+>>>
+\AddFont{futrci9d}{alias/futrci9d/futrci9d}{}
+Missing glyph	Engsmall
+% writing futsci9d.htf hash: 662e976328bd3a21c934aa3455becb64
+\<futsci9d\><<<
+.futrc9d
+htfcss:  futsci9d  font-variant: small-caps; font-family: 'nil', serif;
+
+>>>
+\AddFont{futsci9d}{alias/futsci9d/futsci9d}{}
+Missing glyph	Engsmall
+% writing futrd8t.htf hash: b2cf1fad555e3ef6b19d4fa93efd17bc
+\<futrd8t\><<<
+futrd8t 0 255
+'&#x60;' '' grave 0
+'&#x00B4;' '' acute 1
+'&#x02C6;' '' circumflex 2
+'&#x02DC;' '' tilde 3
+'&#x00A8;' '' dieresis 4
+'&#x02DD;' '' hungarumlaut 5
+'&#x02DA;' '' ring 6
+'&#x02C7;' '' caron 7
+'&#x02D8;' '' breve 8
+'&#x00AF;' '' macron 9
+'&#x02D9;' '' dotaccent 10
+'&#x00B8;' '' cedilla 11
+'&#x02DB;' '' ogonek 12
+'&#x201A;' '' quotesinglbase 13
+'&#x2039;' '' guilsinglleft 14
+'&#x203A;' '' guilsinglright 15
+'&#x201C;' '' quotedblleft 16
+'&#x201D;' '' quotedblright 17
+'&#x201E;' '' quotedblbase 18
+'&#x00AB;' '' guillemotleft 19
+'&#x00BB;' '' guillemotright 20
+'&#x2013;' '' endash 21
+'&#x2014;' '' emdash 22
+'&#x221E;' '' infinity 23
+'&#x2264;' '' lessequal 24
+'&#x0131;' '' dotlessi 25
+'&#x2202;' '' partialdiff 26
+'&#xFB00;' '' f f 27
+'&#xFB01;' '' fi 28
+'&#xFB02;' '' fl 29
+'&#xFB03;' '' f fi 30
+'&#xFB04;' '' f fl 31
+' ' '' space 32
+'!' '' exclam 33
+'"' '' quotedbl 34
+'#' '' numbersign 35
+'$' '' dollar 36
+'%' '' percent 37
+'&amp;' '' ampersand 38
+'&#x2019;' '' quoteright 39
+'(' '' parenleft 40
+')' '' parenright 41
+'*' '' asterisk 42
+'+' '' plus 43
+',' '' comma 44
+'-' '' hyphen 45
+'.' '' period 46
+'/' '' slash 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+':' '' colon 58
+';' '' semicolon 59
+'&lt;' '' less 60
+'=' '' equal 61
+'&gt;' '' greater 62
+'?' '' question 63
+'@' '' at 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'[' '' bracketleft 91
+'\' '' backslash 92
+']' '' bracketright 93
+'^' '' asciicircum 94
+'_' '' underscore 95
+'&#x2018;' '' quoteleft 96
+'a' '' a 97
+'b' '' b 98
+'c' '' c 99
+'d' '' d 100
+'e' '' e 101
+'f' '' f 102
+'g' '' g 103
+'h' '' h 104
+'i' '' i 105
+'j' '' j 106
+'k' '' k 107
+'l' '' l 108
+'m' '' m 109
+'n' '' n 110
+'o' '' o 111
+'p' '' p 112
+'q' '' q 113
+'r' '' r 114
+'s' '' s 115
+'t' '' t 116
+'u' '' u 117
+'v' '' v 118
+'w' '' w 119
+'x' '' x 120
+'y' '' y 121
+'z' '' z 122
+'{' '' braceleft 123
+'|' '' bar 124
+'}' '' braceright 125
+'~' '' asciitilde 126
+'-' '' hyphen 127
+'&#x0102;' '' breve A 128
+'&#x0104;' '' ogonek A 129
+'&#x0106;' '' acute C 130
+'&#x010C;' '' caron C 131
+'&#x010E;' '' caron D 132
+'&#x011A;' '' caron E 133
+'&#x0118;' '' ogonek E 134
+'&#x011E;' '' breve G 135
+'&#x0139;' '' acute L 136
+'&#x013D;' '' L quoteright 137
+'&#x0141;' '' Lslash 138
+'&#x0143;' '' acute N 139
+'&#x0147;' '' caron N 140
+'&#x2126;' '' Omega 141
+'&#x0150;' '' hungarumlaut O 142
+'&#x0154;' '' acute R 143
+'&#x0158;' '' caron R 144
+'&#x015A;' '' acute S 145
+'&#x0160;' '' Scaron 146
+'&#x015E;' '' cedilla S 147
+'&#x0164;' '' caron T 148
+'&#x0162;' '' cedilla T 149
+'&#x0170;' '' hungarumlaut U 150
+'&#x016E;' '' ring U 151
+'&#x0178;' '' Ydieresis 152
+'&#x0179;' '' acute Z 153
+'&#x017D;' '' Zcaron 154
+'&#x017B;' '' dotaccent Z 155
+'&#x0132;' '' I J 156
+'&#x0130;' '' dotaccent I 157
+'&#x0111;' '' macron d 158
+'&#x0178;' '' Ydieresis 159
+'&#x0103;' '' breve a 160
+'&#x0105;' '' ogonek a 161
+'&#x0107;' '' acute c 162
+'&#x010D;' '' caron c 163
+'&#x010F;' '' d quoteright 164
+'&#x011B;' '' caron e 165
+'&#x0119;' '' ogonek e 166
+'&#x011F;' '' breve g 167
+'&#x013A;' '' acute l 168
+'&#x013E;' '' l quoteright 169
+'&#x0142;' '' lslash 170
+'&#x0144;' '' acute n 171
+'&#x0148;' '' caron n 172
+'-' '' hyphen 173
+'&#x0151;' '' hungarumlaut o 174
+'&#x0155;' '' acute r 175
+'&#x0159;' '' caron r 176
+'&#x015B;' '' acute s 177
+'&#x0161;' '' scaron 178
+'&#x015F;' '' cedilla s 179
+'&#x0165;' '' t quoteright 180
+'&#x0163;' '' cedilla t 181
+'&#x0171;' '' hungarumlaut u 182
+'&#x016F;' '' ring u 183
+'&#x00FF;' '' ydieresis 184
+'&#x017A;' '' acute z 185
+'&#x017E;' '' zcaron 186
+'&#x017C;' '' dotaccent z 187
+'&#x0133;' '' i j 188
+'&#x00A1;' '' exclamdown 189
+'&#x00BF;' '' questiondown 190
+'&#x00A3;' '' sterling 191
+'&#x00C0;' '' Agrave 192
+'&#x00C1;' '' Aacute 193
+'&#x00C2;' '' Acircumflex 194
+'&#x00C3;' '' Atilde 195
+'&#x00C4;' '' Adieresis 196
+'&#x00C5;' '' Aring 197
+'&#x00C6;' '' AE 198
+'&#x00C7;' '' Ccedilla 199
+'&#x00C8;' '' Egrave 200
+'&#x00C9;' '' Eacute 201
+'&#x00CA;' '' Ecircumflex 202
+'&#x00CB;' '' Edieresis 203
+'&#x00CC;' '' Igrave 204
+'&#x00CD;' '' Iacute 205
+'&#x00CE;' '' Icircumflex 206
+'&#x00CF;' '' Idieresis 207
+'&#x00D0;' '' Eth 208
+'&#x00D1;' '' Ntilde 209
+'&#x00D2;' '' Ograve 210
+'&#x00D3;' '' Oacute 211
+'&#x00D4;' '' Ocircumflex 212
+'&#x00D5;' '' Otilde 213
+'&#x00D6;' '' Odieresis 214
+'&#x0152;' '' OE 215
+'&#x00D8;' '' Oslash 216
+'&#x00D9;' '' Ugrave 217
+'&#x00DA;' '' Uacute 218
+'&#x00DB;' '' Ucircumflex 219
+'&#x00DC;' '' Udieresis 220
+'&#x00DD;' '' Yacute 221
+'&#x00DE;' '' Thorn 222
+'SS' '' S S 223
+'&#x00E0;' '' agrave 224
+'&#x00E1;' '' aacute 225
+'&#x00E2;' '' acircumflex 226
+'&#x00E3;' '' atilde 227
+'&#x00E4;' '' adieresis 228
+'&#x00E5;' '' aring 229
+'&#x00E6;' '' ae 230
+'&#x00E7;' '' ccedilla 231
+'&#x00E8;' '' egrave 232
+'&#x00E9;' '' eacute 233
+'&#x00EA;' '' ecircumflex 234
+'&#x00EB;' '' edieresis 235
+'&#x00EC;' '' igrave 236
+'&#x00ED;' '' iacute 237
+'&#x00EE;' '' icircumflex 238
+'&#x00EF;' '' idieresis 239
+'&#x00F0;' '' eth 240
+'&#x00F1;' '' ntilde 241
+'&#x00F2;' '' ograve 242
+'&#x00F3;' '' oacute 243
+'&#x00F4;' '' ocircumflex 244
+'&#x00F5;' '' otilde 245
+'&#x00F6;' '' odieresis 246
+'&#x0153;' '' oe 247
+'&#x00F8;' '' oslash 248
+'&#x00F9;' '' ugrave 249
+'&#x00FA;' '' uacute 250
+'&#x00FB;' '' ucircumflex 251
+'&#x00FC;' '' udieresis 252
+'&#x00FD;' '' yacute 253
+'&#x00FE;' '' thorn 254
+'&#x00DF;' '' germandbls 255
+futrd8t 0 255
+htfcss:  futrd8t  font-family: 'nil', serif;
+
+>>>
+\AddFont{futrd8t}{unicode/futrd8t/futrd8t}{}
+% writing futro9d.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futro9d\><<<
+.futr9d
+htfcss:  futro9d  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futro9d}{alias/Utopia/futro9d}{}
+% writing futso9d.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futso9d\><<<
+.futr9d
+htfcss:  futso9d  font-family: 'nil', serif;
+
+>>>
+\AddFont{futso9d}{alias/futso9d/futso9d}{}
+% writing futbo9d.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futbo9d\><<<
+.futr9d
+htfcss:  futbo9d  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbo9d}{alias/Utopia/futbo9d}{}
+% writing futr8t.htf hash: 28bfee5ee15a8b940334b0f1c35a8d57
+\<futr8t\><<<
+futr8t 0 255
+'&#x60;' '' grave 0
+'&#x00B4;' '' acute 1
+'&#x02C6;' '' circumflex 2
+'&#x02DC;' '' tilde 3
+'&#x00A8;' '' dieresis 4
+'&#x02DD;' '' hungarumlaut 5
+'&#x02DA;' '' ring 6
+'&#x02C7;' '' caron 7
+'&#x02D8;' '' breve 8
+'&#x00AF;' '' macron 9
+'&#x02D9;' '' dotaccent 10
+'&#x00B8;' '' cedilla 11
+'&#x02DB;' '' ogonek 12
+'&#x201A;' '' quotesinglbase 13
+'&#x2039;' '' guilsinglleft 14
+'&#x203A;' '' guilsinglright 15
+'&#x201C;' '' quotedblleft 16
+'&#x201D;' '' quotedblright 17
+'&#x201E;' '' quotedblbase 18
+'&#x00AB;' '' guillemotleft 19
+'&#x00BB;' '' guillemotright 20
+'&#x2013;' '' endash 21
+'&#x2014;' '' emdash 22
+'&#x221E;' '' infinity 23
+'&#x2080;' '' perthousandzero 24
+'&#x0131;' '' dotlessi 25
+'&#x0237;' '' dotlessj 26
+'&#xFB00;' '' f f 27
+'&#xFB01;' '' fi 28
+'&#xFB02;' '' fl 29
+'&#xFB03;' '' f fi 30
+'&#xFB04;' '' f fl 31
+' ' '' space 32
+'!' '' exclam 33
+'"' '' quotedbl 34
+'#' '' numbersign 35
+'$' '' dollar 36
+'%' '' percent 37
+'&amp;' '' ampersand 38
+'&#x2019;' '' quoteright 39
+'(' '' parenleft 40
+')' '' parenright 41
+'*' '' asterisk 42
+'+' '' plus 43
+',' '' comma 44
+'-' '' hyphen 45
+'.' '' period 46
+'/' '' slash 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+':' '' colon 58
+';' '' semicolon 59
+'&lt;' '' less 60
+'=' '' equal 61
+'&gt;' '' greater 62
+'?' '' question 63
+'@' '' at 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'[' '' bracketleft 91
+'\' '' backslash 92
+']' '' bracketright 93
+'^' '' asciicircum 94
+'_' '' underscore 95
+'&#x2018;' '' quoteleft 96
+'a' '' a 97
+'b' '' b 98
+'c' '' c 99
+'d' '' d 100
+'e' '' e 101
+'f' '' f 102
+'g' '' g 103
+'h' '' h 104
+'i' '' i 105
+'j' '' j 106
+'k' '' k 107
+'l' '' l 108
+'m' '' m 109
+'n' '' n 110
+'o' '' o 111
+'p' '' p 112
+'q' '' q 113
+'r' '' r 114
+'s' '' s 115
+'t' '' t 116
+'u' '' u 117
+'v' '' v 118
+'w' '' w 119
+'x' '' x 120
+'y' '' y 121
+'z' '' z 122
+'{' '' braceleft 123
+'|' '' bar 124
+'}' '' braceright 125
+'~' '' asciitilde 126
+'-' '' hyphen 127
+'&#x0102;' '' breve A 128
+'&#x0104;' '' ogonek A 129
+'&#x0106;' '' acute C 130
+'&#x010C;' '' caron C 131
+'&#x010E;' '' caron D 132
+'&#x011A;' '' caron E 133
+'&#x0118;' '' ogonek E 134
+'&#x011E;' '' breve G 135
+'&#x0139;' '' acute L 136
+'&#x013D;' '' L quoteright 137
+'&#x0141;' '' Lslash 138
+'&#x0143;' '' acute N 139
+'&#x0147;' '' caron N 140
+'&#x014A;' '' Eng 141
+'&#x0150;' '' hungarumlaut O 142
+'&#x0154;' '' acute R 143
+'&#x0158;' '' caron R 144
+'&#x015A;' '' acute S 145
+'&#x0160;' '' Scaron 146
+'&#x015E;' '' cedilla S 147
+'&#x0164;' '' caron T 148
+'&#x0162;' '' cedilla T 149
+'&#x0170;' '' hungarumlaut U 150
+'&#x016E;' '' ring U 151
+'&#x0178;' '' Ydieresis 152
+'&#x0179;' '' acute Z 153
+'&#x017D;' '' Zcaron 154
+'&#x017B;' '' dotaccent Z 155
+'&#x0132;' '' I J 156
+'&#x0130;' '' dotaccent I 157
+'&#x0111;' '' macron d 158
+'&#x00A7;' '' section 159
+'&#x0103;' '' breve a 160
+'&#x0105;' '' ogonek a 161
+'&#x0107;' '' acute c 162
+'&#x010D;' '' caron c 163
+'&#x010F;' '' d quoteright 164
+'&#x011B;' '' caron e 165
+'&#x0119;' '' ogonek e 166
+'&#x011F;' '' breve g 167
+'&#x013A;' '' acute l 168
+'&#x013E;' '' l quoteright 169
+'&#x0142;' '' lslash 170
+'&#x0144;' '' acute n 171
+'&#x0148;' '' caron n 172
+'&#x014B;' '' eng 173
+'&#x0151;' '' hungarumlaut o 174
+'&#x0155;' '' acute r 175
+'&#x0159;' '' caron r 176
+'&#x015B;' '' acute s 177
+'&#x0161;' '' scaron 178
+'&#x015F;' '' cedilla s 179
+'&#x0165;' '' t quoteright 180
+'&#x0163;' '' cedilla t 181
+'&#x0171;' '' hungarumlaut u 182
+'&#x016F;' '' ring u 183
+'&#x00FF;' '' ydieresis 184
+'&#x017A;' '' acute z 185
+'&#x017E;' '' zcaron 186
+'&#x017C;' '' dotaccent z 187
+'&#x0133;' '' i j 188
+'&#x00A1;' '' exclamdown 189
+'&#x00BF;' '' questiondown 190
+'&#x00A3;' '' sterling 191
+'&#x00C0;' '' Agrave 192
+'&#x00C1;' '' Aacute 193
+'&#x00C2;' '' Acircumflex 194
+'&#x00C3;' '' Atilde 195
+'&#x00C4;' '' Adieresis 196
+'&#x00C5;' '' Aring 197
+'&#x00C6;' '' AE 198
+'&#x00C7;' '' Ccedilla 199
+'&#x00C8;' '' Egrave 200
+'&#x00C9;' '' Eacute 201
+'&#x00CA;' '' Ecircumflex 202
+'&#x00CB;' '' Edieresis 203
+'&#x00CC;' '' Igrave 204
+'&#x00CD;' '' Iacute 205
+'&#x00CE;' '' Icircumflex 206
+'&#x00CF;' '' Idieresis 207
+'&#x00D0;' '' Eth 208
+'&#x00D1;' '' Ntilde 209
+'&#x00D2;' '' Ograve 210
+'&#x00D3;' '' Oacute 211
+'&#x00D4;' '' Ocircumflex 212
+'&#x00D5;' '' Otilde 213
+'&#x00D6;' '' Odieresis 214
+'&#x0152;' '' OE 215
+'&#x00D8;' '' Oslash 216
+'&#x00D9;' '' Ugrave 217
+'&#x00DA;' '' Uacute 218
+'&#x00DB;' '' Ucircumflex 219
+'&#x00DC;' '' Udieresis 220
+'&#x00DD;' '' Yacute 221
+'&#x00DE;' '' Thorn 222
+'SS' '' S S 223
+'&#x00E0;' '' agrave 224
+'&#x00E1;' '' aacute 225
+'&#x00E2;' '' acircumflex 226
+'&#x00E3;' '' atilde 227
+'&#x00E4;' '' adieresis 228
+'&#x00E5;' '' aring 229
+'&#x00E6;' '' ae 230
+'&#x00E7;' '' ccedilla 231
+'&#x00E8;' '' egrave 232
+'&#x00E9;' '' eacute 233
+'&#x00EA;' '' ecircumflex 234
+'&#x00EB;' '' edieresis 235
+'&#x00EC;' '' igrave 236
+'&#x00ED;' '' iacute 237
+'&#x00EE;' '' icircumflex 238
+'&#x00EF;' '' idieresis 239
+'&#x00F0;' '' eth 240
+'&#x00F1;' '' ntilde 241
+'&#x00F2;' '' ograve 242
+'&#x00F3;' '' oacute 243
+'&#x00F4;' '' ocircumflex 244
+'&#x00F5;' '' otilde 245
+'&#x00F6;' '' odieresis 246
+'&#x0153;' '' oe 247
+'&#x00F8;' '' oslash 248
+'&#x00F9;' '' ugrave 249
+'&#x00FA;' '' uacute 250
+'&#x00FB;' '' ucircumflex 251
+'&#x00FC;' '' udieresis 252
+'&#x00FD;' '' yacute 253
+'&#x00FE;' '' thorn 254
+'&#x00DF;' '' germandbls 255
+futr8t 0 255
+htfcss:  futr8t  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futr8t}{unicode/Utopia/futr8t}{}
+% writing futri8t.htf hash: 28bfee5ee15a8b940334b0f1c35a8d57
+\<futri8t\><<<
+.futr8t
+htfcss:  futri8t  font-style: italic; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futri8t}{alias/Utopia/futri8t}{}
+% writing futb8t.htf hash: 28bfee5ee15a8b940334b0f1c35a8d57
+\<futb8t\><<<
+.futr8t
+htfcss:  futb8t  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futb8t}{alias/Utopia/futb8t}{}
+% writing futbi8t.htf hash: 28bfee5ee15a8b940334b0f1c35a8d57
+\<futbi8t\><<<
+.futr8t
+htfcss:  futbi8t  font-weight: bold; font-style: italic; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbi8t}{alias/Utopia/futbi8t}{}
+% writing futrc8t.htf hash: 8564569bc6c4c40d0031c2c7baf2d9d9
+\<futrc8t\><<<
+futrc8t 0 255
+'&#x60;' '' grave 0
+'&#x00B4;' '' acute 1
+'&#x02C6;' '' circumflex 2
+'&#x02DC;' '' tilde 3
+'&#x00A8;' '' dieresis 4
+'&#x02DD;' '' hungarumlaut 5
+'&#x02DA;' '' ring 6
+'&#x02C7;' '' caron 7
+'&#x02D8;' '' breve 8
+'&#x00AF;' '' macron 9
+'&#x02D9;' '' dotaccent 10
+'&#x00B8;' '' cedilla 11
+'&#x02DB;' '' ogonek 12
+'&#x201A;' '' quotesinglbase 13
+'&#x2039;' '' guilsinglleft 14
+'&#x203A;' '' guilsinglright 15
+'&#x201C;' '' quotedblleft 16
+'&#x201D;' '' quotedblright 17
+'&#x201E;' '' quotedblbase 18
+'&#x00AB;' '' guillemotleft 19
+'&#x00BB;' '' guillemotright 20
+'&#x2013;' '' endash 21
+'&#x2014;' '' emdash 22
+'&#x221E;' '' infinity 23
+'&#x2080;' '' perthousandzero 24
+'I' '' I 25
+'J' '' J 26
+'FF' '' F F 27
+'FI' '' F I 28
+'FL' '' F L 29
+'FFI' '' F F I 30
+'FFL' '' F F L 31
+' ' '' space 32
+'!' '' exclam 33
+'"' '' quotedbl 34
+'#' '' numbersign 35
+'$' '' dollar 36
+'%' '' percent 37
+'&amp;' '' ampersand 38
+'&#x2019;' '' quoteright 39
+'(' '' parenleft 40
+')' '' parenright 41
+'*' '' asterisk 42
+'+' '' plus 43
+',' '' comma 44
+'-' '' hyphen 45
+'.' '' period 46
+'/' '' slash 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+':' '' colon 58
+';' '' semicolon 59
+'&lt;' '' less 60
+'=' '' equal 61
+'&gt;' '' greater 62
+'?' '' question 63
+'@' '' at 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'[' '' bracketleft 91
+'\' '' backslash 92
+']' '' bracketright 93
+'^' '' asciicircum 94
+'_' '' underscore 95
+'&#x2018;' '' quoteleft 96
+'A' '' A 97
+'B' '' B 98
+'C' '' C 99
+'D' '' D 100
+'E' '' E 101
+'F' '' F 102
+'G' '' G 103
+'H' '' H 104
+'I' '' I 105
+'J' '' J 106
+'K' '' K 107
+'L' '' L 108
+'M' '' M 109
+'N' '' N 110
+'O' '' O 111
+'P' '' P 112
+'Q' '' Q 113
+'R' '' R 114
+'S' '' S 115
+'T' '' T 116
+'U' '' U 117
+'V' '' V 118
+'W' '' W 119
+'X' '' X 120
+'Y' '' Y 121
+'Z' '' Z 122
+'{' '' braceleft 123
+'|' '' bar 124
+'}' '' braceright 125
+'~' '' asciitilde 126
+'-' '' hyphen 127
+'&#x0102;' '' breve A 128
+'&#x0104;' '' ogonek A 129
+'&#x0106;' '' acute C 130
+'&#x010C;' '' caron C 131
+'&#x010E;' '' caron D 132
+'&#x011A;' '' caron E 133
+'&#x0118;' '' ogonek E 134
+'&#x011E;' '' breve G 135
+'&#x0139;' '' acute L 136
+'&#x013D;' '' L quoteright 137
+'&#x0141;' '' Lslash 138
+'&#x0143;' '' acute N 139
+'&#x0147;' '' caron N 140
+'&#x014A;' '' Eng 141
+'&#x0150;' '' hungarumlaut O 142
+'&#x0154;' '' acute R 143
+'&#x0158;' '' caron R 144
+'&#x015A;' '' acute S 145
+'&#x0160;' '' Scaron 146
+'&#x015E;' '' cedilla S 147
+'&#x0164;' '' caron T 148
+'&#x0162;' '' cedilla T 149
+'&#x0170;' '' hungarumlaut U 150
+'&#x016E;' '' ring U 151
+'&#x0178;' '' Ydieresis 152
+'&#x0179;' '' acute Z 153
+'&#x017D;' '' Zcaron 154
+'&#x017B;' '' dotaccent Z 155
+'&#x0132;' '' I J 156
+'&#x0130;' '' dotaccent I 157
+'&#x00D0;' '' Eth 158
+'&#x00A7;' '' section 159
+'&#x0102;' '' breve A 160
+'&#x0104;' '' ogonek A 161
+'&#x0106;' '' acute C 162
+'&#x010C;' '' caron C 163
+'&#x010E;' '' caron D 164
+'&#x011A;' '' caron E 165
+'&#x0118;' '' ogonek E 166
+'&#x011E;' '' breve G 167
+'&#x0139;' '' acute L 168
+'&#x013D;' '' L quoteright 169
+'&#x0141;' '' Lslash 170
+'&#x0143;' '' acute N 171
+'&#x0147;' '' caron N 172
+'&#x014A;' '' Eng 173
+'&#x0150;' '' hungarumlaut O 174
+'&#x0154;' '' acute R 175
+'&#x0158;' '' caron R 176
+'&#x015A;' '' acute S 177
+'&#x0160;' '' Scaron 178
+'&#x015E;' '' cedilla S 179
+'&#x0164;' '' caron T 180
+'&#x0162;' '' cedilla T 181
+'&#x0170;' '' hungarumlaut U 182
+'&#x016E;' '' ring U 183
+'&#x0178;' '' Ydieresis 184
+'&#x0179;' '' acute Z 185
+'&#x017D;' '' Zcaron 186
+'&#x017B;' '' dotaccent Z 187
+'&#x0132;' '' I J 188
+'&#x00A1;' '' exclamdown 189
+'&#x00BF;' '' questiondown 190
+'&#x00A3;' '' sterling 191
+'&#x00C0;' '' Agrave 192
+'&#x00C1;' '' Aacute 193
+'&#x00C2;' '' Acircumflex 194
+'&#x00C3;' '' Atilde 195
+'&#x00C4;' '' Adieresis 196
+'&#x00C5;' '' Aring 197
+'&#x00C6;' '' AE 198
+'&#x00C7;' '' Ccedilla 199
+'&#x00C8;' '' Egrave 200
+'&#x00C9;' '' Eacute 201
+'&#x00CA;' '' Ecircumflex 202
+'&#x00CB;' '' Edieresis 203
+'&#x00CC;' '' Igrave 204
+'&#x00CD;' '' Iacute 205
+'&#x00CE;' '' Icircumflex 206
+'&#x00CF;' '' Idieresis 207
+'&#x00D0;' '' Eth 208
+'&#x00D1;' '' Ntilde 209
+'&#x00D2;' '' Ograve 210
+'&#x00D3;' '' Oacute 211
+'&#x00D4;' '' Ocircumflex 212
+'&#x00D5;' '' Otilde 213
+'&#x00D6;' '' Odieresis 214
+'&#x0152;' '' OE 215
+'&#x00D8;' '' Oslash 216
+'&#x00D9;' '' Ugrave 217
+'&#x00DA;' '' Uacute 218
+'&#x00DB;' '' Ucircumflex 219
+'&#x00DC;' '' Udieresis 220
+'&#x00DD;' '' Yacute 221
+'&#x00DE;' '' Thorn 222
+'SS' '' S S 223
+'&#x00C0;' '' Agrave 224
+'&#x00C1;' '' Aacute 225
+'&#x00C2;' '' Acircumflex 226
+'&#x00C3;' '' Atilde 227
+'&#x00C4;' '' Adieresis 228
+'&#x00C5;' '' Aring 229
+'&#x00C6;' '' AE 230
+'&#x00C7;' '' Ccedilla 231
+'&#x00C8;' '' Egrave 232
+'&#x00C9;' '' Eacute 233
+'&#x00CA;' '' Ecircumflex 234
+'&#x00CB;' '' Edieresis 235
+'&#x00CC;' '' Igrave 236
+'&#x00CD;' '' Iacute 237
+'&#x00CE;' '' Icircumflex 238
+'&#x00CF;' '' Idieresis 239
+'&#x00D0;' '' Eth 240
+'&#x00D1;' '' Ntilde 241
+'&#x00D2;' '' Ograve 242
+'&#x00D3;' '' Oacute 243
+'&#x00D4;' '' Ocircumflex 244
+'&#x00D5;' '' Otilde 245
+'&#x00D6;' '' Odieresis 246
+'&#x0152;' '' OE 247
+'&#x00D8;' '' Oslash 248
+'&#x00D9;' '' Ugrave 249
+'&#x00DA;' '' Uacute 250
+'&#x00DB;' '' Ucircumflex 251
+'&#x00DC;' '' Udieresis 252
+'&#x00DD;' '' Yacute 253
+'&#x00DE;' '' Thorn 254
+'SS' '' S S 255
+futrc8t 0 255
+htfcss:  futrc8t  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futrc8t}{unicode/Utopia/futrc8t}{}
+% writing futbc8t.htf hash: 8564569bc6c4c40d0031c2c7baf2d9d9
+\<futbc8t\><<<
+.futrc8t
+htfcss:  futbc8t  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbc8t}{alias/Utopia/futbc8t}{}
+% writing futro8t.htf hash: 28bfee5ee15a8b940334b0f1c35a8d57
+\<futro8t\><<<
+.futr8t
+htfcss:  futro8t  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futro8t}{alias/Utopia/futro8t}{}
+% writing futbo8t.htf hash: 28bfee5ee15a8b940334b0f1c35a8d57
+\<futbo8t\><<<
+.futr8t
+htfcss:  futbo8t  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbo8t}{alias/Utopia/futbo8t}{}
+% writing futr-sup.htf hash: 40a4256dc67273ebbf12227b8951c8c0
+\<futr-sup\><<<
+futr-sup 32 116
+' ' '' space 32
+'' ''  
+'' ''  
+'' ''  
+'%' '' percent 36
+'' ''  
+'' ''  
+'' ''  
+'(' '' parenleft 40
+')' '' parenright 41
+'' ''  
+'' ''  
+'&lt;' '' less 44
+'' ''  
+'&gt;' '' greater 46
+'' ''  
+'&#x00C8;' '' Egrave 48
+'&#x00C9;' '' Eacute 49
+'&#x00CA;' '' Ecircumflex 50
+'&#x00CB;' '' Edieresis 51
+'&#x00CC;' '' Igrave 52
+'&#x00CD;' '' Iacute 53
+'&#x00CE;' '' Icircumflex 54
+'&#x00CF;' '' Idieresis 55
+'&#x00D0;' '' Eth 56
+'&#x00D1;' '' Ntilde 57
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'A' '' A 97
+'B' '' B 98
+'' ''  
+'D' '' D 100
+'E' '' E 101
+'' ''  
+'' ''  
+'' ''  
+'I' '' I 105
+'' ''  
+'' ''  
+'L' '' L 108
+'M' '' M 109
+'N' '' N 110
+'O' '' O 111
+'' ''  
+'' ''  
+'R' '' R 114
+'S' '' S 115
+'T' '' T 116
+futr-sup 32 116
+htfcss:  futr-sup  font-family: 'nil', serif;
+
+>>>
+\AddFont{futr-sup}{unicode/futr-sup/futr-sup}{}
+% writing futri-sup.htf hash: 40a4256dc67273ebbf12227b8951c8c0
+\<futri-sup\><<<
+.futr-sup
+htfcss:  futri-sup  font-family: 'nil', serif;
+
+>>>
+\AddFont{futri-sup}{alias/futri-sup/futri-sup}{}
+% writing futs-sup.htf hash: 40a4256dc67273ebbf12227b8951c8c0
+\<futs-sup\><<<
+.futr-sup
+htfcss:  futs-sup  font-family: 'nil', serif;
+
+>>>
+\AddFont{futs-sup}{alias/futs-sup/futs-sup}{}
+% writing futsi-sup.htf hash: 40a4256dc67273ebbf12227b8951c8c0
+\<futsi-sup\><<<
+.futr-sup
+htfcss:  futsi-sup  font-family: 'nil', serif;
+
+>>>
+\AddFont{futsi-sup}{alias/futsi-sup/futsi-sup}{}
+% writing futb-sup.htf hash: 40a4256dc67273ebbf12227b8951c8c0
+\<futb-sup\><<<
+.futr-sup
+htfcss:  futb-sup  font-family: 'nil', serif;
+
+>>>
+\AddFont{futb-sup}{alias/futb-sup/futb-sup}{}
+% writing futbi-sup.htf hash: 40a4256dc67273ebbf12227b8951c8c0
+\<futbi-sup\><<<
+.futr-sup
+htfcss:  futbi-sup  font-family: 'nil', serif;
+
+>>>
+\AddFont{futbi-sup}{alias/futbi-sup/futbi-sup}{}
+% writing futc-sup.htf hash: 40a4256dc67273ebbf12227b8951c8c0
+\<futc-sup\><<<
+.futr-sup
+htfcss:  futc-sup  font-family: 'nil', serif;
+
+>>>
+\AddFont{futc-sup}{alias/futc-sup/futc-sup}{}
+% writing futr9e.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futr9e\><<<
+.futr9d
+htfcss:  futr9e  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futr9e}{alias/Utopia/futr9e}{}
+% writing futri9e.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futri9e\><<<
+.futr9d
+htfcss:  futri9e  font-style: italic; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futri9e}{alias/Utopia/futri9e}{}
+% writing futs9e.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futs9e\><<<
+.futr9d
+htfcss:  futs9e  font-family: 'nil', serif;
+
+>>>
+\AddFont{futs9e}{alias/futs9e/futs9e}{}
+% writing futsi9e.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futsi9e\><<<
+.futr9d
+htfcss:  futsi9e  font-family: 'nil', serif;
+
+>>>
+\AddFont{futsi9e}{alias/futsi9e/futsi9e}{}
+% writing futb9e.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futb9e\><<<
+.futr9d
+htfcss:  futb9e  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futb9e}{alias/Utopia/futb9e}{}
+% writing futbi9e.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futbi9e\><<<
+.futr9d
+htfcss:  futbi9e  font-weight: bold; font-style: italic; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbi9e}{alias/Utopia/futbi9e}{}
+% writing futc9e.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futc9e\><<<
+.futr9d
+htfcss:  futc9e  font-family: 'nil', serif;
+
+>>>
+\AddFont{futc9e}{alias/futc9e/futc9e}{}
+% writing futrc9e.htf hash: 662e976328bd3a21c934aa3455becb64
+\<futrc9e\><<<
+.futrc9d
+htfcss:  futrc9e  font-family: 'nil', serif;
+
+>>>
+\AddFont{futrc9e}{alias/futrc9e/futrc9e}{}
+Missing glyph	Engsmall
+% writing futsc9e.htf hash: 662e976328bd3a21c934aa3455becb64
+\<futsc9e\><<<
+.futrc9d
+htfcss:  futsc9e  font-variant: small-caps; font-family: 'nil', serif;
+
+>>>
+\AddFont{futsc9e}{alias/futsc9e/futsc9e}{}
+Missing glyph	Engsmall
+% writing futrci9e.htf hash: 662e976328bd3a21c934aa3455becb64
+\<futrci9e\><<<
+.futrc9d
+htfcss:  futrci9e  font-family: 'nil', serif;
+
+>>>
+\AddFont{futrci9e}{alias/futrci9e/futrci9e}{}
+Missing glyph	Engsmall
+% writing futsci9e.htf hash: 662e976328bd3a21c934aa3455becb64
+\<futsci9e\><<<
+.futrc9d
+htfcss:  futsci9e  font-variant: small-caps; font-family: 'nil', serif;
+
+>>>
+\AddFont{futsci9e}{alias/futsci9e/futsci9e}{}
+Missing glyph	Engsmall
+% writing futro9e.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futro9e\><<<
+.futr9d
+htfcss:  futro9e  font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futro9e}{alias/Utopia/futro9e}{}
+% writing futso9e.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futso9e\><<<
+.futr9d
+htfcss:  futso9e  font-family: 'nil', serif;
+
+>>>
+\AddFont{futso9e}{alias/futso9e/futso9e}{}
+% writing futbo9e.htf hash: 4870c2da9addb1fdc4c2a0c5ef1a607d
+\<futbo9e\><<<
+.futr9d
+htfcss:  futbo9e  font-weight: bold; font-family: 'Utopia', serif;
+
+>>>
+\AddFont{futbo9e}{alias/Utopia/futbo9e}{}
+% writing futrorn.htf hash: 66292e827b32eac4ea57beb4fdcca7fd
+\<futrorn\><<<
+futrorn 32 117
+'' '' .notdef 32
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' '' noway 65
+'' '' beware 66
+'' ''  
+'' ''  
+'' '' euro2 69
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' '' bomb 76
+'' '' grimace 77
+'&#x1F60E;' '' barcino 78
+'&#x00B6;' '' pilcrow 79
+'' '' pilcrowtwo 80
+'' '' pilcrowthree 81
+'' '' pilcrowfour 82
+'' '' pilcrowfive 83
+'' '' pilcrowsix 84
+'' '' xswordsup 85
+'' '' xswordsdown 86
+'' ''  
+'' '' decoone 88
+'' '' decotwo 89
+'' '' decothree 90
+'' '' decofour 91
+'' '' decofive 92
+'' '' decosix 93
+'' ''  
+'' ''  
+'' ''  
+'' '' gland 97
+'' '' floweroneleft 98
+'' '' floweroneright 99
+'' '' starredbullet 100
+'' ''  
+'' '' leafNE 102
+'' '' leafNW 103
+'' '' leafSE 104
+'' '' leafSW 105
+'' '' leaftwo 106
+'' '' leafthree 107
+'' '' aldinesmall 108
+'' '' aldineone 109
+'' '' aldinetwo 110
+'' '' aldinethree 111
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' '' lefthand 116
+'' '' righthand 117
+futrorn 32 117
+htfcss:  futrorn  font-family: 'fourier-orns', serif;
+
+>>>
+\AddFont{futrorn}{unicode/fourier-orns/futrorn}{}
+Missing glyph	noway
+Missing glyph	beware
+Missing glyph	euro2
+Missing glyph	bomb
+Missing glyph	grimace
+Missing glyph	pilcrowtwo
+Missing glyph	pilcrowthree
+Missing glyph	pilcrowfour
+Missing glyph	pilcrowfive
+Missing glyph	pilcrowsix
+Missing glyph	xswordsup
+Missing glyph	xswordsdown
+Missing glyph	decoone
+Missing glyph	decotwo
+Missing glyph	decothree
+Missing glyph	decofour
+Missing glyph	decofive
+Missing glyph	decosix
+Missing glyph	gland
+Missing glyph	floweroneleft
+Missing glyph	floweroneright
+Missing glyph	starredbullet
+Missing glyph	leafNE
+Missing glyph	leafNW
+Missing glyph	leafSE
+Missing glyph	leafSW
+Missing glyph	leaftwo
+Missing glyph	leafthree
+Missing glyph	aldinesmall
+Missing glyph	aldineone
+Missing glyph	aldinetwo
+Missing glyph	aldinethree
+Missing glyph	lefthand
+Missing glyph	righthand
+% writing futroorn.htf hash: 66292e827b32eac4ea57beb4fdcca7fd
+\<futroorn\><<<
+.futrorn
+htfcss:  futroorn  font-family: 'fourier-orns', serif;
+
+>>>
+\AddFont{futroorn}{alias/fourier-orns/futroorn}{}
+Missing glyph	noway
+Missing glyph	beware
+Missing glyph	euro2
+Missing glyph	bomb
+Missing glyph	grimace
+Missing glyph	pilcrowtwo
+Missing glyph	pilcrowthree
+Missing glyph	pilcrowfour
+Missing glyph	pilcrowfive
+Missing glyph	pilcrowsix
+Missing glyph	xswordsup
+Missing glyph	xswordsdown
+Missing glyph	decoone
+Missing glyph	decotwo
+Missing glyph	decothree
+Missing glyph	decofour
+Missing glyph	decofive
+Missing glyph	decosix
+Missing glyph	gland
+Missing glyph	floweroneleft
+Missing glyph	floweroneright
+Missing glyph	starredbullet
+Missing glyph	leafNE
+Missing glyph	leafNW
+Missing glyph	leafSE
+Missing glyph	leafSW
+Missing glyph	leaftwo
+Missing glyph	leafthree
+Missing glyph	aldinesmall
+Missing glyph	aldineone
+Missing glyph	aldinetwo
+Missing glyph	aldinethree
+Missing glyph	lefthand
+Missing glyph	righthand
+% writing futsorn.htf hash: 66292e827b32eac4ea57beb4fdcca7fd
+\<futsorn\><<<
+.futrorn
+htfcss:  futsorn  font-family: 'fourier-orns', serif;
+
+>>>
+\AddFont{futsorn}{alias/fourier-orns/futsorn}{}
+Missing glyph	noway
+Missing glyph	beware
+Missing glyph	euro2
+Missing glyph	bomb
+Missing glyph	grimace
+Missing glyph	pilcrowtwo
+Missing glyph	pilcrowthree
+Missing glyph	pilcrowfour
+Missing glyph	pilcrowfive
+Missing glyph	pilcrowsix
+Missing glyph	xswordsup
+Missing glyph	xswordsdown
+Missing glyph	decoone
+Missing glyph	decotwo
+Missing glyph	decothree
+Missing glyph	decofour
+Missing glyph	decofive
+Missing glyph	decosix
+Missing glyph	gland
+Missing glyph	floweroneleft
+Missing glyph	floweroneright
+Missing glyph	starredbullet
+Missing glyph	leafNE
+Missing glyph	leafNW
+Missing glyph	leafSE
+Missing glyph	leafSW
+Missing glyph	leaftwo
+Missing glyph	leafthree
+Missing glyph	aldinesmall
+Missing glyph	aldineone
+Missing glyph	aldinetwo
+Missing glyph	aldinethree
+Missing glyph	lefthand
+Missing glyph	righthand
+% writing futsoorn.htf hash: 66292e827b32eac4ea57beb4fdcca7fd
+\<futsoorn\><<<
+.futrorn
+htfcss:  futsoorn  font-family: 'fourier-orns', serif;
+
+>>>
+\AddFont{futsoorn}{alias/fourier-orns/futsoorn}{}
+Missing glyph	noway
+Missing glyph	beware
+Missing glyph	euro2
+Missing glyph	bomb
+Missing glyph	grimace
+Missing glyph	pilcrowtwo
+Missing glyph	pilcrowthree
+Missing glyph	pilcrowfour
+Missing glyph	pilcrowfive
+Missing glyph	pilcrowsix
+Missing glyph	xswordsup
+Missing glyph	xswordsdown
+Missing glyph	decoone
+Missing glyph	decotwo
+Missing glyph	decothree
+Missing glyph	decofour
+Missing glyph	decofive
+Missing glyph	decosix
+Missing glyph	gland
+Missing glyph	floweroneleft
+Missing glyph	floweroneright
+Missing glyph	starredbullet
+Missing glyph	leafNE
+Missing glyph	leafNW
+Missing glyph	leafSE
+Missing glyph	leafSW
+Missing glyph	leaftwo
+Missing glyph	leafthree
+Missing glyph	aldinesmall
+Missing glyph	aldineone
+Missing glyph	aldinetwo
+Missing glyph	aldinethree
+Missing glyph	lefthand
+Missing glyph	righthand
+% writing futborn.htf hash: 66292e827b32eac4ea57beb4fdcca7fd
+\<futborn\><<<
+.futrorn
+htfcss:  futborn  font-family: 'fourier-orns', serif;
+
+>>>
+\AddFont{futborn}{alias/fourier-orns/futborn}{}
+Missing glyph	noway
+Missing glyph	beware
+Missing glyph	euro2
+Missing glyph	bomb
+Missing glyph	grimace
+Missing glyph	pilcrowtwo
+Missing glyph	pilcrowthree
+Missing glyph	pilcrowfour
+Missing glyph	pilcrowfive
+Missing glyph	pilcrowsix
+Missing glyph	xswordsup
+Missing glyph	xswordsdown
+Missing glyph	decoone
+Missing glyph	decotwo
+Missing glyph	decothree
+Missing glyph	decofour
+Missing glyph	decofive
+Missing glyph	decosix
+Missing glyph	gland
+Missing glyph	floweroneleft
+Missing glyph	floweroneright
+Missing glyph	starredbullet
+Missing glyph	leafNE
+Missing glyph	leafNW
+Missing glyph	leafSE
+Missing glyph	leafSW
+Missing glyph	leaftwo
+Missing glyph	leafthree
+Missing glyph	aldinesmall
+Missing glyph	aldineone
+Missing glyph	aldinetwo
+Missing glyph	aldinethree
+Missing glyph	lefthand
+Missing glyph	righthand
+% writing futboorn.htf hash: 66292e827b32eac4ea57beb4fdcca7fd
+\<futboorn\><<<
+.futrorn
+htfcss:  futboorn  font-family: 'fourier-orns', serif;
+
+>>>
+\AddFont{futboorn}{alias/fourier-orns/futboorn}{}
+Missing glyph	noway
+Missing glyph	beware
+Missing glyph	euro2
+Missing glyph	bomb
+Missing glyph	grimace
+Missing glyph	pilcrowtwo
+Missing glyph	pilcrowthree
+Missing glyph	pilcrowfour
+Missing glyph	pilcrowfive
+Missing glyph	pilcrowsix
+Missing glyph	xswordsup
+Missing glyph	xswordsdown
+Missing glyph	decoone
+Missing glyph	decotwo
+Missing glyph	decothree
+Missing glyph	decofour
+Missing glyph	decofive
+Missing glyph	decosix
+Missing glyph	gland
+Missing glyph	floweroneleft
+Missing glyph	floweroneright
+Missing glyph	starredbullet
+Missing glyph	leafNE
+Missing glyph	leafNW
+Missing glyph	leafSE
+Missing glyph	leafSW
+Missing glyph	leaftwo
+Missing glyph	leafthree
+Missing glyph	aldinesmall
+Missing glyph	aldineone
+Missing glyph	aldinetwo
+Missing glyph	aldinethree
+Missing glyph	lefthand
+Missing glyph	righthand
+% writing futcorn.htf hash: 66292e827b32eac4ea57beb4fdcca7fd
+\<futcorn\><<<
+.futrorn
+htfcss:  futcorn  font-family: 'fourier-orns', serif;
+
+>>>
+\AddFont{futcorn}{alias/fourier-orns/futcorn}{}
+Missing glyph	noway
+Missing glyph	beware
+Missing glyph	euro2
+Missing glyph	bomb
+Missing glyph	grimace
+Missing glyph	pilcrowtwo
+Missing glyph	pilcrowthree
+Missing glyph	pilcrowfour
+Missing glyph	pilcrowfive
+Missing glyph	pilcrowsix
+Missing glyph	xswordsup
+Missing glyph	xswordsdown
+Missing glyph	decoone
+Missing glyph	decotwo
+Missing glyph	decothree
+Missing glyph	decofour
+Missing glyph	decofive
+Missing glyph	decosix
+Missing glyph	gland
+Missing glyph	floweroneleft
+Missing glyph	floweroneright
+Missing glyph	starredbullet
+Missing glyph	leafNE
+Missing glyph	leafNW
+Missing glyph	leafSE
+Missing glyph	leafSW
+Missing glyph	leaftwo
+Missing glyph	leafthree
+Missing glyph	aldinesmall
+Missing glyph	aldineone
+Missing glyph	aldinetwo
+Missing glyph	aldinethree
+Missing glyph	lefthand
+Missing glyph	righthand
+
+% writing fourier-mex.htf hash: 7f64ea277b40900b28dd22fe36a3cad8
+\<fourier-mex\><<<
+fourier-mex 33 235
+')' '' parenrightBigg 33
+'[' '' bracketleftBigg 34
+']' '' bracketrightBigg 35
+'&#x230A;' '' floorleftBigg 36
+'&#x230B;' '' floorrightBigg 37
+'&#x2308;' '' ceilingleftBigg 38
+'&#x2309;' '' ceilingrightBigg 39
+'{' '' braceleftBigg 40
+'}' '' bracerightBigg 41
+'&#x2329;' '' angbracketleftBigg 42
+'&#x232A;' '' angbracketrightBigg 43
+'&#x2215;' '' slashBigg 44
+'\' '' backslashBigg 45
+'&#x2215;' '' slashBig 46
+'\' '' backslashBig 47
+'&#x239B;' '' parenlefttp 48
+'&#x239E;' '' parenrighttp 49
+'&#x2308;' '' bracketlefttp 50
+'&#x23A4;' '' bracketrighttp 51
+'&#x230A;' '' bracketleftbt 52
+'&#x23A6;' '' bracketrightbt 53
+'&#x23A2;' '' bracketleftex 54
+'&#x23A5;' '' bracketrightex 55
+'&#xa3A7;' '' bracelefttp 56
+'&#x23AB;' '' bracerighttp 57
+'&#x23A9;' '' braceleftbt 58
+'&#x23AD;' '' bracerightbt 59
+'|' '' braceleftmid 60
+'&#x23AC;' '' bracerightmid 61
+'|' '' braceex 62
+'&#x2195;' '' arrowvertex 63
+'&#x239D;' '' parenleftbt 64
+'&#x23A0;' '' parenrightbt 65
+'&#x239C;' '' parenleftex 66
+'&#x239F;' '' parenrightex 67
+'&#x2329;' '' angbracketleftBig 68
+'&#x232A;' '' angbracketrightBig 69
+'&#x2294;' '' unionsqtext 70
+'&#x2294;' '' unionsqdisplay 71
+'&#x222E;' '' contintegraltext 72
+'&#x222E;' '' contintegraldisplay 73
+'&#x2299;' '' circledottext 74
+'&#x2299;' '' circledotdisplay 75
+'&#x2295;' '' circleplustext 76
+'&#x2295;' '' circleplusdisplay 77
+'&#x2297;' '' circlemultiplytext 78
+'&#x2297;' '' circlemultiplydisplay 79
+'&#x2211;' '' summationtext 80
+'&#x220F;' '' producttext 81
+'&#x222B;' '' integraltext 82
+'&#x22C3;' '' uniontext 83
+'&#x22C2;' '' intersectiontext 84
+'&#x228E;' '' unionmultitext 85
+'&#x22C0;' '' logicalandtext 86
+'&#x22C1;' '' logicalortext 87
+'&#x2211;&#xFE01;' '' summationdisplay 88
+'&#x220F;' '' productdisplay 89
+'&#x222B;' '' integraldisplay 90
+'&#x22C3;' '' uniondisplay 91
+'&#x22C2;' '' intersectiondisplay 92
+'&#x228E;' '' unionmultidisplay 93
+'&#x22C0;' '' logicalanddisplay 94
+'&#x22C1;' '' logicalordisplay 95
+'&#x2210;' '' coproducttext 96
+'&#x2210;' '' coproductdisplay 97
+'&#x0302;' '' hatwide 98
+'&#x0302;' '' hatwider 99
+'&#x0302;' '' hatwidest 100
+'&#x0303;' '' tildewide 101
+'&#x0303;' '' tildewider 102
+'&#x02DC;' '' tildewidest 103
+'[' '' bracketleftBig 104
+']' '' bracketrightBig 105
+'&#x230A;' '' floorleftBig 106
+'&#x230B;' '' floorrightBig 107
+'&#x2308;' '' ceilingleftBig 108
+'&#x2309;' '' ceilingrightBig 109
+'{' '' braceleftBig 110
+'}' '' bracerightBig 111
+'&#x221A;&#xFE01;' '' radicalbig 112
+'&#x221A;&#xFE03;' '' radicalBig 113
+'&#x221A;&#xFE02;' '' radicalbigg 114
+'&#x221A;&#xFE04;' '' radicalBigg 115
+'&#x221A;' '' radicalbt 116
+'&#x221A;' '' radicalvertex 117
+'&#x221A;' '' radicaltp 118
+'&#x2551;' '' arrowvertexdbl 119
+'&#x2191;' '' arrowtp 120
+'&#x2193;' '' arrowbt 121
+'&#xFE37;' '' bracehtipdownleft 122
+'&#xFE37;' '' bracehtipdownright 123
+'&#xFE38;' '' bracehtipupleft 124
+'&#xFE38;' '' bracehtipupright 125
+'&#x21D1;' '' arrowdbltp 126
+'' ''  
+'' ''  
+'' '' hatmorewidest 129
+'' '' tildemorewidest 130
+'' '' hatultime 131
+'' '' tildeultime 132
+'&#xb;' '' bracketdoubleleftbig 133
+'&#xb;' '' bracketdoublerightbig 134
+'&#xb;' '' bracketdoubleleftBig 135
+'&#xb;' '' bracketdoublerightBig 136
+'&#xb;' '' bracketdoubleleftbbig 137
+'&#xb;' '' bracketdoublerightbbig 138
+'&#xb;' '' bracketdoubleleftBBig 139
+'&#xb;' '' bracketdoublerightBBig 140
+'&#xb;' '' bracketdoublelefttp 141
+'&#xb;' '' bracketdoublerighttp 142
+'&#xb;' '' bracketdoubleleftbt 143
+'&#xb;' '' bracketdoublerightbt 144
+'&#xb;' '' bracketdoubleleftex 145
+'&#xb;' '' bracketdoublerightex 146
+'' '' vextendtriple 147
+'' '' hbracewide 148
+'' '' hbracewider 149
+'' '' hbracewidest 150
+'' '' hbracemorewidest 151
+'' '' hbraceultime 152
+'' '' hbracemoreultime 153
+'' '' hbracemoremoreultime 154
+'' '' hbracewaouh 155
+'' '' hbracewaououh 156
+'' '' hbracewaouououh 157
+'' '' hbracewaououououh 158
+'' '' hbracewaouououououh 159
+'' '' hbracewaououououououh 160
+'(' '' parenleftbig 161
+')' '' parenrightbig 162
+'[' '' bracketleftbig 163
+']' '' bracketrightbig 164
+'&#x230A;' '' floorleftbig 165
+'&#x230B;' '' floorrightbig 166
+'&#x2308;' '' ceilingleftbig 167
+'&#x2309;' '' ceilingrightbig 168
+'{' '' braceleftbig 169
+'}' '' bracerightbig 170
+'' ''  
+'' ''  
+'&#x2329;' '' angbracketleftbig 173
+'&#x232A;' '' angbracketrightbig 174
+'&#x2223;' '' vextendsingle 175
+'&#x2225;' '' vextenddouble 176
+'&#x2215;' '' slashbig 177
+'\' '' backslashbig 178
+'(' '' parenleftBig 179
+')' '' parenrightBig 180
+'(' '' parenleftbigg 181
+')' '' parenrightbigg 182
+'[' '' bracketleftbigg 183
+']' '' bracketrightbigg 184
+'&#x230A;' '' floorleftbigg 185
+'&#x230B;' '' floorrightbigg 186
+'&#x2308;' '' ceilingleftbigg 187
+'&#x2309;' '' ceilingrightbigg 188
+'{' '' braceleftbigg 189
+'}' '' bracerightbigg 190
+'&#x2329;' '' angbracketleftbigg 191
+'&#x232A;' '' angbracketrightbigg 192
+'&#x2215;' '' slashbigg 193
+'\' '' backslashbigg 194
+'(' '' parenleftBigg 195
+'&#x21D3;' '' arrowdblbt 196
+'' ''  
+'' ''  
+'' ''  
+'' '' ceilinglefttop 200
+'' '' ceilingrighttop 201
+'' '' floorleftbottom 202
+'' '' floorrightbottom 203
+'' '' ceilingfloorleftex 204
+'' '' ceilingfloorrightex 205
+'&#xb;' '' integraltextdouble 206
+'&#xb;' '' integraldisplaydouble 207
+'' '' integraltexttriple 208
+'' '' integraldisplaytriple 209
+'&#xb;' '' cintegraltextdouble 210
+'&#xb;' '' cintegraldisplaydouble 211
+'' '' cintegraltexttriple 212
+'' '' cintegraldisplaytriple 213
+'' '' slashintegraltext 214
+'' '' slashintegraldisplay 215
+'&#x0361;&#xFE01;' '' arcwider 216
+'&#x0361;&#xFE03;' '' arcwidest 217
+'' '' arcmorewidest 218
+'' '' arcmoremorewidest 219
+'' '' arcultime 220
+'' ''  
+'' '' hbracewaouououououououh 222
+'' '' hbracewaououououououououh 223
+'' '' hatmoreultime 224
+'' '' hatmoremoreultime 225
+'' '' tildemoreultime 226
+'' '' tildemoremoreultime 227
+'&#x0361;&#xFE01;&#x0350;' '' oarcwider 228
+'&#x0361;&#xFE03;&#x0350;' '' oarcwidest 229
+'' '' oarcmorewidest 230
+'' '' oarcmoremorewidest 231
+'' '' oarcultime 232
+'' '' aureole 233
+'' '' aureolewider 234
+'' '' aureolewidest 235
+fourier-mex 33 235
+htfcss:  fourier-mex  font-family: 'Fourier-Math-Extension', serif;
+
+>>>
+\AddFont{fourier-mex}{unicode/Fourier-Math-Extension/fourier-mex}{}
+Missing glyph	hatmorewidest
+Missing glyph	tildemorewidest
+Missing glyph	hatultime
+Missing glyph	tildeultime
+Missing glyph	vextendtriple
+Missing glyph	hbracewide
+Missing glyph	hbracewider
+Missing glyph	hbracewidest
+Missing glyph	hbracemorewidest
+Missing glyph	hbraceultime
+Missing glyph	hbracemoreultime
+Missing glyph	hbracemoremoreultime
+Missing glyph	hbracewaouh
+Missing glyph	hbracewaououh
+Missing glyph	hbracewaouououh
+Missing glyph	hbracewaououououh
+Missing glyph	hbracewaouououououh
+Missing glyph	hbracewaououououououh
+Missing glyph	ceilinglefttop
+Missing glyph	ceilingrighttop
+Missing glyph	floorleftbottom
+Missing glyph	floorrightbottom
+Missing glyph	ceilingfloorleftex
+Missing glyph	ceilingfloorrightex
+Missing glyph	integraltexttriple
+Missing glyph	integraldisplaytriple
+Missing glyph	cintegraltexttriple
+Missing glyph	cintegraldisplaytriple
+Missing glyph	slashintegraltext
+Missing glyph	slashintegraldisplay
+Missing glyph	arcmorewidest
+Missing glyph	arcmoremorewidest
+Missing glyph	arcultime
+Missing glyph	hbracewaouououououououh
+Missing glyph	hbracewaououououououououh
+Missing glyph	hatmoreultime
+Missing glyph	hatmoremoreultime
+Missing glyph	tildemoreultime
+Missing glyph	tildemoremoreultime
+Missing glyph	oarcmorewidest
+Missing glyph	oarcmoremorewidest
+Missing glyph	oarcultime
+Missing glyph	aureole
+Missing glyph	aureolewider
+Missing glyph	aureolewidest
+% writing fourier-mex.htf hash: 7f64ea277b40900b28dd22fe36a3cad8
+\<fourier-mex\><<<
+.fourier-mex
+htfcss:  fourier-mex  font-family: 'Fourier-Math-Extension', serif;
+
+>>>
+\AddFont{fourier-mex}{alias/Fourier-Math-Extension/fourier-mex}{}
+Missing glyph	hatmorewidest
+Missing glyph	tildemorewidest
+Missing glyph	hatultime
+Missing glyph	tildeultime
+Missing glyph	vextendtriple
+Missing glyph	hbracewide
+Missing glyph	hbracewider
+Missing glyph	hbracewidest
+Missing glyph	hbracemorewidest
+Missing glyph	hbraceultime
+Missing glyph	hbracemoreultime
+Missing glyph	hbracemoremoreultime
+Missing glyph	hbracewaouh
+Missing glyph	hbracewaououh
+Missing glyph	hbracewaouououh
+Missing glyph	hbracewaououououh
+Missing glyph	hbracewaouououououh
+Missing glyph	hbracewaououououououh
+Missing glyph	ceilinglefttop
+Missing glyph	ceilingrighttop
+Missing glyph	floorleftbottom
+Missing glyph	floorrightbottom
+Missing glyph	ceilingfloorleftex
+Missing glyph	ceilingfloorrightex
+Missing glyph	integraltexttriple
+Missing glyph	integraldisplaytriple
+Missing glyph	cintegraltexttriple
+Missing glyph	cintegraldisplaytriple
+Missing glyph	slashintegraltext
+Missing glyph	slashintegraldisplay
+Missing glyph	arcmorewidest
+Missing glyph	arcmoremorewidest
+Missing glyph	arcultime
+Missing glyph	hbracewaouououououououh
+Missing glyph	hbracewaououououououououh
+Missing glyph	hatmoreultime
+Missing glyph	hatmoremoreultime
+Missing glyph	tildemoreultime
+Missing glyph	tildemoremoreultime
+Missing glyph	oarcmorewidest
+Missing glyph	oarcmoremorewidest
+Missing glyph	oarcultime
+Missing glyph	aureole
+Missing glyph	aureolewider
+Missing glyph	aureolewidest
+% writing fourier-mex.htf hash: 7f64ea277b40900b28dd22fe36a3cad8
+\<fourier-mex\><<<
+.fourier-mex
+htfcss:  fourier-mex  font-family: 'Fourier-Math-Extension', serif;
+
+>>>
+\AddFont{fourier-mex}{alias/Fourier-Math-Extension/fourier-mex}{}
+Missing glyph	hatmorewidest
+Missing glyph	tildemorewidest
+Missing glyph	hatultime
+Missing glyph	tildeultime
+Missing glyph	vextendtriple
+Missing glyph	hbracewide
+Missing glyph	hbracewider
+Missing glyph	hbracewidest
+Missing glyph	hbracemorewidest
+Missing glyph	hbraceultime
+Missing glyph	hbracemoreultime
+Missing glyph	hbracemoremoreultime
+Missing glyph	hbracewaouh
+Missing glyph	hbracewaououh
+Missing glyph	hbracewaouououh
+Missing glyph	hbracewaououououh
+Missing glyph	hbracewaouououououh
+Missing glyph	hbracewaououououououh
+Missing glyph	ceilinglefttop
+Missing glyph	ceilingrighttop
+Missing glyph	floorleftbottom
+Missing glyph	floorrightbottom
+Missing glyph	ceilingfloorleftex
+Missing glyph	ceilingfloorrightex
+Missing glyph	integraltexttriple
+Missing glyph	integraldisplaytriple
+Missing glyph	cintegraltexttriple
+Missing glyph	cintegraldisplaytriple
+Missing glyph	slashintegraltext
+Missing glyph	slashintegraldisplay
+Missing glyph	arcmorewidest
+Missing glyph	arcmoremorewidest
+Missing glyph	arcultime
+Missing glyph	hbracewaouououououououh
+Missing glyph	hbracewaououououououououh
+Missing glyph	hatmoreultime
+Missing glyph	hatmoremoreultime
+Missing glyph	tildemoreultime
+Missing glyph	tildemoremoreultime
+Missing glyph	oarcmorewidest
+Missing glyph	oarcmoremorewidest
+Missing glyph	oarcultime
+Missing glyph	aureole
+Missing glyph	aureolewider
+Missing glyph	aureolewidest
+
+% writing fncmi.htf hash: 0e1ea0c61097f39b59ffe8e9fd617b9b
+\<fncmi\><<<
+fncmi 0 131
+'&#x0393;' '' Gamma 0
+'&#x2206;' '' Delta 1
+'&#x0398;' '' Theta 2
+'&#x039B;' '' Lambda 3
+'&#x039E;' '' Xi 4
+'&#x03A0;' '' Pi 5
+'&#x03A3;' '' Sigma 6
+'&#x03A5;' '' Upsilon 7
+'&#x03A6;' '' Phi 8
+'&#x03A8;' '' Psi 9
+'&#x2126;' '' Omega 10
+'&#x03B1;' '' alpha 11
+'&#x03B2;' '' beta 12
+'&#x03B3;' '' gamma 13
+'&#x03B4;' '' delta 14
+'&#x03F5;' '' epsilon1 15
+'&#x03B6;' '' zeta 16
+'&#x03B7;' '' eta 17
+'&#x03B8;' '' theta 18
+'&#x03B9;' '' iota 19
+'&#x03BA;' '' kappa 20
+'&#x03BB;' '' lambda 21
+'&#x00B5;' '' mu 22
+'&#x03BD;' '' nu 23
+'&#x03BE;' '' xi 24
+'&#x03C0;' '' pi 25
+'&#x03C1;' '' rho 26
+'&#x03C3;' '' sigma 27
+'&#x03C4;' '' tau 28
+'&#x03C5;' '' upsilon 29
+'&#x03D5;' '' phi 30
+'&#x03C7;' '' chi 31
+'&#x03C8;' '' psi 32
+'&#x03C9;' '' omega 33
+'&#x03B5;' '' epsilon 34
+'&#x03D1;' '' theta1 35
+'&#x03D6;' '' pi1 36
+'&#x03F1;' '' rho1 37
+'&#x03C2;' '' sigma1 38
+'&#x03C6;' '' phi1 39
+'&#x21BC;' '' harpoonleftup 40
+'&#x21BD;' '' harpoonleftdown 41
+'&#x21C0;' '' harpoonrightup 42
+'&#x21C1;' '' harpoonrightdown 43
+'&#x21AA;' '' hookrightchar 44
+'&#x21A9;' '' hookleftchar 45
+'&#x25C3;' '' triangleright 46
+'&#x25B9;' '' triangleleft 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+'.' '' period 58
+',' '' comma 59
+'&lt;' '' less 60
+'/' '' slash 61
+'&gt;' '' greater 62
+'&#x22C6;' '' star 63
+'&#x2202;' '' partialdiff 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'&#x266D;' '' flat 91
+'&#x266E;' '' natural 92
+'&#x266F;' '' sharp 93
+'&#x2323;' '' slurbelow 94
+'&#x2322;' '' slurabove 95
+'&#x2113;' '' lscript 96
+'a' '' a 97
+'b' '' b 98
+'c' '' c 99
+'d' '' d 100
+'e' '' e 101
+'f' '' f 102
+'g' '' g 103
+'h' '' h 104
+'i' '' i 105
+'j' '' j 106
+'k' '' k 107
+'l' '' l 108
+'m' '' m 109
+'n' '' n 110
+'o' '' o 111
+'p' '' p 112
+'q' '' q 113
+'r' '' r 114
+'s' '' s 115
+'t' '' t 116
+'u' '' u 117
+'v' '' v 118
+'w' '' w 119
+'x' '' x 120
+'y' '' y 121
+'z' '' z 122
+'&#x0131;' '' dotlessi 123
+'&#x0237;' '' dotlessj 124
+'&#x2118;' '' weierstrass 125
+'&#x20D7;' '' vector 126
+'&#x2040;' '' tie 127
+'&#xD835;&#xDF18;' '' kappa1 128
+'&#x03F1;' '' rho2 129
+'&#xD835;&#xDF15;' '' partialdiff1 130
+'&#x03D6;' '' pi2 131
+fncmi 0 131
+htfcss:  fncmi  font-family: 'Fourier-Math-Letters', serif;
+
+>>>
+\AddFont{fncmi}{unicode/Fourier-Math-Letters/fncmi}{}
+% writing fncmib.htf hash: 0e1ea0c61097f39b59ffe8e9fd617b9b
+\<fncmib\><<<
+.fncmi
+htfcss:  fncmib  font-weight: bold; font-family: 'Fourier-Math-Letters', serif;
+
+>>>
+\AddFont{fncmib}{alias/Fourier-Math-Letters/fncmib}{}
+% writing fncmii.htf hash: 0e1ea0c61097f39b59ffe8e9fd617b9b
+\<fncmii\><<<
+.fncmi
+htfcss:  fncmii  font-style: italic; font-family: 'Fourier-Math-Letters', serif;
+
+>>>
+\AddFont{fncmii}{alias/Fourier-Math-Letters/fncmii}{}
+% writing fncmiib.htf hash: 0e1ea0c61097f39b59ffe8e9fd617b9b
+\<fncmiib\><<<
+.fncmi
+htfcss:  fncmiib  font-weight: bold; font-style: italic; font-family: 'Fourier-Math-Letters', serif;
+
+>>>
+\AddFont{fncmiib}{alias/Fourier-Math-Letters/fncmiib}{}
+% writing fncsy.htf hash: 251bee2d5dc75011d4aba69609a8e1c0
+\<fncsy\><<<
+fncsy 0 165
+'&#x2212;' '' minus 0
+'&#x00B7;' '' periodcentered 1
+'&#x00D7;' '' multiply 2
+'&#x2217;' '' asteriskmath 3
+'&#x00F7;' '' divide 4
+'&#x22C4;' '' diamondmath 5
+'&#x00B1;' '' plusminus 6
+'&#x2213;' '' minusplus 7
+'&#x2295;' '' circleplus 8
+'&#x2296;' '' circleminus 9
+'&#x2297;' '' circlemultiply 10
+'&#x2298;' '' circledivide 11
+'&#x2299;' '' circledot 12
+'&#x20DD;' '' circlecopyrt 13
+'&#x25E6;' '' openbullet 14
+'&#x2022;' '' bullet 15
+'&#x224D;' '' equivasymptotic 16
+'&#x2261;' '' equivalence 17
+'&#x2286;' '' reflexsubset 18
+'&#x2287;' '' reflexsuperset 19
+'&#x2264;' '' lessequal 20
+'&#x2265;' '' greaterequal 21
+'&#x227C;' '' precedesequal 22
+'&#x227D;' '' followsequal 23
+'&#x223C;' '' similar 24
+'&#x2248;' '' approxequal 25
+'&#x2282;' '' propersubset 26
+'&#x2283;' '' propersuperset 27
+'&#x226A;' '' lessmuch 28
+'&#x226B;' '' greatermuch 29
+'&#x227A;' '' precedes 30
+'&#x227B;' '' follows 31
+'&#x2190;' '' arrowleft 32
+'&#x2192;' '' arrowright 33
+'&#x2191;' '' arrowup 34
+'&#x2193;' '' arrowdown 35
+'&#x2194;' '' arrowboth 36
+'&#x2197;' '' arrownortheast 37
+'&#x2198;' '' arrowsoutheast 38
+'&#x2243;' '' similarequal 39
+'&#x21D0;' '' arrowdblleft 40
+'&#x21D2;' '' arrowdblright 41
+'&#x21D1;' '' arrowdblup 42
+'&#x21D3;' '' arrowdbldown 43
+'&#x21D4;' '' arrowdblboth 44
+'&#x2196;' '' arrownorthwest 45
+'&#x2199;' '' arrowsouthwest 46
+'&#x221D;' '' proportional 47
+'&#x2032;' '' prime 48
+'&#x221E;' '' infinity 49
+'&#x2208;' '' element 50
+'&#x220B;' '' owner 51
+'&#x25B3;' '' triangle 52
+'&#x25BD;' '' triangleinv 53
+'&#x0338;' '' negationslash 54
+'&#x21A6;' '' mapstochar 55
+'&#x2200;' '' universal 56
+'&#x2203;' '' existential 57
+'&#x00AC;' '' logicalnot 58
+'&#x2205;' '' emptysetstress 59
+'&#x211C;' '' Rfraktur 60
+'&#x2111;' '' Ifraktur 61
+'&#x22A4;' '' latticetop 62
+'&#x22A5;' '' perpendicular 63
+'&#x2135;' '' aleph 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'&#x222A;' '' union 91
+'&#x2229;' '' intersection 92
+'&#x228E;' '' unionmulti 93
+'&#x2227;' '' logicaland 94
+'&#x2228;' '' logicalor 95
+'&#x22A2;' '' turnstileleft 96
+'&#x22A3;' '' turnstileright 97
+'&#x230A;' '' floorleft 98
+'&#x230B;' '' floorright 99
+'&#x2308;' '' ceilingleft 100
+'&#x2309;' '' ceilingright 101
+'{' '' braceleft 102
+'}' '' braceright 103
+'&#x2329;' '' angleleft 104
+'&#x27E9;' '' angleright 105
+'|' '' bar 106
+'&#x2225;' '' bardbl 107
+'&#x2195;' '' arrowbothv 108
+'&#x21D5;' '' arrowdblbothv 109
+'\' '' backslash 110
+'&#x2240;' '' wreathproduct 111
+'&#x23B7;' '' radicallow 112
+'&#x2A3F;' '' coproduct 113
+'&#x2207;' '' gradient 114
+'&#x222B;' '' integral 115
+'&#x2294;' '' unionsq 116
+'&#x2293;' '' intersectionsq 117
+'&#x2291;' '' subsetsqequal 118
+'&#x2292;' '' supersetsqequal 119
+'&#x00A7;' '' section 120
+'&#x2020;' '' dagger 121
+'&#x2021;' '' daggerdbl 122
+'&#x00B6;' '' paragraph 123
+'&#x2663;' '' club 124
+'&#x2662;' '' diamond 125
+'&#x2661;' '' heart 126
+'&#x2660;' '' spade 127
+'+' '' plus 128
+'=' '' equal 129
+'&lt;' '' less 130
+'&gt;' '' greater 131
+'&#x02A7D;' '' leqslant 132
+'&#x02A7E;' '' geqslant 133
+'&#x2225;' '' parallelslanted 134
+'&#x1F60E;' '' barcino 135
+'&#x022A8;' '' vDash 136
+'&#x025C0;' '' blacktriangleleft 137
+'&#x025B6;' '' blacktriangleright 138
+'&#x2A7D;&#x0338;' '' notleqslant 139
+'&#x2A7E;&#x0338;' '' notgeqslant 140
+'&#x2225;' '' parallel 141
+'&#x2226;' '' notparallel 142
+'&#x2226;' '' notparallelslanted 143
+'&#x22AD;' '' notvDash 144
+'&#x1D40;' '' intercal 145
+'&#x0210F;' '' hslash 146
+'&#x2204;' '' notexists 147
+'&#x02201;' '' complement 148
+'&#x228A;' '' varsubsetneq 149
+'&#x2694;' '' swords 150
+'&#x2694;' '' swordsdown 151
+'&#x2AF4;' '' bartriple 152
+'&#x27E6;' '' bracketdoubleleft 153
+'&#x27E7;' '' bracketdoubleright 154
+'&#x2209;' '' notelement 155
+'&#x220C;' '' notowner 156
+'&#x0127;' '' hbar 157
+'&#x02216;' '' smallsetminus 158
+'&#x02ACB;' '' subsetneqq 159
+'&#x021C9;' '' rightrightarrows 160
+'&#x021C7;' '' leftleftarrows 161
+'&#x25a1;' '' square 162
+'&#x021B6;' '' curvearrowleft 163
+'&#x021B7;' '' curvearrowright 164
+'&#x25A0;' '' blacksquare 165
+fncsy 0 165
+htfcss:  fncsy  font-family: 'Fourier-Math-Symbols', serif;
+
+>>>
+\AddFont{fncsy}{unicode/Fourier-Math-Symbols/fncsy}{}
+% writing pncr8c.htf hash: 92c07d0287737ab54d0f8103f3c50277
+\<pncr8c\><<<
+pncr8c 0 246
+'&#x60;' '' grave 0
+'&#x00B4;' '' acute 1
+'&#x02C6;' '' circumflex 2
+'&#x02DC;' '' tilde 3
+'&#x00A8;' '' dieresis 4
+'&#x02DD;' '' hungarumlaut 5
+'&#x02DA;' '' ring 6
+'&#x02C7;' '' caron 7
+'&#x02D8;' '' breve 8
+'&#x00AF;' '' macron 9
+'&#x02D9;' '' dotaccent 10
+'&#x00B8;' '' cedilla 11
+'&#x02DB;' '' ogonek 12
+'&#x201A;' '' quotesinglbase 13
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'&#x201E;' '' quotedblbase 18
+'' ''  
+'' ''  
+'&#x2013;&#x2013;' '' endash endash 21
+'&#x2013;&#x2013;' '' endash endash 22
+'&#x221E;' '' infinity 23
+'&#x2264;' '' lessequal 24
+'&#x2265;' '' greaterequal 25
+'&#x2202;' '' partialdiff 26
+'&#x2211;' '' summation 27
+'&#x220F;' '' product 28
+'&#x03C0;' '' pi 29
+'' ''  
+'&#x0027;' '' quotesingle 31
+' ' '' space 32
+'' ''  
+'' ''  
+'' ''  
+'$' '' dollar 36
+'' ''  
+'' ''  
+'&#x0027;' '' quotesingle 39
+'' ''  
+'' ''  
+'*' '' asterisk 42
+'' ''  
+',' '' comma 44
+'-' '' hyphen 45
+'.' '' period 46
+'&#x2044;' '' fraction 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+'' ''  
+'' ''  
+'&lt;' '' less 60
+'&#x2212;' '' minus 61
+'&gt;' '' greater 62
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'M' '' M 77
+'' ''  
+'O' '' O 79
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'W' '' W 87
+'' ''  
+'' ''  
+'' ''  
+'[[' '' bracketleft bracketleft 91
+'' ''  
+']]' '' bracketright bracketright 93
+'^' '' asciicircum 94
+'_' '' underscore 95
+'&#x60;' '' grave 96
+'' ''  
+'b' '' b 98
+'c' '' c 99
+'d' '' d 100
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'l' '' l 108
+'m' '' m 109
+'n' '' n 110
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'~' '' asciitilde 126
+'' '' .notdef 127
+'&#x02D8;' '' breve 128
+'&#x02C7;' '' caron 129
+'&#x00B4;&#x00B4;' '' acute acute 130
+'&#x60;&#x60;' '' grave grave 131
+'&#x2020;' '' dagger 132
+'&#x2021;' '' daggerdbl 133
+'&#x0304;&#x0304;' '' bar bar 134
+'&#x2030;' '' perthousand 135
+'&#x2022;' '' bullet 136
+'&#x00B0;C' '' degree C 137
+'&#x0160;' '' Scaron 138
+'&#x2039;' '' guilsinglleft 139
+'&#x0192;' '' florin 140
+'&#x2126;' '' Omega 141
+'&#x221A;' '' radical 142
+'&#x2248;' '' approxequal 143
+'' '' .notdef 144
+'' '' .notdef 145
+'' '' .notdef 146
+'&#x201C;' '' quotedblleft 147
+'&#x201D;' '' quotedblright 148
+'&#x2022;' '' bullet 149
+'&#x2013;' '' endash 150
+'&#x2122;' '' trademark 151
+'&#x02DC;' '' tilde 152
+'&#x2122;' '' trademark 153
+'&#x0161;' '' scaron 154
+'&#x203A;' '' guilsinglright 155
+'&#x0153;' '' oe 156
+'&#x2206;' '' Delta 157
+'&#x25CA;' '' lozenge 158
+'&#x0178;' '' Ydieresis 159
+'' '' .notdef 160
+'&#x00A1;' '' exclamdown 161
+'&#x00A2;' '' cent 162
+'&#x00A3;' '' sterling 163
+'&#x00A4;' '' currency 164
+'&#x00A5;' '' yen 165
+'&#x00A6;' '' brokenbar 166
+'&#x00A7;' '' section 167
+'&#x00A8;' '' dieresis 168
+'&#x00A9;' '' copyright 169
+'&#x00AA;' '' ordfeminine 170
+'&#x00AB;' '' guillemotleft 171
+'&#x00AC;' '' logicalnot 172
+'-' '' hyphen 173
+'&#x00AE;' '' registered 174
+'&#x00AF;' '' macron 175
+'&#x00B0;' '' degree 176
+'&#x00B1;' '' plusminus 177
+'&#x00B2;' '' twosuperior 178
+'&#x00B3;' '' threesuperior 179
+'&#x00B4;' '' acute 180
+'&#x00B5;' '' mu 181
+'&#x00B6;' '' paragraph 182
+'&#x00B7;' '' periodcentered 183
+'&#x00B8;' '' cedilla 184
+'&#x00B9;' '' onesuperior 185
+'&#x00BA;' '' ordmasculine 186
+'&#x00BB;' '' guillemotright 187
+'&#x00BC;' '' onequarter 188
+'&#x00BD;' '' onehalf 189
+'&#x00BE;' '' threequarters 190
+'C' '' C 191
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'&#x00D7;' '' multiply 214
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'' ''  
+'&#x00F7;' '' divide 246
+pncr8c 0 246
+htfcss:  pncr8c  font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncr8c}{unicode/Century_Schoolbook_L/pncr8c}{}
+% writing pncro8c.htf hash: 92c07d0287737ab54d0f8103f3c50277
+\<pncro8c\><<<
+.pncr8c
+htfcss:  pncro8c  font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncro8c}{alias/Century_Schoolbook_L/pncro8c}{}
+% writing pncri8c.htf hash: 92c07d0287737ab54d0f8103f3c50277
+\<pncri8c\><<<
+.pncr8c
+htfcss:  pncri8c  font-style: italic; font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncri8c}{alias/Century_Schoolbook_L/pncri8c}{}
+% writing pncb8c.htf hash: 92c07d0287737ab54d0f8103f3c50277
+\<pncb8c\><<<
+.pncr8c
+htfcss:  pncb8c  font-weight: bold; font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncb8c}{alias/Century_Schoolbook_L/pncb8c}{}
+% writing pncbo8c.htf hash: 92c07d0287737ab54d0f8103f3c50277
+\<pncbo8c\><<<
+.pncr8c
+htfcss:  pncbo8c  font-weight: bold; font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncbo8c}{alias/Century_Schoolbook_L/pncbo8c}{}
+% writing pncbi8c.htf hash: 92c07d0287737ab54d0f8103f3c50277
+\<pncbi8c\><<<
+.pncr8c
+htfcss:  pncbi8c  font-weight: bold; font-style: italic; font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncbi8c}{alias/Century_Schoolbook_L/pncbi8c}{}
+% writing pncr8t.htf hash: 3b81b1e871b025e6ed523dd34ee6ed43
+\<pncr8t\><<<
+pncr8t 0 255
+'&#x60;' '' grave 0
+'&#x00B4;' '' acute 1
+'&#x02C6;' '' circumflex 2
+'&#x02DC;' '' tilde 3
+'&#x00A8;' '' dieresis 4
+'&#x02DD;' '' hungarumlaut 5
+'&#x02DA;' '' ring 6
+'&#x02C7;' '' caron 7
+'&#x02D8;' '' breve 8
+'&#x00AF;' '' macron 9
+'&#x02D9;' '' dotaccent 10
+'&#x00B8;' '' cedilla 11
+'&#x02DB;' '' ogonek 12
+'&#x201A;' '' quotesinglbase 13
+'&#x2039;' '' guilsinglleft 14
+'&#x203A;' '' guilsinglright 15
+'&#x201C;' '' quotedblleft 16
+'&#x201D;' '' quotedblright 17
+'&#x201E;' '' quotedblbase 18
+'&#x00AB;' '' guillemotleft 19
+'&#x00BB;' '' guillemotright 20
+'&#x2013;' '' endash 21
+'&#x2014;' '' emdash 22
+'&#x221E;' '' infinity 23
+'&#x2264;' '' lessequal 24
+'&#x0131;' '' dotlessi 25
+'&#x2202;' '' partialdiff 26
+'&#xFB00;' '' f f 27
+'&#xFB01;' '' fi 28
+'&#xFB02;' '' fl 29
+'&#xFB03;' '' f fi 30
+'&#xFB04;' '' f fl 31
+' ' '' space 32
+'!' '' exclam 33
+'"' '' quotedbl 34
+'#' '' numbersign 35
+'$' '' dollar 36
+'%' '' percent 37
+'&amp;' '' ampersand 38
+'&#x2019;' '' quoteright 39
+'(' '' parenleft 40
+')' '' parenright 41
+'*' '' asterisk 42
+'+' '' plus 43
+',' '' comma 44
+'-' '' hyphen 45
+'.' '' period 46
+'/' '' slash 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+':' '' colon 58
+';' '' semicolon 59
+'&lt;' '' less 60
+'=' '' equal 61
+'&gt;' '' greater 62
+'?' '' question 63
+'@' '' at 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'[' '' bracketleft 91
+'\' '' backslash 92
+']' '' bracketright 93
+'^' '' asciicircum 94
+'_' '' underscore 95
+'&#x2018;' '' quoteleft 96
+'a' '' a 97
+'b' '' b 98
+'c' '' c 99
+'d' '' d 100
+'e' '' e 101
+'f' '' f 102
+'g' '' g 103
+'h' '' h 104
+'i' '' i 105
+'j' '' j 106
+'k' '' k 107
+'l' '' l 108
+'m' '' m 109
+'n' '' n 110
+'o' '' o 111
+'p' '' p 112
+'q' '' q 113
+'r' '' r 114
+'s' '' s 115
+'t' '' t 116
+'u' '' u 117
+'v' '' v 118
+'w' '' w 119
+'x' '' x 120
+'y' '' y 121
+'z' '' z 122
+'{' '' braceleft 123
+'|' '' bar 124
+'}' '' braceright 125
+'~' '' asciitilde 126
+'-' '' hyphen 127
+'&#x0102;' '' breve A 128
+'&#x0104;' '' ogonek A 129
+'&#x0106;' '' acute C 130
+'&#x010C;' '' caron C 131
+'&#x010E;' '' caron D 132
+'&#x011A;' '' caron E 133
+'&#x0118;' '' ogonek E 134
+'&#x011E;' '' breve G 135
+'&#x0139;' '' acute L 136
+'&#x013D;' '' L quoteright 137
+'&#x0141;' '' Lslash 138
+'&#x0143;' '' acute N 139
+'&#x0147;' '' caron N 140
+'&#x2126;' '' Omega 141
+'&#x0150;' '' hungarumlaut O 142
+'&#x0154;' '' acute R 143
+'&#x0158;' '' caron R 144
+'&#x015A;' '' acute S 145
+'&#x0160;' '' Scaron 146
+'&#x015E;' '' cedilla S 147
+'&#x0164;' '' caron T 148
+'&#x0162;' '' cedilla T 149
+'&#x0170;' '' hungarumlaut U 150
+'&#x016E;' '' ring U 151
+'&#x0178;' '' Ydieresis 152
+'&#x0179;' '' acute Z 153
+'&#x017D;' '' Zcaron 154
+'&#x017B;' '' dotaccent Z 155
+'&#x0132;' '' I J 156
+'&#x0130;' '' dotaccent I 157
+'&#x0111;' '' macron d 158
+'&#x00A7;' '' section 159
+'&#x0103;' '' breve a 160
+'&#x0105;' '' ogonek a 161
+'&#x0107;' '' acute c 162
+'&#x010D;' '' caron c 163
+'&#x010F;' '' d quoteright 164
+'&#x011B;' '' caron e 165
+'&#x0119;' '' ogonek e 166
+'&#x011F;' '' breve g 167
+'&#x013A;' '' acute l 168
+'&#x013E;' '' l quoteright 169
+'&#x0142;' '' lslash 170
+'&#x0144;' '' acute n 171
+'&#x0148;' '' caron n 172
+'-' '' hyphen 173
+'&#x0151;' '' hungarumlaut o 174
+'&#x0155;' '' acute r 175
+'&#x0159;' '' caron r 176
+'&#x015B;' '' acute s 177
+'&#x0161;' '' scaron 178
+'&#x015F;' '' cedilla s 179
+'&#x0165;' '' t quoteright 180
+'&#x0163;' '' cedilla t 181
+'&#x0171;' '' hungarumlaut u 182
+'&#x016F;' '' ring u 183
+'&#x00FF;' '' ydieresis 184
+'&#x017A;' '' acute z 185
+'&#x017E;' '' zcaron 186
+'&#x017C;' '' dotaccent z 187
+'&#x0133;' '' i j 188
+'&#x00A1;' '' exclamdown 189
+'&#x00BF;' '' questiondown 190
+'&#x00A3;' '' sterling 191
+'&#x00C0;' '' Agrave 192
+'&#x00C1;' '' Aacute 193
+'&#x00C2;' '' Acircumflex 194
+'&#x00C3;' '' Atilde 195
+'&#x00C4;' '' Adieresis 196
+'&#x00C5;' '' Aring 197
+'&#x00C6;' '' AE 198
+'&#x00C7;' '' Ccedilla 199
+'&#x00C8;' '' Egrave 200
+'&#x00C9;' '' Eacute 201
+'&#x00CA;' '' Ecircumflex 202
+'&#x00CB;' '' Edieresis 203
+'&#x00CC;' '' Igrave 204
+'&#x00CD;' '' Iacute 205
+'&#x00CE;' '' Icircumflex 206
+'&#x00CF;' '' Idieresis 207
+'&#x00D0;' '' Eth 208
+'&#x00D1;' '' Ntilde 209
+'&#x00D2;' '' Ograve 210
+'&#x00D3;' '' Oacute 211
+'&#x00D4;' '' Ocircumflex 212
+'&#x00D5;' '' Otilde 213
+'&#x00D6;' '' Odieresis 214
+'&#x0152;' '' OE 215
+'&#x00D8;' '' Oslash 216
+'&#x00D9;' '' Ugrave 217
+'&#x00DA;' '' Uacute 218
+'&#x00DB;' '' Ucircumflex 219
+'&#x00DC;' '' Udieresis 220
+'&#x00DD;' '' Yacute 221
+'&#x00DE;' '' Thorn 222
+'SS' '' S S 223
+'&#x00E0;' '' agrave 224
+'&#x00E1;' '' aacute 225
+'&#x00E2;' '' acircumflex 226
+'&#x00E3;' '' atilde 227
+'&#x00E4;' '' adieresis 228
+'&#x00E5;' '' aring 229
+'&#x00E6;' '' ae 230
+'&#x00E7;' '' ccedilla 231
+'&#x00E8;' '' egrave 232
+'&#x00E9;' '' eacute 233
+'&#x00EA;' '' ecircumflex 234
+'&#x00EB;' '' edieresis 235
+'&#x00EC;' '' igrave 236
+'&#x00ED;' '' iacute 237
+'&#x00EE;' '' icircumflex 238
+'&#x00EF;' '' idieresis 239
+'&#x00F0;' '' eth 240
+'&#x00F1;' '' ntilde 241
+'&#x00F2;' '' ograve 242
+'&#x00F3;' '' oacute 243
+'&#x00F4;' '' ocircumflex 244
+'&#x00F5;' '' otilde 245
+'&#x00F6;' '' odieresis 246
+'&#x0153;' '' oe 247
+'&#x00F8;' '' oslash 248
+'&#x00F9;' '' ugrave 249
+'&#x00FA;' '' uacute 250
+'&#x00FB;' '' ucircumflex 251
+'&#x00FC;' '' udieresis 252
+'&#x00FD;' '' yacute 253
+'&#x00FE;' '' thorn 254
+'&#x00DF;' '' germandbls 255
+pncr8t 0 255
+htfcss:  pncr8t  font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncr8t}{unicode/Century_Schoolbook_L/pncr8t}{}
+% writing pncrc8t.htf hash: 74901bd890c38013389c7831d3dabf1a
+\<pncrc8t\><<<
+pncrc8t 0 255
+'&#x60;' '' grave 0
+'&#x00B4;' '' acute 1
+'&#x02C6;' '' circumflex 2
+'&#x02DC;' '' tilde 3
+'&#x00A8;' '' dieresis 4
+'&#x02DD;' '' hungarumlaut 5
+'&#x02DA;' '' ring 6
+'&#x02C7;' '' caron 7
+'&#x02D8;' '' breve 8
+'&#x00AF;' '' macron 9
+'&#x02D9;' '' dotaccent 10
+'&#x00B8;' '' cedilla 11
+'&#x02DB;' '' ogonek 12
+'&#x201A;' '' quotesinglbase 13
+'&#x2039;' '' guilsinglleft 14
+'&#x203A;' '' guilsinglright 15
+'&#x201C;' '' quotedblleft 16
+'&#x201D;' '' quotedblright 17
+'&#x201E;' '' quotedblbase 18
+'&#x00AB;' '' guillemotleft 19
+'&#x00BB;' '' guillemotright 20
+'&#x2013;' '' endash 21
+'&#x2014;' '' emdash 22
+'&#x221E;' '' infinity 23
+'&#x2264;' '' lessequal 24
+'I' '' I 25
+'J' '' J 26
+'FF' '' F F 27
+'FI' '' F I 28
+'FL' '' F L 29
+'FFI' '' F F I 30
+'FFL' '' F F L 31
+' ' '' space 32
+'!' '' exclam 33
+'"' '' quotedbl 34
+'#' '' numbersign 35
+'$' '' dollar 36
+'%' '' percent 37
+'&amp;' '' ampersand 38
+'&#x2019;' '' quoteright 39
+'(' '' parenleft 40
+')' '' parenright 41
+'*' '' asterisk 42
+'+' '' plus 43
+',' '' comma 44
+'-' '' hyphen 45
+'.' '' period 46
+'/' '' slash 47
+'0' '' zero 48
+'1' '' one 49
+'2' '' two 50
+'3' '' three 51
+'4' '' four 52
+'5' '' five 53
+'6' '' six 54
+'7' '' seven 55
+'8' '' eight 56
+'9' '' nine 57
+':' '' colon 58
+';' '' semicolon 59
+'&lt;' '' less 60
+'=' '' equal 61
+'&gt;' '' greater 62
+'?' '' question 63
+'@' '' at 64
+'A' '' A 65
+'B' '' B 66
+'C' '' C 67
+'D' '' D 68
+'E' '' E 69
+'F' '' F 70
+'G' '' G 71
+'H' '' H 72
+'I' '' I 73
+'J' '' J 74
+'K' '' K 75
+'L' '' L 76
+'M' '' M 77
+'N' '' N 78
+'O' '' O 79
+'P' '' P 80
+'Q' '' Q 81
+'R' '' R 82
+'S' '' S 83
+'T' '' T 84
+'U' '' U 85
+'V' '' V 86
+'W' '' W 87
+'X' '' X 88
+'Y' '' Y 89
+'Z' '' Z 90
+'[' '' bracketleft 91
+'\' '' backslash 92
+']' '' bracketright 93
+'^' '' asciicircum 94
+'_' '' underscore 95
+'&#x2018;' '' quoteleft 96
+'A' '' A 97
+'B' '' B 98
+'C' '' C 99
+'D' '' D 100
+'E' '' E 101
+'F' '' F 102
+'G' '' G 103
+'H' '' H 104
+'I' '' I 105
+'J' '' J 106
+'K' '' K 107
+'L' '' L 108
+'M' '' M 109
+'N' '' N 110
+'O' '' O 111
+'P' '' P 112
+'Q' '' Q 113
+'R' '' R 114
+'S' '' S 115
+'T' '' T 116
+'U' '' U 117
+'V' '' V 118
+'W' '' W 119
+'X' '' X 120
+'Y' '' Y 121
+'Z' '' Z 122
+'{' '' braceleft 123
+'|' '' bar 124
+'}' '' braceright 125
+'~' '' asciitilde 126
+'-' '' hyphen 127
+'&#x0102;' '' breve A 128
+'&#x0104;' '' ogonek A 129
+'&#x0106;' '' acute C 130
+'&#x010C;' '' caron C 131
+'&#x010E;' '' caron D 132
+'&#x011A;' '' caron E 133
+'&#x0118;' '' ogonek E 134
+'&#x011E;' '' breve G 135
+'&#x0139;' '' acute L 136
+'&#x013D;' '' L quoteright 137
+'&#x0141;' '' Lslash 138
+'&#x0143;' '' acute N 139
+'&#x0147;' '' caron N 140
+'&#x2126;' '' Omega 141
+'&#x0150;' '' hungarumlaut O 142
+'&#x0154;' '' acute R 143
+'&#x0158;' '' caron R 144
+'&#x015A;' '' acute S 145
+'&#x0160;' '' Scaron 146
+'&#x015E;' '' cedilla S 147
+'&#x0164;' '' caron T 148
+'&#x0162;' '' cedilla T 149
+'&#x0170;' '' hungarumlaut U 150
+'&#x016E;' '' ring U 151
+'&#x0178;' '' Ydieresis 152
+'&#x0179;' '' acute Z 153
+'&#x017D;' '' Zcaron 154
+'&#x017B;' '' dotaccent Z 155
+'&#x0132;' '' I J 156
+'&#x0130;' '' dotaccent I 157
+'&#x00D0;' '' Eth 158
+'&#x00A7;' '' section 159
+'&#x0102;' '' breve A 160
+'&#x0104;' '' ogonek A 161
+'&#x0106;' '' acute C 162
+'&#x010C;' '' caron C 163
+'&#x010E;' '' caron D 164
+'&#x011A;' '' caron E 165
+'&#x0118;' '' ogonek E 166
+'&#x011E;' '' breve G 167
+'&#x0139;' '' acute L 168
+'&#x013D;' '' L quoteright 169
+'&#x0141;' '' Lslash 170
+'&#x0143;' '' acute N 171
+'&#x0147;' '' caron N 172
+'-' '' hyphen 173
+'&#x0150;' '' hungarumlaut O 174
+'&#x0154;' '' acute R 175
+'&#x0158;' '' caron R 176
+'&#x015A;' '' acute S 177
+'&#x0160;' '' Scaron 178
+'&#x015E;' '' cedilla S 179
+'&#x0164;' '' caron T 180
+'&#x0162;' '' cedilla T 181
+'&#x0170;' '' hungarumlaut U 182
+'&#x016E;' '' ring U 183
+'&#x0178;' '' Ydieresis 184
+'&#x0179;' '' acute Z 185
+'&#x017D;' '' Zcaron 186
+'&#x017B;' '' dotaccent Z 187
+'&#x0132;' '' I J 188
+'&#x00A1;' '' exclamdown 189
+'&#x00BF;' '' questiondown 190
+'&#x00A3;' '' sterling 191
+'&#x00C0;' '' Agrave 192
+'&#x00C1;' '' Aacute 193
+'&#x00C2;' '' Acircumflex 194
+'&#x00C3;' '' Atilde 195
+'&#x00C4;' '' Adieresis 196
+'&#x00C5;' '' Aring 197
+'&#x00C6;' '' AE 198
+'&#x00C7;' '' Ccedilla 199
+'&#x00C8;' '' Egrave 200
+'&#x00C9;' '' Eacute 201
+'&#x00CA;' '' Ecircumflex 202
+'&#x00CB;' '' Edieresis 203
+'&#x00CC;' '' Igrave 204
+'&#x00CD;' '' Iacute 205
+'&#x00CE;' '' Icircumflex 206
+'&#x00CF;' '' Idieresis 207
+'&#x00D0;' '' Eth 208
+'&#x00D1;' '' Ntilde 209
+'&#x00D2;' '' Ograve 210
+'&#x00D3;' '' Oacute 211
+'&#x00D4;' '' Ocircumflex 212
+'&#x00D5;' '' Otilde 213
+'&#x00D6;' '' Odieresis 214
+'&#x0152;' '' OE 215
+'&#x00D8;' '' Oslash 216
+'&#x00D9;' '' Ugrave 217
+'&#x00DA;' '' Uacute 218
+'&#x00DB;' '' Ucircumflex 219
+'&#x00DC;' '' Udieresis 220
+'&#x00DD;' '' Yacute 221
+'&#x00DE;' '' Thorn 222
+'SS' '' S S 223
+'&#x00C0;' '' Agrave 224
+'&#x00C1;' '' Aacute 225
+'&#x00C2;' '' Acircumflex 226
+'&#x00C3;' '' Atilde 227
+'&#x00C4;' '' Adieresis 228
+'&#x00C5;' '' Aring 229
+'&#x00C6;' '' AE 230
+'&#x00C7;' '' Ccedilla 231
+'&#x00C8;' '' Egrave 232
+'&#x00C9;' '' Eacute 233
+'&#x00CA;' '' Ecircumflex 234
+'&#x00CB;' '' Edieresis 235
+'&#x00CC;' '' Igrave 236
+'&#x00CD;' '' Iacute 237
+'&#x00CE;' '' Icircumflex 238
+'&#x00CF;' '' Idieresis 239
+'&#x00D0;' '' Eth 240
+'&#x00D1;' '' Ntilde 241
+'&#x00D2;' '' Ograve 242
+'&#x00D3;' '' Oacute 243
+'&#x00D4;' '' Ocircumflex 244
+'&#x00D5;' '' Otilde 245
+'&#x00D6;' '' Odieresis 246
+'&#x0152;' '' OE 247
+'&#x00D8;' '' Oslash 248
+'&#x00D9;' '' Ugrave 249
+'&#x00DA;' '' Uacute 250
+'&#x00DB;' '' Ucircumflex 251
+'&#x00DC;' '' Udieresis 252
+'&#x00DD;' '' Yacute 253
+'&#x00DE;' '' Thorn 254
+'SS' '' S S 255
+pncrc8t 0 255
+htfcss:  pncrc8t  font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncrc8t}{unicode/Century_Schoolbook_L/pncrc8t}{}
+% writing pncro8t.htf hash: 3b81b1e871b025e6ed523dd34ee6ed43
+\<pncro8t\><<<
+.pncr8t
+htfcss:  pncro8t  font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncro8t}{alias/Century_Schoolbook_L/pncro8t}{}
+% writing pncri8t.htf hash: 3b81b1e871b025e6ed523dd34ee6ed43
+\<pncri8t\><<<
+.pncr8t
+htfcss:  pncri8t  font-style: italic; font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncri8t}{alias/Century_Schoolbook_L/pncri8t}{}
+% writing pncb8t.htf hash: 3b81b1e871b025e6ed523dd34ee6ed43
+\<pncb8t\><<<
+.pncr8t
+htfcss:  pncb8t  font-weight: bold; font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncb8t}{alias/Century_Schoolbook_L/pncb8t}{}
+% writing pncbc8t.htf hash: 74901bd890c38013389c7831d3dabf1a
+\<pncbc8t\><<<
+.pncrc8t
+htfcss:  pncbc8t  font-weight: bold; font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncbc8t}{alias/Century_Schoolbook_L/pncbc8t}{}
+% writing pncbo8t.htf hash: 3b81b1e871b025e6ed523dd34ee6ed43
+\<pncbo8t\><<<
+.pncr8t
+htfcss:  pncbo8t  font-weight: bold; font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncbo8t}{alias/Century_Schoolbook_L/pncbo8t}{}
+% writing pncbi8t.htf hash: 3b81b1e871b025e6ed523dd34ee6ed43
+\<pncbi8t\><<<
+.pncr8t
+htfcss:  pncbi8t  font-weight: bold; font-style: italic; font-family: 'Century Schoolbook L', serif;
+
+>>>
+\AddFont{pncbi8t}{alias/Century_Schoolbook_L/pncbi8t}{}
+\bye
+

@@ -1,0 +1,486 @@
+% \iffalse meta-comment
+%
+% Copyright (C) 2016-2022 by Josef Friedrich <josef@friedrich.rocks>
+% ----------------------------------------------------------------------
+% This work may be distributed and/or modified under the conditions of
+% the LaTeX Project Public License, either version 1.3 of this license
+% or (at your option) any later version.  The latest version of this
+% license is in:
+%
+%   http://www.latex-project.org/lppl.txt
+%
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Josef Friedrich.
+%
+% This work consists of the files nodetree.dtx and nodetree.ins
+% and the derived filebase nodetree.sty and nodetree.lua.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{nodetree.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}[1999/12/01]
+%<package>\ProvidesPackage{nodetree}
+%<*package>
+    [2022/12/17 v2.2.1 Visualize node lists in a tree view]
+%</package>
+% \fi
+%
+% \CheckSum{0}
+%
+% \CharacterTable
+%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%   Dollar        \$     Percent       \%     Ampersand     \&
+%   Acute accent  \'     Left paren    \(     Right paren   \)
+%   Asterisk      \*     Plus          \+     Comma         \,
+%   Minus         \-     Point         \.     Solidus       \/
+%   Colon         \:     Semicolon     \;     Less than     \<
+%   Equals        \=     Greater than  \>     Question mark \?
+%   Commercial at \@     Left bracket  \[     Backslash     \\
+%   Right bracket \]     Circumflex    \^     Underscore    \_
+%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%   Right brace   \}     Tilde         \~}
+%
+%
+% \changes{v0.1}{2015/06/16}{Converted to DTX file}
+% \changes{v1.0}{2016/07/07}{Inital release}
+% \changes{v1.1}{2016/07/13}{Fix the registration of same callbacks}
+% \changes{v1.2}{2016/07/18}{Fix difference between README.md in the upload and that from nodetree.dtx}
+% \changes{v2.0}{2020/05/29}{
+%  * Switch from lowercase macro names to PascalCase names for better readability.
+%  * The Lua code is no longer developed inside the DTX file, instead in a separate file named nodetree.lua.
+%  * Add a sub package named nodetree-embed.sty for embedding nodetree views into a \LaTeX{} document.
+%  * Add support for new node subtype names.
+%  * Add support for a new Lua\TeX{} node callback.
+%  * Add support for node properties.
+%  * Less verbose representation of node attributes.
+%  * Minor tree output adjustments.
+% }
+% \changes{v2.1}{2020/10/03}{
+%  * Make the package compatible with the Harfbuzz mode of the luaotfload fontloader.
+%  * Print node properties of copied nodes.
+% }
+% \changes{v2.2}{2020/10/23}{
+%  * Fix unavailable library error (utf8 not in Lua5.1)
+% }
+% \changes{v2.2.1}{2022/12/17}{
+% * Replace non-printable unicode symbols with ???.
+% * Add missing newlines for callbacks with multiple node lists.
+% * Print subtype fields with value 0.
+% * Fix the presentation of the subtype field of a glyph as a bit field.
+% }
+% \DoNotIndex{\newcommand,\newenvironment,\def,\directlua}
+%
+% \StopEventually{}
+% \pagebreak
+% \section{Implementation}
+%
+% \iffalse
+%<*tex>
+% \fi
+% \MacroTopsep = 10pt plus 2pt minus 2pt
+% \MacrocodeTopsep = 10pt plus 1.2pt minus 1pt
+% \makeatletter
+% \c@CodelineNo 25 \relax
+% \makeatother
+%
+% \subsection{The file \tt{nodetree.tex}}
+%
+%    \begin{macrocode}
+\directlua{
+  nodetree = require('nodetree')
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\NodetreeSetOption}
+%    \begin{macrocode}
+\def\NodetreeSetOption[#1]#2{
+  \directlua{
+    nodetree.set_option('#1', '#2')
+  }
+}
+\let\nodetreeoption\NodetreeSetOption
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\NodetreeResetOption}
+%    \begin{macrocode}
+\def\NodetreeResetOption#1{
+  \NodetreeSetOption[#1]{%
+    \directlua{
+      tex.print(nodetree.get_default_option('#1'))
+    }%
+  }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\NodetreeReset}
+%    \begin{macrocode}
+\def\NodetreeReset{
+  \NodetreeResetOption{callback}
+  \NodetreeResetOption{channel}
+  \NodetreeResetOption{color}
+  \NodetreeResetOption{decimalplaces}
+  \NodetreeResetOption{unit}
+  \NodetreeResetOption{verbosity}
+}
+\let\nodetreereset\NodetreeReset
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\NodetreeRegisterCallback}
+%    \begin{macrocode}
+\def\NodetreeRegisterCallback#1{
+  \directlua{
+    nodetree.set_option('callback', '#1')
+    nodetree.register_callbacks()
+  }
+}
+\let\nodetreeregister\NodetreeRegisterCallback
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\NodetreeUnregisterCallback}
+%    \begin{macrocode}
+\def\NodetreeUnregisterCallback#1{
+  \directlua{
+    nodetree.set_option('callback', '#1')
+    nodetree.unregister_callbacks()
+  }
+}
+\let\nodetreeunregister\NodetreeUnregisterCallback
+%    \end{macrocode}
+% \end{macro}
+%
+% \iffalse
+%</tex>
+%<*package>
+% \fi
+% \makeatletter
+% \c@CodelineNo 25 \relax
+% \makeatother
+%
+% \subsection{The file \tt{nodetree.sty}}
+%
+%    \begin{macrocode}
+\input{nodetree}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\RequirePackage{kvoptions}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\SetupKeyvalOptions{
+  family=NT,
+  prefix=NTK@
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[term]{channel}
+\define@key{NT}{channel}[]{\NodetreeSetOption[channel]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[postlinebreak]{callback}
+\define@key{NT}{callback}[]{\NodetreeSetOption[callback]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[1]{verbosity}
+\define@key{NT}{verbosity}[]{\NodetreeSetOption[verbosity]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[colored]{color}
+\define@key{NT}{color}[]{\NodetreeSetOption[color]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[1]{unit}
+\define@key{NT}{unit}[]{\NodetreeSetOption[unit]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[1]{decimalplaces}
+\define@key{NT}{decimalplaces}[]{\NodetreeSetOption[decimalplaces]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\ProcessKeyvalOptions{NT}
+\directlua{
+  nodetree.register_callbacks()
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\NodetreeSet}
+%    \begin{macrocode}
+\newcommand{\NodetreeSet}[1]{%
+  \setkeys{NT}{#1}%
+}
+\let\nodetreeset\NodetreeSet
+%    \end{macrocode}
+% \end{macro}
+%
+% \iffalse
+%</package>
+%<*packageembed>
+% \fi
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}[1994/06/01]
+\ProvidesPackage{nodetree-embed}
+  [2022/12/17 v2.2.1 Embed node trees into a LaTeX document]
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\RequirePackage{xcolor,mdframed,expl3,xparse,fontspec}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\input{nodetree}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\RequirePackage{kvoptions}
+\SetupKeyvalOptions{
+  family=NTE,
+  prefix=NTEK@
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\directlua{
+  nodetree = require('nodetree')
+  nodetree.check_shell_escape()
+}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\define@key{NTE}{callback}[]{\NodetreeSetOption[callback]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[1]{verbosity}
+\define@key{NTE}{verbosity}[]{\NodetreeSetOption[verbosity]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[colored]{color}
+\define@key{NTE}{color}[]{\NodetreeSetOption[color]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[1]{unit}
+\define@key{NTE}{unit}[]{\NodetreeSetOption[unit]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[1]{decimalplaces}
+\define@key{NTE}{decimalplaces}[]{\NodetreeSetOption[decimalplaces]{#1}}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[monokaisoda]{theme}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[dark]{thememode}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[Ubuntu Mono]{font}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareStringOption[\footnotesize]{fontsize}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\DeclareBoolOption{showmarkup}
+%    \end{macrocode}
+%
+%    \begin{macrocode}
+\ProcessKeyvalOptions{NTE}
+%    \end{macrocode}
+%
+% \begin{macro}{\NTE@colors}
+%    \begin{macrocode}
+\ExplSyntaxOn
+\def\NTE@colors{
+  \str_case_e:nn{\NTEK@theme}{
+    {bwdark}{
+      \definecolor{NTEblack}{gray}{0}
+      \definecolor{NTEred}{gray}{1}
+      \definecolor{NTEgreen}{gray}{1}
+      \definecolor{NTEyellow}{gray}{1}
+      \definecolor{NTEblue}{gray}{1}
+      \definecolor{NTEmagenta}{gray}{1}
+      \definecolor{NTEcyan}{gray}{1}
+      \definecolor{NTEwhite}{gray}{1}
+      \definecolor{NTEblackbright}{gray}{0}
+      \definecolor{NTEredbright}{gray}{1}
+      \definecolor{NTEgreenbright}{gray}{1}
+      \definecolor{NTEyellowbright}{gray}{1}
+      \definecolor{NTEbluebright}{gray}{1}
+      \definecolor{NTEmagentabright}{gray}{1}
+      \definecolor{NTEcyanbright}{gray}{1}
+      \definecolor{NTEwhitebright}{gray}{1}
+    }
+    {bwlight}{
+      \definecolor{NTEblack}{gray}{0}
+      \definecolor{NTEred}{gray}{0}
+      \definecolor{NTEgreen}{gray}{0}
+      \definecolor{NTEyellow}{gray}{0}
+      \definecolor{NTEblue}{gray}{0}
+      \definecolor{NTEmagenta}{gray}{0}
+      \definecolor{NTEcyan}{gray}{0}
+      \definecolor{NTEwhite}{gray}{1}
+      \definecolor{NTEblackbright}{gray}{0}
+      \definecolor{NTEredbright}{gray}{0}
+      \definecolor{NTEgreenbright}{gray}{0}
+      \definecolor{NTEyellowbright}{gray}{0}
+      \definecolor{NTEbluebright}{gray}{0}
+      \definecolor{NTEmagentabright}{gray}{0}
+      \definecolor{NTEcyanbright}{gray}{0}
+      \definecolor{NTEwhitebright}{gray}{1}
+    }
+    {monokaisoda}{
+      \definecolor{NTEblack}{HTML}{1a1a1a}
+      \definecolor{NTEred}{HTML}{f4005f}
+      \definecolor{NTEgreen}{HTML}{98e024}
+      \definecolor{NTEyellow}{HTML}{fa8419}
+      \definecolor{NTEblue}{HTML}{9d65ff}
+      \definecolor{NTEmagenta}{HTML}{f4005f}
+      \definecolor{NTEcyan}{HTML}{58d1eb}
+      \definecolor{NTEwhite}{HTML}{c4c5b5}
+      \definecolor{NTEblackbright}{HTML}{625e4c}
+      \definecolor{NTEredbright}{HTML}{f4005f}
+      \definecolor{NTEgreenbright}{HTML}{98e024}
+      \definecolor{NTEyellowbright}{HTML}{e0d561}
+      \definecolor{NTEbluebright}{HTML}{9d65ff}
+      \definecolor{NTEmagentabright}{HTML}{f4005f}
+      \definecolor{NTEcyanbright}{HTML}{58d1eb}
+      \definecolor{NTEwhitebright}{HTML}{f6f6ef}
+    }
+  }
+  \str_case_e:nn{\NTEK@thememode}{
+    {dark}{
+      \definecolor{NTEbackground}{named}{NTEblack}
+      \definecolor{NTEfont}{named}{NTEwhitebright}
+    }
+    {light}{
+      \definecolor{NTEbackground}{named}{NTEwhitebright}
+      \definecolor{NTEfont}{named}{NTEblack}
+    }
+  }
+}
+\ExplSyntaxOff
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\NTE@fonts}
+%    \begin{macrocode}
+\def\NTE@fonts{
+  \bfseries%
+  \NTEK@fontsize%
+  \setmonofont{\NTEK@font}%
+  \ttfamily%
+  \setlength{\parindent}{0pt}%
+  \setlength{\parskip}{-0.9pt}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\NodetreeSet}
+% Same definition as in nodetree.sty. Only implement this command
+% if not already registers.
+%    \begin{macrocode}
+\providecommand{\NodetreeSet}[1]{%
+  \setkeys{NTE}{#1}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
+\newenvironment{NodetreeEmbedView}[1][]{
+  \setkeys{NTE}{#1}
+  \NTE@colors
+  \begin{mdframed}[
+    linecolor=black,
+    backgroundcolor=NTEbackground,
+    fontcolor=NTEfont,
+  ]%
+  \NTE@fonts
+}{
+  \end{mdframed}%
+}
+%    \end{macrocode}
+%
+% \begin{environment}{NodetreeEmbedEnv}
+%    \begin{macrocode}
+\NewDocumentEnvironment { NodetreeEmbedEnv } { O{} +b } {
+  \setkeys{NTE}{#1}
+  \ifNTEK@showmarkup
+    \noindent
+    \texttt{\detokenize{#2}}
+  \else
+  \fi
+  \NTE@colors
+  \begin{NodetreeEmbedView}
+    \directlua{
+      nodetree.compile_include('\luaescapestring{\unexpanded{#2}}')
+    }
+  \end{NodetreeEmbedView}
+}{}
+%    \end{macrocode}
+% \end{environment}
+
+% \begin{macro}{\NodetreeEmbedCmd}
+%    \begin{macrocode}
+\NewDocumentCommand { \NodetreeEmbedCmd } { O{} +v } {
+  \setkeys{NTE}{#1}
+  \ifNTEK@showmarkup
+    \noindent
+    \texttt{#2}
+  \else
+  \fi
+  \NTE@colors
+  \begin{NodetreeEmbedView}
+    \directlua{
+      nodetree.compile_include('\luaescapestring{\unexpanded{#2}}')
+    }
+  \end{NodetreeEmbedView}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\NodetreeEmbedInput}
+%    \begin{macrocode}
+\newcommand{\NodetreeEmbedInput}[2][]{
+  \setkeys{NTE}{#1}
+  \begin{NodetreeEmbedView}
+  \input{#2.nttex}
+  \end{NodetreeEmbedView}
+}
+\let\nodetreeterminalemulator\NodetreeEmbedInput
+%    \end{macrocode}
+% \end{macro}
+%
+\endinput
+% \iffalse
+%</packageembed>
+% \fi
+%
+% \Finale
+\endinput

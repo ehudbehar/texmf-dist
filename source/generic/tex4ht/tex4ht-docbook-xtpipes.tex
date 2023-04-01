@@ -1,0 +1,537 @@
+% $Id: tex4ht-docbook-xtpipes.tex 740 2020-06-13 22:35:32Z karl $
+% htlatex tex4ht-docbook-xtpipes "xhtml,next,3" "" "-d./"
+%
+% Copyright 2009-2020 TeX Users Group
+% Copyright 2000-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\documentclass{article}
+    \Configure{ProTex}{log,<<<>>>,title,list,`,[[]]}
+\begin{document}
+
+\input{common}
+\input{tex4ht-cpright}
+\input{tex4ht-dir}
+
+
+
+%%%%%%%%%%%%%%%%%%
+\part{Post Processing for DocBook Output Mode}
+%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Outline}
+%%%%%%%%%%%%%%%%%%
+
+\AtEndDocument{\OutputCodE\<docbook.4xt\>}
+
+\Needs{"xmllint --valid --noout docbook.4xt"} 
+
+\<docbook.4xt\><<<
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE xtpipes SYSTEM "xtpipes.dtd" >
+<!-- docbook.4xt (`version), generated from `jobname.tex
+     Copyright (C) 2009-2010 TeX Users Group
+     Copyright (C) `CopyYear.2008. Eitan M. Gurari
+`<TeX4ht copyright`> -->
+<xtpipes preamble="yes" signature="docbook.4xt (`version)">
+   <sax content-handler="xtpipes.util.ScriptsManager" 
+        lexical-handler="xtpipes.util.ScriptsManagerLH" >
+     `<db links`>
+     `<tabular hor lines`>
+     `<trim() para`>
+   </sax>
+</xtpipes>
+>>>
+
+
+\AtEndDocument{\OutputCodE\<DbUtilities.java\>}
+
+\ifdojava
+  \Needs{"
+    javac DbUtilities.java -d \XTPIPES
+"}
+\fi
+
+\<DbUtilities.java\><<<
+package tex4ht;
+/* DbUtilities.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2008. Eitan M. Gurari
+`<TeX4ht copyright`> */
+
+import org.w3c.dom.*;
+public class DbUtilities {
+  `<static void cline(dom)`>
+  `<static void para(dom)`>
+}
+>>>
+ 
+
+%%%%%%%%%%%%%%%%%%
+\section{Trim Spaces of Paragraphs}
+%%%%%%%%%%%%%%%%%%
+
+\<trim() para\><<<
+<script element="para" >
+   <dom name="." xml="." method="para" class="tex4ht.DbUtilities" />
+</script> 
+>>>
+
+
+\<static void para(dom)\><<<
+public static void para(Node dom) {
+   Node pNode = dom.getFirstChild();
+   if( pNode.hasChildNodes() ){
+      Node child = pNode.getFirstChild();
+      if( child != null ){
+         if(  (child.getNodeType() == Node.TEXT_NODE)
+            &&
+              ((Text) child).getWholeText().trim().equals("")  
+         ){         
+            pNode.removeChild( child );
+   }  }  }
+   if( pNode.hasChildNodes() ){
+      Node child = pNode.getLastChild();
+      if( child != null ){
+         if(  (child.getNodeType() == Node.TEXT_NODE)
+            &&
+              ((Text) child).getWholeText().trim().equals("")  
+         ){         
+            pNode.removeChild( child );
+   }  }  }
+   if( pNode.hasChildNodes() ){
+      Node child = pNode.getFirstChild();
+      if(    (child != null) 
+          && (child.getNextSibling() == null)
+          && (child.getNodeType() == Node.TEXT_NODE)
+      ){
+         String txt = ((Text) child).getWholeText();      
+         String trm = txt.trim();
+         if( !trm.equals(txt) ){
+            ((Text)child).replaceWholeText(trm);
+   }  }  }
+}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Title Elements}
+%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Internal Links}
+%%%%%%%%%%%%%%%%%%
+
+
+ Anchor within the document should use 
+ 
+\begin{center}
+  \verb+<link linkend="Ortsflaechen">...</link>+
+\end{center}
+
+without the `\verb+#+' character.  
+The ulink element is used for URLs.
+   
+\begin{center}
+  \verb+<ulink url="http://...">...</ulink>+
+\end{center}
+ 
+\<db links\><<<
+<script element="ulink" >
+   <set name="ulink" >
+      `<open xslt script`>
+      `<ulink templates`>
+      `<close xslt script`>
+   </set>
+   <xslt name="." xml="." xsl="ulink" />
+</script> 
+>>>
+
+
+\<ulink templates\><<<
+<xsl:template match=" ulink[
+   @url and starts-with( @url, '#')
+]" >
+   <link>
+      <xsl:attribute name="linkend">
+         <xsl:value-of select=" substring( @url, 2 )" />
+      </xsl:attribute>
+      <xsl:apply-templates select="*|text()|comment()" />
+   </link>
+</xsl:template> 
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{tabular hor lines}
+%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%
+\subsection{Outline}
+%%%%%%%%%%%%%
+
+
+\<tabular hor lines\><<<
+<script element="tbody" >
+   <set name="dirt" >
+      `<open xslt script`>
+      `<tbody dirt templates`>
+      `<close xslt script`>
+   </set>
+   <set name="tbody" >
+      `<open xslt script`>
+      `<tbody templates`>
+      `<close xslt script`>
+   </set>
+   <xslt name="." xml="." xsl="tbody" />
+   <xslt name="." xml="." xsl="dirt" />
+   <dom name="." xml="." method="cline" class="tex4ht.DbUtilities" />
+</script> 
+>>>
+
+
+
+
+
+
+\<static void cline(dom)\><<<
+public static void cline(Node dom) {
+   Node row, entry, para, nextrow;
+   Node node = dom.getFirstChild();
+   if( node != null ){
+      `<remove empty trailing rows`>
+      `<merge cline rows into non-line rows`>
+   }
+}
+>>>
+
+
+\<remove empty trailing rows\><<<
+row = node.getLastChild();
+while(     (row != null)
+        && ( (entry = row.getLastChild()) != null)
+        && ( (para = entry.getFirstChild()) != null)
+        && ( para.getNextSibling() == null)
+        && ( para.getFirstChild() == null)
+){
+  node.removeChild(row); 
+  row = node.getLastChild();
+}
+>>>
+
+The merging of rows deal with cases similar to the following one.
+
+
+\begin{verbatim}
+<row> 
+  <entry align="left"> 
+    <para> 1</para> 
+  </entry> 
+  <entry align="left" nameend="3" namest="2"> 
+    <para>2 to 3</para> 
+  </entry> 
+</row> 
+<row role="cline"> 
+  <entry rowsep="0"/> 
+  <entry rowsep="1"/> 
+  <entry rowsep="1"/> 
+</row> 
+\end{verbatim}
+
+\<merge cline rows into non-line rows\><<<
+row = node.getFirstChild();
+while( row != null ){
+  if(    (row.getNodeType() == Node.ELEMENT_NODE)
+      && ((Element) row).getAttribute("rowsep").equals("") 
+      && !((Element) row).getAttribute("role"  ).equals("cline")
+      && ((nextrow = row.getNextSibling()) != null)
+      && (nextrow.getNodeType() == Node.ELEMENT_NODE)
+      && ((Element) nextrow).getAttribute("role"  ).equals("cline")
+  ){
+    `<boolean compatible = ...`>
+    if( compatible ){
+       `<row += nextrow`>
+       node.removeChild(nextrow); 
+    }
+  }
+  row = row.getNextSibling();
+}
+>>>
+
+\<boolean compatible = ...\><<<
+boolean compatible = true;
+Node entry1 = row.getFirstChild();
+Node entry2 = nextrow.getFirstChild();
+while( true ){
+  if( (entry1 == null) || (entry2 == null) ){ break; }
+  int range;
+  try{
+    range =
+          Integer.parseInt( ((Element) entry1).getAttribute("nameend") )
+          -
+          Integer.parseInt( ((Element) entry1).getAttribute("namest") )
+          +
+          1;
+  } catch( Exception e){ range = 1;}
+  if( range > 1 ){
+    String rowsep = ((Element) entry2).getAttribute("rowsep");
+    while( --range > 0 ){
+       entry2 = entry2.getNextSibling();
+       if( entry2 == null ){
+          compatible = false;
+          break;
+       }
+       String value = ((Element) entry2).getAttribute("rowsep");
+       if( !value.equals( rowsep ) ){
+          compatible = false;
+          break;
+       }
+    }
+  }
+  if( !compatible ){ break; }
+  entry1 = entry1.getNextSibling();
+  entry2 = entry2.getNextSibling();
+}
+>>>
+
+\<row += nextrow\><<<
+entry1 = row.getFirstChild();
+entry2 = nextrow.getFirstChild();
+while( true ){
+  if( (entry1 == null) || (entry2 == null) ){ break; }
+  int range;
+  try{
+    range =
+          Integer.parseInt( ((Element) entry1).getAttribute("nameend") )
+          -
+          Integer.parseInt( ((Element) entry1).getAttribute("namest") )
+          +
+          1;
+  } catch( Exception e){ range = 1;}
+  ((Element) entry1).setAttribute(
+                       "rowsep",
+                       ((Element) entry2).getAttribute("rowsep") );
+  while( --range > 0 ){
+     entry2 = entry2.getNextSibling();
+  }
+  entry1 = entry1.getNextSibling();
+  entry2 = entry2.getNextSibling();
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Dirt Lines}
+%%%%%%%%%%%%%
+
+Can they be removed earlier  at the latex pass?
+
+
+\<tbody dirt templates\><<<
+<xsl:template match=" row[ 
+  (count(child::entry) = 1)
+ and
+  ( normalize-space(child::entry[1]/child::para[1]/child::comment())
+    = 'dirt'
+  )
+]">
+</xsl:template>
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{hline}
+%%%%%%%%%%%%%
+
+
+
+\<tbody templates\><<<
+<xsl:template match=" row[ @role = 'hline' ]" />
+>>>
+
+\<tbody templates\><<<
+<xsl:template match=" row[ @role = 'hline' ]" />
+<xsl:template match=" row[ 
+       following-sibling::*[1][ self::row[@role = 'hline'] ]
+] ">
+   <xsl:copy>
+      <xsl:attribute name="rowsep"> 
+         <xsl:text>1</xsl:text>
+      </xsl:attribute>
+      <xsl:apply-templates select="*|@*|text()|comment()" />
+   </xsl:copy>
+</xsl:template>
+>>>
+
+%%%%%%%%%%%%%
+\subsection{cline}
+%%%%%%%%%%%%%
+
+
+
+
+\<tbody templates\><<<
+<xsl:template match=" row[ 
+     (@role = 'cline')
+     and
+     preceding-sibling::*[1]
+                         [ self::row[ not(@role) ] ]
+     and
+     (   count(child::entry) 
+       = count(preceding-sibling::*[1]/child::entry))
+]" />
+<xsl:template match=" row[ 
+       not(@role)
+   and
+       following-sibling::*[1][ self::row[@role = 'cline'] ]
+   and
+     (   count(child::entry) 
+       = count(following-sibling::*[1]/child::entry))
+] ">
+   <xsl:copy>
+      <xsl:apply-templates select="@*" />
+      <xsl:apply-templates select="*|text()|comment()" mode="cline" />
+   </xsl:copy>
+</xsl:template>
+>>>
+
+\<tbody templates\><<<
+<xsl:template match=" text()|comment() " mode="cline">
+   <xsl:copy>
+      <xsl:apply-templates select="*|@*|text()|comment()"  />
+   </xsl:copy>
+</xsl:template>
+>>>
+
+
+
+
+\<tbody templates\><<<
+<xsl:template match="*" mode="cline">
+   <xsl:copy>
+      <xsl:if test="self::entry">
+         <xsl:attribute name="rowsep"> 
+             <xsl:variable name="pos">
+                <xsl:value-of select="position()" /> 
+             </xsl:variable>
+             <xsl:value-of select="parent::row
+                                   / following-sibling::*[1]
+                                   / child::entry[position()=$pos]
+                                   / @rowsep
+                                    " />
+          </xsl:attribute>
+      </xsl:if>
+      <xsl:apply-templates select="*|@*|text()|comment()"  />
+   </xsl:copy>
+</xsl:template>
+>>>
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Shared}
+%%%%%%%%%%%%%%%%%%
+
+
+
+\<open xslt script\><<<
+<![CDATA[ 
+   <xsl:stylesheet version="1.0"
+      xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+      xmlns:db="http://docbook.org/ns/docbook"
+   >
+      <xsl:output omit-xml-declaration = "yes" />
+>>>
+
+\<close xslt script\><<<
+      <xsl:template match="*|@*|text()|comment()" >
+        <xsl:copy>
+          <xsl:apply-templates select="*|@*|text()|comment()" />
+        </xsl:copy>
+      </xsl:template>
+   </xsl:stylesheet> 
+]]>
+>>>
+
+
+\<get content template\><<<
+<xsl:template match="*" mode="content" >
+  <xsl:choose>
+     <xsl:when test=" @class = 'char' " >   
+       <xsl:text>x</xsl:text>
+     </xsl:when>
+     <xsl:when test=" not( 
+            (@title = 'speech-extra') or (@class = 'accent-char')
+         ) " >
+       <xsl:apply-templates select="*|text()" mode="content" />
+     </xsl:when>
+  </xsl:choose>
+</xsl:template> 
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Copyright}
+%%%%%%%%%%%%%%%%%%
+
+\let\newfilename=\relax
+
+\<copy right\><<< 
+/**********************************************************/ >>>
+
+
+
+\<cont copy right\><<< 
+/*                                                        */
+/* This work may be distributed and/or modified under the */
+/* conditions of the LaTeX Project Public License, either */
+/* version 1.3 of this license or (at your option) any    */
+/* later version. The latest version of this license is   */
+/* in                                                     */
+/*   http://www.latex-project.org/lppl.txt                */
+/* and version 1.3 or later is part of all distributions  */
+/* of LaTeX version 2003/12/01 or later.                  */
+/*                                                        */
+/* This work has the LPPL maintenance status "maintained".*/
+/*                                                        */
+/* The Current Maintainer of this work                    */
+/* is the TeX4ht Project <http://tug.org/tex4ht>.         */
+>>>
+
+\ifdojava
+\AtEndDocument{\Needs{%
+    "pushd \XTPIPES || exit 1
+     ;  
+     jar cf tex4ht.jar *
+     ;
+     popd
+     ;
+     mv \XTPIPES tex4ht.jar \TEXMFTEXivBIN
+     ;
+     cp \XTPIPES xtpipes/lib/* 
+        \TEXMFTEXivXTPIPES
+"}}
+\fi
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\end{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

@@ -1,0 +1,93 @@
+% $Id: tex4ht-info-ooffice.tex 65 2010-11-17 19:16:45Z karl $
+% compile 3 times: latex tex4ht-info-ooffice   
+%             or htlatex tex4ht-info-ooffice "html,sections+"
+%            or ht latex tex4ht-info-ooffice
+%
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) 2005-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\ifx \HTML\UnDef
+   \def\HTML{infoof}
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}
+   \def\next{\input mktex4ht.4ht   \endinput}
+   \expandafter\next
+\fi
+
+\input{common-info}
+\input{common}
+\input{tex4ht-cpright}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Info OpenOffice}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<infoof\><<<
+% infoof.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) |CopyYear.2005. Eitan M. Gurari
+|<TeX4ht copywrite|>
+{          \catcode`\@=0 \catcode`\\=11 @relax
+  @gdef@infoIVht[#1]#2//{%
+    @ifnum #1>1
+      @def@infoIVht[##1]##2//{%
+        @ifnum ##1>1 @ifnum ##1<#1
+           @bgroup 
+             @no:catcodes0{255}{11}%
+             @no:catcodes{91}{91}{12}% [
+             @no:catcodes{47}{47}{12}% /
+             @newlinechar13 %   
+             @long@def@infoIVht####1\ifx\infoIVht####2infoIVht[####3//{%
+               @def@infoIVht{******************************************}%
+               @immediate@write-1{@infoIVht}%
+               @immediate@write-1{****** @csname :Hin@endcsname.4ht}%
+               @immediate@write-1{@infoIVht}%
+               @bgroup
+                @def@infoIVht{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*}%
+                @let~=@space   @immediate@write-1{@infoIVht}%
+               @egroup   
+               @immediate@write-1{####1}%
+               @bgroup
+                @def@infoIVht{~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~*}%
+                @let~=@space   @immediate@write-1{@infoIVht}%
+               @egroup
+               @immediate@write-1{@infoIVht}%
+             @egroup}%
+           @expandafter@expandafter@expandafter@infoIVht
+     @fi@fi }%
+  @fi }
+}
+>>>
+
+
+
+
+
+
+
+\chapter{The Code}
+
+\section{latex}
+
+\<configure infoof latex\><<<
+\Configure{enumerate:1}.................. 3
+\Configure{enumerate:2}.................. 3
+\Configure{enumerate:3}.................. 3
+\Configure{enumerate:4}.................. 3
+
+    #1  label type: 1, a, A, i, I
+    #2  left delimiter
+    #3  right delimiter
+>>>
+
+
+
+
+ 
+ 
+\endinput
+
+

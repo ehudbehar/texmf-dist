@@ -1,0 +1,171 @@
+%D \module
+%D   [     file=t-lua-widow-control,
+%D      version=3.0.0, %%version
+%D        title=lua-widow-control,
+%D     subtitle=\ConTeXt module for lua-widow-control,
+%D       author=Max Chernoff,
+%D         date=2022-11-22, %%dashdate
+%D    copyright=Max Chernoff,
+%D      license=MPL-2.0+,
+%D          url=https://github.com/gucci-on-fleek/lua-widow-control]
+\startmodule[lua-widow-control]
+\unprotect
+
+% Preliminaries
+\installnamespace{lwc}
+
+\installswitchcommandhandler \????lwc {lwc} \????lwc
+
+% Set up the options
+\newdimen\lwc_emergency_stretch
+\newdimen\lwc_draft_offset
+\newcount\lwc_max_cost
+
+\starttexdefinition lwc_set_parameters
+    \lwc_emergency_stretch=\lwcparameter{emergencystretch}
+    \lwc_draft_offset=\lwcparameter{draftoffset}
+
+    \doifelse{\lwcparameter{\c!state}}\v!start{
+        \lwc_enable
+    }{
+        \lwc_disable
+    }
+
+    \lwc_debug{\lwcparameter{debug}}
+
+    \doif{\lwcparameter{draft}}\v!start{
+        \setlwcparameter{showcosts}{\v!start}
+        \setlwcparameter{showcolours}{\v!start}
+    }
+
+    \doif{\lwcparameter{draft}}\v!stop{
+        \setlwcparameter{showcosts}{\v!stop}
+        \setlwcparameter{showcolours}{\v!stop}
+    }
+
+    \lwc_show_costs{\lwcparameter{showcosts}}
+    \lwc_show_colours{\lwcparameter{showcolours}}
+
+    \lwc_nobreak{\lwcparameter{nobreak}}
+
+    \lwc_max_cost=\lwcparameter{maxcost}
+
+    % We can't just set the penalties because they will be reset automatically
+    % at \\starttext.
+    \startsetups[*default]
+        \directsetup{*reset}
+
+        \clubpenalty=\lwcparameter{orphanpenalty}
+        \widowpenalty=\lwcparameter{widowpenalty}
+        \displaywidowpenalty=\lwcparameter{widowpenalty}
+        \brokenpenalty=\lwcparameter{brokenpenalty}
+    \stopsetups
+
+    \startsetups[grid][*default]
+        \directsetup{*reset}
+
+        \clubpenalty=\lwcparameter{orphanpenalty}
+        \widowpenalty=\lwcparameter{widowpenalty}
+        \displaywidowpenalty=\lwcparameter{widowpenalty}
+        \brokenpenalty=\lwcparameter{brokenpenalty}
+    \stopsetups
+
+    \setups[*default]
+\stoptexdefinition
+
+% Load the main Lua file
+\ctxloadluafile{lua-widow-control}
+
+% Define the presets
+\definelwc[default][
+    emergencystretch=3em,
+    maxcost=2147483647,
+    nobreak=keep,
+    orphanpenalty=1,
+    widowpenalty=1,
+    brokenpenalty=1,
+]
+
+\definelwc[strict][
+    emergencystretch=0pt,
+    maxcost=5000,
+    nobreak=warn,
+    widowpenalty=1,
+    orphanpenalty=1,
+    brokenpenalty=1,
+]
+
+\definelwc[balanced][
+    emergencystretch=1em,
+    maxcost=10000
+    nobreak=keep,
+    widowpenalty=500,
+    orphanpenalty=500,
+    brokenpenalty=500,
+]
+
+% Set up the default options
+\setuplwc[
+    \c!state=\v!start,
+    debug=\v!stop,
+    draft=,
+    showcosts=\v!stop,
+    showcolours=\v!stop,
+    draftoffset=1in,
+]
+
+\setuplwc[default]
+
+\appendtoks
+    \ifcase\lwcsetupmode
+        % can't happen
+    \or % \setuplwc[name][key=value]
+      \ifx\previouslwc\currentlwc
+        \let\currentlwc\currentlwc
+        \lwc_set_parameters
+      \fi
+    \or % \setuplwc[key=value]
+      \let\currentlwc\previouslwc
+      \lwc_set_parameters
+    \or % \setuplwc[name]
+      \glet\currentlwc\currentlwc % global
+      \lwc_set_parameters
+    \fi
+\to \everysetuplwc
+
+\lwc_set_parameters
+
+% Here, we enable font expansion/contraction. It isn't strictly necessary for
+% \lwc/'s functionality; however, it is required for the
+% lengthened paragraphs to not have terrible spacing.
+\definefontfeature[default][default][expansion=quality]
+\setupalign[hz]
+
+% Expansion of some parts of the document, such as section headings, is quite
+% undesirable, so we'll disable \lwc/ for certain commands.
+% We should only reenable \lwc/ at the end if it was already enabled.
+\newcount\lwc_disable_count
+
+\define\lwc_patch_pre{%
+    \lwc_if_enabled%
+        \advance\lwc_disable_count by 1%
+        \setuplwc[\c!state=\v!stop]%
+    \fi%
+}
+
+\define\lwc_patch_post{
+    \ifnum\lwc_disable_count>0\relax%
+        \setuplwc[\c!state=\v!start]%
+        \advance\lwc_disable_count by -1%
+    \fi%
+}
+
+% Add the default patches
+\prependtoks\lwc_patch_pre\to\everybeforesectionheadhandle % Sectioning
+\prependtoks\lwc_patch_post\to\everyaftersectionheadhandle
+
+% Make the commands public
+\let\iflwc=\lwc_if_enabled
+
+\protect
+\stopmodule

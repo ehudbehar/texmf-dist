@@ -1,0 +1,62 @@
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+-------:| -----------------------------------------------------------------
+ekdosis:| Typesetting TEI xml compliant critical editions
+ Author:| Robert Alessi
+ E-mail:| alessi@robertalessi.net
+License:| Released under the GNU General Public License v3 or later
+    See:| http://www.gnu.org/licenses/
+
+This file is part of the `ekdosis' package
+
+ekdosis -- Typesetting TEI xml compliant critical editions
+Copyright (C) 2020--2021  Robert Alessi
+
+Please send error reports and suggestions for improvements to Robert
+Alessi <alessi@robertalessi.net>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see
+<http://www.gnu.org/licenses/>.
+
+This work consists of the files ekdosis.dtx, ekdosis.el, this file and
+a Makefile.
+Running "make" generates the derived files README, ekdosis.pdf and
+ekdosis.sty.
+Running "make inst" installs the files in the user's TeX tree.
+\endpreamble
+
+\usedir{tex/lualatex/ekdosis}
+\generate{
+  \file{\jobname.sty}{\from{\jobname.dtx}{package}}
+}
+\nopreamble\nopostamble
+\usedir{tex/lualatex/ekdosis}
+\bgroup
+\catcode9=12
+\generate{
+  \file{\jobname.lua}{
+  \from{\jobname.dtx}{luapre}
+  \from{\jobname.dtx}{lua}
+  }
+}
+\egroup
+% \usedir{doc/lualatex/ekdosis}
+% \generate{
+%   \file{ekdosis-ex01.tex}{
+%     \from{\jobname.dtx}{example01}
+%   }
+% }
+\endbatchfile

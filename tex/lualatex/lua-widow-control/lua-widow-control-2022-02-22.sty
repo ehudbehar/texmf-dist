@@ -1,0 +1,103 @@
+% lua-widow-control
+% https://github.com/gucci-on-fleek/lua-widow-control
+% SPDX-License-Identifier: MPL-2.0+
+% SPDX-FileCopyrightText: 2022 Max Chernoff
+
+\NeedsTeXFormat{LaTeX2e}[2015/01/01] % Formats built after 2015 include \LuaTeX{}Base
+\ProvidesPackage{lua-widow-control}%
+    [2022/02/22 v1.1.6]
+
+% The version number above is somewhat-misleading: I will make bugfixes to this file
+% from time to time, but the core of the file will not change. Therefore, we should
+% report a real version number here for debugging.
+\PackageInfo{lua-widow-control}{%
+    Real version:
+    2022/11/22 %%slashdate
+    v3.0.0 %%version
+}
+
+\PackageWarning{lua-widow-control}{%
+    Old LaTeX format detected!\MessageBreak\MessageBreak
+    Lua-widow-control prefers a LaTeX format\MessageBreak
+    newer than November 2020. I'll still run\MessageBreak
+    the latest Lua code, but I'm using an older\MessageBreak
+    version of the LaTeX code. This means that\MessageBreak
+    the key-value interface is *UNSUPPORTED*.\MessageBreak
+}
+
+\ifdefined\directlua\else
+    \PackageError{lua-widow-control}{%
+        LuaTeX is required for this package.\MessageBreak
+        Make sure to compile with `lualatex'%
+    }{}
+\fi
+
+\clubpenalty=1
+\widowpenalty=1
+\displaywidowpenalty=1
+
+% We can't use \\newlength since that makes a \TeX{} "skip", not a "dimen"
+\newdimen\lwcemergencystretch
+\lwcemergencystretch=3em
+
+\newcount\lwcmaxcost
+\lwcmaxcost=2147483647
+
+\directlua{require "lua-widow-control"}
+
+% Here, we enable font expansion/contraction. It isn't strictly necessary for
+% \lwc/'s functionality; however, it is required for the
+% lengthened paragraphs to not have terrible spacing.
+\RequirePackage{etoolbox}
+\AtEndPreamble{
+    \@ifpackageloaded{microtype}{}{ % Only load if not already loaded
+        \RequirePackage[
+            final,
+            activate={true,nocompatibility}
+        ]{microtype}
+    }
+}
+
+% Define \TeX{} wrappers for Lua functions
+\newcommand{\lwcenable}{\directlua{lwc.enable_callbacks()}}
+\newcommand{\lwcdisable}{\directlua{lwc.disable_callbacks()}}
+\newcommand{\iflwc}{\directlua{lwc.if_lwc_enabled()}}
+
+% Enable \lwc/ by default when the package is loaded.
+\lwcenable
+
+% Expansion of some parts of the document, such as section headings, is quite
+% undesirable, so we'll disable \lwc/ for certain commands.
+\newcommand{\lwc@patch@warning}[1]{\PackageWarning{lua-widow-control}{%
+    Patching the \protect#1 command failed%
+}}
+
+% We should only reenable \lwc/ at the end if it was already enabled.
+\newif\iflwc@should@reenable
+
+\newcommand{\lwc@patch@pre}{%
+    \iflwc%
+        \lwc@should@reenabletrue%
+        \lwcdisable%
+    \else%
+        \lwc@should@reenablefalse%
+    \fi%
+}
+
+\newcommand{\lwc@patch@post}{%
+    \iflwc@should@reenable%
+        \lwcenable%
+    \fi%
+}
+
+\newcommand{\lwcdisablecmd}[1]{%
+    \ifdefined#1
+        \pretocmd{#1}{\lwc@patch@pre}{}{\lwc@patch@warning{#1}}%
+        \apptocmd{#1}{\lwc@patch@post}{}{\lwc@patch@warning{#1}}%
+    \fi
+}
+
+\lwcdisablecmd{\@sect} % Sectioning
+
+
+\endinput

@@ -1,0 +1,547 @@
+\def\luaquotesversionnumber{1.4.0}
+\ProvidesPackage{luaquotes}
+  [2023/01/25\luaquotesversionnumber smart quotes with lua]
+  % !TeX program = lualatex                                   
+% !TeX encoding = utf8
+% This work may be distributed and/or modified under the 
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+%   http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX 
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status `maintained'.
+%
+% The Current Maintainer of this work is Elijah Z Granet
+
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% to show the package only works with Lua
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \RequirePackage{iftex}
+  \ifPDFTeX {
+    \PackageError{luaquotes}
+      {You are using pdfTeX but this package only works 
+      \MessageBreak with LuaTeX}{}
+  }
+\else\ifXeTeX{    \PackageError{luaquotes}
+      {You are using XeTeX but this package only works 
+      \MessageBreak with LuaTeX}{}
+}\fi\fi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Dependency
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \RequirePackage{luacode} 
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% fontspec for the auxiliary 
+% quotes where tligs need
+% to be disabled
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  \RequirePackage{fontspec}
+  %%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% removing the effects for monospace
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{luacode}
+local uchar = unicode.utf8.char
+  fonts.handlers.otf.addfeature{
+    name = "qtbye",
+    type = "substitution",
+    data =
+    {
+   “ = 0x0022,
+” = 0x0022,
+’ = 0x0027,
+« = 0x0022,
+» = 0x0022,
+‹ = 0x0027,
+› = 0x0027
+ },
+  }
+  \end{luacode}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Code here and throughout similar 
+%functions  partly adapted from TeX.SE user
+% Mico 
+% https://tex.stackexchange.com/questions/499953/how-to-generate-correct-single-and-double-quotes-in-tex
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\luaexec{
+function doublequotes ( s )
+           return ( s:gsub ( '"(..-)"' , "“\%1”" ) )
+         end}
+
+         %%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Assuming ' at the start of the line means an opening quotation mark not an apostrophe
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\luaexec{function singlequotelinestart ( s )
+           return (s:gsub ("^'","‘" )  )
+        end}
+         
+
+ 
+% \luaexec{
+% function abbrevsingle ( s )
+%            return ( s:gsub ( " '(..-) " , " ’\%1 " ) )
+%          end}        
+
+\luaexec{function singlequotes ( s )
+           return ( s:gsub ( " '"," ‘" ) )
+         end}
+         
+         
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% parentheses
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\sqoneleft}{{\addfontfeature{RawFeature={-qtbye,-tlig}}‘}}
+
+\luaexec{function psinglequotes ( s )
+           return ( s:gsub ( "\%('",[[(\sqoneleft]] ) )
+         end}
+
+\newcommand\singlequotespon{\directlua{
+luatexbase.add_to_callback (
+   "process_input_buffer" , psinglequotes , "psinglequotes" )
+   }}
+\newcommand\singlequotespoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "psinglequotes" )}}
+
+      
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DE parentheses
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\newcommand{\sqoneleft}{{\addfontfeature{RawFeature={-qtbye,-tlig}}‘}}
+
+\luaexec{function depsinglequotes ( s )
+           return ( s:gsub ( "\%('",[[(‚]] ) )
+         end}
+
+\newcommand\desinglequotespon{\directlua{
+luatexbase.add_to_callback (
+   "process_input_buffer" , depsinglequotes , "depsinglequotes" )
+   }}
+\newcommand\desinglequotespoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "depsinglequotes" )}}
+
+\luaexec{function depsinglequotesclose ( s )
+           return ( s:gsub ( "'\%)",[[\sqoneleft)]] ) )
+         end}
+
+\newcommand\desinglequotespcloseon{\directlua{
+luatexbase.add_to_callback (
+   "process_input_buffer" , depsinglequotesclose , "depsinglequotesclose" )
+   }}
+\newcommand\desinglequotespcloseoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "depsinglequotesclose" )}}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% FR Parentheses
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\sglmtlp}{{\addfontfeature{RawFeature={-qtbye,-tlig}}‹\hskip .16667em}}
+\newcommand{\sglmtrp}{{\addfontfeature{RawFeature={-qtbye,-tlig}}\hskip .16667em›}}
+
+\luaexec{function frpsinglequotes ( s )
+           return ( s:gsub ( "\%('",[[(\sglmtlp]] ) )
+         end}
+\luaexec{function frpsinglequotesclose ( s )
+           return ( s:gsub ( "'\%)",[[\sglmtrp)]] ) )
+         end}
+
+\newcommand\frsinglequotespon{\directlua{
+luatexbase.add_to_callback (
+   "process_input_buffer" , frpsinglequotes , "frpsinglequotes" )
+   }}
+\newcommand\frsinglequotespoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "frpsinglequotes" )}}
+\newcommand\frsinglequotespcloseon{\directlua{
+luatexbase.add_to_callback (
+   "process_input_buffer" , frpsinglequotesclose , "frpsinglequotesclose" )
+   }}
+\newcommand\frsinglequotespcloseoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "frpsinglequotesclose" )}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DECH Parentheses
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\sglmtlpdech}{{\addfontfeature{RawFeature={-qtbye,-tlig}}‹}}
+\newcommand{\sglmtrpdech}{{\addfontfeature{RawFeature={-qtbye,-tlig}}›}}
+
+\luaexec{function dechpsinglequotes ( s )
+           return ( s:gsub ( "\%('",[[(\sglmtlpdech]]) )
+         end}
+\luaexec{function dechpsinglequotesclose ( s )
+           return ( s:gsub ( "'\%)",[[\sglmtrpdech)]]) )
+         end}
+
+\newcommand\dechsinglequotespon{\directlua{
+luatexbase.add_to_callback (
+   "process_input_buffer" , dechpsinglequotes , "dechpsinglequotes" )
+   }}
+\newcommand\dechsinglequotespoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "dechpsinglequotes" )}}
+\newcommand\dechsinglequotespcloseon{\directlua{
+luatexbase.add_to_callback (
+   "process_input_buffer" , dechpsinglequotesclose , "dechpsinglequotesclose" )
+   }}
+\newcommand\dechsinglequotespcloseoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "dechpsinglequotesclose" )}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% activation and deactivation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand\doublequoteson{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" , 
+   doublequotes , 
+   "doublequotes" )}}
+\newcommand\doublequotesoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , 
+   "doublequotes" )}}
+% \newcommand\abbrevsingleon{\directlua{luatexbase.add_to_callback (
+%    "process_input_buffer" , 
+%    abbrevsingle , 
+%    "abbrevsingle" )}}
+% \newcommand\abbrevsingleoff{\directlua{luatexbase.remove_from_callback (
+%    "process_input_buffer" , 
+%    "abbrevsingle" )}}
+
+\newcommand\singlequotelinestarton{\directlua{
+luatexbase.add_to_callback (
+   "process_input_buffer" , singlequotelinestart , "singlequotelinestart" )
+   }}
+\newcommand\singlequotelinestartoff{\directlua{
+luatexbase.remove_from_callback (
+   "process_input_buffer" , "singlequotelinestart" )
+   }}
+\newcommand\singlequoteson{\directlua{
+luatexbase.add_to_callback (
+   "process_input_buffer" , singlequotes , "singlequotes" )
+   }}
+\newcommand\singlequotesoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "singlequotes" )}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% global functions, useful for things like this
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+   \newcommand{\smartquotes}{%
+\doublequoteson%
+\singlequotelinestarton%
+% \abbrevsingleon%
+\singlequoteson
+\singlequotespon}
+   \newcommand{\dumbquotes}{
+   \doublequotesoff
+% \abbrevsingleoff
+   \singlequotelinestartoff
+   \singlequotesoff
+   \singlequotespoff
+   }
+   
+       \DeclareOption{en}{
+\AtBeginDocument{\dechsmartquotes\dechdumbquotes\frsmartquotes\frdumbquotes\desmartquotes\dedumbquotes\degmsmartquotes\degmdumbquotes\smartquotes}
+\renewcommand{\texttt}[1]{{\ttfamily\addfontfeature{RawFeature={+qtbye,-tlig}} #1}}
+    }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% auxiliary punctuation
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Essentially to be used where the
+% thing fails to provide the 
+% quotation or 
+% quote like punctuation
+% needed 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% German quotations
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\desingle}{{\addfontfeature{RawFeature={-qtbye,-tlig}}\symbol{"201A}}}
+\newcommand{\dedouble}{{\addfontfeature{RawFeature={-qtbye,-tlig}}\symbol{"201E}}}
+\newcommand{\degmsingle}{{\addfontfeature{RawFeature={-qtbye,-tlig}}\symbol{"203A}}}
+\newcommand{\degmdouble}{{\addfontfeature{RawFeature={-qtbye,-tlig}}\symbol{"00BB}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% backtick
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\bcktck}{{\addfontfeature{RawFeature={-qtbye,-tlig}}`}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Straight double 
+% and single quotes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\dqone}{{\addfontfeature{RawFeature={-qtbye,-tlig}}\symbol{"0027}}}
+\newcommand{\dqtwo}{{\addfontfeature{RawFeature={-qtbye,-tlig}}\symbol{"0022}}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Prime, mostly for 
+% Feet and inches
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\lqprime}{′}
+\newcommand{\lqdoubleprime}{″}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The Okina, for typing 
+% Hawaiʻi
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\okina}{ʻ}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The individual smart quotes
+% 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\sqtwoleft}{{\addfontfeature{RawFeature={-qtbye,-tlig}}“}}
+\newcommand{\sqtworight}{{\addfontfeature{RawFeature={-qtbye,-tlig}}”}}
+\newcommand{\sqoneright}{{\addfontfeature{RawFeature={-qtbye,-tlig}}’}}
+\newcommand{\apost}{{\addfontfeature{RawFeature={-qtbye,-tlig}}’}}
+%sqoneleft  command moved because order mattered
+\newcommand{\glmtl}{{\addfontfeature{RawFeature={-qtbye,-tlig}}«\,}}
+\newcommand{\glmtr}{{\addfontfeature{RawFeature={-qtbye,-tlig}}\,»}}
+\newcommand{\sglmtl}{{\addfontfeature{RawFeature={-qtbye,-tlig}}‹\,}}
+\newcommand{\sglmtr}{{\addfontfeature{RawFeature={-qtbye,-tlig}}\,›}}
+
+\newcommand{\degmtl}{{\addfontfeature{RawFeature={-qtbye,-tlig}}»}}
+\newcommand{\degmtr}{{\addfontfeature{RawFeature={-qtbye,-tlig}}«}}
+\newcommand{\desgmtl}{{\addfontfeature{RawFeature={-qtbye,-tlig}}›}}
+\newcommand{\desgmtr}{{\addfontfeature{RawFeature={-qtbye,-tlig}}‹}}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DEUTSCH
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\luaexec{function dedoublequotes ( s )
+           return ( s:gsub ( '"(..-)"' , "„\%1“" ) )
+         end}
+\luaexec{function desinglequotelinestart ( s )
+           return (s:gsub ("^'","‚" )  )
+        end}
+\luaexec{function desinglequotesclose( s )
+return ( s:gsub ( " '(..-)'", " ‚\%1`" ) )
+         end}
+
+%% Two utility macros to activate/deactivate the Lua function:
+\newcommand\dedoublequoteson{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" , dedoublequotes , "dedoublequotes" )}}
+\newcommand\dedoublequotesoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "dedoublequotes" )}}
+\newcommand\desinglequotelinestarton{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" , desinglequotelinestart , "desinglequotelinestart" )}}
+\newcommand\desinglequotelinestartoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "desinglequotelinestart" )}}
+   \newcommand\desinglequotescloseon{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" , desinglequotesclose , "desinglequotesclose" )}}
+\newcommand\desinglequotescloseoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "desinglequotesclose" )}}
+   \newcommand{\desmartquotes}{\dedoublequoteson
+\desinglequotelinestarton
+\desinglequotescloseon
+\desinglequotespon
+\desinglequotespcloseon
+}
+   \newcommand{\dedumbquotes}{\dedoublequotesoff
+\desinglequotelinestartoff
+\desinglequotescloseoff
+\desinglequotespoff
+\desinglequotespcloseoff
+}
+   \DeclareOption{de}{
+\AtBeginDocument{
+\dechsmartquotes\dechdumbquotes
+\frsmartquotes
+\frdumbquotes
+\smartquotes
+\dumbquotes\dumbquotes
+\desmartquotes}
+\renewcommand{\texttt}[1]{{\ttfamily\addfontfeature{RawFeature={+qtbye,-tlig}} #1}}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% SCHÖNERES DEUTSCH
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\luaexec{function degmdoublequotes ( s )
+           return ( s:gsub ( '"(..-)"' , "»\%1«" ) )
+         end}
+\luaexec{function degmsinglequotelinestart ( s )
+           return (s:gsub ("^'","›" )  )
+        end}
+\luaexec{function degmsinglequotesclose( s )
+return ( s:gsub ( " '(..-)'", " ‚\%1‹" ) )
+         end}
+
+%% Two utility macros to activate/deactivate the Lua function:
+\newcommand\degmdoublequoteson{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" , degmdoublequotes , "degmdoublequotes" )}}
+\newcommand\degmdoublequotesoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "degmdoublequotes" )}}
+\newcommand\degmsinglequotelinestarton{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" , degmsinglequotelinestart , "degmsinglequotelinestart" )}}
+\newcommand\degmsinglequotelinestartoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "degmsinglequotelinestart" )}}
+   \newcommand\degmsinglequotescloseon{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" , degmsinglequotesclose , "degmsinglequotesclose" )}}
+\newcommand\degmsinglequotescloseoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "degmsinglequotesclose" )}}
+   \newcommand{\degmsmartquotes}{\degmdoublequoteson
+\degmsinglequotelinestarton
+\degmsinglequotescloseon}
+   \newcommand{\degmdumbquotes}{\degmdoublequotesoff
+\degmsinglequotelinestartoff
+\degmsinglequotescloseoff}
+   \DeclareOption{degm}{
+\AtBeginDocument{
+\dechsmartquotes\dechdumbquotes
+\frsmartquotes
+\frdumbquotes
+\smartquotes
+\dumbquotes\dumbquotes
+\degmsmartquotes}
+\renewcommand{\texttt}[1]{{\ttfamily\addfontfeature{RawFeature={+qtbye,-tlig}} #1}}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Français
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\luaexec{function frdoublequotes ( s )
+           return ( s:gsub ( '"(..-)"' , "«\\,\%1\\,»" ) )
+         end}
+
+
+\luaexec{function frsinglequotelinestart ( s )
+           return (s:gsub ("^'","'" )  )
+        end}
+\luaexec{function frsinglequotesclose( s )
+return ( s:gsub ( " '(..-)'", " ‹\\,\%1\\,›" ) )
+         end}
+
+%% Two utility macros to activate/deactivate the Lua function:
+\newcommand\frdoublequoteson{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" ,frdoublequotes , "frdoublequotes" )}}
+\newcommand\frdoublequotesoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "frdoublequotes" )}}
+\newcommand\frsinglequotelinestarton{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" ,frsinglequotelinestart , "frsinglequotelinestart" )}}
+\newcommand\frsinglequotelinestartoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "frsinglequotelinestart" )}}
+   \newcommand\frsinglequotescloseon{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" ,frsinglequotesclose , "frsinglequotesclose" )}}
+\newcommand\frsinglequotescloseoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "frsinglequotesclose" )}}
+   \newcommand{\frsmartquotes}{\frdoublequoteson
+   \frsinglequotespon
+   \frsinglequotespcloseon
+\frsinglequotelinestarton
+\frsinglequotescloseon}
+   \newcommand{\frdumbquotes}{\frdoublequotesoff
+   \frsinglequotespoff
+   \frsinglequotespcloseoff
+\frsinglequotelinestartoff
+\frsinglequotescloseoff}
+   \DeclareOption{fr}{
+\AtBeginDocument{\dechsmartquotes\dechdumbquotes\desmartquotes\dedumbquotes\degmsmartquotes\degmdumbquotes\smartquotes\dumbquotes\dumbquotes\frsmartquotes}
+\renewcommand{\texttt}[1]{{\ttfamily\addfontfeature{RawFeature={+qtbye,-tlig}} #1}}
+
+
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Deutsch (Schweiz) 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\luaexec{function dechdoublequotes ( s )
+           return ( s:gsub ( '"(..-)"' , "«\%1»" ) )
+         end}
+
+
+\luaexec{function dechsinglequotelinestart ( s )
+           return (s:gsub ("^'","'" )  )
+        end}
+\luaexec{function dechsinglequotesclose( s )
+return ( s:gsub ( " '(..-)'", " ‹\%1›" ) )
+         end}
+%% Two utility macros to activate/deactivate the Lua function:
+\newcommand\dechdoublequoteson{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" ,dechdoublequotes , "dechdoublequotes" )}}
+\newcommand\dechdoublequotesoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "dechdoublequotes" )}}
+\newcommand\dechsinglequotelinestarton{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" ,dechsinglequotelinestart , "dechsinglequotelinestart" )}}
+\newcommand\dechsinglequotelinestartoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "dechsinglequotelinestart" )}}
+   \newcommand\dechsinglequotescloseon{\directlua{luatexbase.add_to_callback (
+   "process_input_buffer" ,dechsinglequotesclose , "dechsinglequotesclose" )}}
+\newcommand\dechsinglequotescloseoff{\directlua{luatexbase.remove_from_callback (
+   "process_input_buffer" , "dechsinglequotesclose" )}}
+   \newcommand{\dechsmartquotes}{\dechdoublequoteson
+   \dechsinglequotespon
+   \dechsinglequotespcloseon
+\dechsinglequotelinestarton
+\dechsinglequotescloseon}
+   \newcommand{\dechdumbquotes}{\dechdoublequotesoff
+   \dechsinglequotespoff
+   \dechsinglequotespcloseoff
+\dechsinglequotelinestartoff
+\dechsinglequotescloseoff}
+   \DeclareOption{dech}{
+\AtBeginDocument{\desmartquotes\dedumbquotes\degmsmartquotes\degmdumbquotes\smartquotes\dumbquotes\dumbquotes\frsmartquotes\frdumbquotes\dechsmartquotes}
+\renewcommand{\texttt}[1]{{\ttfamily\addfontfeature{RawFeature={+qtbye,-tlig}} #1}}
+
+
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Default option is English
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ExecuteOptions{en}% 
+  \ProcessOptions*
+
+
+
+  

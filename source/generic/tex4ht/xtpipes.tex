@@ -1,0 +1,4518 @@
+% $Id: xtpipes.tex 740 2020-06-13 22:35:32Z karl $
+
+% htlatex xtpipes "xhtml,3,next" "" "-d./"
+% htlatex xtpipes "xhtml,3,next,doc" "" "-d./"
+% htlatex xtpipes "xhtml,3,next,win"
+% htlatex xtpipes "xhtml,3,next,win,doc"
+
+% generalize -i attribute to accept multiple directories, like for -classpath
+% gcj support these ``generics''  with a ``-5'' or ``-1.5'' switch
+
+% Copyright 2009-2020 TeX Users Group
+% Copyright 1996-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\documentclass{article}
+   \usepackage{url}
+   \usepackage{verbatim}
+   \input{common.tex}
+   % make ` be the escape character, instead of |
+   \Configure{ProTex}{java,<<<>>>,title,list,`}
+\begin{document}
+\input tex4ht-cpright.tex
+\input tex4ht-dir.tex
+
+\def\CNT{0}
+\bgroup
+   \catcode`\^=7
+   \catcode`\^^M=13  %
+   \gdef\OP#1{%
+      \edef\temp{%
+        \noexpand\<#1\noexpand\><<<
+            \CNT
+        >>> %
+      } \temp %
+      \immediate\write15{...... \CNT\space #1}
+      \HAdvance\CNT by 1 %
+   }   %
+\egroup
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \AddFile[optional: target file name; default: given file name]
+%         (optional: target home dir; default MYDIR)
+%         {file name}{dir}
+
+\ifOption{win}
+   {\def\mv{move }}
+   {\def\mv{mv }}
+
+\def\Slash{/}
+{
+   \catcode`\/=0
+   \catcode`\\=12
+   /ifOption{win}{/gdef/Slash{\}}{}
+}
+\def\SLASH{/}
+
+\def\AddFile{\futurelet\ext\AddFileA}
+\def\AddFileA{%
+   \if [\ext \def\ext[##1]{\def\ext{##1}\futurelet\dir\AddFileB}%
+   \else     \def\ext{\def\ext{}\futurelet\dir\AddFileB}\fi
+   \ext}
+\def\AddFileB{%
+   \if (\dir \def\dir(##1){\def\dir{##1}\AddFileC}%
+   \else     \def\dir{\let\dir\MYdir\AddFileC}\fi
+   \dir}
+
+
+\def\AddFileC#1#2{%
+   \expandafter\setStartDir \dir #2!%
+   \bgroup
+     \def\Slash{/}%
+     \xdef\EndDir{\dir
+                #2\Slash
+             \ifx\ext\empty
+                  \if !#1!\else #1\fi
+             \else \ext\fi}%
+   \egroup
+   \MakeDir
+   \if !#1!\else
+      \Needs{"\mv #1\space \dir #2\Slash
+                    \ifx\ext\empty #1\else \ext\fi"}%
+   \fi
+}
+
+\ifOption{win}
+{
+   \def\MakeDir{\relax
+      \expandafter \ifx  \csname !\StartDir\endcsname\relax
+         \expandafter\let\csname !\StartDir\endcsname=\empty
+         \Needs{"if NOT EXIST \StartDir \space mkdir -p \StartDir"}%
+      \fi
+      \ifx \EndDir\empty \else
+          \expandafter\AppendDir \EndDir////*%
+          \expandafter\MakeDir
+      \fi
+   }
+}{
+   \def\MakeDir{\relax
+      \expandafter \ifx  \csname !\StartDir\endcsname\relax
+         \expandafter\let\csname !\StartDir\endcsname=\empty
+         \Needs{"mkdir -p \StartDir"}%
+      \fi
+      \ifx \EndDir\empty \else
+          \expandafter\AppendDir \EndDir////*%
+          \expandafter\MakeDir
+      \fi
+   }
+}
+
+\def\AppendDir#1/#2/#3/*{%
+   \def\temp{#2}\ifx \temp\empty
+      \let\EndDir=\empty
+   \else
+      \edef\StartDir{\ifx \StartDir\empty\else
+                     \ifx \StartDir\SLASH \Slash \else
+                     \StartDir\Slash\fi   \fi
+                     #1}%
+      \def\EndDir{#2/#3}%
+      \expandafter\MakeDir
+   \fi
+}
+\def\setStartDir#1#2!{%
+    \def\StartDir{#1}\ifx\StartDir\SLASH\else
+    \def\StartDir{}\fi
+}
+
+
+
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% % \AddFile[optional: target file name; default: given file name]
+% %         (optional: target home dir; default MYDIR)
+% %         {file name}{dir}
+%
+% \def\AddFile{\futurelet\ext\AddFileA}
+% \def\AddFileA{%
+%    \if [\ext \def\ext[##1]{\def\ext{##1}\futurelet\dir\AddFileB}%
+%    \else     \def\ext{\def\ext{}\futurelet\dir\AddFileB}\fi
+%    \ext}
+% \def\AddFileB{%
+%    \if (\dir \def\dir(##1){\def\dir{##1}\AddFileC}%
+%    \else     \def\dir{\let\dir\MYdir\AddFileC}\fi
+%    \dir}
+% \def\AddFileC#1#2{%
+%    \expandafter\setStartDir \dir #2!%
+%    \edef\EndDir{\ifx \dir\empty \else \dir/\fi
+%                 #2/\ifx\ext\empty \if !#1!XXX\else #1\fi\else \ext\fi}\MakeDir
+%    \if !#1!\else
+%       \Needs{"mv #1\space \dir /#2/\ifx\ext\empty #1\else \ext\fi"}%
+%    \fi
+% }
+% \def\MakeDir{\relax
+%    \expandafter \ifx  \csname !\StartDir\endcsname\relax
+%       \expandafter\let\csname !\StartDir\endcsname=\empty
+%       \Needs{"mkdir -p \StartDir"}%
+%    \fi
+%    \ifx \EndDir\empty \else
+%        \expandafter\AppendDir \EndDir////*%
+%        \expandafter\MakeDir
+%    \fi
+% }
+% \def\AppendDir#1/#2/#3/*{%
+%    \def\temp{#2}\ifx \temp\empty  \let\EndDir=\empty
+%    \else
+%       \edef\StartDir{\ifx \StartDir\empty\else
+%                      \ifx \StartDir\SLASH /\else
+%                      \StartDir/\fi   \fi
+%                      #1}\def\EndDir{#2/#3}%
+%    \fi
+% }
+% \def\setStartDir#1#2!{%
+%     \def\StartDir{#1}\ifx\StartDir\SLASH\else
+%     \def\StartDir{}\fi
+% }
+% \def\SLASH{/}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% TODO : make \WORK MSDOS / Linux agnostic.
+\def\MYdir{\WORK}
+
+
+\expandafter\let\csname !/\endcsname\empty
+\expandafter\let\csname !/\endcsname\empty
+\expandafter\let\csname !/home\endcsname\empty
+\expandafter\let\csname !/home/4\endcsname\empty
+\expandafter\let\csname !/home/4/gurari\endcsname\empty
+\expandafter\let\csname !/home/4/gurari/xtpipes.dir\endcsname\empty
+%\expandafter\let\csname !/home/4/gurari/tex4ht.dir/texmf\endcsname\empty
+%\expandafter\let\csname !/home/4/gurari/xtpipes.dir\endcsname\empty
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\part{Core}
+%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Control}
+%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%
+\subsection{Outline}
+%%%%%%%%%%%%%%%%%%
+
+
+\AtEndDocument{
+   \OutputCode[java]\<xtpipes.java\>  % double .java to avoid problems on MS
+   \OutputCodE\<Xtpipes.java\>
+   \OutputCodE\<xtpipes.dtd\>
+}
+
+% \Needs{"
+%    mkdir -p work.dir
+%    ;
+%    mkdir -p work.dir/xtpipes
+% "}
+
+\ifdojava
+\ifOption{win} {}{
+\AtEndDocument{\Needs{"
+    find \WORK\space -type f -iname '*.java' -print0
+    | xargs -0 javac -d \XTPIPES\space -sourcepath \WORK
+    ;
+"}}
+}
+\fi
+
+
+\ifOption{win} {
+    \def\BIN{}
+}{
+    \def\BIN{(\XTPIPES)}
+}
+
+% 
+\expandafter\AddFile\BIN{xtpipes.dtd}{xtpipes\Slash lib}
+
+\AddFile{Xtpipes.java}{xtpipes}
+
+\<Xtpipes.java\><<<
+package xtpipes;
+/* Xtpipes.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+`<xtpipes imports`>
+`<class XtpipesPrintWriter  `>
+public class Xtpipes {
+   `<xtpipes fields`>
+   `<static void main(String [])`>
+   `<static void xtpipes(String [], OutputStream, PrintWriter)`>
+   `<static void xtpipes(String [], OutputStreamWriter, PrintWriter)`>
+   `<static void xtpipes(String [], XtpipesPrintWriter, PrintWriter)`>
+   `<static Document getDOM(...)`>
+   `<static void mainMethod(String [])`>
+   `<static void execute( node )`>
+   `<static String execute( node, xml )`>
+   `<static void instructionErr(...)`>
+   `<static String serialize( dom )`>
+   `<static void cleanXmlns( dom )`>
+}
+`<class XtpipesEntityResolver`>
+>>>
+
+\Needs{"\mv xtpipes.java.java \MYdir xtpipes.java"}
+
+NOTE: We can not place Xtpipes.class and xtpipes.class at the same
+directory because MS Windows get confused between the two.
+
+
+\<xtpipes.java\><<<
+/* xtpipes.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+import xtpipes.*;
+public class xtpipes {
+  public static void main(String [] args) throws Exception {
+    Xtpipes.main(args);
+} }
+>>>
+
+
+\<static String execute( node, xml )\><<<
+public static String execute( Node node, String xml )
+                                      throws Exception {
+  String name = ".";
+  String old = (String) map.get(name);
+  map.put( name, (Object) xml );
+  execute( node.getFirstChild() );
+  String s = (String) map.get(name);
+  if( old != null ){ map.put( name, (Object) old ); }
+  return s;
+}
+>>>
+
+
+
+
+
+
+
+\<xtpipes fields\><<<
+private static HashMap <String,Object> map;
+private static boolean needScript;
+>>>
+
+
+The members of xtpipes need to be initiated each time the methods of
+the program are invoked from external point.  That can happen multiple
+times for a given run. Hence, the fields are not initiated in the
+declaration points, but within the main method.  All the external
+calls go directly or indirectly through that method.
+
+
+\<init fields\><<<
+map = new HashMap  <String,Object> ();
+needScript = true;
+>>>
+
+
+\<xtpipes imports\><<<
+// import xtpipes.util.InputObject;
+// import xtpipes.util.FileInfo;
+import xtpipes.XtpipesPrintWriter;
+import java.net.URLConnection;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.HashMap;
+import java.util.Stack;
+import javax.xml.parsers.*;
+import javax.xml.transform.*;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.*;
+import org.w3c.dom.*;
+import org.xml.sax.*;
+import org.xml.sax.helpers.*;
+import java.net.URL;
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Invocation Interfaces}
+%%%%%%%%%%%%%
+
+\<static void main(String [])\><<<
+public static void main(String args[]) throws Exception {
+  `<init fields`>
+  mainMethod(args);
+}
+>>>
+
+
+
+
+\<static void xtpipes(String [], OutputStream, PrintWriter)\><<<
+public static void xtpipes(String [] args,
+                           OutputStream out,
+                           PrintWriter log)
+                                                throws Exception {
+  `<init fields`>
+  outPrintWriter = new XtpipesPrintWriter( out, true );
+  logWriter = (log==null)? (new PrintWriter( System.err )) : log;
+  mainMethod(args);
+  outPrintWriter.flush();
+}
+>>>
+
+
+
+\<static void xtpipes(String [], OutputStreamWriter, PrintWriter)\><<<
+public static void xtpipes(String [] args,
+                           OutputStreamWriter out,
+                           PrintWriter log)
+                                                throws Exception {
+  `<init fields`>
+  outPrintWriter = new XtpipesPrintWriter( out );
+  logWriter = (log==null)? (new PrintWriter( System.err )) : log;
+  mainMethod(args);
+  outPrintWriter.flush();
+}
+>>>
+
+\<static void xtpipes(String [], XtpipesPrintWriter, PrintWriter)\><<<
+public static void xtpipes(String [] args,
+                           XtpipesPrintWriter out,
+                           PrintWriter log)
+                                                throws Exception {
+  `<init fields`>
+  outPrintWriter = out;
+  logWriter = (log==null)? (new PrintWriter( System.err )) : log;
+  mainMethod(args);
+  outPrintWriter.flush();
+}
+>>>
+
+
+\<xtpipes fields\><<<
+private static boolean returnDom;
+private static String result;
+>>>
+
+\<init fields\><<<
+returnDom = false;
+result = null;
+>>>
+
+
+\<static Document getDOM(...)\><<<
+public static Document getDOM(String args[])
+                               throws Exception {
+  `<init fields`>
+   returnDom = true;
+   mainMethod(args);
+   Document dom = null;
+   if( result == null ){
+     System.err.println(
+       "--- xtpipes warning --- getDOM without <return name=\"...\"> from 4xt file: "
+         + scriptFile );
+   } else {
+      try{
+         byte [] bytes = result.getBytes("UTF-8");
+         InputStream is =  new ByteArrayInputStream( bytes );
+         dom = domBuilder.parse (is);
+      } catch ( org.xml.sax.SAXParseException e ){
+         if( Xtpipes.trace ){
+            Xtpipes.logWriter.println(
+               "\n---------------------------------------------------\n"
+                        + result +
+               "\n---------------------------------------------------\n" );
+         }
+         String s = "";
+         `<s += input file name within args`>
+         if( scriptFile != null ){ s += "    script file: " + scriptFile; }
+         instructionErr( null,
+            "parsing error: " + e.getMessage() +s, 21 );
+      } catch ( Exception e ){
+         instructionErr( null, e.toString(), 5 );
+      }
+      `<close ml2xml files`>
+   }
+   return dom;
+}
+>>>
+
+\<static Document getDOM(...)\><<<
+public static Document getDOM(String s, String args[])
+                                           throws Exception {
+   `<init fields`>
+   returnDom = true;
+   inData = s;
+   mainMethod(args);
+   Document dom = null;
+   if( result == null ){
+     System.err.println(
+       "--- xtpipes warning --- getDOM without"
+         + " <return name=\"...\"> from 4xt file: "
+         + scriptFile );
+   } else {
+      try{
+         byte [] bytes = result.getBytes("UTF-8");
+         InputStream is =  new ByteArrayInputStream( bytes );
+         dom = domBuilder.parse (is);
+      } catch ( org.xml.sax.SAXParseException e ){
+         instructionErr( null, "improper xml: " + e.getMessage()
+           + "\n code starts with: "
+           + result.substring(0, Math.min(100,result.length()))
+         , 17 );
+      } catch ( Exception e ){
+         instructionErr( null, e.toString(), 6 );
+      }
+      `<close ml2xml files`>
+   }
+   return dom;
+}
+>>>
+
+
+\<static Document getDOM(...)\><<<
+public static Document getDOM(String args[], PrintWriter log)
+                               throws Exception {
+   logWriter = (log==null)? new PrintWriter( System.err ) : log;
+   return getDOM(args);
+}
+>>>
+
+\<static Document getDOM(...)\><<<
+public static Document getDOM(String s, String args[], PrintWriter log)
+                                           throws Exception {
+   logWriter = (log==null)? (new PrintWriter( System.err )) : log;
+   return getDOM(s, args);
+}
+>>>
+
+
+
+
+\<xtpipes fields\><<<
+static PrintWriter logWriter = new PrintWriter( System.err );
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Core Entry Code}
+%%%%%%%%%%%%%
+g
+
+\<static void mainMethod(String [])\><<<
+private static void mainMethod(String args[]) throws Exception {
+  try{
+    `<command line vars`>
+    `<process command line`>
+  } catch (Exception e){
+     instructionErr( null, e.getMessage(), e.getStackTrace(), 31 );
+  }
+  try {
+     DocumentBuilderFactory domFactory =
+           DocumentBuilderFactory.newInstance();
+     domFactory.setValidating(true);
+     DocumentBuilder validatingDomBuilder =
+                     domFactory.newDocumentBuilder();
+     validatingDomBuilder.setEntityResolver(`<new EntityResolver()`>);
+     validatingDomBuilder.setErrorHandler(`<new ErrorHandler()`>);
+     `<xtpipes initialization`>
+     `<scriptFile := entry script file name`>
+     while( needScript ){
+       if( scriptFile == null ){
+          instructionErr( null, "Missing 4xt script file name", 32 );
+       }
+       `<search script file`>
+       Document script = validatingDomBuilder.parse(scriptFile);
+       `<trace open script`>
+       execute( script.getFirstChild() );
+     }
+     `<close output file`>
+      Xtpipes.logWriter.flush();
+  } catch( org.xml.sax.SAXParseException e ){
+     String s = "Improper file " + scriptFile + ": " + e.getMessage();
+     instructionErr( null, s, 2 );
+  } catch( java.io.FileNotFoundException e ){
+     String s;
+     if( scriptFile.equals( e.getMessage() ) ){
+        s =  "Could not find file: " + scriptFile;
+     } else {
+        s = "Problem at script " + scriptFile + ": Could not find file "
+                                                     + e.getMessage();
+     }
+     instructionErr( null, s, 3 );
+  } catch( Exception e ){
+     String s = "Problems at file: " + scriptFile + "\n   " + e;
+     instructionErr( null, s, 4 );
+} }
+>>>
+
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Locate the Script File}
+%%%%%%%%%%%%%
+
+
+
+
+\<search script file\><<<
+String f = FileInfo.searchFile( scriptFile );
+if( f == null ){
+   throw new java.io.FileNotFoundException( scriptFile );
+} else {
+   scriptFile = f;
+}
+>>>
+
+
+
+[\HPage{System Properties}
+
+\<sys.java\><<<
+// `version
+import java.util.*;
+class sys{
+  public static void main( String [] args ) {
+     java.util.Properties p = System.getProperties();
+     java.util.Enumeration keys = p.keys();
+     while( keys.hasMoreElements() ) {
+         String name = (String) keys.nextElement();
+         String value = System.getProperty( name );
+         logWriter.println( name + " : " + value );
+} }  }
+>>>
+\EndHPage{}]
+
+
+%%%%%%%%%%%%%
+\subsection{Flow of Control}
+%%%%%%%%%%%%%
+
+
+\<static void execute( node )\><<<
+private static void execute( Node node ) throws Exception {
+  while( node != null ){
+    if( node.getNodeType()==Node.ELEMENT_NODE ){
+      String instruction = node.getNodeName();
+      `<trace element`>
+      if( instruction.equals( "xtpipes" ) ){
+         `<execute xtpipes`>
+      } else if( instruction.equals( "set" ) ){
+         `<execute set`>
+      } else if( instruction.equals( "get" ) ){
+         `<execute get`>
+      } else if( instruction.equals( "print" ) ){
+         `<execute print`>
+      } else if( instruction.equals( "return" ) ){
+         `<execute return`>
+      } else if( instruction.equals( "if" ) ){
+         `<execute if`>
+      } else if( instruction.equals( "xslt" ) ){
+         `<execute xslt`>
+      } else if( instruction.equals( "dom" ) ){
+         `<execute dom`>
+      } else if( instruction.equals( "sax" ) ){
+         `<execute sax`>
+      } else {
+         instructionErr( node, "Improper instruction: " + instruction, 11 );
+    } }
+    node = node.getNextSibling();
+} }
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Comamnd Line Options: Outline}
+%%%%%%%%%%%%%
+
+
+
+\<get args[n]\><<<
+if( args[n] == null ){}
+else if( args[n].equals("") ){}
+else if( args[n].charAt(0)!='-' ){ inFile = args[n]; }
+else if( args[n].equals("-m") ){
+  messages = true;
+  `<output system info`>
+}
+else if( args[n].equals("-s") ){
+  `<scan script file name`>
+}
+else if( args[n].equals("-S") ){
+  `<scan script map file name`>
+}
+else if( args[n].equals("-i") ){
+  `<scan script dir name`>
+}
+else if( args[n].equals("-o") ){
+  `<scan output file name`>
+}
+else if( args[n].startsWith("-x") ){
+  `<scan ml2xml argument`>
+}
+else if( args[n].equals("-E") ){
+  exceptionErrs = true;
+}
+else if( args[n].equals("-d") ){
+  `<scan input data`>
+}
+else if( args[n].equals("-trace") ){ trace=true; }
+else if( args[n].equals("-help") ){ help=true; }
+else { `<improper args[n]`> }
+>>>
+
+
+\<display command line syntax\><<<
+System.err.println( xtpipes_call );
+>>>
+
+\<command line vars\><<<
+String xtpipes_call =
+     "   xtpipes (`version)"
+   + "\n   Command line options: "
+   + "\n     java xtpipes [-trace] [-help] [-m] [-E] [-s script_file]"
+   +                                               " [-S script_map]"
+   + "\n                  [-i script_dir] [-o out_file] "
+   + "\n                  [-x...ml2xml_arg...]  "
+   +                     "(-d in_data | in_file)"
+   + "\n     -m        messages printing mode"
+   + "\n     -E        error messages into exception calls"
+   + "\n     in_data   XML data directly into the command line\n"
+;
+>>>
+
+
+
+At least one  `-x'  command line option is required for ml2xml
+to be called.  An empty postfix is also fine.
+
+
+
+\<s += input file name within args\><<<
+for( int n=0; n<args.length; n++ ){
+  if( args[n].charAt(0)!='-' ){
+     s += "  input file: " + args[n] + ".";  break;
+  }
+  else if( args[n].equals("-s")
+           || args[n].equals("-S")
+           || args[n].equals("-i")
+           || args[n].equals("-o")
+           || args[n].equals("-d") ){ n++;  }
+}
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Comamnd Line Options: Processing}
+%%%%%%%%%%%%%
+
+
+
+\<process command line\><<<
+boolean help=false;
+for( int n=0; n<args.length; n++ ){
+  `<get args[n]`>
+}
+`<default stdio output`>
+`<help message and stop on improper args in batch mode`>
+new FileInfo(logWriter, i_scriptDir, trace);
+if( inFile != null ){
+   inputObject = new InputObject( inFile, logWriter );
+   if( inputObject.getInputStream() == null ){
+      instructionErr( null, "Could not find or open file: " + inFile, 28 );
+   }
+   inFile = inputObject.getFilename();
+} else {
+   inputObject = new InputObject( inData.getBytes("UTF-8"), logWriter );
+}
+inputObject.buildProfile( trace );
+>>>
+
+\<help message and stop on improper args in batch mode\><<<
+if( !returnDom ){
+   if( help || ((inFile == null) && (inData == null)) ){
+     `<display command line syntax`>
+     if( (inFile == null) && (inData == null) ){
+        System.exit(0);
+}  } }
+>>>
+
+\<improper args[n]\><<<
+if( !exceptionErrs ){
+  for(int i=n+1; i<args.length; i++ ){
+    if( args[i].equals("-E") ){ exceptionErrs = true; }
+} }
+instructionErr( null,
+     "Improper argument: " + args[n] + "\n" + xtpipes_call, 26 );
+>>>
+
+
+
+
+\<scan input data\><<<
+n++;
+if( n < args.length ){
+   inData = args[n];
+} else {
+   System.err.println(
+       "--- Error --- Missing field for -d argument" );
+   inFile = null; inData = null; break;
+}
+>>>
+
+
+
+
+
+
+\<xtpipes fields\><<<
+private static String     inFile,
+                          inData;
+private static boolean exceptionErrs, messages;
+public static InputObject inputObject;
+>>>
+
+
+\<init fields\><<<
+inFile = null;
+inData = null;
+exceptionErrs = false;
+messages = false;
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Output File}
+%%%%%%%%%%%%%
+
+
+The output file name mentioned in the input command line `-o file.out' is
+employed in the following cases.
+
+\begin{itemize}
+\item
+Within sax commands without `name' argument
+
+\item Within the return instruction, if none of the sax commands wrote
+  into the file.  The returnToFile field is used for book keeping of
+  whether a sax command used the file earlier for an output target.
+
+
+NOTE: check the case of `cond copy input preamble' ??
+\end{itemize}
+
+
+\<scan output file name\><<<
+n++;
+if( n < args.length ){
+   outFileName = args[n];
+} else {
+   System.err.println(
+       "--- Error --- Missing field for -o argument" );
+   inFile = null; inData = null; break;
+}
+>>>
+
+
+\<xtpipes fields\><<<
+private static String outFileName;
+private static PrintWriter outPrintWriter;
+private static boolean returnToFile = false;
+>>>
+
+\<init fields\><<<
+outFileName = null;
+outPrintWriter = null;
+>>>
+
+
+
+\<open output file\><<<
+if( outFileName != null ){
+   try {
+      FileWriter fw = new FileWriter( outFileName );
+      outPrintWriter = new XtpipesPrintWriter( fw );
+      returnToFile = true;
+   } catch(Exception e){
+      instructionErr( null, e.toString(), 12 );
+}  }
+>>>
+
+\<close output file\><<<
+if( outFileName != null ){
+   outPrintWriter.close();
+}
+>>>
+
+\<default stdio output\><<<
+if( outPrintWriter == null ){
+   outPrintWriter = new XtpipesPrintWriter(System.out,true);
+}
+>>>
+
+% 
+\AtEndDocument{
+   \OutputCodE\<XtpipesPrintWriter.java\>
+}
+\AddFile{XtpipesPrintWriter.java}{xtpipes}
+
+\<XtpipesPrintWriter.java\><<<
+package xtpipes;
+/* XtpipesPrintWriter.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+import java.io.*;
+public class XtpipesPrintWriter extends PrintWriter {
+   public XtpipesPrintWriter() {
+     super(System.out, true);
+   }
+   public XtpipesPrintWriter (PrintStream ps, boolean b){
+     super(ps, b);
+   }
+   public XtpipesPrintWriter (OutputStream ps, boolean b){
+     super(ps, b);
+   }
+   public XtpipesPrintWriter (FileWriter fw){
+     super(fw);
+   }
+   public XtpipesPrintWriter (Writer wr){
+     super(wr);
+   }
+   public void print(String str) {
+     super.print( XtpipesUni.toUni(str, "") );
+   }
+   public void println(String str) {
+     super.println( XtpipesUni.toUni(str, "") );
+}  }
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{The xtpipes Script}
+%%%%%%%%%%%%%%%%%%
+
+
+The translation of a file is driven by a script that determines the
+transformations to be applied to the diffrent fragments of the input
+data.  The name of the script may be found in different locations.
+
+\begin{itemize}
+\item
+A xtpipes processing instruction within the input
+\item
+Command line option `-s'
+\item
+A .map  file that checks the data characteristics to determine the
+script. Currently available only to input files, not to input strings.
+\end{itemize}
+
+
+
+%%%%%%%%%%%%%
+\subsection{Command Line Options}
+%%%%%%%%%%%%%
+
+
+A script should satisfy  the rules of `xtpipes.dtd',
+and a map should satisfy the rules of `xtpipes-map.dtd'.
+
+
+
+
+\<scan script file name\><<<
+n++;
+if( n < args.length ){ scriptFile=args[n]; }
+else {
+  System.err.println(
+      "--- Error --- Missing field for -s argument" );
+  inFile = null; inData = null;  break;
+}
+>>>
+
+
+\<scan script map file name\><<<
+n++;
+if( n < args.length ){ scriptMap=args[n]; }
+else {
+  System.err.println(
+      "--- Error --- Missing field for -S argument" );
+  inFile = null; inData = null;  break;
+}
+>>>
+
+
+\<scan script dir name\><<<
+n++;
+if( n < args.length ){
+   i_scriptDir=args[n];
+} else {
+  System.err.println(
+      "--- Error --- Missing field for -i argument" );
+  inFile = null; inData = null; break;
+}
+>>>
+
+
+
+
+\<xtpipes fields\><<<
+public static String scriptFile;
+private static String scriptMap;
+static String i_scriptDir;
+>>>
+
+
+\<init fields\><<<
+scriptFile = null;
+i_scriptDir = null;
+scriptMap = null;
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Getting the Start Up Script}
+%%%%%%%%%%%%%
+
+The command line arguments may provide a pointer to
+a `scriptFile' and a pointer to an algorithm `scriptMap'
+for getting the script file name.
+
+With and without ml2xml
+
+\<scriptFile := entry script file name\><<<
+if( scriptMap != null ){
+   try{
+      String f = FileInfo.searchFile( scriptMap );
+      if( f == null ){
+         throw new java.io.FileNotFoundException( scriptMap );
+      } else {
+         scriptMap = f;
+      }
+      `<get sax reader`>
+      saxReader.setContentHandler( new DefaultHandler(){
+         `<process script map`>
+        } );
+      InputStream inputStream =
+           (InputStream) (new File(scriptMap).toURI().toURL().openStream());
+      saxReader.parse( new InputSource(inputStream) );
+      saxReaderStack.push( saxReader );
+   } catch( java.io.FileNotFoundException e ){
+      instructionErr( null,
+                      "File not found: " + e.getMessage()
+                      + "; command line option -i",
+                      33 );
+   } catch( Exception e ){
+      instructionErr( null, e.toString(), e.getStackTrace(), 27 );
+   }
+}
+if( scriptFile == null ){
+    scriptFile = "xtpipes-default.4xt";
+}
+>>>
+
+
+\<process script map\><<<
+private Stack <Boolean> condition = new Stack <Boolean> ();
+>>>
+
+\<process script map\><<<
+public void startDocument () {
+   condition.push( Boolean.valueOf(true) );
+}
+>>>
+
+\<process script map\><<<
+public void startElement(String ns, String sName,
+                        String qName, Attributes atts) {
+   if( condition == null ){ return; }
+   `<trace start map element`>
+   boolean cond = ((Boolean) condition.peek()).booleanValue();
+   if( qName.equals("when") ){
+      if( cond ){ `<cond := when ...`> }
+   }
+   else
+   if( qName.equals("command-line") ){
+      if( scriptFile != null ){
+        `<trace found script in map`>
+        condition = null;
+        return;
+   }  }
+   else
+   if( qName.equals("processing-instruction") ){
+      if( cond ){
+         String s = inputObject.getXtpipes();
+         if( s != null ){
+           Xtpipes.scriptFile = s;
+           `<trace found script in map`>
+           condition = null;
+           return;
+   }  }  }
+   else
+   if( qName.equals("select") ){
+      if( cond ){
+        Xtpipes.scriptFile = atts.getValue("name");
+        `<trace found script in map`>
+        condition = null;
+        return;
+   }  }
+   condition.push( Boolean.valueOf(cond) );
+}
+>>>
+
+
+
+
+\<process script map\><<<
+public void endElement(String ns, String sName, String qName) {
+   if( condition == null ){ return; }
+   `<trace end map element`>
+   condition.pop();
+}
+>>>
+
+
+
+\<cond := when ...\><<<
+String name = atts.getValue("name");
+String value = atts.getValue("value");
+if( name.equals("system-id") ){
+   cond = value.equals(inputObject.getSystemId());
+}
+else
+if( name.equals("public-id") ){
+   cond = value.equals(inputObject.getPublicId());
+}
+else
+if( name.equals("dtd-root") ){
+   cond = value.equals(inputObject.getDtdRoot());
+}
+else
+if( name.equals("root") ){
+   cond = value.equals(inputObject.getRoot());
+}
+else
+if( name.equals("ext") ){
+   cond = inputObject.getFilename().endsWith("." + value);
+}
+else
+if( name.equals("prefix") ){
+   name = inputObject.getFilename();
+   if( name != null ){
+      int i = name.lastIndexOf('/');
+      if( (i != -1) && ((i+1) < name.length()) ){
+         name = name.substring(i+1);
+      }
+      i = name.lastIndexOf('\\');
+      if( (i != -1) && ((i+1) < name.length()) ){
+         name = name.substring(i+1);
+      }
+      cond = name.startsWith(value);
+}  }
+else
+if( name.equals("meta-type") ){
+   cond = value.equals(inputObject.getMetaType());
+}
+else
+if( name.equals("content-type") ){
+   cond = value.equals(inputObject.getContentType());
+}
+>>>
+
+
+
+
+
+
+
+\<trace found script in map\><<<
+if( trace ){
+   Xtpipes.logWriter.println( " Found script file in map: "
+                                + Xtpipes.scriptFile );
+}
+>>>
+
+
+\<trace start map element\><<<
+if( Xtpipes.trace ){
+   String s =  "<" + qName + "\n";
+   for(int i=0; i<atts.getLength(); i++ ){
+      String name = atts.getQName(i);
+      s += " " + name + "=\"" + atts.getValue(i) + "\"";
+   }
+   s += ">" ;
+   Xtpipes.logWriter.println( s );
+}
+>>>
+
+\<trace end map element\><<<
+if( Xtpipes.trace ){
+   String s =  "</" + qName + ">";
+   Xtpipes.logWriter.println( s );
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{DTDs}
+%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%
+\immediate\openin15=xtpipes.dtd
+\ifeof15 \else
+   \immediate\closein15
+   [\HPage{xtpipes.dtd}
+     \verbatiminput{xtpipes.dtd}
+   \EndHPage{}]
+\fi
+%%%%%%%%%%%%%
+%
+%%%%%%%%%%%%%
+\immediate\openin15=xtpipes-map.dtd
+\ifeof15 \else
+   \immediate\closein15
+   [\HPage{xtpipes-map.dtd}
+     \verbatiminput{xtpipes-map.dtd}
+   \EndHPage{}]
+\fi
+%%%%%%%%%%%%%
+
+\begin{verbatim}
+<xtpipes> ... </xtpipes>
+\end{verbatim}
+
+\<xtpipes.dtd\><<<
+<!-- xtpipes.dtd (`version), generated from `jobname.tex
+     Copyright (C) 2009-2010 TeX Users Group
+     Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> -->
+<!ELEMENT xtpipes (#PCDATA `<xtpipes entries`>)* >
+<!ATTLIST xtpipes
+          preamble  CDATA #IMPLIED DEFAULT (yes | no) "no"
+          signature CDATA #IMPLIED                         >
+>>>
+
+
+% 
+\AtEndDocument{
+   \OutputCodE\<xtpipes-map.dtd\>
+}
+
+\expandafter\AddFile\BIN{xtpipes-map.dtd}{xtpipes\Slash lib}
+
+\<xtpipes-map.dtd\><<<
+<!-- xtpipes-map.dtd (`version), generated from `jobname.tex
+     Copyright (C) 2009-2010 TeX Users Group
+     Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> -->
+<!ELEMENT xtpipes-map (when | processing-instruction
+                            | select
+                            | command-line)*  >
+<!ELEMENT when (when | select
+                     | processing-instruction
+                     | command-line )*  >
+<!ELEMENT select EMPTY >
+<!ELEMENT processing-instruction EMPTY >
+<!ELEMENT command-line EMPTY >
+<!ATTLIST xtpipes-map
+          signature      CDATA #IMPLIED
+>
+<!ATTLIST when
+          name   (
+                    system-id
+                  | public-id
+                  | dtd-root
+                  | root
+                  | ext
+                  | meta-type
+                  | content-type
+                  | prefix      )  "public-id"
+          value   CDATA #IMPLIED
+          case-sensitive (yes|no) "no"
+>
+<!ATTLIST select
+          name      CDATA #REQUIRED
+>
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Indirect Scripts}
+%%%%%%%%%%%%%
+
+
+
+If the root xtpipes element has no children, the input file is
+searched for an alternative script within a processing instruction of
+the form \verb+<?xtpipes file="..." ?>+.
+
+\<script := xtpipes processing instruction\><<<
+if( inData == null ){
+   `<search file for xtpipes instruction`>
+} else {
+   `<search string for xtpipes instruction`>
+}
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Search File}
+%%%%%%%%%%%%%
+
+
+
+
+\<search file for xtpipes instruction\><<<
+/*
+errMsg = "Searching <?xtpipes file=\"...\"?>  in "
+                      + inFile + ": ";
+*/
+scriptFile = inputObject.getXtpipes();
+rootName = inputObject.getRoot();
+needScript = true;
+>>>
+
+\<search file for xtpipes instructionOLD\><<<
+errMsg = "Searching <?xtpipes file=\"...\"?>  in "
+                      + inFile + ": ";
+       `<get sax reader`>
+       saxReader.setContentHandler( new XtPipesSearch() );
+try{
+    saxReader.parse( new File(inFile).toURI().toURL().toString() );
+} catch ( java.io.FileNotFoundException ioe ){
+    try{
+       saxReader.parse( new InputSource(
+                        new URL(inFile) . openStream() ));
+    } catch ( java.io.FileNotFoundException fnf ){
+        saxReader.parse( new File(inFile).toURI().toURL().toString() );
+}   }
+       saxReaderStack.push( saxReader );
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Copy Preamble}
+%%%%%%%%%%%%%
+
+
+Copy into th eoutput the code preceeding the root. Note: assumes proper
+XML file as it doesn't use ml2xml. NEEDS FIXING.
+Example:
+
+\begin{verbatim}
+----> <?xml version="1.0" encoding="UTF-8"?>
+----> <!DOCTYPE math:math PUBLIC "-//W3C//DTD MathML 2.0//EN" "math.dtd">
+----> <?xtpipes file="oo-math.4xt" ?>
+----> <!-- try-m12 by TeX4ht from try.tex line 69 2007-01-09-11:20
+----> (http://www.cse.ohio-state.edu/~gurari/TeX4ht/) -->
+\end{verbatim}
+
+
+
+\<cond copy input preamble\><<<
+if( node.hasAttributes() ){
+   Node attr = node.getAttributes()
+                   .getNamedItem( "signature" );
+   `<preamble output into log`>
+   attr = node.getAttributes()
+                   .getNamedItem( "preamble" );
+   if( (attr != null)
+       && attr.getNodeValue().equals( "yes" ) ){
+      `<get src preamble`>
+} }
+>>>
+
+
+\<get src preamble\><<<
+// BufferedReader br = null;
+try {
+   String s;
+   boolean front = true;
+   rootName = "<" + ((rootName==null)? inputObject.getRoot() : rootName);
+   if( inData == null ){
+      `<get src preamble from file`>
+   } else {
+      `<get src preamble from string`>
+   }
+} catch (Exception e) {
+   System.err.println(
+        "--- Error --- Couldn't copy preamble: " + e);
+}
+>>>
+
+
+
+
+\<get src preamble from file\><<<
+// FileReader fr = new FileReader(inFile);
+// BufferedReader in = new BufferedReader(fr);
+`<BufferedReader in := inFile`>
+while (  ((s = in.readLine()) != null) && front ) {
+   int i = s.indexOf( rootName );
+   if( i > -1 ){
+      front = false;
+      s = s.substring(0,i);
+   }
+   outPrintWriter.println(s);
+   returnToFile = false;
+}
+in.close();
+>>>
+
+\<BufferedReader in := inFile\><<<
+URLConnection connection =
+             new URL(inFile).openConnection();
+connection.setRequestProperty("User-Agent",
+                "["
+              + System.getProperty("os.name")
+              + " / "
+              + System.getProperty("os.arch")
+              + "]"
+              + "["
+              + System.getProperty("java.version")
+              + " - "
+              + System.getProperty("java.vendor")
+              + "]"
+);
+InputStream inputStream = connection.getInputStream();
+BufferedReader in = new BufferedReader (
+                        new InputStreamReader ( inputStream ) );
+>>>
+
+
+
+
+
+
+\<get src preamble from string\><<<
+int i = inData.indexOf( rootName );
+if( i > -1 ){
+   front = false;
+   s = inData.substring(0,i);
+} else { s = ""; }
+outPrintWriter.println(s);
+returnToFile = false;
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{The Instructions}
+%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%
+\subsection{XtPipes}
+%%%%%%%%%%%%%
+
+The xtpipes element is the root of the script file through which
+the transformation starts.
+
+\<execute xtpipes\><<<
+// String errMsg = "";
+needScript = false;
+if( node.hasChildNodes() ){
+  `<open output file`>
+  `<cond copy input preamble`>
+   execute( node.getFirstChild() );
+} else {
+   `<script := xtpipes processing instruction`>
+}
+>>>
+
+
+
+
+
+
+If the root xtpipes element has no children, the input file is
+searched for an alternative script within a processing instruction of
+the form \verb+<?xtpipes file="..." ?>+.
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Handle Set}
+%%%%%%%%%%%%%
+
+Associate a name to the given enclosed  code.
+
+\begin{verbatim}
+<set name="...">
+<![CDATA[
+  ...
+]]>
+</set>
+\end{verbatim}
+
+\<xtpipes entries\><<<
+| set
+>>>
+
+\<xtpipes.dtd\><<<
+<!ELEMENT set (#PCDATA) >
+<!ATTLIST set
+          name CDATA #REQUIRED >
+>>>
+
+
+
+
+
+\<execute set\><<<
+String name = node.getAttributes().getNamedItem( "name" )
+                                  .getNodeValue();
+Node cdata = node.getFirstChild();
+while( cdata.getNodeType() != Node.CDATA_SECTION_NODE ){
+   cdata = cdata.getNextSibling();
+}
+String code = cdata.getNodeValue().trim();
+map.put( name, (Object) code );
+>>>
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Handle Get XML Code}
+%%%%%%%%%%%%%
+
+Stores a XML file content under the given name.
+
+\begin{verbatim}
+<get name="..." file="..." />
+\end{verbatim}
+
+
+\<xtpipes entries\><<<
+| get
+>>>
+
+
+\<xtpipes.dtd\><<<
+<!ELEMENT get EMPTY >
+<!ATTLIST get
+          name CDATA #REQUIRED
+          file CDATA #REQUIRED
+>
+>>>
+
+
+\<execute get\><<<
+try {
+  String name = node.getAttributes()
+                  .getNamedItem( "name" ).getNodeValue();
+  String file = node.getAttributes()
+               .getNamedItem( "file" ).getNodeValue();
+  StreamSource in   = new StreamSource( new File(file) );
+  ByteArrayOutputStream baos = new ByteArrayOutputStream();
+  identityTransformer.transform( in, new StreamResult(baos) );
+  byte [] bytes = baos.toByteArray();
+  map.put( name, (Object) new String(bytes) );
+} catch( Exception e ){
+   instructionErr( node, e.toString(), 14 );
+}
+>>>
+
+
+
+\<xtpipes initialization\><<<
+fc = TransformerFactory.newInstance();
+identityTransformer =  fc.newTransformer();
+identityTransformer.setErrorListener(
+    `<identity transformer XML error listener`> );
+>>>
+
+\<xtpipes fields\><<<
+private static TransformerFactory fc;
+private static Transformer identityTransformer;
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Print Named XML Code}
+%%%%%%%%%%%%%
+
+Prints the content of the named XML code. If a file name is not
+provided in the `file' attribute,
+the stderr is assumed.
+% the file name from the command line
+% is assumed. If a file name is not provided in both places, the stdio
+% is assumed.
+%    outPrintWriter.println( xml );
+
+\begin{verbatim}
+<print name="..." file="..." />
+\end{verbatim}
+
+
+
+\<xtpipes entries\><<<
+| print
+>>>
+
+
+\<xtpipes.dtd\><<<
+<!ELEMENT print EMPTY >
+<!ATTLIST print
+          name CDATA #REQUIRED
+          file CDATA #IMPLIED
+>
+>>>
+
+
+
+\<execute print\><<<
+String name = node.getAttributes()
+                 .getNamedItem( "name" ).getNodeValue();
+String xml = (String) map.get(name);
+if( node.getAttributes().getNamedItem( "file" )==null ){
+   if( !Xtpipes.trace ){
+      logWriter.println( "[##]  = xtpipes => print: " + scriptFile );
+   }
+   logWriter.println( XtpipesUni.toUni(xml, "") );
+} else {
+   String file = node.getAttributes()
+                 .getNamedItem( "file" ).getNodeValue();
+   try{
+       FileWriter fw = new FileWriter( file );
+       XtpipesPrintWriter out = new XtpipesPrintWriter( fw );
+       out.println( xml );
+       out.close();
+   } catch(Exception e){
+       instructionErr( node, e.toString(),15 );
+}  }
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Result for Returned Value}
+%%%%%%%%%%%%%
+
+A call to getDOM uses the data for its returned value.
+
+\begin{verbatim}
+<return name="..." />
+\end{verbatim}
+
+
+
+\<xtpipes entries\><<<
+| return
+>>>
+
+
+\<xtpipes.dtd\><<<
+<!ELEMENT return EMPTY >
+<!ATTLIST return
+          name CDATA #REQUIRED
+>
+>>>
+
+
+
+\<execute return\><<<
+String name = node.getAttributes()
+                 .getNamedItem( "name" ).getNodeValue();
+result = (String) map.get(name);
+if( returnToFile ){
+   outPrintWriter.println(result);
+}
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Conditional `if' statements}
+%%%%%%%%%%%%%
+
+Execute the enclosed instructions provided the named XML code
+satisfied the named DTD conditions.
+
+\begin{verbatim}
+<if xml="..." dtd="..." root="..." >
+   ...
+</if>
+\end{verbatim}
+
+
+\<xtpipes entries\><<<
+| if
+>>>
+
+
+\<xtpipes.dtd\><<<
+<!ELEMENT if (#PCDATA `<xtpipes entries`>)* >
+<!ATTLIST if
+          xml CDATA #REQUIRED
+          dtd CDATA #REQUIRED
+          root CDATA #REQUIRED
+>
+>>>
+
+\<execute if\><<<
+try{
+   `<doc = dtd + xml`>
+   byte [] bytes = doc.getBytes("UTF-8");
+   ByteArrayInputStream bais = new ByteArrayInputStream( bytes );
+   InputSource in = new InputSource( bais );
+   SAXParser saxParser = saxFactory.newSAXParser();
+   XMLReader xmlReader = saxParser.getXMLReader();
+   xmlReader.parse( in );
+   `<trace if true`>
+   execute( node.getFirstChild() );
+} catch ( Exception e ){ `<trace if false`> }
+>>>
+
+
+\<doc = dtd + xml\><<<
+String xml = node.getAttributes()
+                 .getNamedItem( "xml" ).getNodeValue();
+String dtd = node.getAttributes()
+                 .getNamedItem( "dtd" ).getNodeValue();
+// String root = node.getAttributes()
+//                 .getNamedItem( "root" ).getNodeValue();
+String doc = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n"
+             + "<!DOCTYPE doc [\n"
+             + (String) map.get(dtd)
+             + "\n]>\n"
+             + (String) map.get(xml) ;
+>>>
+
+
+
+\<xtpipes initialization\><<<
+saxFactory = SAXParserFactory.newInstance();
+saxFactory.setValidating(true);
+>>>
+
+
+\<xtpipes fields\><<<
+private static SAXParserFactory saxFactory;
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Handle XSLT}
+%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%
+\subsubsection{Outline}
+%%%%%%%%%%%%%
+
+Associate a name to the result of applying the named XSLT
+transformation on the named XML code.  If the name is omitted, the
+outcome is sent to the output file named in the command line. If such
+file name is not provided, the standard I/O stream is assumed.
+
+
+\begin{verbatim}
+<xslt  name="..." xml="..."  xsl="..." />
+\end{verbatim}
+
+Note that XSLT is just a restricted kind of XML code.
+
+
+
+\<xtpipes entries\><<<
+| xslt
+>>>
+
+
+\<xtpipes.dtd\><<<
+<!ELEMENT xslt EMPTY >
+<!ATTLIST xslt
+          name CDATA #IMPLIED
+          xml  CDATA #REQUIRED
+          xsl  CDATA #REQUIRED
+>
+>>>
+
+\<execute xslt\><<<
+try{
+   `<StreamSource inDoc = ...`>
+   `<StreamSource inXslt = ...`>
+   `<StreamResult outDoc = ...`>
+   errMssg = null;
+   fc.setErrorListener( `<transformer factory XSLT error listener`> );
+   Transformer transformer = fc.newTransformer( inXslt );
+   transformer.setErrorListener( `<transformer XML error listener`> );
+   transformer.transform(inDoc, outDoc );
+   `<store xslt outcome`>
+} catch ( javax.xml.transform.TransformerException e ){
+   if( Xtpipes.trace ){ e.printStackTrace(); }
+   instructionErr( node,
+                   e.getMessage()
+                   +
+                   ((errMssg==null)? "" : ("; " +errMssg))
+                   , 37);
+} catch ( Exception e ){
+   if( Xtpipes.trace ){ e.printStackTrace(); }
+   instructionErr( node, (errMssg==null)? e.toString()
+                                        : e.toString() + "; " + errMssg
+                       , 16 );
+}
+>>>
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsubsection{Input}
+%%%%%%%%%%%%%
+
+\<StreamSource inDoc = ...\><<<
+Node xmlNode = node.getAttributes().getNamedItem( "xml" );
+StreamSource inDoc = null;
+String xml;
+if( xmlNode == null ){
+   `<inDoc = input stream source`>
+} else {
+   xml = xmlNode.getNodeValue();
+   String doc = (String) map.get(xml);
+   if( doc!=null ){
+      byte [] bytes = doc.getBytes("UTF-8");
+      ByteArrayInputStream bais = new ByteArrayInputStream( bytes );
+      inDoc = new StreamSource( bais );
+}  }
+>>>
+
+
+
+
+\<inDoc = input stream source\><<<
+if( inData == null ){
+   inDoc = new StreamSource( new File(inFile) );
+} else {
+   byte [] bytes = inData.getBytes("UTF-8");
+   ByteArrayInputStream bais = new ByteArrayInputStream( bytes );
+   inDoc = new StreamSource( bais );
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsubsection{XSLT}
+%%%%%%%%%%%%%
+
+\<StreamSource inXslt = ...\><<<
+String xslt = node.getAttributes()
+                  .getNamedItem( "xsl" ).getNodeValue();
+String templates = (String) map.get(xslt);
+byte [] bytes = templates.getBytes("UTF-8");
+ByteArrayInputStream bais =  new ByteArrayInputStream( bytes );
+StreamSource inXslt = new StreamSource( bais );
+>>>
+
+
+%%%%%%%%%%%%%
+\subsubsection{Output}
+%%%%%%%%%%%%%
+
+
+
+\<StreamResult outDoc = ...\><<<
+Node nameNode = node.getAttributes().getNamedItem("name");
+StreamResult outDoc;
+CharArrayWriter caos = null;
+if( nameNode == null ){
+   outDoc = new StreamResult(outPrintWriter);
+   returnToFile = false;
+} else {
+   caos = new CharArrayWriter();
+   outDoc  = new StreamResult(caos);
+}
+>>>
+
+
+\<store xslt outcome\><<<
+`<store chars into map`>
+>>>
+
+
+
+
+
+\<NO\><<<
+ByteArrayOutputStream baos = new ByteArrayOutputStream();
+StreamResult outDoc  = new StreamResult(baos);
+>>>
+
+
+\<NO\><<<
+String name = node.getAttributes()
+                .getNamedItem( "name" ).getNodeValue();
+bytes = baos.toByteArray();
+map.put( name, (Object) new String(bytes) );
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{DOM}
+%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+\subsubsection{Outline}
+%%%%%%%%%%%%%
+
+
+Associate a name to the result of applying the named method on the DOM
+of the named XML code. The method should have an interface similar to
+\verb+public static void m( Node dom )+.
+
+\begin{verbatim}
+<dom name="..." xml="..." method="..." class="..." />
+\end{verbatim}
+
+
+\<xtpipes entries\><<<
+| dom
+>>>
+
+
+\<xtpipes.dtd\><<<
+<!ELEMENT dom EMPTY >
+<!ATTLIST dom
+          name   CDATA #REQUIRED
+          xml    CDATA #REQUIRED
+          method CDATA #REQUIRED
+          class  CDATA #REQUIRED
+          dcl    CDATA #IMPLIED DEFAULT (yes | no) "no"
+>
+>>>
+
+
+
+\<execute dom\><<<
+try{
+   `<load xml into dom`>
+   `<transform dom`>
+   `<store dom into map`>
+} catch ( NoSuchMethodException e ){
+   instructionErr( node,
+       "could not find method: " + e.getMessage(), 18 );
+} catch ( java.lang.reflect.InvocationTargetException e ){
+   if( Xtpipes.trace ){ e.printStackTrace(); }
+   instructionErr( node, e.getCause().toString(), 36);
+} catch ( Exception e ){
+   if( Xtpipes.trace ){ e.printStackTrace(); }
+   instructionErr( node, e.toString(), 20 );
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsubsection{Transform}
+%%%%%%%%%%%%%
+
+
+\<transform dom\><<<
+String className = node.getAttributes()
+             .getNamedItem( "class" ).getNodeValue();
+String methodName = node.getAttributes()
+             .getNamedItem( "method" ).getNodeValue();
+Class <?> cls = Class.forName( className );
+Class<?>  [] argTypes = { Node.class };
+Method m = cls.getMethod( methodName, argTypes );
+Object parmValues[] = new Object[1];
+parmValues[0] = dom;
+m.invoke( null, parmValues );
+>>>
+
+\<xtpipes initialization\><<<
+domFactory.setValidating(false);
+domBuilder = domFactory.newDocumentBuilder();
+>>>
+
+\<xtpipes fields\><<<
+private static DocumentBuilder domBuilder;
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsubsection{Input Stream}
+%%%%%%%%%%%%%
+
+
+\<load xml into dom\><<<
+Node xmlNode = node.getAttributes().getNamedItem( "xml" );
+Document dom;
+if( xmlNode == null ){
+   `<dom = parse input`>
+} else {
+   String xml = xmlNode.getNodeValue();
+   String doc = (String) map.get(xml);
+   if( doc == null ){
+      instructionErr( node, "improper xml attribute value", 18 );
+   }
+   byte [] bytes = doc.getBytes("UTF-8");
+   InputStream is = new ByteArrayInputStream( bytes );
+   dom = domBuilder.parse (is);
+}
+>>>
+
+\<dom = parse input\><<<
+if( inData == null ){
+   dom = domBuilder.parse( new File(inFile) );
+} else {
+   byte [] bytes = inData.getBytes("UTF-8");
+   InputStream is =  new ByteArrayInputStream( bytes );
+   dom = domBuilder.parse (is);}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsubsection{Output Stream}
+%%%%%%%%%%%%%
+
+
+\<store dom into map\><<<
+`<StreamResult outDoc = ...`>
+cleanXmlns(dom);
+DOMSource domSource = new DOMSource(dom);
+try{
+   identityTransformer.transform( domSource, outDoc );
+} catch ( javax.xml.transform.TransformerException e ){
+  String s = Xtpipes.trace?
+      (
+        "\n------------------------ xml code ------------------------\n"
+      + serialize( dom )
+      + "\n----------------------------------------------------------\n"
+      )
+      : "";
+   instructionErr( node, e.getMessage() + s, 35 );
+}
+if( nameNode != null ){
+  String name = nameNode.getNodeValue();
+  char [] chars = caos.toCharArray() ;
+  String domString = new String(chars);
+  `<remove dom dcl`>
+  map.put( name, (Object) domString );
+}
+>>>
+
+
+\<remove dom dcl\><<<
+Node dcl = node.getAttributes().getNamedItem( "dcl" );
+if(  ((dcl == null) || (dcl.getNodeValue().equals("no") ))
+     &&
+       (domString.length() > 7)
+     &&
+       domString.startsWith("<?xml")
+     &&
+       !Character.isLetterOrDigit( domString.charAt(5) )
+){
+    domString = domString.substring( domString.indexOf("?>") + 2 );
+}
+>>>
+
+
+
+
+
+
+\<NO\><<<
+String name = node.getAttributes()
+             .getNamedItem( "name" ).getNodeValue();
+ByteArrayOutputStream baos = new ByteArrayOutputStream();
+identityTransformer.transform( new DOMSource(dom),
+                             new StreamResult(baos) );
+bytes = baos.toByteArray();
+map.put( name, (Object) new String(bytes) );
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Handle SAX}
+%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+\subsubsection{outline}
+%%%%%%%%%%%%%
+
+Apply the specified content-handler and filters on the XML
+content.
+
+\begin{verbatim}
+<sax name="..." xml="..." content-handler="..."
+                          lexical-handler="..." >
+   <script element="..." > ... </script>
+   ...
+   <script element="..." > ... </script>
+</sax>
+\end{verbatim}
+
+
+If provided, the {\bf name attribute} is associated to the outcome.
+If omitted, the output file name from the command line is assumed. If
+such file name is not provided, the standard I/O stream is assumed.
+
+If the {\bf xml attribute} is not internally defined (within the hash
+table), a file name is assumed.  If not provided, it stands for the
+input file name provided in the command line.
+
+The \verb+content-handler+ attribute gets a comma seperated list of
+classes names. The first argument refers to a content handler, the
+other arguments refer to filters. A content handler gets five
+arguments: output stream, an HashMap refering to the different scripts
+enclosed by the sax instruction, a method, log stream, and a boolean
+trace indicator.  A filter and a lexical-constractor gets three
+arguments: output stream, log stream, and a boolean trace indicator.
+
+The sax instruction applies the filters and the content handler on the
+provided xml string.  The script elements offer definitions of scripts
+delivered to the content handler. The ScriptsManager content handler
+of the distribution (Section~\ref{ScriptsManager}), for instance,
+invokes these scripts when their corresponding named elemets are
+encountered.
+
+
+\<xtpipes entries\><<<
+| sax
+>>>
+
+
+\<xtpipes.dtd\><<<
+<!ELEMENT sax (#PCDATA | script)*  >
+<!ELEMENT script (#PCDATA `<xtpipes entries`> )*  >
+<!ATTLIST sax
+          name            CDATA #IMPLIED
+          xml             CDATA #IMPLIED
+          content-handler CDATA #REQUIRED
+          lexical-handler CDATA #IMPLIED
+>
+<!ATTLIST script
+          element CDATA #REQUIRED
+>
+>>>
+
+\<execute sax\><<<
+String errMsg = "";
+try{
+   `<load xml into input source`>
+   `<String [] className = ...`>
+   `<ch := content handler`>
+   `<get sax reader`>
+   XMLReader reader = saxReader;
+   `<insert sax filters`>
+   errMsg = "setContentHandler( "
+            + className[0].trim() + " )";
+   saxReader.setContentHandler( (org.xml.sax.ContentHandler) ch );
+   `<saxReader += lexical handler`>
+   `<saxReader := ignore DOCTYPE statement`>
+   if( inputSource==null ){
+       `<open sax input file`>
+   } else {
+       errMsg = "xtpipes sax parsing error";
+       saxReader.parse( inputSource );
+   }
+   `<store chars into map`>
+   saxReaderStack.push( reader );
+} catch ( java.io.FileNotFoundException e ){
+   instructionErr( node, errMsg
+                   + "could not find file: " + e.getMessage(), 19 );
+} catch ( ClassNotFoundException e ){
+   instructionErr( node, errMsg
+                   + " class not found: "
+                   + e.getMessage() + "\n classpath = "
+                   + System.getProperty("java.class.path")
+                   + " ---", 22 );
+} catch ( java.lang.reflect.InvocationTargetException e ){
+   instructionErr( node, errMsg + ": " + e.getCause(), 23 );
+} catch ( Exception e ){
+   Xtpipes.logWriter.flush();
+   e.printStackTrace();
+   instructionErr( node, errMsg + ": " + e.toString(), 29 );
+}
+>>>
+
+\<open sax input file\><<<
+errMsg = "While parsing file " + xml + ": ";
+InputStream inputStream = null;
+if( Xtpipes.ml2xml == null ){
+   if( Xtpipes.trace ){
+       Xtpipes.logWriter.println(
+         "No request for ml2xml configuration (command line option -x)" );
+   }
+   `<inputStream := ml2xml-less imput`>
+} else {
+   `<inputStream := (InputStream) new Ml2xml(filename, "foo.m2x")`>
+}
+saxReader.parse( new InputSource(inputStream) );
+`<Ml2xml close files`>
+>>>
+
+\<inputStream := ml2xml-less imput\><<<
+try{
+    inputStream = (InputStream) (new File(xml).toURI().toURL().openStream());
+} catch ( java.io.FileNotFoundException ioe ){
+    try{
+       URL url = null;
+       try {
+           url = new URL(xml);
+       } catch ( java.net.MalformedURLException fnf ){
+           url = new File(xml).toURI().toURL();
+       }
+       inputStream = (InputStream) (url.openStream());
+    } catch ( java.io.FileNotFoundException fnf ){
+        inputStream = (InputStream)
+           (
+              new File( new File(xml).toURI().toURL().toString() )
+              . toURI().toURL()
+              . openStream()
+           );
+}   }
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsubsection{SAX Reader}
+%%%%%%%%%%%%%
+
+The sax reader is pushed into the stack when its job is done, for
+use in other sax instructions.  The stack is needed because nested sax
+instructions need unspecified number of readers. The filters may
+change the sax readers, so the readers need saving for later storing
+them in the stacks.
+
+\<get sax reader\><<<
+XMLReader saxReader;
+if( saxReaderStack.empty() ){
+   SAXParser saxParser = saxFactory.newSAXParser();
+   saxReader = saxParser.getXMLReader();
+   `<saxReader := ignore DOCTYPE statement`>
+} else {
+   saxReader = (XMLReader) saxReaderStack.pop();
+}
+>>>
+
+
+
+
+\<xtpipes initialization\><<<
+saxFactory = SAXParserFactory.newInstance();
+saxFactory.setValidating(false);
+>>>
+
+\<xtpipes fields\><<<
+private static Stack <XMLReader> saxReaderStack;
+>>>
+
+
+\<init fields\><<<
+saxReaderStack = new Stack <XMLReader> ();
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Handling DOCTYPE Statements}
+%%%%%%%%%%%%%
+
+
+The following code hides the DOCTYPE entry when searching the xtpipes
+processing instruction and when loading an input file.
+
+\<saxReader := ignore DOCTYPE statement\><<<
+saxReader.setEntityResolver(new org.xml.sax.EntityResolver() {
+   public InputSource resolveEntity(
+                          String publicId, String systemId) {
+     if( (new File(systemId)).exists() ){
+        return new org.xml.sax.InputSource( systemId );
+      }
+      StringReader strReader = new StringReader("");
+      return new org.xml.sax.InputSource(strReader);
+   }
+});
+>>>
+
+The default SAX behavior observes the DOCTYPE statement and assumes
+the following setup.
+
+\begin{verbatim}
+saxReader.setEntityResolver(new org.xml.sax.EntityResolver() {
+   public InputSource resolveEntity(
+      String publicId, String systemId) {
+      return null;
+   }
+});
+\end{verbatim}
+
+
+
+
+%%%%%%%%%%%%%
+\subsubsection{Input}
+%%%%%%%%%%%%%
+
+
+\<load xml into input source\><<<
+Node xmlNode = node.getAttributes().getNamedItem( "xml" );
+InputSource inputSource=null;
+String xml = null;
+if( xmlNode == null ){
+   `<load xml from input`>
+} else {
+   xml = xmlNode.getNodeValue();
+   String doc = (String) map.get(xml);
+   if( doc!=null ){
+      byte [] bytes = doc.getBytes("UTF-8");
+      ByteArrayInputStream bais = new ByteArrayInputStream( bytes );
+      inputSource = new InputSource( bais );
+}  }
+>>>
+
+
+\<load xml from input\><<<
+if( inData == null ){
+   xml = inFile;
+} else {
+   byte [] bytes = inData.getBytes("UTF-8");
+   ByteArrayInputStream bais = new ByteArrayInputStream( bytes );
+   inputSource = new InputSource( bais );
+}
+>>>
+
+
+%%%%%%%%%%%%%
+\subsubsection{Output Stream}
+%%%%%%%%%%%%%
+
+
+\<output stream for sax\><<<
+Node nameNode = node.getAttributes().getNamedItem("name");
+PrintWriter out;
+CharArrayWriter caos = null;
+if( nameNode == null ){
+   out = outPrintWriter;
+   returnToFile = false;
+} else {
+   caos = new CharArrayWriter();
+   out = new PrintWriter( caos );
+}
+>>>
+
+\<store chars into map\><<<
+if( nameNode != null ){
+   String name = nameNode.getNodeValue();
+   char [] chars = caos.toCharArray() ;
+   map.put( name, (Object) new String(chars) );
+}
+>>>
+
+Note: Characters are prefered over bytes as they support
+unicode.
+
+%%%%%%%%%%%%%
+\subsection{Get Content Handler for SAX}
+%%%%%%%%%%%%%
+
+\<String [] className = ...\><<<
+String [] className = node.getAttributes()
+                     .getNamedItem( "content-handler" )
+                     .getNodeValue()
+                     .split(",");
+>>>
+
+
+
+
+The constructor of a content handler is provided five arguments:
+
+\begin{itemize}
+\item
+An output stream
+\item
+A hash map containing the enclosed defdinitions of scripts
+\item A method name
+\item A log stream
+\item A trace flag
+\end{itemize}
+
+
+\<ch := content handler\><<<
+Class<?> [] argTypes = {
+         PrintWriter.class, HashMap.class, Method.class,
+         PrintWriter.class, boolean.class };
+`<output stream for sax`>
+Object parmValues[] = new Object[5];
+parmValues[0] = out;
+`<sax scripts`>  parmValues[1] = scripts;
+parmValues[2] = method;
+parmValues[3] = Xtpipes.logWriter;
+parmValues[4] = (Object) Xtpipes.trace;
+Class<?> cls = Class.forName( className[0].trim() );
+Constructor<?> c = cls.getConstructor( argTypes );
+Object ch = (Object) c.newInstance( parmValues );
+>>>
+
+\<sax scripts\><<<
+HashMap <String,Object> scripts = new HashMap <String,Object> ();
+Node script = node.getFirstChild();
+while( script != null ){
+  if( script.getNodeType()==Node.ELEMENT_NODE ){
+     String element = script.getAttributes().getNamedItem( "element" )
+                                       .getNodeValue();
+     if( scripts.containsKey(element) ){
+        System.err.println(
+           "--- Warning --- redfining script: " + element );
+     }
+     scripts.put( element, (Object) script );
+  }
+  script = script.getNextSibling();
+}
+>>>
+
+\<xtpipes initialization\><<<
+Class <?> cls = Xtpipes.class;
+Class<?> [] argTypes = { Node.class, String.class };
+method = cls.getMethod( "execute", argTypes );
+>>>
+
+\<xtpipes fields\><<<
+private static Method method;
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Get Filters}
+%%%%%%%%%%%%%
+
+
+
+\<insert sax filters\><<<
+for( int i=1; i<className.length; i++ ){
+   argTypes = new Class [3];
+   argTypes[0] = PrintWriter.class;
+   argTypes[1] = PrintWriter.class;
+   argTypes[2] = boolean.class;
+   parmValues = new Object[3];
+   parmValues[0] = out;
+   parmValues[1] = Xtpipes.logWriter;
+   parmValues[2] = (Object) Xtpipes.trace;
+   errMsg = "Class.forName( " + className[i].trim() + ") " ;
+   cls = Class.forName( className[i].trim() );
+   errMsg = "get-constructor "
+            + className[i].trim()
+            + "( PrintWriter, PrintWriter, boolean ) " ;
+   c = cls.getConstructor( argTypes );
+   errMsg = "get-object "
+            + className[i].trim()
+            + "( PrintWriter, PrintWriter, boolean ) " ;
+   if( (cls.getModifiers() % 2) != 1 ){
+      errMsg += "; class not defined to be public. ";
+   }
+   XMLFilter filter = (XMLFilter) c.newInstance( parmValues );
+   errMsg = "set-parent "
+            +  className[i].trim()
+            + "( PrintWriter, PrintWriter, boolean ) " ;
+   filter.setParent(saxReader);
+   saxReader = filter;
+}
+>>>
+
+
+The filters are assumed to have a tri-parameter constructors which
+get an output stream for first arguments, log stream for second argument, and
+a trace boolean value for third argument.
+
+
+
+%%%%%%%%%%%%%
+\subsection{Get Lexical Handler for SAX}
+%%%%%%%%%%%%%
+
+
+
+
+
+
+
+
+
+The constructor of a lexical handler is provided the
+content handler as an argument.
+
+
+
+\<saxReader += lexical handler\><<<
+Node lexAttr = node.getAttributes()
+                  .getNamedItem( "lexical-handler" );
+if( lexAttr != null ){
+   String lexName = lexAttr.getNodeValue();
+   argTypes = new Class[3];
+   argTypes[0] = Class.forName( className[0].trim() );
+   argTypes[1] = PrintWriter.class;
+   argTypes[2] = boolean.class;
+   parmValues = new Object[3];
+   parmValues[0] = ch;
+   parmValues[1] = Xtpipes.logWriter;
+   parmValues[2] = (Object) Xtpipes.trace;
+   errMsg = "Class.forName( " + lexName.trim() + ") " ;
+   cls = Class.forName( lexName.trim() );
+   errMsg = "get-constructor " +
+                lexName.trim() +
+                "( " + className[0].trim() + " ) " ;
+   c = cls.getConstructor( argTypes );
+   errMsg = "get-object " +
+               lexName.trim() + "( ... ) " ;
+   Object xh = (Object) c.newInstance( parmValues );
+   errMsg = "set lexical handler " + lexName.trim() + " ";
+   saxReader.setProperty(
+       "http://xml.org/sax/properties/lexical-handler",
+       (org.xml.sax.ext.LexicalHandler) xh
+    );
+}
+>>>
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Entity Resolver}
+%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+\subsection{Interface}
+%%%%%%%%%%%%%
+
+
+
+
+\<new EntityResolver()\><<<
+new XtpipesEntityResolver()
+>>>
+
+\<class XtpipesEntityResolver\><<<
+class XtpipesEntityResolver implements  org.xml.sax.EntityResolver {
+   `<InputSource resolveEntity(publicID, systemId)`>
+}
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Implementation}
+%%%%%%%%%%%%%
+
+
+
+\<InputSource resolveEntity(publicID, systemId)\><<<
+public InputSource resolveEntity(String publicID, String systemID)
+                                                    throws SAXException {
+   if( Xtpipes.trace ){
+      Xtpipes.logWriter.println( "Resolving: publicID = \" " + publicID
+                + "\"  systemID = \"" + systemID + "\"" );
+   }
+   String file = FileInfo.searchFile( systemID );
+   if( file != null ){
+     try{
+        file = new File(file).toURI().toURL().toString();
+        return new InputSource( file );
+     } catch( java.net.MalformedURLException mfe){
+        throw new SAXException(
+          "--- xtpipes error 30 --- improper file name: " + file  );
+   } }
+   return null;
+}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{File Information}
+%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%
+\subsection{Outline}
+%%%%%%%%%%%%%
+
+
+
+
+% 
+\AtEndDocument{
+   \OutputCodE\<FileInfo.java\>
+}
+
+\AddFile{FileInfo.java}{xtpipes}
+
+\<FileInfo.java\><<<
+package xtpipes;
+/* FileInfo.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+`<FileInfo imports`>
+public class FileInfo{
+     `<FileInfo fields`>
+   public FileInfo(PrintWriter log, String iii_scriptDir, boolean trace) {
+      FileInfo.log = log;
+      FileInfo.ii_scriptDir = iii_scriptDir;
+      FileInfo.trace = trace;
+      `<classPaths[] := ...`>
+      `<scriptPaths[] := ...`>
+   }
+   `<static String searchFile( file )`>
+   `<static String [] getPaths( dirs )`>
+   `<static String cleanPath( path )`>
+   `<static String searchDirectory(dir, file)`>
+}
+>>>
+
+\<FileInfo fields\><<<
+static String [] classPaths = null;
+static String [] scriptPaths = null;
+static java.util.HashMap <String,String> registry =
+                                  new java.util.HashMap <String,String>();
+static String slash = System.getProperty("file.separator");
+static String ii_scriptDir;
+static PrintWriter log;
+static boolean trace;
+>>>
+
+
+\<FileInfo imports\><<<
+import java.io.File;
+import java.io.PrintWriter;
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Search Engine}
+%%%%%%%%%%%%%
+
+
+
+
+\<static String searchFile( file )\><<<
+public static String searchFile( String file ){
+   String key = ((ii_scriptDir == null)? "" : ii_scriptDir )
+                + "!" + file;
+   String result = (String) registry.get( key );
+   if( result == null ){
+      for(int i=0; i<2; i++){
+         if( trace ){
+            log.println( "Searching: " + file );
+         }
+         if( (new File(file)).exists() ){
+            result = ( file.indexOf(slash) == -1 )?
+                         (System.getProperty("user.dir") + slash + file)
+                        :
+                         file;
+         }
+         else {
+            if( ii_scriptDir != null ){
+               `<search file in script directories`>
+            }
+            if( result == null ){
+               `<search file in classpath/xtpipes/lib`>
+         }  }
+         if( result != null ){ break; }
+         file =  new File(file).getName();
+      }
+      if( result != null ){
+        result = FileInfo.cleanPath(result);
+        registry.put(key, result);
+      }
+   }
+   if( trace ){
+      if( result == null ){
+         log.println(
+            "Directory paths from xtpipes command line option -i: "
+                                            + ii_scriptDir );
+      } else { log.println( "Found: " + result + "\n" ); }
+      log.flush();
+   }
+   return result;
+}
+>>>
+
+
+
+\<search file in script directories\><<<
+int k = scriptPaths.length;
+while( k>0 ){
+  k--;
+  if( trace ){
+    log.println( "Searching: " + file
+                   + ", recursively in directory: " + scriptPaths[k] );
+  }
+  result = searchDirectory( new File(scriptPaths[k]), file);
+  if( result != null ){ break; }
+}
+String s = ii_scriptDir + file;
+if( (new File( s )).exists() ){ result = s; }
+>>>
+
+
+\<search file in classpath/xtpipes/lib\><<<
+int k = classPaths.length;
+String toFile = "xtpipes" + slash + "lib" + slash + file;
+while( k>0 ){
+  k--;
+  String s =  classPaths[k] + toFile;
+  if( trace ){ log.println( "Searching: " + s ); }
+  if( new File(s).exists() ){ result = s; break; }
+}
+>>>
+
+
+\<static String searchDirectory(dir, file)\><<<
+static String searchDirectory(File dir, String file) {
+    String result = null;
+    if( dir.isDirectory() ){
+       String [] children = dir.list();
+       for (int i=0; i<children.length; i++) {
+          result = searchDirectory( new File(dir,children[i]), file);
+          if( result != null ) { break; }
+       }
+    } else {
+       String s = dir.toString();
+       if( s.equals(file) || s.endsWith(slash + file) ){
+           result = s;
+        }
+     }
+     return result;
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Class Paths}
+%%%%%%%%%%%%%
+
+
+
+
+\<classPaths[] := ...\><<<
+classPaths = FileInfo.getPaths( System.getProperty("java.class.path") );
+>>>
+
+Script paths are to be encoded in a similar manner as class paths.
+
+\<classPaths[] := ...\><<<
+if( iii_scriptDir != null ){
+   scriptPaths = FileInfo.getPaths( iii_scriptDir );
+}
+>>>
+
+\<static String [] getPaths( dirs )\><<<
+static String [] getPaths( String dirs ){
+      String [] paths = null;
+   paths = dirs.split( System.getProperty("path.separator") );
+   int k = paths.length;
+   while( k>0 ){
+      k--;
+      `<set full path`>
+      int len = paths[k].length();
+      if( (len>1) && (paths[k].lastIndexOf(slash + ".") == (len-1)) ){
+         paths[k]  = paths[k].substring(0,len-1);
+      } else if( (len>0) && ((len-1) != paths[k].lastIndexOf( slash )) ){
+         paths[k] += slash;
+   }  }
+   return paths;
+}
+>>>
+
+
+
+\<set full path\><<<
+paths[k] = cleanPath( paths[k] );
+>>>
+
+\<\><<<
+if( (paths[k].length() > 0) && (paths[k].charAt(0) == '~') ){
+  if( (paths[k].length() == 1)|| (paths[k].charAt(1) != '~') ){
+    paths[k] = System.getProperty( "user.home" ) + paths[k].substring(1);
+}  }
+if( paths[k].charAt(0) == '.' ){
+   paths[k] = System.getProperty( "user.dir" ) + slash + paths[k];
+}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Input Objects for  XML Files}
+%%%%%%%%%%%%%%%%%%
+
+The XML files my contain faults as a brute force approach is applied in
+which the file is scanned directly without trying to build an XML object.
+
+%%%%%%%%%%%%%
+\subsection{Outline}
+%%%%%%%%%%%%%
+
+% 
+\AtEndDocument{
+   \OutputCodE\<InputObject.java\>
+}
+
+\AddFile{InputObject.java}{xtpipes}
+
+
+\<InputObject.java\><<<
+package xtpipes;
+/* InputObject.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+`<InputObject imports`>
+
+public class InputObject{
+      `<InputObject fields`>
+   `<public InputObject(...)`>
+   `<java.io.InputStream getInputStream( filename )`>
+   `<java.io.InputStream getInputStream( url )`>
+   `<void buildProfile( boolean trace )`>
+   public InputStream getInputStream(){ return inputStream; }
+   public String getFilename(){
+      return (url == null)?
+         ( (connection == null)? filename
+                               :
+                                 connection . getURL() . toString()
+         )
+       : url;
+   }
+   public String getContentType(){ return contentType; }
+   public String getMetaType(){ return metaType; }
+   public String getPublicId(){ return publicId; }
+   public String getSystemId(){ return systemId; }
+   public String getXtpipes(){ return xtpipes; }
+   public String getRoot(){ return root; }
+   public String getDtdRoot(){ return dtdRoot; }
+}
+>>>
+
+\<InputObject fields\><<<
+InputStream inputStream = null;
+URLConnection connection = null;
+String filename = null;
+static PrintWriter log;
+>>>
+
+\<InputObject imports\><<<
+import java.io.PrintWriter;
+import java.net.URL;
+import java.net.URLConnection;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.InputStream;
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Constructor}
+%%%%%%%%%%%%%
+
+
+
+
+\<public InputObject(...)\><<<
+public InputObject( String filename, PrintWriter log ){
+   InputObject.log = log;
+   filename = filename.trim();
+   try{
+      inputStream = getInputStream(filename);
+   } catch (Exception exp0){
+      if( !filename.startsWith( "http://" ) ){
+         try{
+            String name = "http://" + filename;
+            inputStream = getInputStream( name );
+            filename = name;
+         } catch (Exception exp1){
+            try{
+               String name = FileInfo.cleanPath(filename);
+               inputStream = getInputStream( name );
+               filename = name;
+            } catch (Exception exp2){ inputStream = null; }
+   }  }  }
+   this.filename = filename;
+}
+>>>
+
+\<public InputObject(...)\><<<
+public InputObject( byte [] bytes, PrintWriter log ){
+   InputObject.log = log;
+   inputStream = new ByteArrayInputStream( bytes );
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Stream from a  File Name}
+%%%%%%%%%%%%%
+
+
+
+\<java.io.InputStream getInputStream( filename )\><<<
+private java.io.InputStream getInputStream(
+                                      String filename )
+                                   throws java.io.IOException{
+   if( filename == null ){ return null; }
+   URL url;
+   java.io.InputStream inputStream = null;
+//   String loadingError = "Failed to get requested file.";
+   try {
+      url = new File(filename).toURI().toURL();
+      inputStream =  getInputStream( url );
+   } catch (Exception ie) {
+       try {
+           url = new URL(filename);
+           inputStream =  getInputStream( url );
+       } catch (java.io.FileNotFoundException ife) {
+           throw new java.io.IOException(
+              "File not found: " + filename);
+       } catch (Exception ife) {
+           throw new java.io.IOException(ife + "\n" + ie);
+   }   }
+   return inputStream;
+}
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Stream from a URL}
+%%%%%%%%%%%%%
+
+\<java.io.InputStream getInputStream( url )\><<<
+private java.io.InputStream getInputStream( URL url )
+                            throws java.io.FileNotFoundException,
+                                             java.io.IOException {
+   java.io.InputStream inputStream = null;
+   String errMssg = "";
+   try{
+      connection = null;
+      connection = url.openConnection();
+      connection.setRequestProperty("User-Agent",
+                      "["
+                    + System.getProperty("os.name")
+                    + " / "
+                    + System.getProperty("os.arch")
+                    + "]"
+                    + "["
+                    + System.getProperty("java.version")
+                    + " - "
+                    + System.getProperty("java.vendor")
+                    + "]"
+
+           );
+      inputStream = connection.getInputStream();
+   } catch(java.io.FileNotFoundException ve){
+      errMssg = "File not found: " + url;
+      throw new java.io.FileNotFoundException(
+                 "--- Ml2xml input error --- " + errMssg );
+   } catch (javax.net.ssl.SSLHandshakeException ve){
+      errMssg = "SSL Handshake Exception: " + ve.getMessage();
+      throw new javax.net.ssl.SSLHandshakeException(
+                 "--- Ml2xml input error --- " + errMssg );
+   } catch (java.net.UnknownHostException ve){
+      errMssg = "Unknown Host Exception: " + ve.getMessage();
+      throw new java.net.UnknownHostException(
+                   "--- Ml2xml input error --- " + errMssg );
+   }
+   return inputStream;
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Clean Path}
+%%%%%%%%%%%%%
+
+
+
+\<static String cleanPath( path )\><<<
+public static String cleanPath( String path ){
+     String slash = System.getProperty("file.separator");
+     String userDir = System.getProperty( "user.dir" );
+  `<clean leading wigle`>
+  `<clean leading dots`>
+  `<clean internal dots`>
+  return path;
+}
+>>>
+
+\<clean leading wigle\><<<
+  if( (path.length() > 0) && (path.charAt(0) == '~') ){
+    if( (path.length() == 1) || (path.charAt(1) != '~') ){
+      path = System.getProperty( "user.home" )
+                             + path.substring(1);
+  } }
+>>>
+
+\<clean leading dots\><<<
+  if( path.startsWith("..") ){
+     path = userDir.substring(0,
+               Math.max(0,Math.max(
+                 userDir.lastIndexOf("/")
+                 ,
+                 userDir.lastIndexOf("\\")
+               )))
+            + path.substring(2);
+  }
+  if( path.startsWith(".") ){
+     path = userDir + slash + path.substring(1);
+  }
+>>>
+
+\<clean internal dots\><<<
+  int i;
+  while(
+    ((i=path.indexOf("/..")) != -1)
+    ||
+    ((i=path.indexOf("\\..")) != -1)
+  ){
+    String s = path.substring(0,i);
+    int j = Math.max(s.lastIndexOf("/"), s.lastIndexOf("\\"));
+    path = path.substring(0,j) + path.substring(i+3);
+  }
+  while(
+    ((i=path.indexOf("/.")) != -1)
+    ||
+    ((i=path.indexOf("\\.")) != -1)
+  ){
+    String s = path.substring(0,i);
+    int j = Math.max(s.indexOf("/"), s.indexOf("\\"));
+    path = path.substring(0,j) + path.substring(i+2);
+  }
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Profile: Connecting and Reading the Input File}
+%%%%%%%%%%%%%
+
+\<void buildProfile( boolean trace )\><<<
+public void buildProfile( boolean trace ){
+   if( trace ){
+      log.println(
+         "xtpipes (`version)"
+         + "\n   java.version: "    + System.getProperty("java.version")
+         + "\n   java.class.path: " + System.getProperty("java.class.path")
+         + "\n   os.name: "         + System.getProperty("os.name")
+         + "\n   user.home: "       + System.getProperty("user.home")
+         + "\n   user.dir: "        + System.getProperty("user.dir")
+           );
+   }
+   if( connection != null ){
+     `<profile info from connection`>
+   }
+   `<profile from preamble of file`>
+   if( trace ){
+      log.println(
+           " url = "           + url
+         + "\n contentType = " + contentType
+         + "\n publicId = "    + publicId
+         + "\n systemId = "    + systemId
+         + "\n xtpipes = "     + xtpipes
+         + "\n root = "        + root
+         + "\n dtdRoot = "     + dtdRoot
+      );
+}  }
+>>>
+
+
+\<profile info from connection\><<<
+contentType = connection . getContentType();
+url = connection . getURL() . toString();
+>>>
+
+
+
+\<profile from preamble of file\><<<
+int max = 8192;
+int buffSize = 4096;
+byte [] buff = new byte [ buffSize ];
+int m = 0;
+int length = 0;
+int ch;
+int type = `<undef type`>;
+String token = null;
+while( m < max ){
+   try{
+      int k = Math.min( max - m, buffSize );
+      length = inputStream.read( buff, 0, k );
+      if( length == -1 ){ break; }
+      if( length == 0  ){ continue; }
+   } catch (java.io.IOException e){
+      System.err.println( "--- xtpipes error --- : " + e );
+      break;
+   }
+   for(int i = 0 ; i < length; i++ ){
+     `<search preamble info`>
+     m++;
+}  }
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Profile: Scanning the Different Cases}
+%%%%%%%%%%%%%
+
+
+
+
+\<search preamble info\><<<
+switch( ch = buff[i] ){
+   case  '<':  token = "";
+               type = `<new tok`>;
+               break;
+   case  '>':  if( token != null ){
+                  token = token . replaceAll( "\\s+", " ");
+                  `<at token end`>
+                  token = null;
+               }
+               break;
+   case '\n':
+   case  ' ':  if( token != null ){
+                  `<at token space`>
+               }
+               break;
+   case  '"':
+   case '\'':  if( token == null ){ break; }
+               `<public and system ids`>
+   default:    if( token != null ){
+                  if( type == `<pre doctype`> ){
+                     if( ch == 'D' ){
+                        type = `<doctype`>;
+                        token += (char) ch;
+                     } else { token = null; type = `<undef type`>; }
+                  }
+                  else
+                  if( token.equals("") && (type == `<new tok`>) ){
+                     `<get token type`>
+                  } else { token += (char) ch; }
+}              }
+>>>
+
+
+\<public and system ids\><<<
+if( !token.trim().equals("") ){
+   if( token.trim().charAt(0) == ch ){
+     if( type == `<public id`> ){
+        publicId = token.trim().substring(1);
+        type = `<system id`>;
+        token = "";
+        break;
+     }
+     else if( type == `<system id`> ){
+        systemId = token.trim().substring(1);
+        token = null;
+        break;
+     }
+} }
+>>>
+
+
+\<get token type\><<<
+switch( ch ){
+   case '!': type = `<pre doctype`>;
+             break;
+   case '?': type = `<proc instruction`> ;
+             break;
+   default:  if( Character.isLetter(ch)
+                 && ((root == null) || (metaType == null)) ){
+                type = `<root or meta`>;
+                token += (char) ch;
+             } else { token = null; }
+}
+>>>
+
+\<at token end\><<<
+if( type == `<proc instruction`> ){
+   if( xtpipes == null ){
+      int n = token.length();
+      if( (n > 1) && (token.charAt( n - 1 ) == '?')
+                  && (token.startsWith("xtpipes") ) ){
+         String s = token . substring(7,n-1) . replaceAll( "\\s+", "");
+         n = s.length();
+         if( (n>6) && (s.startsWith("file="))
+                   && (s.charAt(5) == s.charAt(n-1)) ){
+           xtpipes = s.substring(6,n-1);
+   }  }  }
+} else if( type == `<meta`> ){
+   if( metaType == null ){
+      token = token . replaceAll( "\\s+", "");
+      int k = token.indexOf("http-equiv");
+      int n = token.indexOf("content");
+      if( (k != -1) && (n != -1) ){
+         if( token.length() > (Math.max(k,n)+3) ){
+            if( token.substring(k+12).startsWith("Content-Type") ){
+               token = token.substring(n+9);
+               n = token.indexOf(";");
+               if( n !=-1 ){ metaType = token.substring(0,n); }
+   }  }  }  }
+} else if( (type == `<root or meta`>) && (root == null) ){
+   root = token;
+}
+>>>
+
+\<at token space\><<<
+if( type == `<root or meta`> ){
+   if( token.equals("meta") ){
+      if( metaType == null ){
+         type = `<meta`>;
+         token = " ";
+      } else {
+         token = null;
+      }
+   } else {
+      if( root == null ){
+        root = token;
+      }
+      token = null;
+   }
+} else if( type == `<doctype`> ){
+   if( token.equals("DOCTYPE") ){
+      type = `<doctype root`>;
+      token = " ";
+   } else { token = null; }
+} else if( type == `<doctype root`> ){
+   if( !token.trim().equals("") ){
+      dtdRoot = token.trim();
+      token = " ";
+      type = `<doctype id`>;
+   } else { token = null; }
+} else if( type == `<doctype id`> ){
+   if( !token.trim().equals("") ){
+      token = token.trim();
+      if( token.equals("PUBLIC") ){
+         type = `<public id`>;
+         token = "";
+      } else if( token.equals("SYSTEM") ){
+         type = `<system id`>;
+         token = "";
+      } else { token = null; }
+   }
+} else { token += ' '; }
+>>>
+
+
+\<InputObject fields\><<<
+String dtdRoot = null,
+      publicId = null,
+      systemId = null,
+       xtpipes = null,
+           url = null,
+      metaType = null,
+   contentType = null,
+          root = null;
+>>>
+
+\OP{undef type}
+\OP{new tok}
+\OP{root or meta}
+\OP{pre doctype}
+\OP{doctype}
+\OP{doctype root}
+\OP{doctype id}
+\OP{public id}
+\OP{system id}
+\OP{proc instruction}
+\OP{proc root}
+\OP{meta}
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Input Objects for XML Strings}
+%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%
+\subsection{Search String for Indirection}
+%%%%%%%%%%%%%
+
+
+\<search string for xtpipes instruction\><<<
+scriptFile = inputObject.getXtpipes();
+rootName = inputObject.getRoot();
+needScript = true;
+>>>
+
+
+Remove XtPipesSearch!!!!!!!!!!!!!!
+
+\<\><<<
+try{
+       `<get sax reader`>
+       saxReader.setContentHandler( new XtPipesSearch() );
+      `<body of search string for xtpipes instruction`>
+       saxReaderStack.push( saxReader );
+} catch(Exception e){
+e.printStackTrace();
+   instructionErr( node, errMsg + e.toString(), 13 );
+}
+>>>
+
+\<body of search string for xtpipes instruction\><<<
+errMsg = "Searching <?xtpipes file=\"...\"?>  in "
+        + inData.substring(0, Math.min(70,inData.length()))
+        + "... : ";
+byte [] bytes = inData.getBytes("UTF-8");
+ByteArrayInputStream bais = new ByteArrayInputStream( bytes );
+InputSource is = new InputSource( bais );
+saxReader.parse(is);
+>>>
+
+%%%%%%%%%%%%%
+\subsection{The Search Engine}
+%%%%%%%%%%%%%
+
+
+
+\<xtpipes fields DELETED\><<<
+private static class XtPipesSearch extends DefaultHandler {
+   public void  endElement(String uri,
+                           String localName, String qName){
+     `<extract root element name`>
+   }
+   public void processingInstruction(String target, String attrs) {
+     if( !needScript && target.equals("xtpipes") ){
+        `<extract script file name`>
+}  } }
+>>>
+
+
+The input file is
+searched for an alternative script within a processing instruction of
+the form \verb+<?xtpipes file="..." ?>+.
+
+
+\<extract root element name\><<<
+rootName = qName;
+>>>
+
+
+\<extract script file name\><<<
+try {
+   `<get sax reader`>
+   saxReader.setContentHandler(new DefaultHandler() {
+      public void startElement(String uri, String localName,
+         String qName, Attributes atts) {
+         String filename = atts.getValue("file");
+         if( filename != null ){
+            scriptFile = filename;
+            `<show script file name in log file`>
+            needScript = true;
+      }  }
+   });
+   String str = "<xtpipes " + attrs + "/>";
+   StringReader reader = new StringReader(str);
+   InputSource in = new InputSource(reader);
+   saxReader.parse(in);
+   saxReaderStack.push( saxReader );
+} catch(Exception e){
+   System.err.println( "--- Error 10 --- " + e );
+}
+>>>
+
+
+
+
+
+
+
+\<xtpipes fields\><<<
+private static String  rootName;
+>>>
+
+
+\<init fields\><<<
+rootName = null;
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Information About the Transformation}
+%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%
+\subsection{User's System}
+%%%%%%%%%%%%%
+
+
+
+\<output system info\><<<
+logWriter.println(
+     "xtpipes (`version)"
+     + "\n java.version: "    + System.getProperty("java.version")
+     + "\n java.class.path: " + System.getProperty("java.class.path")
+     + "\n os.name: "         + System.getProperty("os.name")
+     + "\n user.home: "       + System.getProperty("user.home")
+     + "\n user.dir: "        + System.getProperty("user.dir")
+);
+for( int k=0; k<args.length; k++ ){
+  logWriter.println( "     " + args[k] );
+}
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Script to be Used}
+%%%%%%%%%%%%%
+
+
+\<show script file name in log file\><<<
+if( messages ){
+   logWriter.println(
+      "Requesting XtPipes script file: "
+      + filename );
+}
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Preamble Attribute}
+%%%%%%%%%%%%%
+
+\<preamble output into log\><<<
+if ( (attr != null) && messages ) {
+   logWriter.println( attr.getNodeValue() );
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Tracing}
+%%%%%%%%%%%%%
+
+
+\<xtpipes fields\><<<
+static boolean trace;
+>>>
+
+\<init fields\><<<
+trace = false;
+>>>
+
+
+
+\<trace element\><<<
+if( trace ){
+   logWriter.print( "[##] = xtpipes => " + instruction );
+   if( node.hasAttributes() ){
+      NamedNodeMap attributes = node.getAttributes();
+      for(int i=0; i < attributes.getLength(); i++ ){
+         Node attr = attributes.item(i);
+         logWriter.print( " "   + attr.getNodeName()
+                         + "=\"" + attr.getNodeValue() + "\"" );
+   } }
+   logWriter.println(); logWriter.flush();
+}
+>>>
+
+\<trace if true\><<<
+if( trace ){
+   logWriter.print( "--> true" );
+}
+>>>
+
+\<trace if false\><<<
+if( trace ){
+   logWriter.print( "--> true" );
+}
+>>>
+
+
+\<trace open script\><<<
+if( trace ){
+   logWriter.println( "(" + scriptFile + ")" );
+}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{loose Ends}
+%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%
+\subsection{Fix XML Defaults}
+%%%%%%%%%%%%%%%%%%
+
+\<xtpipes fields\><<<
+private static String [] ml2xml = null;
+static Class<?> ml2xmlClassObj = null;
+>>>
+
+\<scan ml2xml argument\><<<
+if( args[n].substring(2).equals("") ){
+   if( ml2xml == null ){ ml2xml = new String[0]; }
+} else {
+   if( ml2xml == null ){
+      ml2xml = new String[1];
+   } else {
+      String [] m2x = new String [ml2xml.length + 1];
+      for(int cnt=0; cnt < ml2xml.length; cnt++){
+        m2x[cnt] = ml2xml[cnt];
+      }
+      ml2xml = m2x;
+   }
+   ml2xml[ ml2xml.length - 1 ] = args[n].substring(2);
+}
+>>>
+
+
+\<inputStream := (InputStream) new Ml2xml(filename, "foo.m2x")\><<<
+try{
+   ml2xmlClassObj = Class.forName( "ml2xml.Ml2xml" );
+} catch (java.lang.ClassNotFoundException cnf ){
+   instructionErr( null, "Class not found: ml2xml.Ml2xml", 25 );
+}
+Class<?> [] argTyp = { String.class, String[].class };
+Constructor<?> con = ml2xmlClassObj.getConstructor( argTyp );
+try{
+   `<trace call to ml2xml`>
+   inputStream = (InputStream) con.newInstance(
+         new Object[]{xml, ml2xml}
+      );
+} catch(java.lang.reflect.InvocationTargetException ite){
+   String s = "Problem at: ml2xml.Ml2xml(" + xml + ","
+              + "new String[]{" ;
+   for(int i=0; i < Xtpipes.ml2xml.length; i++){
+      s += ((i==0)? "\"" : ", \"") + Xtpipes.ml2xml[i] + "\"";
+   }
+   s += "})";
+   instructionErr( null, s + "; " + ite.getCause(), 38);
+}
+>>>
+
+ ite.getTargetException().printStackTrace();
+
+
+\<Ml2xml close files\><<<
+if( Xtpipes.ml2xml != null ){
+   Class<?> [] argTyp = {};
+   Method m = ml2xmlClassObj . getMethod( "closeFiles", argTyp );
+   m.invoke( null, new Object[0] );
+}
+>>>
+
+\<trace call to ml2xml\><<<
+if( Xtpipes.trace ){
+   String s = "Calling: ml2xml.Ml2xml(inputStream,"
+              + "new String[]{" ;
+   for(int i=0; i < Xtpipes.ml2xml.length; i++){
+      s += ((i==0)? "\"" : ", \"") + Xtpipes.ml2xml[i] + "\"";
+   }
+   s += "})";
+   Xtpipes.logWriter.println( s );
+}
+>>>
+
+
+\<close ml2xml files\><<<
+if( ml2xmlClassObj != null ){
+  Class<?> [] argTypes = { };
+  Method m = ml2xmlClassObj.getMethod( "closeFiles", argTypes );
+  Object parmValues[] = new Object[0];
+  m.invoke( null, parmValues );
+}
+>>>
+
+
+\<xtpipes imports\><<<
+import java.lang.reflect.Constructor;
+>>>
+
+Ml2xml is referenced through reflection instead of directly so that xtpipes can
+be delivered also without that utility, e.g., for tex4ht where no treatment of faulty
+XML file is to be done. In fact, this approach can be generalized to offer
+arbitrary filter for the input.
+
+
+
+
+%%%%%%%%%%%%%%%%%% 
+\subsection{Unicode Filter}
+%%%%%%%%%%%%%%%%%%
+
+Non-ASCII characters are translated into unicode hexadecimal entities.
+The same holds for ascii characters listed within the filter.
+
+\AtEndDocument{
+   \OutputCodE\<XtpipesUni.java\>
+}
+\AddFile{XtpipesUni.java}{xtpipes}
+
+
+\<XtpipesUni.java\><<<
+/* XtpipesUni.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+package xtpipes;
+public class XtpipesUni{
+   `<String toUni( char[], start, length, filter )`>
+   `<String toUni( String, filter )`>
+}
+>>>
+
+\<String toUni( char[], start, length, filter )\><<<
+private static int D800 = Integer.parseInt("D800", 16);
+private static int DFFF = Integer.parseInt("DFFF", 16);
+private static int DC00 = Integer.parseInt("DC00", 16);
+private static int X400 = Integer.parseInt("400",16);
+private static int X10000 = Integer.parseInt("10000",16);
+
+
+public static String toUni( char[] ch, int start, int length,
+                                           String filter ){
+   StringBuffer buf = new StringBuffer(length);
+   for (int i = 0; i < length; i++) {
+       int chr = ch[ start + i ];
+       boolean ascii =  (chr == '\n')
+                        || (chr > 31) && (chr < 127) ;
+       if( filter.indexOf(chr) > -1 ){ ascii = false; }
+
+       if( (chr >= D800) && (chr<= DFFF) ){
+          chr = ((ch[i] - D800) * X400 + (ch[++i] - DC00)) + X10000;
+       }
+
+
+       buf.append(
+         ascii ? Character.toString((char) chr)
+               : ("&#x"
+                 + Integer.toHexString(chr).toUpperCase()
+                 + ";" ) );
+   }
+   return new String(buf);
+}
+>>>
+
+\<String toUni( String, filter )\><<<
+public static String toUni( String s, String filter ){
+   char [] ch = s.toCharArray();
+   int length = ch.length;
+   return toUni(ch, 0, length, filter);
+}
+>>>
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Error Messagesg}
+%%%%%%%%%%%%%
+
+
+
+
+
+
+\<static void instructionErr(...)\><<<
+private static void instructionErr( Node node, String e, int num )
+                                     throws Exception {
+   String err = "--- xtpipes error " + num + " --- ";
+   if( node != null ){
+      err += "At <" + node.getNodeName();
+      NamedNodeMap attr = node.getAttributes();
+      for(int i=0; i<attr.getLength(); i++){
+         Node nd = attr.item(i);
+         err += " " +
+             nd.getNodeName()  + "=\"" +
+             nd.getNodeValue() + "\"" ;
+      }
+      err += " > : " ;
+   }
+   err += e;
+   `<close ml2xml files`>
+   Xtpipes.logWriter.flush();
+   if( exceptionErrs ) { throw new Exception( err );  }
+   else {
+      System.err.println( err );
+      System.exit(1);
+   }
+}
+>>>
+
+
+
+\<static void instructionErr(...)\><<<
+private static void instructionErr( Node node, String e,
+                                StackTraceElement[] st, int num )
+                                     throws Exception {
+   Xtpipes.logWriter.println(
+      "--- xtpipes error " + num + " --- " + e
+   );
+   for(int i=st.length-1; i>=0; i-- ){
+      Xtpipes.logWriter.println( st[i].toString() );
+   }
+   instructionErr( node, e, num );
+}
+>>>
+
+
+
+
+\<new ErrorHandler()\><<<
+new ErrorHandler() {
+    public void warning(SAXParseException e) throws SAXParseException {
+      showSpecifics("warning",e);
+    }
+    public void error(SAXParseException e) throws SAXParseException {
+      showSpecifics("error",e);
+    }
+    public void fatalError(SAXParseException e) throws SAXParseException {
+      showSpecifics("fatal error",e);
+    }
+    public void showSpecifics(String s, SAXParseException e)
+                                                throws SAXParseException {
+      String err =   "--- xtpipes " + s + " 24 --- " + e.getSystemId()
+                     + " line " + e.getLineNumber()
+                     + " col "  + e.getColumnNumber()
+                     + " : "    + e.getMessage() ;
+      if( exceptionErrs ) { throw new SAXParseException(
+                                     err, (org.xml.sax.Locator) null ); }
+      else {
+         System.err.println( err );
+         System.exit(1);
+}   } }
+>>>
+
+
+
+
+
+The follower listeners catch errors but their messages are not
+delivered through the call to the new exceptions (why?).  The field
+errMssg is used so that error 16 will produce the same error messages.
+
+\begin{description}
+\item[Catches errors in the XSLT file]
+
+
+
+\<transformer factory XSLT error listener\><<<
+new ErrorListener() {
+   public void warning(TransformerException e) throws TransformerException {
+     showSpecifics(e);
+   }
+   public void error(TransformerException e) throws TransformerException {
+     showSpecifics(e);
+   }
+   public void fatalError(TransformerException e) throws TransformerException {
+     showSpecifics(e);
+   }
+   void showSpecifics(TransformerException e)
+                                               throws  TransformerException{
+     String err = e.getMessage() ;
+     String loc = e.getLocationAsString();
+     if( loc != null ){ err = loc + ": " + err; }
+     err = "XSL stylesheet problem: " + err;
+     if( errMssg == null ){ errMssg = err; }
+     throw new TransformerException(err);
+}  }
+>>>
+
+
+\item [Catches errors in the XML file]
+
+\<transformer XML error listener\><<<
+new ErrorListener() {
+   public void warning(TransformerException e) throws TransformerException {
+     showSpecifics(e);
+   }
+   public void error(TransformerException e) throws TransformerException {
+     showSpecifics(e);
+   }
+   public void fatalError(TransformerException e) throws TransformerException {
+     showSpecifics(e);
+   }
+   void showSpecifics(TransformerException e)
+                                               throws  TransformerException{
+     String err = e.getMessage() ;
+     String loc = e.getLocationAsString();
+     if( loc != null ){ err = loc + ": " + err; }
+     if( errMssg == null ){ errMssg = err; }
+     err = "XML document prblem: " + err;
+     throw new TransformerException(err);
+}  }
+>>>
+
+
+\<identity transformer XML error listener\><<<
+new ErrorListener() {
+   public void warning(TransformerException e) throws TransformerException {
+     showSpecifics(e);
+   }
+   public void error(TransformerException e) throws TransformerException {
+     showSpecifics(e);
+   }
+   public void fatalError(TransformerException e) throws TransformerException {
+     showSpecifics(e);
+   }
+   void showSpecifics(TransformerException e)
+                                               throws  TransformerException{
+     String err = e.getMessage() ;
+     String loc = e.getLocationAsString();
+     if( loc != null ){ err = loc + ": " + err; }
+     throw new TransformerException(err);
+}  }
+>>>
+
+
+
+\end{description}
+
+
+\<xtpipes fields\><<<
+public static String errMssg;
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{Serialize Dom}
+%%%%%%%%%%%%%%%%%%
+
+
+\<static String serialize( dom )\><<<
+static String serialize( Node root ){
+   if( root.getNodeType() == Node.TEXT_NODE) {
+         return root.getNodeValue();
+   }
+   if( root.getNodeType() == Node.ELEMENT_NODE) {
+      String ser = "";
+      String tagName = root.getNodeName();
+      ser += "<" + tagName;
+      `<res += serialize attributes`>
+      ser += "\n>";
+      `<res += serialize children`>
+      ser += "</" + tagName + ">";
+      return ser;
+   }
+   if( root.getNodeType() == Node.DOCUMENT_NODE) {
+      String ser = "";
+      `<res += serialize children`>
+      return ser;
+   }
+   if( root == null ){ return "null"; }
+   return "";
+}
+>>>
+
+\<res += serialize children\><<<
+NodeList children = root.getChildNodes();
+if(children.getLength() > 0) {
+   for(int i = 0; i < children.getLength(); i++) {
+      ser += serialize(children.item(i));
+}  }
+>>>
+
+\<res += serialize attributes\><<<
+NamedNodeMap attributes = root.getAttributes();
+for(int i = 0; i < attributes.getLength(); i++) {
+   Attr attribute = (Attr) attributes.item(i);
+   ser += "\n" + attribute.getName() + "=\""
+               + attribute.getValue() + "\" ";
+}
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Clean Xmlns}
+%%%%%%%%%%%%%
+
+
+\<static void cleanXmlns( dom )\><<<
+static ArrayList<String> nsName, nsValue;
+static void cleanXmlns( Node root ){
+   if( root.getNodeType() == Node.ELEMENT_NODE) {
+      int top = nsName.size();
+      `<clean xmlns attributes`>
+      `<clean xmlns in children`>
+       for(int i=nsName.size(); i>top; ){
+         i--;
+         nsName.remove(i);
+         nsValue.remove(i);
+       }
+   } else if( root.getNodeType() == Node.DOCUMENT_NODE) {
+      nsName = new ArrayList<String>();
+      nsValue = new ArrayList<String>();
+      `<clean xmlns in children`>
+      nsName = null;
+      nsValue = null;
+}  }
+>>>
+
+
+
+\<clean xmlns in children\><<<
+NodeList children = root.getChildNodes();
+if(children.getLength() > 0) {
+   for(int i = 0; i < children.getLength(); i++) {
+      cleanXmlns(children.item(i));
+}  }
+>>>
+
+\<clean xmlns attributes\><<<
+ArrayList<Attr> remove = new ArrayList<Attr>();
+NamedNodeMap attributes = root.getAttributes();
+for(int i = 0; i < attributes.getLength(); i++) {
+   Attr attribute = (Attr) attributes.item(i);
+   String name = attribute.getName();
+   if( name.startsWith("xmlns") ){
+     if( (name.length() == 5) || (name.charAt(5) == ':') ){
+        String value = attribute.getValue();
+        `<bool := xmlns active?`>
+        if( bool ){ remove.add(attribute);
+        } else { nsName.add(name); nsValue.add(value); }
+}  } }
+for(int i=remove.size(); i>0; ){
+   i--;
+  ((Element) root).removeAttributeNode( (Attr) remove.get(i) );
+}
+remove = null;
+>>>
+
+\<bool := xmlns active?\><<<
+boolean bool = false;
+for(int k=nsName.size(); k>0; ){
+  k--;
+  if( ((String) nsName.get(k)) . equals(name) ){
+     bool = ((String) nsValue.get(k)) . equals(value);
+     break;
+} }
+>>>
+
+\<xtpipes imports\><<<
+import java.util.ArrayList;
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%% 
+\subsection{Default Script}
+%%%%%%%%%%%%%%%%%%
+
+\AtEndDocument{
+   \OutputCodE\<xtpipes-default.4xt\>
+}
+\expandafter\AddFile\BIN{xtpipes-default.4xt}{xtpipes\Slash lib}
+
+\<xtpipes-default.4xt\><<<
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE xtpipes PUBLIC "-//GURARI//DTD xtpipes//EN" "xtpipes.dtd"  >
+<!-- xtpipes-default.4xt (`version), generated from `jobname.tex
+     Copyright (C) 2009-2010 TeX Users Group
+     Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> -->
+<xtpipes />
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\part{Useful Pre Fabricated Modules}
+%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%
+\section{ScriptsManager: A Content Handler}
+%%%%%%%%%%%%%
+
+\label{ScriptsManager}
+
+
+%%%%%%%%%%%%% 
+\subsection{Outline}
+%%%%%%%%%%%%%
+
+\AtEndDocument{
+   \OutputCodE\<ScriptsManager.java\>
+}
+\AddFile{ScriptsManager.java}{xtpipes\Slash util}
+
+\<ScriptsManager.java\><<<
+/* ScriptsManager.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+package xtpipes.util;
+`<ScriptsManager imports`>
+public class ScriptsManager extends DefaultHandler {
+     `<ScriptsManager fields`>
+     PrintWriter out = null, log = null;
+     HashMap<String,Object> scripts = null;
+     Method method = null;
+     boolean savemode=false;
+     String code="", match = null;
+     Stack<Object[]> stack = new Stack<Object[]>();
+   public ScriptsManager( PrintWriter out,
+                          HashMap<String,Object> scripts,
+                          Method method,
+                          PrintWriter log, boolean trace ){
+     this.out = out;
+     this.log = (log==null)? new PrintWriter( System.err ) : log;
+     this.scripts = scripts;
+     this.method = method;
+   }
+   public void characters(char[] ch, int start, int length){
+     add( XtpipesUni.toUni(ch, start, length, "<>&") );
+   }
+   `<ScriptsManager: void startElement(ns, sName, qName, atts)`>
+   `<ScriptsManager: void endElement(ns, sName, qName)`>
+   protected void add(String s){
+      if( savemode ){ code+=s; }
+      else { out.print(s); }
+}  }
+>>>
+
+
+\<ScriptsManager imports\><<<
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.*;
+import java.io.*;
+import java.lang.reflect.*;
+import java.util.HashMap;
+import java.util.Stack;
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Start Elements}
+%%%%%%%%%%%%%
+
+
+
+
+\<ScriptsManager: void startElement(ns, sName, qName, atts)\><<<
+public void startElement(String ns, String sName,
+                        String qName, Attributes atts) {
+   `<save status of xmlns above element`>
+   `<flag := start new save?`>
+   inBody = true;
+   String s =  "<" + qName + "\n";
+   for(int i=0; i<atts.getLength(); i++ ){
+      String name = atts.getQName(i),
+             value = atts.getValue(i);
+      `<record xmlns`>
+      s += " " + name + "=\"" +
+         XtpipesUni.toUni(value, "<>&\"") + "\"";
+   }
+   if( flag ){ `<add missing xmlns attributes`> }
+   s += ">" ;
+   `<set start element`>
+}
+>>>
+
+
+\<ScriptsManager fields\><<<
+boolean inBody = false;
+>>>
+
+
+\<flag := start new save?\><<<
+String key = (atts==null)?
+               null
+             : (qName + "::" + atts.getValue("class"));
+boolean flag = (key != null) && scripts.containsKey(key);
+
+if( !flag ){
+   key = qName;
+   flag = scripts.containsKey(key);
+}
+>>>
+
+\<set start element\><<<
+if( flag ){
+   Object [] state = { Boolean.valueOf(savemode), code, match };
+   stack.push( state );
+   savemode=true; code=""; match= key;
+} else {
+   Object [] state = { Boolean.valueOf(savemode), null, null };
+   stack.push( state );
+}
+add( s );
+>>>
+
+The parsing of an XML string is similar to that of done by a
+left-to-right bottom up parser of a programming language.
+Specifically, the token are read and send on to the output stream,
+until an element whose name appears in the hash table of scripts is
+encountered.  When such an element is encountered, its body is
+assembled and the corresponding script is applied on the body.  The
+processing might be recursive, in the sense that enclosed elements
+might also have scripts to process them.
+
+The above applies also to an element name concatenated with its class
+attribute value, with the substring `::' as a separator.
+
+%%%%%%%%%%%%%
+\subsection{End Elements}
+%%%%%%%%%%%%%
+
+
+
+\<ScriptsManager: void endElement(ns, sName, qName)\><<<
+public void endElement(String ns, String sName, String qName){
+   String s = "</" + qName + ">";
+   add( s );
+   Object [] state = (Object []) stack.pop();
+   if( (String) state[1] != null ){
+     `<s := invoke script`>
+     `<set end element`>
+     `<recall status of xmlns above element`>
+     if( !s.equals("") ){
+       `<remove xmlns attributes supported from above`>
+       add( s );
+     }
+   } else { `<recall status of xmlns above element`> }
+}
+>>>
+
+
+
+
+
+
+
+\<s := invoke script\><<<
+Object parmValues[] = new Object[2];
+parmValues[0] = scripts.get( match );
+parmValues[1] = code;
+try {
+  s = (String) method.invoke( null, parmValues );
+} catch(java.lang.reflect.InvocationTargetException e){
+   log.println("--- ScriptsManager Error 1 --- " + e.getCause() );
+   log.flush();
+} catch (Exception e){
+   log.println("--- ScriptsManager Error 2 --- " + e );
+   log.flush();
+}
+>>>
+
+
+Can't invoke exception above.
+
+\<set end element\><<<
+savemode = ((Boolean) state[0]).booleanValue();
+code = (String) state[1];
+match = (String) state[2];
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Name Spaces at Start of Elements}
+%%%%%%%%%%%%%
+
+\<record xmlns\><<<
+if( name.startsWith("xmlns") ){
+  if( (name.length() == 5) || (name.charAt(5) == ':') ){
+     `<bool := xmlns active?`>
+     if( !bool ){
+        nsName.add(name); nsValue.add(value);
+} }  }
+>>>
+
+
+
+
+
+\<add missing xmlns attributes\><<<
+HashSet<String> registry = new HashSet<String>();
+for(int i=nsName.size(); i>top; ){
+  i--;
+  registry.add( (String) nsName.get(i) );
+}
+for(int i=top; i>0; ){
+  i--;
+  String nm = (String) nsName.get(i);
+  if( ! registry.contains(nm) ){
+     registry.add( nm );
+     s += " " + nm + "=\"" +
+         XtpipesUni.toUni( (String) nsValue.get(i), "<>&\"") + "\"";
+} }
+>>>
+
+
+
+
+\<ScriptsManager fields\><<<
+ArrayList<String> nsName = new ArrayList<String>(),
+                         nsValue = new ArrayList<String>();
+Stack<Integer> nsStack = new Stack<Integer>();
+>>>
+
+\<ScriptsManager imports\><<<
+import java.util.ArrayList;
+import java.util.HashSet;
+import xtpipes.XtpipesUni;
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Name Spaces at End of Elements}
+%%%%%%%%%%%%%
+
+
+\<remove xmlns attributes supported from above\><<<
+int m = s.indexOf('>');
+char [] attrs = s.substring(0,m).toCharArray();
+int result = qName.length()+1,
+    mark = result,
+    from=-1,
+    control = `<xmlns name`>;
+char delimiter = ' ';
+String name="";
+for(int i=result; i<m; i++ ){
+  attrs[result++] = attrs[i];
+  switch( control ){
+    case  `<xmlns name`>: { `<insert attribute name`>  break; }
+    case `<xmlns quote`>: { `<insert attribute quote`> break; }
+    case `<xmlns value`>: { `<insert attribute value`> break; }
+} }
+s =  (new String(attrs,0, Math.min(result,attrs.length)))
+          + s.substring(m);
+>>>
+
+
+
+\<insert attribute name\><<<
+if( attrs[i] == '=' ){
+   name = (new String(attrs,mark,result-mark-1)).trim();
+   control = `<xmlns quote`>;
+}
+>>>
+
+\<insert attribute quote\><<<
+if( (attrs[i] == '"') || (attrs[i] == '\'') ){
+   delimiter = attrs[i];
+   control = `<xmlns value`>;
+   from = result;
+}
+>>>
+
+\<insert attribute value\><<<
+if( attrs[i] == delimiter ){
+   if( name.startsWith("xmlns")
+       && ((name.length() == 5) || (name.charAt(5) == ':')) ){
+      String value = (new String(attrs,from,result-from-1)).trim();
+      `<bool := xmlns active?`>
+      if( bool ){ result = mark; }
+   }
+   mark = result;
+   control = `<xmlns name`>;
+}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{Name Spaces Inheritence}
+%%%%%%%%%%%%%
+
+
+
+
+
+\<save status of xmlns above element\><<<
+int top = nsName.size();
+nsStack.push( Integer.valueOf(top) );
+>>>
+
+\<recall status of xmlns above element\><<<
+int top = ((Integer) nsStack.pop()) . intValue();
+for(int i=nsName.size(); i>top; ){
+  i--;
+  nsName.remove(i);
+  nsValue.remove(i);
+}
+>>>
+
+
+
+
+
+\OP{xmlns name}
+\OP{xmlns quote}
+\OP{xmlns value}
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%% 
+\section{ScriptsManagerLH: A Lexical Handler}
+%%%%%%%%%%%%%%%%%%
+
+\label{ScriptsManagerLH}
+
+The lexical handler sends its strings to the content hadler.
+
+\AtEndDocument{
+   \OutputCodE\<ScriptsManagerLH.java\>
+}
+\AddFile{ScriptsManagerLH.java}{xtpipes\Slash util}
+
+\<ScriptsManagerLH.java\><<<
+/* ScriptsManagerLH.java (`version), generated from `jobname.tex
+   Copyright (C) 2009-2010 TeX Users Group
+   Copyright (C) `CopyYear.2002. Eitan M. Gurari
+`<TeX4ht copyright`> */
+package xtpipes.util;
+import org.xml.sax.ext.LexicalHandler;
+// import org.xml.sax.ContentHandler;
+import java.io.PrintWriter;
+public class ScriptsManagerLH implements LexicalHandler {
+       ScriptsManager contentHandler;
+       PrintWriter log;
+   public ScriptsManagerLH( ScriptsManager contentHandler,
+                          PrintWriter log, boolean trace ){
+     this.contentHandler = contentHandler;
+     this.log = (log==null)? new PrintWriter( System.err ) : log;
+   }
+   public void comment(char[] ch, int start, int length){
+     if( contentHandler.inBody ){
+        String s = new String(ch, start, length);
+        contentHandler.add(  "<!--" + s + "\n-->");
+   } }
+   public void startEntity(String x){}
+   public void endEntity(String x){}
+   public void startCDATA(){}
+   public void endCDATA(){}
+   public void startDTD(String x, String y, String z){}
+   public void endDTD(){}
+}
+>>>
+
+\begin{itemize}
+\item
+The line breaks in the comments are to avoid sequences of comments
+loosing their intermediate line breaks and as a result causing
+overflow of buffers.
+
+\item The comments in the preamble are included through the
+preamble pattribute of xtpipes.
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\begin{thebibliography}{10}
+\bibitem{ref}
+{\sl The Reflection API},
+Tutorial, Sun Microsystems,
+\url{http://java.sun.com/docs/books/tutorial/reflect/TOC.html}.
+\end{thebibliography}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ifOption{win}
+{
+     \AtEndDocument{
+        \OutputCodE\<dodoc.bat\>
+        \Needs{"dodoc"}
+     }
+}
+{ \ifOption{doc}{
+  \AtEndDocument{\Needs{"
+     mkdir -p doc.dir
+     ;
+     cd doc.dir
+     ;
+     java
+        -classpath
+        ..:../cgjsapi.jar:../../../jldir.dir:../../../jldir.dir/jldoc.jar:../../../ml2xml.dir/ml2xml.dir/bin/ml2xml.jar
+        jldoc.Jldoc
+        -title "Xtpipes APIs"
+        ../work.dir
+     ;
+     cd ..
+     ;
+     /usr/bin/rm -r doc.dir
+  "}}}{}
+}
+
+
+
+
+\<dodoc.bat\><<<
+cd work.dir
+if NOT EXIST bin mkdir bin
+ javac -Xlint:unchecked  -d bin  xtpipes/*.java
+ javac -Xlint:unchecked  -d bin  xtpipes/util/*.java
+ javac -Xlint:unchecked  -d bin  *.java
+cd bin
+ jar cf xtpipes.jar *
+cd ..
+cd xtpipes
+if NOT EXIST bin mkdir bin
+ move ..\bin\xtpipes.jar bin\.
+cd ..
+cd ..
+>>>
+
+\ifOption{win}{
+\immediate\write16{......... work.dir\string \xtpipes\string \lib\string \*}
+\immediate\write16{......... work.dir\string \xtpipes\string \bin\string \xtpipes.jar}
+}{}
+
+
+\ifOption{doc}{\let\DOC\def}{}
+
+
+
+\ifx\DOC\def
+%%%%%%%%%%%%%%%%%%%%%%%
+\<dodoc.bat\><<<
+if NOT EXIST doc.dir mkdir doc.dir
+cd doc.dir
+java -classpath ../../jldoc.dir;../../jldoc.dir/jldoc.jar;../../ml2xml.dir/ml2xml.dir/bin/ml2xml.jar jldoc.Jldoc -title "Xtpipes APIs"  ../work.dir/xtpipes
+cd ..
+rmdir /s /q doc.dir
+>>>
+%%%%%%%%%%%%%%%
+
+\fi
+\
+
+
+
+
+../../..;..;../../jldoc;../../xtpipes/cgjsapi.jar;../../xtpipes/xtpipes.jar;../../jldoc/jldoc.jar;../../ml2xml.dir/ml2xml.dir/bin/ml2xml.jar
+
+\ifdojava
+\ifOption{win} {}{
+\AtEndDocument{\Needs{%
+    "pushd \XTPIPES || exit 1
+     ;
+     jar cf xtpipes.jar *
+     ;
+     popd
+     ;
+     mkdir -p \LIB || exit 1
+     ;
+     mv \XTPIPES xtpipes.jar \LIB
+     ;
+     mkdir -p \HOME texmf/tex4ht/xtpipes/. || exit 1
+     ;
+     cp \XTPIPES xtpipes/lib/*
+        \HOME texmf/tex4ht/xtpipes/.
+"}}
+}
+\fi
+
+
+
+\ifdojava
+\ifOption{win} {}{
+  \AtEndDocument{\Needs{"
+      mkdir -p \LIB\space || exit 1
+      ;
+      find \WORK\space -type f -iname '*.java' -print0
+      | xargs -0 javac -d \XTPIPES\space -sourcepath \WORK
+      ;
+      pushd \XTPIPES || exit 1
+      ;
+      jar cf xtpipes.jar *
+      ;
+      popd
+      ;
+      mv \XTPIPES xtpipes.jar \LIB
+      ;
+      "}}}
+\fi
+
+
+\end{document}

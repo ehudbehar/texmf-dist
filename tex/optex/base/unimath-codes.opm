@@ -1,0 +1,589 @@
+%% This is part of the OpTeX project, see http://petr.olsak.net/optex
+
+\_codedecl \_ncharrmA {Uni math codes <2023-01-17>} % preloaded on demand by \loadmath
+
+   \_doc -----------------------------
+   Unicode math font includes all typical math alphabets together, user needs no
+   load more \TeX/ math families. These math alphabets are encoded by
+   different parts of Unicode table. We need auxiliary macros for setting
+   mathcodes by selected math alphabet.
+   \nl
+   \`\_umathrange` `{<from->-<to>}<class><family>\<first>` sets `\Umathcode`s
+   of the characters in the interval `<from>-<to>` to `\<first>`,
+   `\<first>+1`, `\<first>+2`
+   etc., but \`\_umathcharholes` are skipped
+   (`\_umathcharholes` are parts of the Unicode table not designed for math
+   alphabets, they cause that the math alphabets are
+   not continuously spread out in the table; I mean that the
+   designers were under the influence of drugs when they created
+   this part of the Unicode table).
+   The `<from>-<to>` clause includes characters like~`A-Z`.
+   Note that the `\_umathrange` sets the \`\_classfam` macro as <class>
+   <family> for later use.
+   \_cod -----------------------------
+
+\_newcount\_umathnumA  \_newcount\_umathnumB
+
+\_def\_umathcorr#1#2{\_ea#1\_ea{\_the#2}}
+\_def\_umathprepare#1{\_def\_umathscanholes##1[#1]##2##3\_relax{##2}}
+\_def\_umathvalue#1{\_ea\_umathscanholes\_umathcharholes[#1]{#1}\_relax}
+
+\_def\_umathcharholes{% holes in math alphabets:
+   [119893]{"210E}[119965]{"212C}[119968]{"2130}[119969]{"2131}%
+   [119971]{"210B}[119972]{"2110}[119975]{"2112}[119976]{"2133}[119981]{"211B}%
+   [119994]{"212F}[119996]{"210A}[120004]{"2134}%
+   [120070]{"212D}[120075]{"210C}[120076]{"2111}[120085]{"211C}[120093]{"2128}%
+   [120122]{"2102}[120127]{"210D}[120133]{"2115}[120135]{"2119}
+   [120136]{"211A}[120137]{"211D}[120145]{"2124}%
+}
+\_def\_umathrange#1#2#3#4{\_umathnumB=#4\_def\_classfam{#2 #3 }\_umathrangeA#1}
+\_def\_umathrangeA#1-#2{\_umathnumA=`#1\_relax
+   \_loop
+      \_umathcorr\_umathprepare\_umathnumB
+      \_Umathcode \_umathnumA = \_classfam \_umathcorr\_umathvalue{\_umathnumB}
+      \_ifnum\_umathnumA<`#2\_relax
+         \_advance\_umathnumA by1 \_advance\_umathnumB by1
+   \_repeat
+}
+
+   \_doc -----------------------------
+   A few math characters have very specific Unicode and must be handled
+   individually. We can run \`\_umathrangespec``<list of characters>\relax`
+   just after \^`\_umathrange`. The `\_umathnumB` must be set to the first
+   destination code. The \^`\_umathrangespec` applies to each character from
+   the <list of characters> this:
+   `\Umathcode``<char-code>=\_classfam\_umathnumB` and increments
+   `\_umathnumB`. If `\_umathnumB=0` then it applies
+   `\Umathcode``<char-code>=\_classfam <char-code>`.
+   The \^`\_classfam` and `\_umathnumB` were typically set by previous call
+   of the \^`\_umathrange` macro.
+   \_cod -----------------------------
+
+\_def\_umathrangespec#1{\_ifx#1\_relax \_else
+   \_Umathcode `#1=\_classfam \_ifnum\_umathnumB=0 `#1 \_else \_umathnumB\_fi
+   \_unless\_ifnum\_umathnumB=0 \_advance\_umathnumB by1 \_fi
+   \_ea\_umathrangespec \_fi
+}
+
+   \_doc -----------------------------
+   The math alphabets are set by
+   \`\_rmvariables`, \`\_bfvariables`, \`\_itvariables`, \`\_bivariables`,
+   \`\_calvariables`, \`\_bcalvariables`, \`\_frakvariables`,
+   \`\_bfrakvariables`, \`\_bbvariables`,\nl \`\_sansvariables`,
+   \`\_bsansvariables`, \`\_isansvariables`, \`\_bisansvariables`,
+   \`\_ttvariables`,\nl \`\_itgreek`, \`\_rmgreek,` \`\_bfgreek`, \`\_bigreek`,
+   \`\_bsansgreek`, \`\_bisansgreek`,\nl \`\_itGreek`, \`\_rmGreek`, \`\_bfGreek`,
+   \`\_biGreek`, \`\_bsansGreek`, \`\_bisansGreek`,\nl \`\_rmdigits`,
+   \`\_bfdigits`, \`\_bbdigits`, \`\_sansdigits`, \`\_bsansdigits`,
+   \`\_ttdigits`.\nl
+   They are declared using the
+   \^`\_umathrange {<range>}<class><family><starting-code>` macro.
+   \_cod -----------------------------
+
+\_chardef\_ncharrmA=`A       \_chardef\_ncharrma=`a
+\_chardef\_ncharbfA="1D400   \_chardef\_ncharbfa="1D41A
+\_chardef\_ncharitA="1D434   \_chardef\_ncharita="1D44E
+\_chardef\_ncharbiA="1D468   \_chardef\_ncharbia="1D482
+\_chardef\_ncharclA="1D49C   \_chardef\_ncharcla="1D4B6
+\_chardef\_ncharbcA="1D4D0   \_chardef\_ncharbca="1D4EA
+\_chardef\_ncharfrA="1D504   \_chardef\_ncharfra="1D51E
+\_chardef\_ncharbrA="1D56C   \_chardef\_ncharbra="1D586
+\_chardef\_ncharbbA="1D538   \_chardef\_ncharbba="1D552
+\_chardef\_ncharsnA="1D5A0   \_chardef\_ncharsna="1D5BA
+\_chardef\_ncharbsA="1D5D4   \_chardef\_ncharbsa="1D5EE
+\_chardef\_ncharsiA="1D608   \_chardef\_ncharsia="1D622
+\_chardef\_ncharsxA="1D63C   \_chardef\_ncharsxa="1D656
+\_chardef\_ncharttA="1D670   \_chardef\_nchartta="1D68A
+
+\_protected\_def\_rmvariables     {\_umathrange{A-Z}71\_ncharrmA \_umathrange{a-z}71\_ncharrma}
+\_protected\_def\_bfvariables     {\_umathrange{A-Z}71\_ncharbfA \_umathrange{a-z}71\_ncharbfa}
+\_protected\_def\_itvariables     {\_umathrange{A-Z}71\_ncharitA \_umathrange{a-z}71\_ncharita}
+\_protected\_def\_bivariables     {\_umathrange{A-Z}71\_ncharbiA \_umathrange{a-z}71\_ncharbia}
+\_protected\_def\_calvariables    {\_umathrange{A-Z}71\_ncharclA \_umathrange{a-z}71\_ncharcla}
+\_protected\_def\_bcalvariables   {\_umathrange{A-Z}71\_ncharbcA \_umathrange{a-z}71\_ncharbca}
+\_protected\_def\_frakvariables   {\_umathrange{A-Z}71\_ncharfrA \_umathrange{a-z}71\_ncharfra}
+\_protected\_def\_bfrakvariables  {\_umathrange{A-Z}71\_ncharbrA \_umathrange{a-z}71\_ncharbra}
+\_protected\_def\_bbvariables     {\_umathrange{A-Z}71\_ncharbbA \_umathrange{a-z}71\_ncharbba}
+\_protected\_def\_sansvariables   {\_umathrange{A-Z}71\_ncharsnA \_umathrange{a-z}71\_ncharsna}
+\_protected\_def\_bsansvariables  {\_umathrange{A-Z}71\_ncharbsA \_umathrange{a-z}71\_ncharbsa}
+\_protected\_def\_isansvariables  {\_umathrange{A-Z}71\_ncharsiA \_umathrange{a-z}71\_ncharsia}
+\_protected\_def\_bisansvariables {\_umathrange{A-Z}71\_ncharsxA \_umathrange{a-z}71\_ncharsxa}
+\_protected\_def\_ttvariables     {\_umathrange{A-Z}71\_ncharttA \_umathrange{a-z}71\_nchartta}
+
+\_chardef\_greekrmA="0391   \_chardef\_greekrma="03B1
+\_chardef\_greekbfA="1D6A8  \_chardef\_greekbfa="1D6C2
+\_chardef\_greekitA="1D6E2  \_chardef\_greekita="1D6FC
+\_chardef\_greekbiA="1D71C  \_chardef\_greekbia="1D736
+\_chardef\_greeksnA="1D756  \_chardef\_greeksna="1D770
+\_chardef\_greeksiA="1D790  \_chardef\_greeksia="1D7AA
+
+\_protected\_def\_itgreek    {\_umathrangegreek71\_greekita}
+\_protected\_def\_rmgreek    {\_umathrangegreek71\_greekrma}
+\_protected\_def\_bfgreek    {\_umathrangegreek71\_greekbfa}
+\_protected\_def\_bigreek    {\_umathrangegreek71\_greekbia}
+\_protected\_def\_bsansgreek {\_umathrangegreek71\_greeksna}
+\_protected\_def\_bisansgreek{\_umathrangegreek71\_greeksia}
+\_protected\_def\_itGreek    {\_umathrangeGREEK71\_greekitA}
+\_protected\_def\_rmGreek    {\_umathrangeGREEK71\_greekrmA}
+\_protected\_def\_bfGreek    {\_umathrangeGREEK71\_greekbfA}
+\_protected\_def\_biGreek    {\_umathrangeGREEK71\_greekbiA}
+\_protected\_def\_bsansGreek {\_umathrangeGREEK71\_greeksnA}
+\_protected\_def\_bisansGreek{\_umathrangeGREEK71\_greeksiA}
+
+\_chardef\_digitrmO=`0
+\_chardef\_digitbfO="1D7CE
+\_chardef\_digitbbO="1D7D8
+\_chardef\_digitsnO="1D7E2
+\_chardef\_digitbsO="1D7EC
+\_chardef\_digitttO="1D7F6
+
+\_protected\_def\_rmdigits    {\_umathrange{0-9}71\_digitrmO}
+\_protected\_def\_bfdigits    {\_umathrange{0-9}71\_digitbfO}
+\_protected\_def\_bbdigits    {\_umathrange{0-9}71\_digitbbO}
+\_protected\_def\_sansdigits  {\_umathrange{0-9}71\_digitsnO}
+\_protected\_def\_bsansdigits {\_umathrange{0-9}71\_digitbsO}
+\_protected\_def\_ttdigits    {\_umathrange{0-9}71\_digitttO}
+
+   \_doc -----------------------------
+   The control sequences for `\alpha`, `\beta`, etc.\ are redefined here.
+   The `\alpha` will expand to the character with Unicode `"03B1`, this is a normal
+   character $α$. You can type it directly in your editor if you know how
+   to do this. These sequences are declared by
+   `\_greekdef``<list of sequences>\relax`.
+   \_cod -----------------------------
+
+\_def\_greekdef#1{\_ifx#1\_relax
+   \_else
+      \_edef#1{\_Uchar\_umathnumB}%
+      \_advance\_umathnumB by 1
+      \_ea\_greekdef \_fi
+}
+\_umathnumB="0391
+\_greekdef \Alpha \Beta \Gamma \Delta \Epsilon \Zeta \Eta \Theta \Iota \Kappa
+   \Lambda \Mu \Nu \Xi \Omicron \Pi \Rho \varTheta \Sigma \Tau \Upsilon \Phi
+   \Chi \Psi \Omega \_relax
+
+\_umathnumB="03B1
+\_greekdef \alpha \beta \gamma \delta \varepsilon \zeta \eta \theta \iota \kappa
+   \lambda \mu \nu \xi \omicron \pi \rho \varsigma \sigma \tau \upsilon
+   \varphi \chi \psi \omega \_relax
+
+   \_doc -----------------------------
+   The \`\_umathrangeGREEK``<class><family><first>` and
+   \`\_umathrangegreek``<class><family><first>` macros
+   for setting math codes of Greek characters are defined here. They use \^`\_umathrange`
+   for general codes but the exceptions must be handled by the
+   \^`\_umathrangespec` macro.
+   The exceptions are seven Greek characters:
+   $\epsilon, \vartheta, \varkappa, \phi, \varrho, \varpi, \nabla$.
+   The first six of these characters should behave as lowercase Greek letters
+   and the last one `\nabla` is uppercase Greek letter.
+   \_cod -----------------------------
+
+\_def\epsilon{^^^^03f5} \_def\vartheta{^^^^03d1} \_def\varkappa{^^^^03f0}
+\_def\phi{^^^^03d5}     \_def\varrho{^^^^03f1}   \_def\varpi{^^^^03d6}
+\_def \nabla{^^^^2207}
+
+\_def\_umathrangeGREEK#1#2#3{\_umathrange{^^^^0391-^^^^03a9}#1#2#3% \Alpha-\Omega
+   \_resetnabla  % you can do \let\_resetnabla=\relax if you don't want to change \nabla shape
+}
+\_def\_resetnabla {%
+   \_ifnum\_umathnumB<950 \_umathnumB=0 \_else \_advance\_umathnumB by1 \_fi
+   \_umathrangespec ^^^^2207\_relax % \nabla
+}
+\_def\_umathrangegreek#1#2#3{%
+   \_umathrange{^^^^03b1-^^^^03c9}#1#2#3% \alpha-\omega
+   \_ifnum#3=\_greekrma \_umathnumB=0 \_else \_advance\_umathnumB by2 \_fi
+   \_umathrangespec ^^^^03f5^^^^03d1^^^^03f0^^^^03d5^^^^03f1^^^^03d6\_relax % \epsilon-\varpi
+}
+
+   \_doc -----------------------------
+   The  math alphabets \`\cal`, \`\bbchar`, \`\frak`, \`\script` are re-defined
+   here. The \`\_marm`, \`\_mabf`, \`\_mait`, \`\_mabi`, \`\_matt`
+   used in \^`\rm`, \^`\bf`, \^`\it`, \^`\bi` are re-defined too.\nl
+   You can redefine them again if you need different behavior (for example
+   you don't want to use sans serif bold in math). What to do:
+   \begtt
+   \_protected\_def\_mabf {\_inmath{\_bfvariables\_bfgreek\_bfGreek\_bfdigits}}
+   \_protected\_def\_mabi {\_inmath{\_bivariables\_bigreek\_bfGreek\_bfdigits}}
+   \endtt
+   \`\_inmath` `{<cmds>}` applies `<cmds>` only in math mode.
+   \_cod -----------------------------
+
+\_protected\_def\_inmath#1{\_relax \_ifmmode#1\_fi} % to keep off \loop processing in text mode
+
+% You can redefine these macros to follow your wishes.
+% For example, you need upright lowercase greek letters, you don't need
+% \bf and \bi behave as sans serif in math, ...
+
+\_protected\_def\_marm {\_inmath{\_rmvariables \_rmdigits}}
+\_protected\_def\_mait {\_inmath{\_itvariables \_itGreek}}
+\_protected\_def\_mabf {\_inmath{\_bsansvariables \_bsansgreek \_bsansGreek \_bsansdigits}}
+\_protected\_def\_mabi {\_inmath{\_bisansvariables \_bisansgreek \_bsansGreek \_bsansdigits}}
+\_protected\_def\_matt {\_inmath{\_ttvariables \_ttdigits}}
+\_protected\_def\_bbchar  {\_bbvariables \_bbdigits}
+\_protected\_def\_cal     {\_calvariables}
+\_protected\_def\_frak    {\_frakvariables}
+\_protected\_def\_misans  {\_isansvariables \_sansdigits}
+\_protected\_def\_mbisans {\_bisansvariables \_bisansgreek \_bsansGreek \_bsansdigits}
+\_protected\_def\_script  {\_rmvariables \_fam4 }
+\_protected\_def\_mit     {\_itvariables \_rmdigits \_itgreek \_rmGreek }
+
+\_public \bbchar \cal \frak \misans \mbisans \script \mit ;
+
+   \_doc -----------------------------
+   Each Unicode slot carries information about math type. This is saved in
+   the file `MathClass-15.txt` which is copied to `mathclass.opm` The file
+   has the following format:
+   {\vitt{mathclass.opm}\verbinput (70-85) mathclass.opm }%
+   We have to read this information and convert it to the `\Umathcode`s.
+   \_cod -----------------------------
+
+\_begingroup  % \input mathclass.opm  (which is a copy of MathClass.txt):
+   \_long\_def\_p#1;#2 {\_ifx^#2^\_else
+      \_edef\_tmp{\_csname _c:#2\_endcsname}\_if\_relax\_tmp\_else \_pA#1....\_end#2\_fi
+      \_ea\_p \_fi }
+   \_def\_pA#1..#2..#3\_end#4{%
+      \_ifx\_relax#2\_relax \_pset{"#1}{#4}\_else \_fornum "#1.."#2\_do{\_pset{##1}{#4}}\_fi
+   }
+   \_sdef{_c:L}{1}\_sdef{_c:B}{2}\_sdef{_c:V}{2}\_sdef{_c:R}{3}\_sdef{_c:N}{0}\_sdef{_c:U}{0}
+   \_sdef{_c:F}{0}\_sdef{_c:O}{4}\_sdef{_c:C}{5}\_sdef{_c:P}{6}\_sdef{_c:A}{7}
+   \_def\_pset#1#2{\_Umathcode#1=\_tmp\_space 1 #1\_relax
+      \_if#2O\_Udelcode#1=1 #1\_relax\_fi
+      \_if#2C\_Udelcode#1=1 #1\_relax\_fi
+      \_if#2F\_Udelcode#1=1 #1\_relax\_fi
+   }
+   \_catcode`#=14 \_everyeof={;{} } \_def\par{}
+   \_globaldefs=1 \_ea \_p \_input mathclass.opm
+\_endgroup
+
+   \_doc -----------------------------
+   Each math symbol has its declaration in the file `unicode-math-table.tex`
+   which is copied to `unimath-table.opm`. The file has the following format:
+   {\vitt{unimath-table.opm}\verbinput (36-41) unimath-table.opm }%
+   We have to read this information and set given control sequences as macros
+   which expand to the given Unicode character. This solution enables to use
+   such control sequences in PDF outlines where they expand to the appropriate
+   Unicode character.
+   We don't use `\mathchardef`, we set the mathcodes (class, family, slot)
+   only at single place: for Unicode math characters. For example for we
+   define `\times`:
+   \begtt
+   \def\times{^^d7} \Umathcode "D7 = 2 1 "D7
+   \endtt
+   Because math codes of Greek upright letters vary depending on
+   \^`\_itgreek`, \^`\_bfgreek`,
+   etc.\ macros, we need to keep the access directly to these characters.
+   We define `\mupalpha`, `\mupbeta`, ..., `\mupomega` macros as a code from
+   PUA (Private Use Area) of Unicode table and set mathcode of these
+   codes to the real upright alpha, beta, ..., omega.
+   \_cod -----------------------------
+
+\_begingroup  % \input unimath-table.opm (it is a copy of unicode-math-table.tex):
+   \_umathnumB="F800 % pointer to the Private User Area
+   \_def\UnicodeMathSymbol #1#2#3#4{%
+      \_edef#2{\_Uchar #1}% control sequence is a macro which expands to the Unicode character
+      \_ifnum#1=\_Umathcodenum#1 \_Umathcode#1=0 1 #1 \_fi  % it isn't set by mathclass.opm
+      \_ifx#3\_mathaccent \_protected\_def#2{\_Umathaccent fixed 7 1 #1 }\_fi
+      \_ifnum#1>"390 \_ifnum#1<"3F6
+          \_edef#2{\_Uchar\_umathnumB}% \mupAlpha, \mupBeta, \mupalpha, \mupbeta, ...
+          \_Umathcode\_umathnumB=0 1 #1
+          \_advance\_umathnumB by1
+      \_fi\_fi % \muGreek, \mugreek symbols
+   }
+   \_def\mathfence{F}%
+   \_globaldefs=1 \_input unimath-table.opm
+\_endgroup
+
+   \_doc -----------------------------
+   The macro `\int` expands to an <int-character>. We save the `\mathcode`
+   of the <int-character> to `\_int:<int-character>` using `\Umathchardef` and
+   declare <int-character> as math-active and define it
+   as `\_int:<int-character> \_nolimits`. Moreover, we define `\intop` as
+   `\_int:<int-character>`  (it is the itegral with limits like in plain \TeX).
+   We do this with other int-like operators listed below too.
+   \_cod -----------------------------
+
+\_def\_intwithnolimits#1{\_ifx#1\_relax \_else
+   \_ea\_Umathcharnumdef\_csname _int:#1\_endcsname=\_Umathcodenum\_ea`#1 %
+   \_ea\_def \_csname\_csstring#1op\_ea\_endcsname\_ea{\_csname _int:#1\_endcsname}%
+   \_bgroup \_lccode`\~=\_ea`#1 \_lowercase{\_egroup
+      \_ea\_def\_ea~\_ea{\_csname _int:#1\_endcsname\_nolimits}\_mathcode`~="8000 }%
+   \_ea \_intwithnolimits \_fi
+}
+\_intwithnolimits \int \iint \iiint \oint \oiint \oiiint
+   \intclockwise \varointclockwise \ointctrclockwise \sumint \iiiint \intbar \intBar \fint
+   \pointint \sqint \intlarhk \intx \intcap \intcup \upint \lowint \_relax
+
+   \_doc -----------------------------
+   Many special characters must be declared with care...
+   \_cod -----------------------------
+
+\_global\_Udelcode`<=1 "027E8 % these characters have different meaning
+\_global\_Udelcode`>=1 "027E9 % as normal and as delimeter
+
+\_mit % default math alphabets setting
+
+% hyphen character is transformed to minus:
+\_Umathcode `- = 2 1 "2212
+
+% mathclass defines : as Punct, plain.tex as Rel, we keep mathclass,
+% i.e. there is difference from plain.tex, you can use $f:A\to B$.
+
+% mathclas defines ! as Ord, plain.tex as Close
+\_Umathcode `! = 5 1 `!  % keep plain.tex declaration
+% mathclas defines ? as Punct, plain.tex as Close
+\_Umathcode `? = 5 1 `?  % keep plain.tex declaration
+
+\_Umathcode `* = 2 1 "02217  % equivalent to \ast, like in plain TeX
+
+\_Umathcode "03A2 = 7 1 "03F4 % \varTheta
+
+\_Umathcode `© = 0 1 `© % usage $\copyright$ can be seen in old documents
+
+\_protected\_def \_sqrt       {\_Uradical 1 "0221A }
+\_protected\_def \_cuberoot   {\_Uradical 1 "0221B }
+\_protected\_def \_fourthroot {\_Uradical 1 "0221C }
+
+\_public \sqrt \cuberoot \fourthroot ;
+
+\_protected\_def \_overbrace    #1{\_mathop {\_Umathaccent  7 1 "023DE{#1}}\_limits}
+\_protected\_def \_underbrace   #1{\_mathop {\_Umathaccent bottom 7 1 "023DF{#1}}\_limits}
+\_protected\_def \_overparen    #1{\_mathop {\_Umathaccent  7 1 "023DC{#1}}\_limits}
+\_protected\_def \_underparen   #1{\_mathop {\_Umathaccent bottom 7 1 "023DD{#1}}\_limits}
+\_protected\_def \_overbracket  #1{\_mathop {\_Umathaccent  7 1 "023B4{#1}}\_limits}
+\_protected\_def \_underbracket #1{\_mathop {\_Umathaccent bottom 7 1 "023B5{#1}}\_limits}
+
+\_public \overbrace \underbrace \overparen \underparen \overbracket \underbracket ;
+
+\_protected\_def \widehat            {\_Umathaccent 7 1 "00302 }
+\_protected\_def \widetilde          {\_Umathaccent 7 1 "00303 }
+\_protected\_def \overleftharpoon    {\_Umathaccent 7 1 "020D0 }
+\_protected\_def \overrightharpoon   {\_Umathaccent 7 1 "020D1 }
+\_protected\_def \overleftarrow      {\_Umathaccent 7 1 "020D6 }
+\_protected\_def \overrightarrow     {\_Umathaccent 7 1 "020D7 }
+\_protected\_def \overleftrightarrow {\_Umathaccent 7 1 "020E1 }
+
+\_protected\_def \wideoverbar  {\_Umathaccent 7 1 "00305 }
+\_protected\_def \widebreve    {\_Umathaccent 7 1 "00306 }
+\_protected\_def \widecheck    {\_Umathaccent 7 1 "0030C }
+\_protected\_def \wideutilde   {\_Umathaccent bottom 7 1 "00330 }
+\_protected\_def \mathunderbar {\_Umathaccent bottom 7 1 "00332 }
+\_protected\_def \underleftrightarrow   {\_Umathaccent bottom 7 1 "0034D }
+\_protected\_def \widebridgeabove       {\_Umathaccent 7 1 "020E9 }
+\_protected\_def \underrightharpoondown {\_Umathaccent bottom 7 1 "020EC }
+\_protected\_def \underleftharpoondown  {\_Umathaccent bottom 7 1 "020ED }
+\_protected\_def \underleftarrow        {\_Umathaccent bottom 7 1 "020EE }
+\_protected\_def \underrightarrow       {\_Umathaccent bottom 7 1 "020EF }
+
+\_mathchardef\ldotp="612E
+\_let\|=\Vert
+\_mathcode`\_="8000
+
+\_global\_Umathcode    "22EF         = 0 1 "22EF % mathclass says that it is Rel
+\_global\_Umathcode    "002E         = 0 1 "002E % mathclass says that dot is Punct
+
+\_global\_Umathcode `/ = 0 1 `/  % mathclass says that / is Bin, Plain TeX says that it is Ord.
+
+% compressed dots in S and SS styles (usable in \matrix when it is in T, S and SS style)
+\_protected\_def \vdots {\_relax \_ifnum \_mathstyle>3 \_unicodevdots \_else \_vdots \_fi}
+\_protected\_def \ddots {\_relax \_ifnum \_mathstyle>3 \_unicodeddots \_else \_ddots \_fi}
+\_protected\_def \adots {\_relax \_ifnum \_mathstyle>3 \_unicodeadots \_else \_adots \_fi}
+
+% Unicode superscripts (²) and subscripts as simple macros with \mathcode"8000
+\_bgroup
+   \_def\_tmp#1#2{\_global\_mathcode#1="8000 \_lccode`\~=#1 \_lowercase{\_gdef~}{#2}}
+   \_fornum 0..1 \_do {\_tmp{"207#1}{{^#1}}}
+   \_tmp{"B2}{{^2}}\_tmp{"B3}{{^3}}
+   \_fornum 4..9 \_do {\_tmp{"207#1}{{^#1}}}
+   \_fornum 0..9 \_do {\_tmp{"208#1}{{_#1}}}
+\_egroup
+
+   \_doc -----------------------------
+   Aliases are declared here. They are names not mentioned in the `unimath-table.opm` file
+   but commonly used in \TeX.
+   \_cod -----------------------------
+
+\_let \setminus=\smallsetminus
+\_let \diamond=\smwhtdiamond
+\_let \colon=\mathcolon
+\_let \bullet=\smblkcircle
+\_let \circ=\vysmwhtcircle
+\_let \bigcirc=\mdlgwhtcircle
+\_let \to=\rightarrow
+\_let \le=\leq
+\_let \ge=\geq
+\_let \neq=\ne
+\_protected\_def \triangle {\mathord{\bigtriangleup}}
+\_let \emptyset=\varnothing
+\_let \hbar=\hslash
+\_let \land=\wedge
+\_let \lor=\vee
+\_let \owns=\ni
+\_let \gets=\leftarrow
+\_let \mathring=\ocirc
+\_let \lnot=\neg
+\_let \longdivisionsign=\longdivision
+\_let \backepsilon=\upbackepsilon
+\_let \eth=\matheth
+\_let \dbkarow=\dbkarrow
+\_let \drbkarow=\drbkarrow
+\_let \hksearow=\hksearrow
+\_let \hkswarow=\hkswarrow
+\_let \square=\mdlgwhtsquare
+\_let \blacksquare=\mdlgblksquare
+
+\_let \upalpha=\mupalpha
+\_let \upbeta=\mupbeta
+\_let \upgamma=\mupgamma
+\_let \updelta=\mupdelta
+\_let \upepsilon=\mupvarepsilon
+\_let \upvarepsilon=\mupvarepsilon
+\_let \upzeta=\mupzeta
+\_let \upeta=\mupeta
+\_let \uptheta=\muptheta
+\_let \upiota=\mupiota
+\_let \upkappa=\mupkappa
+\_let \uplambda=\muplambda
+\_let \upmu=\mupmu
+\_let \upnu=\mupnu
+\_let \upxi=\mupxi
+\_let \upomicron=\mupomicron
+\_let \uppi=\muppi
+\_let \uprho=\muprho
+\_let \upvarrho=\mupvarrho
+\_let \upvarsigma=\mupvarsigma
+\_let \upsigma=\mupsigma
+\_let \uptau=\muptau
+\_let \upupsilon=\mupupsilon
+\_let \upvarphi=\mupvarphi
+\_let \upchi=\mupchi
+\_let \uppsi=\muppsi
+\_let \upomega=\mupomega
+\_let \upvartheta=\mupvartheta
+\_let \upphi=\mupphi
+\_let \upvarpi=\mupvarpi
+\_let \varTheta=\mupvarTheta
+\_let \vardelta=\delta
+
+   \_doc -----------------------------
+   The \`\not` macro is redefined here. If the `\_not!<char>` is defined
+   (by \`\_negationof`)
+   then this macro is used. Else centered / is printed over the <char>.
+   \_cod -----------------------------
+
+\_protected\_def\_not#1{%
+  \_trycs{_not!\_csstring#1}{\_mathrel\_mathstyles{%
+     \_setbox0=\_hbox{\_math$\_currstyle#1$}%
+     \_hbox to\_wd0{\_hss$\_currstyle/$\_hss}\_kern-\_wd0 \_box0
+}}}
+\_def\_negationof #1#2{\_ea\_let \_csname _not!\_csstring#1\_endcsname =#2}
+
+\_negationof =         \neq
+\_negationof <         \nless
+\_negationof >         \ngtr
+\_negationof \gets     \nleftarrow
+\_negationof \simeq    \nsime
+\_negationof \equal    \ne
+\_negationof \le       \nleq
+\_negationof \ge       \ngeq
+\_negationof \greater  \ngtr
+\_negationof \forksnot \forks
+\_negationof \in       \notin
+\_negationof \mid      \nmid
+\_negationof \cong     \ncong
+\_negationof \leftarrow \nleftarrow
+\_negationof \rightarrow \nrightarrow
+\_negationof \leftrightarrow \nleftrightarrow
+\_negationof \Leftarrow \nLeftarrow
+\_negationof \Leftrightarrow \nLeftrightarrow
+\_negationof \Rightarrow \nRightarrow
+\_negationof \exists  \nexists
+\_negationof \ni      \nni
+\_negationof \paralel \nparalel
+\_negationof \sim     \nsim
+\_negationof \approx  \napprox
+\_negationof \equiv   \nequiv
+\_negationof \asymp   \nasymp
+\_negationof \lesssim \nlesssim
+\_negationof \ngtrsim \ngtrsim
+\_negationof \lessgtr \nlessgtr
+\_negationof \gtrless \ngtrless
+\_negationof \prec    \nprec
+\_negationof \succ    \nsucc
+\_negationof \subset  \nsubset
+\_negationof \supset  \nsupset
+\_negationof \subseteq \nsubseteq
+\_negationof \supseteq \nsupseteq
+\_negationof \vdash   \nvdash
+\_negationof \vDash   \nvDash
+\_negationof \Vdash  \nVdash
+\_negationof \VDash  \nVDash
+\_negationof \preccurlyeq \npreccurlyeq
+\_negationof \succcurlyeq \nsucccurlyeq
+\_negationof \sqsubseteq \nsqsubseteq
+\_negationof \sqsupseteq \nsqsupseteq
+\_negationof \vartriangleleft \nvartriangleleft
+\_negationof \vartriangleright \nvartriangleright
+\_negationof \trianglelefteq \ntrianglelefteq
+\_negationof \trianglerighteq \ntrianglerighteq
+\_negationof \vinfty \nvinfty
+
+\_public \not ;
+
+   \_doc -----------------------------
+   Newly declared public control sequences are used in internal macros by
+   \OpTeX/. We need to get new meanings for these control sequences in
+   the private namespace.
+   \_cod -----------------------------
+
+\_private
+   \ldotp \cdotp \bullet \triangleleft \triangleright \mapstochar \rightarrow
+   \prime \lhook \rightarrow \leftarrow \rhook \triangleright \triangleleft
+   \rbrace \lbrace \Relbar \Rightarrow \relbar \rightarrow \Leftarrow \mapstochar
+   \longrightarrow \Longleftrightarrow \unicodevdots \unicodeddots \unicodeadots ;
+
+\_endcode
+
+\secc More Unicode-math examples
+
+Example of using additional math font is in section 5.3 in the
+\ulink[http://petr.olsak.net/ftp/olsak/optex/optex-math.pdf]{\tt optex-math.pdf} documentation
+More examples are in the
+\ulink[http://petr.olsak.net/optex/optex-tricks.html]{OpTeX tricks} and in the
+\ulink[https://petr.olsak.net/ftp/olsak/optex/math-doc.pdf]{math.opm} package.
+
+See \url{http://tex.stackexchange.com/questions/308749}
+for technical details about Unicode-math.
+
+\_endinput
+
+History:
+2023-01-17  \int operators re-implemented
+2023-01-15  \mupalpha, \mupbeta etc. have codes from PUA
+2023-01-15  math control sequences are macros, they expand to math characters
+2023-01-14  \epsilon, \vartheta, \varkappa, \phi, \varrho, \varpi, ... bug fix
+2023-01-13  \mupalhpha, \mupbeta, ... bug fix
+2022-11-20  \mathfence's get delimiter code too
+2022-11-18  Delimiters re-implemented
+2022-11-17  \Umathchardef replaced by \chardef
+2022-07-20  \Umathcode for copyright declared
+2022-02-22  \rm, \bf etc. moved to font-select, \_marm, \_mabf etc. introduced
+2022-02-08  several wide math accents added
+2022-01-06  \varTheta corrected
+2021-09-15  \square, \blacksquare defined
+2021-04-25  \triangleright: typo fixed
+2021-04-20  reading mathclass.opm improved
+2021-04-07  \_setnabla introduced, \nabla as uppercase Greek letter
+2021-03-26  \it does \_itGreek
+2021-03-19  \{, \} are defined as mode independent macros in math-macros.opm
+2021-03-11  Umathcode `* declaed as \ast
+2021-02-03  Unicode superscripts, subscripts declared
+2021-01-31  Mathcode of ! ? set to Close, codes undeclared in mathclass set correctly
+2021-01-23  Compressed \vdots, \ddots, \adots in script(script)style.
+2020-11-13  Bug fix: \colon declared
+2020-06-13  Umathcode of / declared as in Plain TeX
+2020-06-07  \_itgreek \_itGreek, \_rmgreek \_rmGreek etc. introduced, names changed
+2020-06-03  \not\mid = \nmid added, \not corrected
+2020-04-30  Bug fix: \phi, \varpi etc. were bad encoded
+2020-04-09  Bug fix: \Udelcode`<, \Udelcode`> added

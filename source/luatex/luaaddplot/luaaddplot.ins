@@ -1,0 +1,19 @@
+
+% $Id: luaaddplot.ins 2 2022-03-19 23:02:47Z reinhard $
+
+\input docstrip
+
+\nopreamble
+\askforoverwritefalse
+
+\usedir{tex/latex/luaaddplot}
+
+   \generate{\file{luaaddplot.sty}{\from{luaaddplot.dtx}{sty}}}
+
+\usedir{tex/generic/luaaddplot}
+
+   \generate{\file{luaaddplot.tex}{\from{luaaddplot.dtx}{tex}}}
+   \nopostamble
+   \generate{\file{luaaddplot.lua}{\from{luaaddplot.dtx}{lua}}}
+
+\endbatchfile

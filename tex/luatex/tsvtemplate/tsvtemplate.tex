@@ -1,0 +1,27 @@
+% Do not read this file twice.
+\ifdefined\tsvloaded\expandafter\endinput\fi
+\chardef\tsvloaded\catcode`\& \catcode`\&=11
+
+% Implement a tsv reader.
+\long\def\applytemplate#1#2#3#4{\begingroup\openin\&r#4
+  \def\&w##1##2{\errmessage{#4: ##1 fields at line \the\&o\space
+  (##2 discarded)}}\catcode`#112 \errorcontextlines0 \ifx\&z#2\&z
+    {\catcode`\ 9 \global\read\&r to\&f}\else {\catcode`\,13
+    \&e\edef\scantextokens{,}{\Uchar`#1}\global\&d{&f}{#2}}\fi
+    \&e\&b\Uchar`#1{#3}}
+\long\def\&d#1#2{\&e\edef\csname#1\endcsname{\scantextokens{#2}}}
+\let\&e\expandafter\newcount\&o\newcount\&p\def\&q{\par}\newread\&r\def\&z{\&z}
+\def\&s#1{\&w{Not enough}{line}} \def\&t#1\&z#2{\&w{Too many}{fields}}
+\def\&a#1{\advance#11 } \long\def\&b#1#2{\&o0 \&p0
+  \def\&x##1#1{\ifx\&z##1\&z\let\&x\relax\else\&a\&p\&d{&\the\&p}{##1}\fi\&x}%
+  \&e\&x\&f#1#1\chardef\&m\&p \long\def\&x##1#1{\&a\&p \ifx\&z##1\&e\&s\else
+    \&d{\csname &\the\&p\endcsname}{##1}\ifnum\&p=\&m\&e\&y\fi\fi\&x}%
+  \long\def\&y\fi\&x##1#1{\fi{#2}\ifx\&z##1\relax\else\&e\&t\fi}\&p0
+  \def\&n{\read\&r to\&l \ifx\&q\&l\closein\&r\let\&n\relax
+    \else\&a\&o{\&e\&x\&l#1\&z#1}\fi\&n}\&n\endgroup}
+
+% A shorthand for Plain \TeX.
+\def\tsvtemplate{\futurelet\&px\&pa}
+\def\&pc{\&pb[]}\def\&pb[#1]{\applytemplate\^^I{#1}}
+\def\&pa{\ifx\&px[\&e\&pb\else\&e\&pc\fi}
+\catcode`\&=\tsvloaded

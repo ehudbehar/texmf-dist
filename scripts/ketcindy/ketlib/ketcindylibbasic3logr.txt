@@ -1,0 +1,111 @@
+// 20191004
+//    Mkketcindyjs changed  ( import for ketcindyjs supported)
+// 20191003
+//    Usegraphics changed ( for tpic )
+// 201908918
+//    Defvar changed ( precision 5 -> 16)
+// 201908916
+//    Setketcindyjs changed ( JSBODY moved to Ketinit)
+// 201908915
+//    Tocindyform,Totexform debugged ( ^ )
+//    Totexform change ( "*" to "\cdot " or "" )
+// 201908914
+//    Fracform changed  ( numer, denom added to output)
+// 201908911
+//    Mketcindyjs debugged  (JSBODY, ` => ')
+// 201908910
+//    Ketcindyjsbody added  (JSBODY)
+//    Setketcindyjs,Mkketcindyjs changed  (JSBODY)
+// 201908905
+//    Mkketcindyjs debugged (multi-initialization)
+// 20190827
+//    Mkketcindyjs debugged (case of no "axes:"  )
+// 20190816
+//    Deffun debugged (return )
+// 20190814
+//    Deffun changed( for ketcindyjs )
+// 20190808
+//    Setplaybuttons changed  ( space option added )
+// 20190802
+//    Movetojs debugged  ( MOVETOJSLIST initialized )
+//    Ketcindyjsdata debugged  ( set() used to remove identical elements )
+// 20190801
+//    Ketcindyjsdata debugged  ( KetcindyjsDataList initialized )
+//    Mkketcindyjs debugged  ( position of KetcindyjsDataList)
+// 20190731
+//    Setplaybuttons added
+// 20190729
+//    Mkketcindyjs changed  (Axes option)
+//    Movetojs changed (number of text available)
+// 20190715
+//    Totexform debugged  ( for pi )
+// 20190712
+//    Totexformpart changed (double spaces replaced with \;)
+//    Tocindyformpart changed (single space replaced with *)
+// 20190704
+//    Parsejson,Resizetextsize,Movetojs,Movetojsexe added
+// 20190629
+//    Fracform changed
+// 20190627
+//    Mkketcindyjs ( Axes and Figure options added )
+// 20190623
+//    Fracform,Gcd added
+// 20190618
+//    Mkketcindyjs changed (Error message)
+// 20190615
+//    WritetoRS,Usegraphics,Viewtex,Figpdf changed  ( indexof for pict2e,tikz )
+// 20190604
+//    Mkketcindyjs changed ( eqflg added )
+// 20190528
+//    Animationparam changed  ( stop => rng)
+// 20190524
+//    Animationparam added
+// 20190522
+//    Textedit2value changed
+//    Tocindyform,Tocindyformpart debugged
+//    Toctexform,Totexformpart debugged
+// 20190521
+//    Textedit2value added
+//    Tocindyform,Tocindyformpart adde
+//    Totexform changed  (pi => \pi, case without "()")
+// 20190515
+//    Totexform,Totexformpart changed(enhanced)
+// 20190514
+//    Totexform,Totexformpart added
+//    Copyketcindyjs debugged  ( "/" added for "cd")
+// 20190506
+//    Setketcindyjs,Mkketcindyjs debugged (color)
+// 20190504
+//    Mkketcindyjs changed ( rmptL,REMOVEPTJS,border,"z" )
+// 20190502
+//    Mkketcindyjs changed ( only ketjs on/off added )
+// 20190430
+//    Textedit added
+//    Mkketcindyjs debugged  ( only ketjs)
+// 20190428
+//    Mkketcindyjs debugged  ( basic3d => basic3 )
+//    Tenkeybrd, Getkey changed
+// 20190427
+//    Tenkeybrd, Getkey added
+// 20190423
+//    Ketcindyjsdata and Mkketcindyjs changed
+// 20190422
+//    Ketcindyjsdata added
+//    Setketcindyjs, Mkketcindyjs changed ( for Ketcindyjsdata )
+// 20190419
+//    Findfun debugged  ( inside of "" removed )
+// 20190417
+//    Mkketcindyjs changed  ( Ignore options )
+// 20190416
+//    Findfun, Extractun, Extractall moved from basic2
+//    Mkketcindyjs, Extractall debugged   ( IgnoreList, DL globalized )
+// 20190415
+//    Makeshell debugged ( Dq -> Dqq )
+//    Makebat debugged ( tex,path  (\) )
+//    parse( ..=  ) changed ( ; added )
+// 20190414
+//    Makeshell Makebat changed  ( Dqq(fname )
+// 20190412
+//    newly generated
+//    Some functions moved from basic2
+//    Figpdf debugged  (SCALEY)

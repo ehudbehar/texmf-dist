@@ -1,0 +1,3994 @@
+% $Id: tex4ht-docbook.tex 904 2021-04-16 20:30:30Z karl $
+% compile 3 times:     latex tex4ht-docbook   
+%                or  xhlatex tex4ht-docbook "html,3,sections+"
+%
+% Copyright 2009-2021 TeX Users Group
+% Copyright 2000-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\ifx \HTML\UnDef
+   \def\HTML{docbook,docbook-math,docbook-mml}                         
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\title{Source for DocBook}% 
+                  \author{Eitan M. Gurari}}   
+   \def\PREAMBLE{\usepackage{url}}
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common}
+\input{tex4ht-cpright}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{File Organization}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<docbook\><<<
+% docbook.4ht (|version), generated from |jobname.tex
+% Copyright 2009-2021 TeX Users Group
+% Copyright |CopyYear.2000. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+
+\<docbook-math\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% docbook-math.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) |CopyYear.2000. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+
+\<docbook-mml\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% docbook-mml.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2010 TeX Users Group
+% Copyright (C) |CopyYear.2000. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+
+\<configure docbook tex4ht\><<<
+\if:latex  |<Hinclude latex|>
+\else      |<Hinclude plain|>  \fi
+>>>
+
+\<configure docbook plain\><<<
+|<Hinclude plain lib|>
+|<Hinclude plain + latex lib|>
+>>>
+
+\<configure docbook latex\><<<
+|<Hinclude latex lib|>
+|<Hinclude plain + latex lib|>
+>>>
+
+\<configure docbook Preamble\><<<    
+\Configure{ext}{xml}
+\edef\Preamble{\Preamble,refcaption}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Origin of Hooks}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%
+\section{tex4ht}
+%%%%%%%%%%%%%%%%%%
+
+\<configure docbook tex4ht\><<<    
+|<tex4ht wrapper|>
+|<tex4ht paragraphs|>
+|<tex4ht cross-linking|>
+>>>
+
+
+%%%%%%%%%%%%%%%
+\section{latex}
+%%%%%%%%%%%%%%%
+
+\<configure docbook latex\><<< 
+|<latex ltsec|>
+|<latex environments|>
+|<latex lists|>
+|<latex tables|>
+|<latex etc|>
+|<obey lines|>
+|<latex, plain|>
+>>>
+
+
+\<configure docbook plain\><<<
+|<latex, plain|>
+>>>
+
+
+
+
+\<latex etc\><<<
+\Configure{ref}{\refLink}{\EndLink}{}      
+\def\refLink#1#2#3\EndLink{
+   \ifvmode
+     \HCode{<note role="ref"><para>}
+     \Link{#1}{#2}\expandafter\ifx \csname RefArg\endcsname\relax\else \Tg<!--ref: \RefArg-->\fi\EndLink
+     #3\HCode{</para></note>}
+   \else
+     \Link{#1}{#2}\expandafter\ifx \csname RefArg\endcsname\relax\else \Tg<!--ref: \RefArg-->\fi\EndLink
+   \fi}
+>>>
+
+
+\<configure docbook-mml latex\><<< 
+\def\refLink#1#2#3\EndLink{%
+   \ifvmode
+      \ifmathml\else
+          \HCode{<note role="ref"><para role="ref">}
+      \fi
+      \Link{#1}{#2}\expandafter\ifx \csname RefArg\endcsname\relax\else \Tg<!--ref: \RefArg-->\fi\EndLink
+      \ifmathml\else #3\HCode{</para></note>}\par\fi
+   \else
+      \Link{#1}{#2}\expandafter\ifx \csname RefArg\endcsname\relax\else \Tg<!--ref: \RefArg-->\fi\EndLink
+   \fi
+}
+>>>
+
+
+
+
+
+\<latex etc\><<<
+\Configure{newline}{\HCode{<!--br\Hnewline/-->}}             
+>>>
+
+\<configure docbook-mml tex4ht\><<< 
+\LinkCommand\mtxt:link{mtext,xreflabel,id, class="label" ,,\empty}
+\LinkCommand\msp:link{mstyle,xreflabel,id, class="label" ,,\empty}
+>>>
+
+
+
+\<configure docbook-mml latex\><<< 
+\Configure{newline}
+  {\ifmtext \HCode{</mtext><mtext\Hnewline class="newline">}%
+   \else \HCode{<!--br\Hnewline role="newline" /-->}\fi}
+>>>
+
+\<configure docbook-mml latex\><<<
+\Configure{equation}
+   {\IgnorePar\EndP\HCode{<para role="equation">}}
+   {\HCode{</para><para role="equation-label">}}
+   {\IgnorePar\HCode{</para>}\ShowPar\par}
+>>>
+
+
+
+
+
+
+
+\<latex etc\><<<
+\Configure{newtheorem}
+   {\IgnorePar\EndP\HCode{<blockquote role="newtheorem"><title>}}
+   {\HCode{</title>}\ShowPar\par}
+   {\IgnorePar\EndP\HCode{</blockquote>}\ShowPar\par}
+>>>
+
+\verb+<section>+ and \verb+<blockquote>+ allow recursion,
+but the first can't be followed by \verb+<para>+.
+
+
+\<configure docbook plain\><<< 
+|<plain prologue|>
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Class Roots}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<configure docbook article\><<< 
+|<article, report, book|>
+|<article prologue|>
+|<article maketitle|>
+|<article sections|>
+|<article tocs|>
+|<article,report,book lists|>
+|<article,report,book figures|>
+|<article,report|>
+|<article,report,book indexes|>
+>>>
+
+% |<amsart + article sec|>
+
+
+\<configure docbook report\><<< 
+|<article, report, book|>
+|<report, book|>
+|<report prologue|>
+|<report maketitle|>
+|<report sections|>
+|<report,book tocs|>
+|<article,report,book lists|>
+|<article,report,book figures|>
+|<article,report|>
+|<article,report,book indexes|>
+>>>
+
+
+
+\<configure docbook book\><<< 
+|<article, report, book|>
+|<report, book|>
+|<book prologue|>
+|<book maketitle|>
+|<book sections|>
+|<report,book tocs|>
+|<article,report,book lists|>
+|<article,report,book figures|>
+|<article,report,book indexes|>
+>>>
+
+
+
+\<configure docbook scrartcl\><<< 
+|<article, report, book|>
+|<article prologue|>
+|<article maketitle|>
+|<article sections|>
+|<article tocs|>
+|<article,report,book lists|>
+|<article,report,book figures|>
+|<article,report|>
+|<article,report,book indexes|>
+>>>
+
+\<configure docbook scrbook\><<< 
+|<article, report, book|>
+|<report, book|>
+|<book prologue|>
+|<book maketitle|>
+|<scr title page|>
+|<book sections|>
+|<scrbook sections|>
+|<report,book tocs|>
+|<scrbook tocs|>
+|<article,report,book lists|>
+|<article,report,book figures|>
+|<article,report,book indexes|>
+>>>
+
+\<configure docbook scrreprt\><<< 
+|<article, report, book|>
+|<report, book|>
+|<report prologue|>
+|<report maketitle|>
+|<report sections|>
+|<report,book tocs|>
+|<article,report,book lists|>
+|<article,report,book figures|>
+|<article,report|>
+|<article,report,book indexes|>
+>>>
+
+\<configure docbook memoir\><<< 
+|<article, report, book|>
+|<report, book|>
+|<book prologue|>
+|<book maketitle|>
+|<book sections|>
+|<report,book tocs|>
+|<article,report,book lists|>
+|<article,report,book figures|>
+|<article,report,book indexes|>
+>>>
+
+\<article, report, book\><<<
+|<config lists of figures and tables|>
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Front and Back Matter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Front and Back Matter}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\begin{verbatim}
+<TEI.2>
+    <teiHeader> [ TEI Header information ]  </teiHeader>
+    <text>
+        <front> [ front matter ... ]   </front>
+        <body>  [ body of text ... ]   </body>
+        <back>  [ back matter ...  ]   </back>
+    </text>
+</TEI.2>
+\end{verbatim}
+
+The front and back elements are optional.
+
+\<tex4ht wrapper\><<<
+\Configure{HTML}{}{}
+\Configure{HEAD}{\bgroup \Configure{TITLE}{}{}}{\egroup}
+\Configure{BODY}{}{}
+\Configure{TITLE+} {}
+\ifx \a:TITLE\:UnDef
+\Configure{TITLE}{}{}
+\fi
+>>>
+
+There used to be this configuration, but the resulting title element was empty.
+Publication title should be inside info element anyway. This element is inserted by maketitle.
+% \Configure{TITLE}{\Protect\IgnorePar
+%    \HCode{<title>}}{\HCode{</title>\Hnewline}}
+
+
+
+
+
+
+
+
+\<article prologue\><<<
+\def\:gobbleM#1->{}
+\Configure{BODY}
+   {|<tex4ht sig|>%
+    \HCode{<article |<xml name spaces|> >}%
+    \a:TITLE\bgroup \:TITLE: \c:TITLE \egroup \b:TITLE 
+    \par\ShowPar
+   } 
+   {\IgnorePar\EndP\HCode{</article>}}
+|<tex4ht log sig|>
+>>>
+
+
+\<plain prologue\><<<
+\def\:gobbleM#1->{}
+\Configure{BODY}
+   {|<tex4ht sig|>%
+    \HCode{<article |<xml name spaces|> >}%
+    \par\ShowPar} 
+   {\IgnorePar\EndP\HCode{</article>}}
+|<tex4ht log sig|>
+>>>
+
+
+
+\<report prologue\><<<
+\def\:gobbleM#1->{}
+\Configure{BODY}
+   {|<tex4ht sig|>%
+    \HCode{<article role="report" |<xml name spaces|> >}%
+    \a:TITLE\bgroup \:TITLE: \c:TITLE \egroup \b:TITLE 
+    \par\ShowPar}
+   {\IgnorePar\EndP\HCode{</article>}}
+|<tex4ht log sig|>
+>>>
+
+
+
+\<book prologue\><<<
+\def\:gobbleM#1->{}
+\Configure{BODY}
+   {|<tex4ht sig|>%
+    \HCode{<article role="book" |<xml name spaces|> >}%
+    \a:TITLE\bgroup \:TITLE: \c:TITLE \egroup \b:TITLE 
+    \par\ShowPar
+   }
+   {\IgnorePar\EndP\HCode{</article>}}
+|<tex4ht log sig|>
+>>>
+
+
+
+\<tex4ht sig\><<<
+\HCode{\Hnewline<!--translated from \jobname.tex
+     \Hnewline by TeX4ht  (https://tug.org/tex4ht/) 
+     \expandafter\:gobbleM\meaning\Preamble\space-->\Hnewline}
+\:CheckOption{-xtpipes} \if:Option 
+   \Log:Note{Use the `-xtpipes' command line option to 
+             avoid xtpipes post processing}
+\else
+   \HCode{<?xtpipes file="docbook.4xt" ?>\Hnewline}
+\fi
+>>>
+
+\<tex4ht log sig\><<<
+\immediate\write-1{TeX4ht package options:
+    \expandafter\:gobbleM\meaning\Preamble}
+>>>
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\subsection{DTD's}
+%%%%%%%%%%%%%%%%%%
+
+\<xml name spaces\><<<
+xmlns="http://docbook.org/ns/docbook"                        \Hnewline  
+xmlns:xlink="http://www.w3.org/1999/xlink"                   \Hnewline  
+version="5.0"                                                \Hnewline  
+>>>
+
+\<\><<<
+xmlns="http://relaxng.org/ns/structure/1.0"                  \Hnewline  
+xmlns:svg="http://www.w3.org/2000/svg"                       \Hnewline  
+xmlns:s="http://www.ascc.net/xml/schematron"                 \Hnewline  
+xmlns:rng="http://relaxng.org/ns/structure/1.0"              \Hnewline  
+xmlns:mml="http://www.w3.org/1998/Math/MathML"               \Hnewline  
+xmlns:html="http://www.w3.org/1999/xhtml"                    \Hnewline  
+xmlns:db="http://docbook.org/ns/docbook"                     \Hnewline  
+xmlns:ctrl="http://nwalsh.com/xmlns/schema-control/"         \Hnewline  
+xmlns:a="http://relaxng.org/ns/compatibility/annotations/1.0"\Hnewline  
+xmlns:xsd="http://www.w3.org/2001/XMLSchema"                 \Hnewline  
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"        \Hnewline  
+>>>
+
+% datatypeLibrary="http://www.w3.org/2001/XMLSchema-datatypes" \Hnewline  
+% ns="http://docbook.org/ns/docbook"                           \Hnewline 
+
+
+
+\<article prologue\><<<
+\Configure{VERSION}
+  {\HCode{<?xml version="1.0"?>\Hnewline}}
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE article |<doctype 5.0|> >\Hnewline }}
+>>>
+
+\<doctype 5.0\><<<
+PUBLIC "-//OASIS//DTD DocBook V5.0//|<dtd lang|>"\Hnewline
+       "http://www.oasis-open.org/docbook/xml/5.0/docbook.dtd"
+>>>
+
+
+
+%   {\HCode{<!--!DOCTYPE article [|<docbook dtd|>]\Hnewline 
+%     DocBook V5.0CR5 -->\Hnewline }}
+
+
+\<plain prologue\><<<
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE article |<doctype 5.0|> >\Hnewline }}
+>>>
+
+
+
+
+\<report prologue\><<<
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE article |<doctype 5.0|> >\Hnewline }}
+>>>
+
+
+
+
+\<book prologue\><<<
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE article |<doctype 5.0|> >\Hnewline }}
+>>>
+
+
+\<docbook dtd\><<<
+<!ENTITY \% docbook.dtd PUBLIC\Hnewline
+    "-//OASIS//DTD DocBook XML V4.2CR1//|<dtd lang|>"\Hnewline
+       "http://www.oasis-open.org/docbook/xml/4.2CR1/docbookx.dtd">
+\Hnewline \%docbook.dtd; \Hnewline
+>>>
+
+
+\<dtd lang\><<<
+\expandafter
+\ifx \csname a:dtd-lang\endcsname\relax EN\else
+  \csname a:dtd-lang\endcsname
+\fi
+>>>
+
+
+
+\<configure docbook-mml article\><<< 
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE article |<doctype 5.0|> >\Hnewline }}
+>>>
+
+
+\<configure docbook-mml report\><<< 
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE article |<doctype 5.0|> >\Hnewline }}
+>>>
+
+
+\<configure docbook-mml book\><<< 
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE article |<doctype 5.0|> >\Hnewline }}
+>>>
+
+%   {\HCode{<!--!DOCTYPE article [|<docbook-mml dtd tex4ht|>]\Hnewline 
+%     DocBook V5.0CR5 -->\Hnewline }}
+
+\<configure docbook-mml scrbook\><<< 
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE article |<doctype 5.0|> >\Hnewline }}
+>>>
+
+
+
+
+
+\<configure docbook-mml plain\><<< 
+\Configure{VERSION}
+   {\HCode{<?xml version="1.0"?>\Hnewline}}
+\Configure{DOCTYPE}
+   {\HCode{<!DOCTYPE article |<doctype 5.0|> >\Hnewline }}
+>>>
+
+
+
+\<docbook-mml dtd tex4ht\><<<
+|<docbook-mml dtd|>%
+|<docbook dtd|>%
+|<mathml dtd|>%
+>>>
+
+
+\<docbook-mml dtd\><<<
+<!ELEMENT equation (math)>\Hnewline
+<!ELEMENT inlineequation (math)>\Hnewline
+|<duplicated mathml entities|>%
+>>>
+
+\<duplicated mathml entities\><<<
+<!ENTITY \% ent-isopub  "">
+<!ENTITY \% ent-isonum  "">\Hnewline    
+<!ENTITY \% ent-isolat2  "">
+<!ENTITY \% ent-isolat1  "">\Hnewline    
+<!ENTITY \% ent-isodia  "">
+<!ENTITY \% ent-isocyr2  "">\Hnewline    
+<!ENTITY \% ent-isocyr1  "">
+<!ENTITY \% ent-isobox  "">\Hnewline    
+<!ENTITY \% ent-isotech  "">
+<!ENTITY \% ent-isogrk3  "">\Hnewline    
+<!ENTITY \% ent-isoamsr  "">
+<!ENTITY \% ent-isoamso  "">\Hnewline    
+<!ENTITY \% ent-isoamsn  "">
+<!ENTITY \% ent-isoamsc  "">\Hnewline    
+<!ENTITY \% ent-isoamsb  "">
+<!ENTITY \% ent-isoamsa  "">\Hnewline  
+>>>
+
+
+
+\<mathml dtd\><<<
+<!ENTITY \% mathml.dtd PUBLIC
+    "-//W3C//DTD MathML 2.0//|<dtd lang|>"\Hnewline\space\space
+    "mathml.dtd">  
+    \Hnewline \%mathml.dtd;\Hnewline
+>>>
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\chapter{LaTeX}
+%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Title Page}
+%%%%%%%%%%%%%%%%%%
+
+\<article maketitle\><<<
+\Configure{maketitle}
+   {\HCode{<info role="maketitle">}}
+   {\HCode{</info>}\par\ShowPar}
+   {\HCode{<title>}}{\HCode{</title>}}
+\Configure{thanks author date and} {}{}
+   {\HCode{<author><personname><othername>}}
+   {\HCode{</othername></personname></author>}}
+   {\HCode{<date>}}
+   {\HCode{</date>}}
+   {}{}
+>>>
+
+\<report maketitle\><<<
+\Configure{maketitle}
+   {\HCode{<info role="maketitle">}}
+   {\HCode{</info>}\par\ShowPar}
+   {\HCode{<title>}}{\HCode{</title>}}
+\Configure{thanks author date and} {}{}
+   {\HCode{<author><personname><othername>}}
+   {\HCode{</othername></personname></author>}}
+   {\HCode{<date>}}
+   {\HCode{</date>}}
+   {}{}
+>>>
+
+\<book maketitle\><<<
+\Configure{maketitle}
+   {\HCode{<info role="maketitle">}}
+   {\HCode{</info>}\par\ShowPar}
+   {\HCode{<title>}}{\HCode{</title>}}
+\Configure{thanks author date and} {}{}
+   {\HCode{<author><personname><othername>}}
+   {\HCode{</othername></personname></author>}}
+   {\HCode{<date>}}
+   {\HCode{</date>}}
+   {}{}
+>>>
+
+
+\<article maketitle\><<<
+\ConfigureEnv{abstract}
+   {\IgnorePar\EndP\HCode{<abstract>}}
+   {\IgnorePar\EndP\HCode{</abstract>}}
+   {\HCode{<title>}}
+   {\HCode{</title>}}
+>>>
+
+
+
+\<report maketitle\><<<
+\ConfigureEnv{abstract}
+   {\IgnorePar\EndP\HCode{<abstract>}}
+   {\IgnorePar\EndP\HCode{</abstract>}}
+   {\HCode{<note role="title"><para>}}
+   {\HCode{</para></note>}}
+>>>
+
+
+
+
+
+\<scr title page\><<<
+\ConfigureEnv{titlepage}
+   {\bgroup 
+      \ifvmode \IgnorePar\fi \EndP
+%     \HCode{<para class="titlepage">}%
+      \Configure{tabular}{}{}{}{}{}{}% 
+      \ConfigureEnv{tabular}{}{}{}{}{}{}% 
+      \ConfigureEnv{center}{}{}{}{}}
+   {\ifvmode \IgnorePar\fi \EndP
+%     \HCode{</para>}%
+    \egroup}
+   {} {}
+\Configure{dedication}
+   {\ifvmode \IgnorePar\fi\EndP
+    \HCode{<para role="dedication" >}}
+   {\ifvmode \IgnorePar\fi\EndP \HCode{</para>}}
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Sections}
+%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%
+\subsection{Special Cases for Sectioning Titles}
+%%%%%%%%%%%%%
+
+
+
+
+\<latex ltsec\><<<
+\Configure{InsertTitle}{\let\label=\lb:l
+   \let\ref=\o:ref \Configure{ref}{}{}{}}
+\Configure{AfterTitle}{\let\index=\:index
+       \let\ref=\:ref  \let\label=\lb:l }
+\Configure{NoSection}
+  {\let\sv:index=\index \let\sv:label=\label 
+   \let\sv:newline=\newline \def\newline{ }%
+   \let\sv:setfontsize=\@setfontsize  \let\@setfontsize=\:gobbleIII
+   \let\index=\@gobble  \let\label=\@gobble  
+   |<nolink ref|>%
+  }
+  {\let\index=\sv:index \let\label=\sv:label 
+   |<restore ref|>%
+   \let\newline=\sv:newline    \let\@setfontsize=\sv:setfontsize 
+  }
+>>>
+
+
+
+\<nolink ref\><<<
+\let\sva:rEfLiNK=\a:rEfLiNK
+\let\svb:rEfLiNK=\b:rEfLiNK
+\let\svc:rEfLiNK=\c:rEfLiNK  
+\expandafter\let\expandafter\svC:rEfLiNK\c:rEfLiNK
+\Configure{ref}{}{}{}%  \let\sv:ref=\ref  \let\ref=\@gobble
+>>>
+
+\<restore ref\><<<
+\let\a:rEfLiNK=\sva:rEfLiNK
+\let\b:rEfLiNK=\svb:rEfLiNK
+\let\c:rEfLiNK=\svc:rEfLiNK
+\expandafter\let\c:rEfLiNK\svC:rEfLiNK  %  \let\ref\sv:ref  
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Titles and Bodies}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<book sections\><<<
+|<article sections|>
+\Configure{chapter}
+   {\OpenDiv{chapter}}   {\CloseDiv{chapter}}
+   {\HCode{<title>}} {\HCode{</title>}\par\ShowPar}
+\Configure{likechapter}
+   {\OpenDiv{likechapter}}   {\CloseDiv{likechapter}}
+   {\HCode{<title>}} {\HCode{</title>}\par\ShowPar}
+>>>
+
+
+\<report sections\><<<
+|<book sections|>
+>>>
+
+
+
+\<article sections\><<<
+|<amsart + article sec|>
+>>>
+
+
+
+\<TitleMark\><<<
+\TitleMark
+>>>
+
+
+
+\<sectioning utilities\><<<
+\def\OpenDiv#1{%
+   \IgnorePar\EndP \HCode{<!--l.
+       \the\inputlineno--><section\Hnewline role="#1">}%
+}
+\def\CloseDiv#1{%
+   \IgnorePar\EndP\HCode{</section><!--end #1-->}%
+}
+\def\AppOpenDiv#1{%
+   \IgnorePar\EndP \HCode{<!--l.
+       \the\inputlineno--><appendix\Hnewline role="#1">}%
+}
+\def\AppCloseDiv#1{%
+   \IgnorePar\EndP\HCode{</appendix><!--end #1-->}%
+}
+>>>
+
+
+% \HAssign\DivLevel=0
+% \def\OpenDiv#1{%
+%    \IgnorePar\EndP   \gHAdvance\DivLevel by 1
+%    \HCode{<sect\DivLevel\Hnewline role="#1">}%
+% }
+% \def\CloseDiv#1{%
+%    \IgnorePar\EndP\HCode{</sect\DivLevel><!--end #1-->}%
+%    \gHAdvance\DivLevel by -1
+% }
+
+
+%   \PopStack\text:stack\:temp \def\:tempa{body}%
+%   \ifx \:temp\:tempa \else \HCode{</\:temp><body>}\fi
+%   \PushStack\text:stack{body}
+
+
+
+\<article sections\><<<
+\Configure{likepart}
+   {\OpenDiv{likepart}}   {\CloseDiv{likepart}}
+   {\HCode{<title>}} {\HCode{</title>}\par\ShowPar}
+\Configure{likesection}
+   {\OpenDiv{likesection}}   {\CloseDiv{likesection}}
+   {\HCode{<title>}}   {\HCode{</title>}\par\ShowPar}
+\Configure{likesubsection}
+   {\OpenDiv{likesubsection}}   {\CloseDiv{likesubsection}}
+   {\HCode{<title>}}   {\HCode{</title>}\par\ShowPar}
+\Configure{likesubsubsection}
+   {\OpenDiv{likesubsubsection}}   {\CloseDiv{likesubsubsection}}
+   {\HCode{<title>}}   {\HCode{</title>}\par\ShowPar}
+\Configure{likeparagraph}
+   {\OpenDiv{likeparagraph}}   {\CloseDiv{likeparagraph}}
+   {\HCode{<title>}}   {\HCode{</title>}\par\ShowPar}
+\Configure{likesubparagraph}
+   {\OpenDiv{likesubparagraph}}   {\CloseDiv{likesubparagraph}}
+   {\HCode{<title>}}   {\HCode{</title>}\par\ShowPar}
+>>>
+
+
+
+
+\<scrbook sections\><<<
+\Configure{addchap}
+   {\OpenDiv{addchap}}   {\CloseDiv{addchap}}
+   {\HCode{<title>}}   {\HCode{</title>}\par\ShowPar}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{End Points}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<article sections\><<<
+\Configure{endlikesection}
+     {section,chapter,likechapter,appendix,part,likepart}
+\Configure{endlikesubsection}
+   {subsection,section,likesection,chapter,%
+      likechapter,appendix,part,likpart}
+\Configure{endlikesubsubsection}
+   {subsubsection,subsection,likesubsection,section,%
+      likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endlikeparagraph}
+   {paragraph,subsubsection,likesubsubsection,subsection,%
+    likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endlikesubparagraph}
+   {subparagraph,likeparagraph,subsubsection,likesubsubsection,%
+    subsection,likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\ifx \part\:UnDef \else
+   \Configure{endlikepart}{endpart}
+\fi
+>>>
+
+\<scrbook sections\><<<
+
+\Configure{endlikeparagraph}
+   {paragraph,subsubsection,likesubsubsection,subsection,%
+    likesubsection,section,%
+    likesection,chapter,likechapter,addchap,appendix,part,likepart}
+\Configure{endsubparagraph}
+   {likesubparagraph,likeparagraph,subsubsection,likesubsubsection,%
+    subsection,likesubsection,section,%
+    likesection,chapter,likechapter,addchap,appendix,part,likepart}
+\Configure{endlikesubparagraph}
+   {subparagraph,likeparagraph,subsubsection,likesubsubsection,%
+    subsection,likesubsection,section,%
+    likesection,chapter,likechapter,addchap,appendix,part,likepart}
+\Configure{endsection}
+     {likesection,chapter,likechapter,addchap,appendix,part,likepart}
+\Configure{endlikesection}
+     {section,chapter,likechapter,addchap,appendix,part,likepart}
+\Configure{endsubsection}
+   {likesubsection,section,likesection,chapter,%
+      likechapter,addchap,appendix,part,likepart}
+\Configure{endlikesubsection}
+   {subsection,section,likesection,chapter,%
+      likechapter,addchap,appendix,part,likepart}
+\Configure{endsubsubsection}
+   {likesubsubsection,subsection,likesubsection,section,%
+      likesection,chapter,likechapter,addchap,appendix,part,likepart}
+\Configure{endlikesubsubsection}
+   {subsubsection,subsection,likesubsection,section,%
+      likesection,chapter,likechapter,addchap,appendix,part,likepart}
+\Configure{endparagraph}
+   {likeparagraph,subsubsection,likesubsubsection,subsection,%
+    likesubsection,section,%
+    likesection,chapter,likechapter,addchap,appendix,part,likepart}
+\Configure{endchapter}{likechapter,addchap,appendix,part,likepart}
+\Configure{endlikechapter}{chapter,appendix,part,likeparaddchap,addchap}
+\Configure{endaddchap}{chapter,likechapter,appendix,part,likepart}
+\Configure{endappendix}{chapter,likechapter,addchap,part,likepart}
+
+\ifx \part\:UnDef \else
+   \Configure{endpart}{likepart}
+   \Configure{endlikepart}{endpart}
+\fi
+>>>
+
+%%%%%%%%%%%%%%%
+\section{Lists}
+%%%%%%%%%%%%%%%
+
+
+\<latex lists\><<<
+\ConfigureList{trivlist}%
+   {\EndP\HCode{<glosslist>}\let\end:itm=\empty}
+   {\EndP\HCode{</glossdef></glossentry></glosslist>}\ShowPar}
+   {\end:itm\def\end:itm{\EndP\HCode{</glossdef></glossentry>}}%
+      \HCode{<glossentry><glossterm><remark>}\bgroup \bf}
+   {\egroup\HCode{</remark></glossterm><glossdef\Hnewline>}\par\ShowPar}
+\ConfigureList{list}%
+   {\EndP\HCode{<glosslist>}\let\end:itm=\empty}
+   {\EndP\HCode{</glossdef></glossentry></glosslist>}\ShowPar}
+   {\end:itm\def\end:itm{\EndP\HCode{</glossdef></glossentry>}}%
+      \HCode{<glossentry><glossterm><remark>}\bgroup \bf}
+   {\egroup\HCode{</remark></glossterm><glossdef\Hnewline>}\par\ShowPar}
+\ConfigureList{itemize}%
+   {\EndP\HCode{<itemizedlist>}\let\end:itm=\empty}
+   {\EndP\HCode{</listitem></itemizedlist>}\ShowPar}
+   {\end:itm\def\end:itm{\EndP\Tg</listitem>}\DeleteMark}
+   {\HCode{<listitem>}\par\ShowPar}
+\ConfigureList{enumerate}%
+   {\EndP\HCode{<orderedlist\Hnewline>}\let\end:itm=\empty}
+   {\EndP\HCode{</listitem></orderedlist>}\ShowPar}
+   {\end:itm\def\end:itm{\EndP\Tg</listitem>}\DeleteMark}
+   {\HCode{<listitem>}\AnchorLabel\par\ShowPar}
+\ConfigureList{description}%
+   {\EndP\HCode{<variablelist\Hnewline>}%
+      |<save end:itm|>\global\let\end:itm=\empty}
+   {|<recall end:itm|>\EndP
+    \HCode{</listitem></varlistentry></variablelist>}\ShowPar}
+   {\end:itm \global\def\end:itm{\EndP
+                          \HCode{</listitem></varlistentry>}}%
+    \HCode{<varlistentry><term\Hnewline>}\bgroup \bf}
+   {\egroup\EndP\HCode{</term><listitem>}\par\ShowPar}
+>>>
+
+
+\<save end:itm\><<<
+\PushMacro\end:itm
+>>>
+
+
+\<recall end:itm\><<<
+\PopMacro\end:itm \global\let\end:itm \end:itm 
+>>>
+
+
+% \LinkCommand\DBLink{link, linkend,,,,\empty}
+
+\<tex4ht cross-linking\><<<
+%\LinkCommand\DBLink{ulink, url}
+\LinkCommand\DBLink{link, xlink:href}
+\LinkCommand\Anchor{anchor,, xml:id,,,\empty}
+\Odef\Link[#1]#2#3{%
+   \global\let\EndLink=\empty
+   \if ]#3]\else \Anchor{}{#3}\EndAnchor
+             \gdef\M:EndLink{\HCode{<!--end anchor-->}}\fi
+   \if ]#1#2]\else 
+     \EndLink\DBLink[#1]{#2}{}\global\let\EndLink=\EndDBLink\fi
+}
+|<fix Link for -|>
+\Configure{Link}{anchor}{linkend=}{xml:id=}{}
+>>>
+
+\<configure docbook-mml tex4ht\><<<
+\Odef\M:Link[#1]#2#3{%
+   \global\let\M:EndLink=\empty
+   \if ]#3]\else \Anchor{}{#3}\EndAnchor
+                   \gdef\M:EndLink{\HCode{<!--end anchor-->}}\fi
+   \if ]#1#2]\else
+     \EndLink\DBLink[#1]{#2}{}\global\let\M:EndLink=\EndDBLink\fi
+}
+|<fix M:Link for -|>
+>>>
+
+
+
+\<fix Link for -\><<<
+\let\do:Link=\Link
+\def\Link{\Protect\p:Link}
+\def\p:Link{\futurelet\:next\choose:Link}
+\def\choose:Link{\ifx -\:next \expandafter\minus:Link
+                 \else\expandafter\do:Link\fi}
+\def\minus:Link#1{\do:Link}
+>>>
+
+The protection is required for cases like the following one.
+
+\begin{verbatim}
+\documentclass{article} 
+   \begin{document} 
+\section{Introduction} 
+ 
+\begin{figure*} \caption{fig  \ref{fig}} \end{figure*} 
+ 
+\label{fig}  
+ 
+\end{document} 
+\end{verbatim}
+
+
+
+
+\<fix M:Link for -\><<<
+\let\do:M:Link=\M:Link
+\def\M:Link{\Protect\p:M:Link}
+\def\p:M:Link{\futurelet\:next\choose:M:Link}
+\def\choose:M:Link{\ifx -\:next \expandafter\minus:M:Link
+                 \else\expandafter\do:M:Link\fi}
+\def\minus:M:Link#1{\do:M:Link}
+>>>
+
+%%%%%%%%%%%%%%%
+\section{Bibliography}
+%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Shared}
+%%%%%%%%%%%%%%%%%%%
+
+
+
+\<article,report,book lists\><<<
+\ConfigureList{thebibliography}%
+   {\IgnorePar\EndP
+      \HCode{<simplelist role="bibliography">}\let\en:bib=\empty}
+   {\en:bib\HCode{</simplelist>}}
+   {\en:bib\def\en:bib{\HCode{</member>}}%
+    \HCode{<member><!--l. 
+        \the\inputlineno--><abbrev role="biblioentry">}%
+    |<para within bib|>}
+   {\HCode{</abbrev>}}
+>>>
+
+
+
+
+
+\<para within bib\><<<
+\Configure{HtmlPar}{}{}{}{}
+>>>
+
+
+
+\<latex lists\><<<
+\Configure{cite}{\HCode{<citation>}}{\HCode{</citation>}}{\LinkCite}{}
+\Configure{bibitem}{\Link}{\EndLink}
+\LinkCommand\LinkCite{xref, linkend,,,/,\empty}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{Jurabib}
+%%%%%%%%%%%%%%%%%%%
+
+
+\<configure docbook jurabib\><<<
+\Configure{jblink}{\Link}{\EndLink}
+\Configure{jbanchor}{\Link}{\EndLink}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%
+\subsection{Biblatex}
+%%%%%%%%%%%%%%%%%%%%%
+
+
+\<configure docbook biblatex\><<<
+    \def\bibConfigure{%
+  \ConfigureList{thebibliography}
+  {\ifvmode \IgnorePar \fi \EndP \EndP
+    \HCode {<bibliolist>}%
+%
+% This is for linking citations with biblist items which
+% are in a different file when output is split into different
+% chunks. [CVR 2012-09-27]
+%
+%
+% <biblatex-2.2>
+%
+  \immediate\write\@auxout{%
+      \string\BibFileName[\therefsection]{\FileName}}%
+%
+% </biblatex-2.2>
+%
+    \PushMacro \end:itm \global \let \end:itm =\empty}%
+  {\ifvmode \IgnorePar \fi \EndP
+    \PopMacro \end:itm \global \let \end:itm \end:itm \EndP
+    \HCode {</bibliomisc></bibliomixed></bibliolist>}\ShowPar}%
+  {\ifvmode \IgnorePar \fi \EndP \gHAdvance \bibN by 1
+    \end:itm \global \def \end:itm {\EndP \HCode{</bibliomisc></bibliomixed>}}%
+    \HCode {<bibliomixed xml:id="X\therefsection-\abx@field@entrykey"><bibliomisc>}\bgroup \bf}%
+  {\ifvmode \IgnorePar \fi \EndP
+    \egroup
+    \HCode {</bibliomisc><bibliomisc\Hnewline xml:id="bib-\bibN">}%
+    \par \ShowPar}%
+ }
+
+\def\hyper:natanchorstart#1{\Link{}{#1}\EndLink}%  
+\def\hyper:natlinkstart#1{\Link{#1}{}}%
+>>>
+
+
+
+%%%%%%%%%%%%%%%%
+\section{Tables and Arrays}
+%%%%%%%%%%%%%%%%
+
+\<<article, report, book\><<<
+\ConfigureEnv{table}
+   {\ifvmode \IgnorePar\fi \EndP
+    \HCode{<para role="table"><blockquote>}}
+   {\ifvmode \IgnorePar\fi \EndP
+    \HCode{</blockquote></para>}}
+   {}{}
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Tabular and Array}
+%%%%%%%%%%%%%
+
+
+
+\<configure docbook Preamble\><<<    
+\:CheckOption{debug-} \if:Option 
+    \def\IgnoreDebug#1{}
+\else 
+    \def\IgnoreDebug#1{#1}
+\fi
+>>>
+
+\<latex tables\><<<
+\Configure{tabular}
+   {\IgnorePar\EndP \halignTB{tabular}%
+    \HCode{<informaltable><tgroup cols="\ar:cnt">}%
+    |<tabular colspec width|>%
+    \HCode{<tbody>}}
+   {\HCode{</tbody></tgroup></informaltable>}\ShowPar}
+   {\HCode{<row>}}
+   {\HCode{</row>}}
+   {\HCode{<entry\Hnewline}\halignTD
+    \ifnum \HMultispan>1 
+       \tmp:cnt=\HCol \advance\tmp:cnt by \HMultispan
+       \advance\tmp:cnt by -1
+       \HCode{ namest="c\HCol"  \IgnoreDebug{nameend="c\the\tmp:cnt"}}\fi
+    \HCode{>}\par\ShowPar}
+   {\ifvmode\IgnorePar\fi \EndP \HCode{</entry>}}
+>>>
+
+[\HPage{test data}
+\<\><<<
+\documentclass{report}  
+\begin{document}  
+  
+\begin{tabular}{p{13cm}}  
+  
+\begin{verbatim}  
+foo  
+\end{verbatim}\\  
+abc  
+\end{tabular}  
+  
+ \end{document} 
+>>>
+\EndHPage{}]
+
+\<latex tables\><<<
+\HAssign\tabularN=0
+\Configure{halignTB<>}{tabular}{<>\HAlign}
+\Configure{halignTB}
+   {\halignTBL}
+   {}
+>>>
+
+
+\<configure docbook-mml latex\><<<
+\Configure{halignTB}
+   {\ifmathml \HCode{<\:MT table }\fi \halignTBL}
+   {\ifmathml \HCode{>}\fi}
+>>>
+
+
+\<configure docbook-mml array\><<<
+\Configure{halignTB}
+   {\ifmathml \HCode{<\:MT table }\fi \halignTBL}
+   {\ifmathml \HCode{>}\fi}
+>>>
+
+\<tabular colspec width\><<<
+\tmp:cnt = 0
+\loop   
+\ifnum \tmp:cnt < \ar:cnt
+   \advance\tmp:cnt by 1
+   {\HAssign\HCol=\tmp:cnt
+   \HCode{<colspec colname="c\HCol" 
+             \expandafter\expandafter\expandafter\ifx
+                                       \HColWidth\relax\else
+                 colwidth="\HColWidth" 
+             \fi
+          />}}%
+\repeat  
+>>>
+
+
+
+\<latex tables\><<<
+\Configure{halignTD} {}{}
+   {<}{\HCode{ align="left"}}
+   {-}{\HCode{ align="center"}}
+   {>}{\HCode{ align="right"}}
+   {^}{\HCode{ valign="top"}}
+   {=}{\HCode{ valign="middle"}}
+   {||}{\HCode{ valign="middle"}}
+   {_}{\HCode{ valign="bottom"}}
+   {p}{\HCode{ align="char"}}
+   {m}{\HCode{ align="left" valign="middle"}}
+   {b}{\HCode{ align="left" valign="middle"}}
+   {}
+>>>
+
+
+
+
+
+
+\<configure docbook-mml latex\><<<
+\Configure{halignTD} {}{}
+   {<}{\ifmathml \HCode{ \a:mathml columnalign="left"}\else
+        \HCode{ align="left" }\fi}
+   {-}{\ifmathml \HCode{ \a:mathml columnalign="center"}\else
+        \HCode{ align="center" }\fi}
+   {>}{\ifmathml \HCode{ \a:mathml columnalign="right"}\else
+        \HCode{ align="right" }\fi}
+   {^}{\ifmathml \HCode{ \a:mathml rowalign="top"}\else
+        \HCode{ valign="top" }\fi}
+   {=}{\ifmathml \HCode{ \a:mathml rowalign="baseline"}\else
+        \HCode{ valign="baseline" }\fi}
+   {||}{\ifmathml \HCode{ \a:mathml rowalign="center"}\else
+        \HCode{ valign="middle" }\fi}
+   {_}{\ifmathml \HCode{ \a:mathml rowalign="bottom"}\else
+        \HCode{ valign="bottom" }\fi}
+   {p}{\ifmathml \HCode{ \a:mathml columnalign="left"}\else
+        \HCode{ align="left"}\fi}
+   {}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\<latex tables\><<<
+\Configure{hline}{}
+\Configure{//[]}{}
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{Horizontal Borders}
+%%%%%%%%%%%%%
+
+
+
+
+\<latex tables\><<<
+\Configure{HBorder}
+   {<row\Hnewline role="hline">}
+      {<entry rowsep="1"></entry>}   
+   {</row>}
+   {<row\Hnewline role="cline">}
+      {<entry rowsep="0"></entry>} 
+      {<entry rowsep="1"></entry>}
+   {</row>}
+   {<row\Hnewline role="vspace">} 
+       {<entry rowsep="1"\Hnewline></entry>}
+   {</row>}
+\Configure{putHBorder}{\HCode{\HBorder}}
+>>>
+
+
+
+
+\<configure docbook-mml latex\><<< 
+\def\:MM{\ifmathml \a:mathml m\fi}
+\Configure{HBorder}
+   {<\ifmathml \a:mathml mtr class\else row role\fi ="hline">} 
+   {\ifmathml  <\a:mathml mtd><mo> \string&\#x0332; </mo></\a:mathml mtd>\else
+               <entry rowsep="1"></entry>\fi} 
+   {</\ifmathml \a:mathml mtr\else row\fi>}
+   {<\ifmathml \a:mathml mtr class\else row role\fi ="cline">} 
+   {\ifmathml <\a:mathml mtd></\a:mathml mtd>\else
+             <entry rowsep="0"></entry>\fi}
+   {\ifmathml<\a:mathml mtd><mo> \string&\#x0332; </mo></\a:mathml mtd>\else
+             <entry rowsep="1"></entry>\fi}
+   {</\ifmathml \a:mathml mtr\else row\fi>}
+   {<\ifmathml \a:mathml mtr class\else row role\fi ="vspace">} 
+   {\ifmathml <\a:mathml mtd></\a:mathml mtd>\else
+           <entry rowsep="1"\Hnewline>\string&\#x00A0;</entry>\fi}
+   {</\ifmathml \a:mathml mtr\else row\fi>}
+>>>
+
+\<configure docbook latex\><<< 
+\Configure{xcline}{\ht:special{t4ht=<!--dirt-->}} 
+>>>
+
+\<mml hline\><<<
+
+>>>
+
+
+
+\<\><<<
+  \let\VBorder=\empty   \let\AllColMargins=\empty
+  \Configure{VBorder}
+     {\let\VBorder=\empty \let\AllColMargins=\empty
+      \global\let\GROUPS=\empty \HAssign\NewGroup = 0 
+      \gHAdvance\Next:TableNo by 1 \global\let\TableNo=\Next:TableNo }
+     {\xdef\VBorder{\VBorder\ifnum \NewGroup> 0 </colgroup>\fi}
+      \HAssign\NewGroup = 0  \gdef\GROUPS{rules="groups"}}
+     {\Advance:\NewGroup by 1 
+      \ifnum \NewGroup=1 \xdef\VBorder{\VBorder<colgroup 
+          xml:id="TBL-\TableNo-\ar:cnt g">}\fi      
+      \xdef\VBorder{\VBorder<col\Hnewline xml:id="TBL-\TableNo
+         -\ar:cnt"\xml:empty>}\xdef\AllColMargins{\AllColMargins1}}
+     {\xdef\AllColMargins{\AllColMargins 0}}
+>>>
+
+
+\<latex tables\><<<
+\HAssign\Next:TableNo=0 \global\let\TableNo=\Next:TableNo
+>>>
+
+
+\<latex tables\><<<
+\Configure{hline}{\ifx \ar:cnt\:UnDef\else
+      \o:noalign:{|<hline body for array/tabular|>}%
+      \expandafter\ignoreEndTr
+   \fi}
+>>>
+
+
+
+
+\<hline body for array/tabular\><<<
+\append:def\hline:s{\a:HBorder}%
+\def\:tempb{\ifnum \tmp:cnt<\ar:cnt 
+    \advance\tmp:cnt by 1 \append:def\hline:s{\b:HBorder}%
+    \expandafter\:tempb
+  \fi }%
+\tmp:cnt=0 \:tempb
+\append:def\hline:s{\c:HBorder}\global\let\hline:s=\hline:s
+>>>
+
+
+
+\<\><<<
+\Configure{//[]}{\ifx \ar:cnt\:UnDef 
+   \else\o:noalign:{|<vspace body for array/tabular|>}\fi}
+>>>
+
+\<vspace body for array/tabular\><<<
+\append:def\vspc:s{\h:HBorder}%
+\def\:tempb{\ifnum \tmp:cnt<\ar:cnt 
+    \advance\tmp:cnt by 1 \append:def\vspc:s{\i:HBorder}%
+    \expandafter\:tempb
+  \fi }
+\tmp:cnt|=0 \:tempb
+\append:def\vspc:s{\j:HBorder}\global\let\vspc:s|=\vspc:s
+>>>
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Long Tables}
+%%%%%%%%%%%%%
+
+\<configure docbook longtable\><<<
+\Configure{longtable}
+   {\IgnorePar\EndP 
+    \HCode{<informaltable}\halignTB{longtable}%
+    \HCode{><tgroup cols="\ar:cnt"><tbody>}}
+   {\HCode{</tbody></tgroup></informaltable>}\ShowPar}
+   {\HCode{<row \Hnewline}\halignTR\HCode{>}}
+   {\r:HA}
+   {\HCode{<entry}%
+    \halignTD
+    \ifnum \HMultispan>1 
+       \tmp:cnt=\HCol \advance\tmp:cnt by \HMultispan
+       \advance\tmp:cnt by -1
+       \HCode{ namest="c\HCol"  \IgnoreDebug{nameend="c\the\tmp:cnt"}}\fi
+    \HCode{\Hnewline role="td}|<tabular td align|>%
+    \HCode{">}|<td save EndP|>%
+    |<start array par box|>\PushStack\Table:Stck\TableNo}
+   {\PopStack\Table:Stck\TableNo |<end array par box|>\d:HA}
+\Configure{halignTB<>}{longtable}{\HCode{role="longtable"\Hnewline
+                                            }<>\HAlign}
+\Configure{longtableparbox}{\IgnorePar\leavevmode\ShowPar\par}
+>>>
+
+%   {\IgnorePar\EndP
+%     \HCode{|<show input line no|><div}%
+%     \halignTB{longtable}\HCode{><table>}}
+%   {\HCode{</table></div>}}
+
+
+\<configure docbook longtable\><<<
+\def\r:HA{\HCode{</row>}}
+\def\d:HA{\ifvmode \IgnorePar \fi \EndP\HCode{</entry>}|<td recall EndP|>}
+>>>
+
+
+\<configure docbook tex4ht\><<<
+\newif\ifHCond
+>>>
+
+
+\<show input line no\><<<
+<!--l. \the\inputlineno-->%
+>>>
+
+
+\<td save EndP\><<<
+\SaveEndP 
+>>>
+
+\<td recall EndP\><<<
+\RecallEndP 
+>>>
+
+\<start array par box\><<<
+\par  \ShowPar
+>>>
+
+\<end array par box\><<<
+\IgnorePar \EndP
+>>>
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{Obey Lines and Alignments}
+%%%%%%%%%%%%%
+
+
+
+
+\<obey lines\><<<
+\Configure{verb}{}{}
+>>>
+
+\<latex, plain\><<<
+\Configure{obeylines}
+   {\ifvmode \IgnorePar \EndP
+       \HCode{<blockquote role="obeylines-v">}%
+       \gdef\ob:ln{blockquote}%
+    \else \HCode{<remark role="obeylines-h">}%
+       \gdef\ob:ln{remark}%
+    \fi
+   }
+   {\ht:special{t4ht=</\ob:ln>}\ShowPar} {\hbox{\HCode{<!--br /-->}}}
+>>>
+
+\<latex etc\><<<
+\ConfigureEnv{center}
+   {} {\ShowPar} {}{}
+\Configure{centerline}
+   {\ifvmode \IgnorePar\fi\HCode{<!--centerline-->}}
+   {\HCode{<!--/centerline-->}}
+\Configure{leftline} 
+   {\ifvmode \IgnorePar\fi\HCode{<!--leftline-->}}
+   {\HCode{<!--/leftline-->}}
+\Configure{rightline} 
+   {\ifvmode \IgnorePar\fi\HCode{<!--rightline-->}}
+   {\HCode{<!--/rightline-->}}
+>>>
+
+
+%%%%%%%%%%%%%
+\subsection{multirow}
+%%%%%%%%%%%%%
+
+\<configure docbook multirow\><<<
+\Configure{multirow}
+    {\HCode{<blockquote
+        role="multirow"><para role="\the\@tempcnta">}}
+    {\HCode{</para></blockquote>}}
+>>>
+
+
+
+%%%%%%%%%%%%%
+\subsection{multirow}
+%%%%%%%%%%%%%
+
+\<configure docbook dcolumn\><<<
+\Configure{dcolumn}
+  {\HCode{<blockquote role="align-char"><para role="\Dpoint">}}
+  {\HCode{</para></blockquote>}}
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{colortbl.sty}
+%%%%%%%%%%%%%%%%%%%%%%%
+
+\<configure docbook colortbl WAIT\><<<
+\HAssign\Table:No=0
+\HAssign\TableNo=0
+\HAssign\Prev:Col=0
+\HAssign\HRow=0
+
+\Configure{@classz}
+   {\let\begin:current@color=\relax
+    \let\end:current@color=\relax }
+   {%
+     \ifx \CT@column@color\relax \else 
+     \ifx \CT@column@color\empty \else{%
+         \def\CT@color{\@ifnextchar[\color:ii\color:i}%
+         \CT@column@color|<par del|>%
+         \edef\:temp{\noexpand\add:color
+            {background-color}{\:temp}{\ar:cnt}}\:temp
+     }\fi \fi
+   }
+   {\begin:current@color}
+   {\end:current@color}
+\Configure{rowcolor}{\row:clr}
+\def\row:clr#1{{%
+%  \HAdvance\HRow by 1
+  \add:color{background-color}{#1}{\HRow-}}}
+\Configure{text-colortbl}
+  {\add:color{color}{\current@color}{\HRow-\HCol}}
+\Configure{cell-colortbl}
+   {\add:color{background-color}{\current@color}{\HRow-\HCol}}
+\def\add:color#1#2#3{%
+  \Configure{SetHColor}{\Css{ \#TBL-\TableNo-#3{ #1:\HColor }}}{#2}}
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%
+\section{Figures}
+%%%%%%%%%%%%%%%%%
+
+\<article,report,book figures\><<<
+\ConfigureEnv{figure}
+   {\ifvmode \IgnorePar\fi \EndP  \HCode{<figure><title/><blockquote>}}  
+   {\ifvmode \IgnorePar\fi \EndP  \HCode{</blockquote></figure>}} 
+   {}{}
+\Configure{caption}
+   {\HCode{<blockquote role="caption"><title role="caption">}}     
+   {\HCode{</title><para>}}     
+   {}   
+   {\HCode{</para></blockquote>}}
+>>>
+
+\<config lists of figures and tables\><<<
+\ConfigureToc{lof}
+   {\HCode{\Hnewline<tocentry role="lofToc">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{lot}
+   {\HCode{\Hnewline<tocentry role="lotToc">}}
+   {\ }{} {\HCode{</tocentry>}}
+>>>
+
+
+
+%%%%%%%%%%%%%%
+\section{Math}
+%%%%%%%%%%%%%%
+
+\<configure docbook-math tex4ht\><<<
+\Configure{$$}{\EndP\PicDisplay}{\EndPicDisplay}      
+   {\everymath{}\everydisplay{}}  
+\Configure{$}{\PicMath}{\EndPicMath}{}
+\Configure{PicMath}
+  {\Tg<inlineequation>}{\Tg</inlineequation>}{}{}
+\let\MathPar\empty
+>>>
+
+
+\<configure docbook-math tex4ht\><<<
+\Configure{PicDisplay}
+  {\edef\MathPar{\ifvmode par-\fi}\IgnorePar\EndP\ShowPar\endgraf
+   \HCode{<equation role="\MathPar math-display"><mathphrase>}}
+  {\HCode{</mathphrase></equation>}\ShowPar} 
+  {}  {\space role="\MathPar math-display" }
+>>>
+
+
+
+
+
+\<try inline par\><<<
+\ShowPar\par{\HCondtrue\noindent}%
+>>>
+
+
+
+\<configure docbook tex4ht \><<<
+\Configure{Picture+}{}{}
+\Configure{Picture*}{}{}
+\Configure{IMG}
+  {\ht:special{t4ht=<graphic\Hnewline fileref="}}
+  {\ht:special{t4ht="}}
+  {}
+  {}
+  {\ht:special{t4ht=></graphic>}}
+\Configure{pic-halign}{}
+>>>
+
+
+
+\<configure docbook tex4ht\><<<
+\Configure{Picture+}{}{}
+\Configure{Picture*}{}{}
+\Configure{IMG}
+  {\ht:special{t4ht=<inlinemediaobject><imageobject><imagedata\Hnewline
+                                                       fileref="}}
+  {\ht:special{t4ht="}}
+  {}
+  {}
+  {\ht:special{t4ht=></imagedata></imageobject></inlinemediaobject>}}
+\Configure{pic-halign}{}
+>>>
+
+
+
+\<configure docbook tex4ht\><<<
+\Configure{PictureAlt*+}
+   {\let\sv:HtmlPar=\HtmlPar   \let\HtmlPar=\empty
+     |<postscript for /Picture|>%
+     |<tex halign and cr/crcr|>%
+     \NoFonts\csname PauseMathClass\endcsname \SUBOff \SUPOff
+     \let\HCode=\:gobble     |%\offinterlineskip|%
+     \let\EndPicture=\empty
+     \ht:special{t4ht@[}%
+   }
+   {\ht:special{t4ht@]}%
+     \let\HCode=\:HCode
+     \let\EndPicture=\:UnDef \let\HtmlPar=\sv:HtmlPar \SUBOn \SUPOn
+     \csname EndPauseMathClass\endcsname \EndNoFonts
+     |<tex4ht halign and cr/crcr|>%
+     |<delay postscript|>%
+   }
+>>>
+
+\<postscript for /Picture\><<<
+\def\PsCode##1{{\ht:special{\PsCodeSpecial##1}}}%
+>>>
+
+\<tex halign and cr/crcr\><<<
+\iffalse{\fi   
+\let\sv:halign=\halign
+\let\sv:cr=\cr
+\let\sv:crcr=\crcr
+\iffalse}\fi 
+\RecallTeXcr \let\halign =\TeXhalign
+>>>
+
+\<tex4ht halign and cr/crcr\><<<
+\iffalse{\fi   
+\let\halign=\sv:halign
+\let\cr=\sv:cr
+\let\crcr=\sv:crcr
+\iffalse}\fi 
+>>>
+
+\<delay postscript\><<<
+\let\PsCode=\relax
+>>>
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<configure docbook-math tex4ht WAIT\><<<
+
+\Configure{halignTR}
+   {\HCode{ style="vertical-align:baseline;"}}
+\Configure{halignTBL}
+% %   {t}{\HCode{ valign="top"}}
+% %   {b}{\HCode{ valign="baseline"}}
+% %   {c}{\HCode{ valign="middle"}}
+    {}
+
+\Configure{halign}
+   {\EndP\halignTB{halign}}   {\HCode{</table>}}
+   \R:HA\r:HA\D:HA\d:HA
+\Configure{pic-halign}{}
+\Configure{halignTD} {}{}
+   {<}{\HCode{ style="white-space:nowrap; text-align:left;"}}
+   {-}{\HCode{ style="white-space:nowrap; text-align:center;"}}
+   {>}{\HCode{ style="white-space:nowrap; text-align:right;"}}
+   {^}{\HCode{ style="vertical-align:top; white-space:nowrap;"}}
+   {=}{\HCode{ style="vertical-align:baseline; white-space:nowrap;"}}
+   {||}{\HCode{ style="vertical-align:middle; white-space:nowrap;"}}
+   {_}{\HCode{ style="vertical-align:bottom; white-space:nowrap;"}}
+   {p}{\HCode{ style="white-space:wrap; text-align:left;"}\Protect\a:HColWidth}
+   {m}{\HCode{ style="white-space:nowrap; text-align:left; vertical-align:middle;"}}
+   {b}{\HCode{ style="white-space:nowrap; text-align:left; vertical-align:baseline;"}}
+   {}
+
+
+
+\ifx \a:imgdir\:UnDef
+   \let\a:imgdir=\empty
+   \catcode`\:=12
+      \expandafter
+      \def\csname :temp\endcsname#1imgdir:#2,#3!*?: {%
+         \if !#2!\else \expandafter
+                          \def\csname a:imgdir\endcsname{#2}\fi}
+      \expandafter\csname :temp\expandafter\endcsname
+         \Preamble ,imgdir:,!*?: %
+   \catcode`\:=11
+   \Log:Note{for addressing images in
+       a subdirectory,  use the command line option `imgdir:.../'}
+\fi
+
+>>>
+
+\<configure docbook-math latex WAIT\><<<
+   \ConfigureEnv{array}
+     {\IgnorePar\EndP\Tg<div class="pic-array">\Picture*{}$$}
+     {$$\EndPicture\Tg</div>}{}{}
+>>>
+
+\<configure docbook-math array WAIT\><<<
+   \ConfigureEnv{array}
+     {\IgnorePar\EndP\Tg<div class="pic-array">\Picture*{}$$}
+     {$$\EndPicture\Tg</div>}{}{}
+>>>
+
+
+
+
+
+
+
+
+
+\<configure docbook graphics\><<<
+\Configure{graphics}
+  {}
+  {\HCode{<inlinemediaobject><imageobject><imagedata
+                   width="\the\Gin@req@width"
+                   fileref="\Gin@base\Gin@ext"
+      ></imagedata></imageobject></inlinemediaobject>}%
+   }
+>>>
+
+
+\<configure docbook graphics \><<<
+\Configure{graphics}
+  {}
+  {\HCode{<graphic width="\the\Gin@req@width"  fileref="\Gin@base\Gin@ext"
+      ></graphic>}%
+   }
+>>>
+
+
+\<configure docbook-math latex\><<<
+\Configure{[]} 
+   {\PicDisplay $$\everymath{}\everydisplay{}}
+   {$$\EndPicDisplay}
+\Configure{()}{\protect\PicMath$}{$\protect\EndPicMath}
+>>>
+
+
+
+
+\<configure docbook-mml tex4ht\><<<
+\Configure{$$}
+   {\Configure{@math}{|<disp math|>}\DviMath}
+   {\EndDviMath{\csname HCondtrue\endcsname\noindent}}
+   {}
+\Configure{@math}{|<disp math|>} \let\math:mode=\a:@math
+\Configure{DviMath}
+    {\a:DviMathML \mathmltrue 
+       \mml:htfsym |%\NoFonts|%%       
+       \IgnoreRule
+       \HCode{<!--l. \the\inputlineno--><math\Hnewline
+                xmlns="http://www.w3.org/1998/Math/MathML">}\a:math
+       |<sv dvimath par|>\IgnorePar}
+    {\HCode{</math>} \EndIgnoreRule
+     \ext:htfsym |%\EndNoFonts|%%
+     \mathmlfalse \b:DviMathML |<recall dvimath par|>}
+\Configure{DviMathML}
+   {\HCode{<\ifx \math:mode\a:@math \else inline\fi
+             equation \Hnewline \expandafter\:rend \a:@math==//>}}
+   {\HCode{</\ifx \math:mode\a:@math \else inline\fi equation>}}
+\def\:rend#1=#2=#3//{\if !#1!\else role=#2\fi}
+>>>
+
+
+% \ifOption{mml-fonts}{}{|%\mml:htfsym|%\NoFonts}%
+% \ifOption{mml-fonts}{}{|%\ext:htfsym|%\EndNoFonts}%
+
+\<disp math\><<<
+display="block">>>
+
+\<recall dvimath par\><<<
+\sv:ignore
+>>>
+
+\<sv dvimath par\><<<
+\edef\sv:ignore{\if:nopar  
+    \noexpand\IgnorePar\else \noexpand\ShowPar\fi}%
+>>>
+
+
+
+
+
+
+
+\<configure docbook fontmath\><<<
+\Configure{mathit}{\HCode{<emphasis role="it">}}
+                  {\HCode{</emphasis>}}
+\Configure{mathbf}{\HCode{<emphasis role="bf">}}
+                  {\HCode{</emphasis>}}
+\Configure{mathtt}{\HCode{<emphasis role="tt">}}
+                  {\HCode{</emphasis>}}
+\Configure{mathsf}{\HCode{<emphasis role="sf">}}
+                  {\HCode{</emphasis>}}
+\Configure{mathrm}{\HCode{<emphasis role="rm">}}
+                  {\HCode{</emphasis>}}
+>>>
+
+\<configure docbook latex\><<<
+\Configure{textbf}{|<par within font|>\HCode{<emphasis role="bf">}}
+                  {\HCode{</emphasis>}|<end par within font|>}
+\Configure{textit}{|<par within font|>\HCode{<emphasis role="it">}}
+                  {\HCode{</emphasis>}|<end par within font|>}
+\Configure{textrm}{|<par within font|>\HCode{<emphasis role="rm">}}
+                  {\HCode{</emphasis>}|<end par within font|>}
+\Configure{textup}{|<par within font|>\HCode{<emphasis role="up">}}
+                  {\HCode{</emphasis>}|<end par within font|>}
+\Configure{textsc}{|<par within font|>\HCode{<emphasis role="sc">}}
+                  {\HCode{</emphasis>}|<end par within font|>}
+\Configure{textsf}{|<par within font|>\HCode{<emphasis role="sf">}}
+                  {\HCode{</emphasis>}|<end par within font|>}
+\Configure{textsl}{|<par within font|>\HCode{<emphasis role="sl">}}
+                  {\HCode{</emphasis>}|<end par within font|>}
+\Configure{texttt}{|<par within font|>\HCode{<emphasis role="tt">}}
+                  {\HCode{</emphasis>}|<end par within font|>}
+\Configure{emph}{|<par within font|>\HCode{<emphasis>}}
+                {\HCode{</emphasis>}|<end par within font|>}
+>>>
+
+
+
+\<par within font\><<<
+\leavevmode\SaveEndP\bgroup 
+\Configure{HtmlPar}
+   {\HCode{<!--br role="newline" /-->}}
+   {\HCode{<!--br role="newline" /-->}}
+   {}{}%
+>>>                    
+
+\<end par within font\><<<
+\egroup \RecallEndP
+>>>
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Environments}
+%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+%%%%%%%%%%%%
+\subsection{quote}
+%%%%%%%%%%%%
+
+\<latex environments\><<<
+\ConfigureEnv{quote}{\ifvmode\IgnorePar\fi\EndP\HCode{<blockquote>}}{\ifvmode\IgnorePar\fi\EndP\HCode{</blockquote>}\par\ShowPar}{}{}
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Center}
+%%%%%%%%%%%%%
+
+\<latex environments\><<<
+\ConfigureEnv{center}
+  {\EndP}{\par \ShowPar} {}{}
+\ConfigureList{center}
+   {\IgnorePar\EndP\HCode{<section role="center"><title/>}\par\ShowPar}
+   {\IgnorePar\EndP\HCode{</section>}\par\ShowPar}
+   {} {\par\ShowPar}
+>>>
+
+%%%%%%%%
+\subsection{Flusshing}
+%%%%%%%%%%%%%
+
+\<latex environments\><<<
+\ConfigureEnv{flushleft}
+  {\EndP}{\par \ShowPar} {}{}
+\ConfigureEnv{flushright}
+  {\EndP}{\par \ShowPar} {}{}
+\ConfigureList{flushleft}
+  {\IgnorePar\EndP\HCode{<blockquote role="flushleft">}\par\ShowPar}
+  {\IgnorePar\EndP\HCode{</blockquote>}\par\ShowPar}
+  {} {\par\ShowPar}
+\ConfigureList{flushright}
+  {\IgnorePar\EndP\HCode{<blockquote role="flushright">}\par\ShowPar}
+  {\IgnorePar\EndP\HCode{</blockquote>}\par\ShowPar}
+  {} {\par\ShowPar}
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Mini Page}
+%%%%%%%%%%%%%
+
+\<latex environments\><<<
+\ConfigureEnv{minipage}
+   {%\IgnorePar\EndP
+    %\HCode{<note><para role="minipage">}%
+    {\ifnum 0=`}\fi
+   }
+   {\ifnum 0=`{\fi}%
+%    \EndP\HCode{</para></note>}%
+   }
+   {}{}
+>>>
+
+The extra braces in the minipage configurations are to allow the
+compilation of cases similar to the following one.
+
+\begin{verbatim}
+\documentclass{article}  
+\begin{document}    
+\begin{tabular}{c}  
+\begin{minipage}{4in}  
+\begin{eqnarray}  
+x & = & y  
+\end{eqnarray}  
+\end{minipage}  
+\end{tabular}    
+\end{document}  
+\end{verbatim}
+
+
+
+
+\<latex environments\><<<
+\ConfigureEnv{section}
+   {\IgnorePar\EndP\HCode{<section role="minipage">}}
+   {\IgnorePar\EndP\HCode{</section>}\ShowPar}
+   {}{}
+>>>
+
+%%%%%%%%%%%%%
+\subsection{Tabbing}
+%%%%%%%%%%%%%
+
+\<latex environments\><<<
+
+>>>
+
+\subsection{Tabular and Array}
+
+\<latex environments\><<<
+
+>>>
+
+\subsection{Verbatim}
+
+\<latex environments\><<<
+\ConfigureEnv{verbatim}
+  {\ifinner\else \vfill\break\fi
+    \IgnorePar\EndP\HCode{<literallayout role="verbatim">}\EndNoFonts}
+  {\NoFonts \ht:special{t4ht=</literallayout>}\ShowPar\par}
+  {} {}
+\ConfigureEnv{verbatim*}
+  {\ifinner\else \vfill\break\fi
+    \IgnorePar\EndP\HCode{<literallayout role="verbatim-star">}\EndNoFonts}
+  {\NoFonts \HCode{</literallayout>}\ShowPar\par}
+  {} {}
+\Configure{verbatim}{\:nbsp}{\a:sp}
+>>>
+
+    array
+    tabbing
+    tabular
+ 
+
+%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Listings}
+%%%%%%%%%%%%%%%%%%%%%%
+
+\<configure docbook listings\><<<
+\Log:Note{to ensure proper alignments use
+   fixed size fonts (see listings.dtx)}
+\Configure{listings}
+   {\ifvmode \IgnorePar\fi \EndP 
+    {\everypar{}\leavevmode}\HCode{<!--l. \the\inputlineno-->}%
+     \HCode{<pre class="listings">}%
+   }
+   {{\everypar{}\leavevmode}\HCode{</pre>}}
+   {}{}
+\Configure{lstinline}
+   {\HCode{<remark role="lstinline">}}
+   {\HCode{</remark>}}
+>>>
+
+\<configure docbook listings\><<<
+\ConfigureEnv{lstlisting}
+   {\ifvmode \IgnorePar\fi \EndP  
+    \HCode{<!--l. \the\inputlineno-->}%
+    \HCode{<div class="lstlisting">}%
+    \bgroup 
+       \Configure{listings}
+         {{\everypar{}\leavevmode}}
+         {{\everypar{}\leavevmode}}
+         {\HCode{<br/>}}{}%
+   }
+   {\egroup \ifvmode \IgnorePar\fi \EndP   \HCode{</div>}}
+   {} {}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Paragraphs}
+%%%%%%%%%%%%%%%%%%%%
+
+
+\<tex4ht paragraphs\><<<
+\Configure{HtmlPar}
+   {\EndP\HCode{<!--l. \the\inputlineno--><para>}}
+   {\EndP\HCode{<!--l. \the\inputlineno--><para>}}    
+   {\HCode{</para>}}     {\HCode{</para>}}    
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%
+\section{TOCs}
+%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%
+\subsection{Shared}
+%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\<configure docbook tex4ht\><<<
+\Configure{TocLink}{\Link{#2}{#3}\EndLink#4}   
+>>>
+
+
+
+
+\<article tocs\><<<
+\Configure{tableofcontents}
+  {\ifvmode \IgnorePar\fi \EndP\HCode{<toc><tocpart>}}
+  {\ifvmode \IgnorePar\fi \EndP\HCode{</tocpart></toc><para></para>}}
+  {}{}{}
+>>>
+
+
+\<report,book tocs\><<<
+|<article tocs|>
+\ConfigureToc{appendix}
+   {\HCode{\Hnewline<tocentry role="appendixToc">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{chapter}
+   {\HCode{\Hnewline<tocentry role="chapterToc">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{likechapter}
+   {} {\HCode{\Hnewline<tocentry role="likechapterToc">}}
+   {} {\HCode{</tocentry>}}
+>>>
+
+\<article tocs\><<<
+\ConfigureToc{likeparagraph}
+   {} {\HCode{\Hnewline<tocentry role="likeparagraphToc">}}
+   {} {\HCode{</tocentry>}}
+\ConfigureToc{likepart}
+  {} {\HCode{\Hnewline<tocentry role="likepartToc">}}
+  {} {\HCode{</tocentry>}}
+\ConfigureToc{likesection}
+   {} {\HCode{\Hnewline<tocentry role="likesectionToc">}}
+   {} {\HCode{</tocentry>}}
+\ConfigureToc{likesubparagraph}
+   {} {\HCode{\Hnewline<tocentry role="likesubparagraphToc">}}
+   {} {\HCode{</tocentry>}}
+\ConfigureToc{likesubsection}
+   {} {\HCode{\Hnewline<tocentry role="likesubsectionToc">}}
+   {} {\HCode{</tocentry>}}
+\ConfigureToc{likesubsubsection}
+   {} {\HCode{\Hnewline<tocentry role="likesubsubsectionToc">}}
+   {} {\HCode{</tocentry>}}
+\ConfigureToc{paragraph}
+   {\HCode{\Hnewline<tocentry role="paragraphToc">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{part}
+   {\HCode{\Hnewline<tocentry role="partToc">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{section}
+   {\HCode{\Hnewline<tocentry role="sectionToc">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{subparagraph}
+   {\HCode{\Hnewline<tocentry role="subparagraphToc">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{subsection}
+   {\HCode{\Hnewline<tocentry role="subsectionToc">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{subsubsection}
+   {\HCode{\Hnewline<tocentry role="subsubsectionToc">}}
+   {\ }{} {\HCode{</tocentry>}}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%
+\subsection{Scr}
+%%%%%%%%%%%%%%%%%%%%
+
+\<scrbook tocs\><<<
+\ConfigureToc{addchap}
+   {}
+   {\HCode{\Hnewline<tocentry role="addchapToc">}}
+   {} 
+   {\HCode{</tocentry>}}
+>>>
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Texinfo}
+%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<configure docbook texinfo\><<<
+\ConfigureToc{chapter}
+   {\HCode{\Hnewline<tocentry role="chapter">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{appendix}
+   {\HCode{\Hnewline<tocentry role="appendix">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{unnumbered}
+   {\HCode{\Hnewline<tocentry role="unnumbered">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{numberedsec}
+   {\HCode{\Hnewline<tocentry role="numberedsec">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{appendixsec}
+   {\HCode{\Hnewline<tocentry role="appendixsec">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{unnumberedsec}
+   {\HCode{\Hnewline<tocentry role="unnumberedsec">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{numberedsubsec}
+   {\HCode{\Hnewline<tocentry role="numberedsubsec">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{appendixsubsec}
+   {\HCode{\Hnewline<tocentry role="appendixsubsec">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{appendixsubsec}
+   {\HCode{\Hnewline<tocentry role="appendixsubsec">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{unnumberedsubsec}
+   {\HCode{\Hnewline<tocentry role="unnumberedsubsec">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{numberedsubsubsec}
+   {\HCode{\Hnewline<tocentry role="numberedsubsubse">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{appendixsubsubsec}
+   {\HCode{\Hnewline<tocentry role="appendixsubsubse">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{appendixsubsubsec}
+   {\HCode{\Hnewline<tocentry role="appendixsubsubse">}}
+   {\ }{} {\HCode{</tocentry>}}
+\ConfigureToc{unnumberedsubsubsec}
+   {\HCode{\Hnewline<tocentry role="unnumberedsubsub">}}
+   {\ }{} {\HCode{</tocentry>}}
+\Configure{toTocLink}{\Title:Link}{}    
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Indexes}
+%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%
+\subsection{Article, Report, Book}
+%%%%%%%%%%%%%
+
+\<index entry\><<<
+\Configure{theindex}
+   {\let\end:theidx=\empty \HCode{<indexterm>}}
+   {\HCode{</indexterm>}}
+   {|<primary index|>%
+    \def\end:cur{|<end primary index|>\let\end:cur=\empty}%
+    \DB:index
+   }
+    {\end:cur \let\chain:subitem=\empty} 
+   {\chain:subitem |<secondary index|>%
+    \def\end:cur{|<end secondary index|>\let\end:cur=\empty}%
+   }
+    {\end:cur \def\chain:subitem{%
+     |<new index entry|>|<primary index|>|<end primary index|>}%
+     \let\chain:subsubitem=\empty
+   }
+   {\chain:subsubitem|<tertiary index|>%
+    \def\end:cur{|<end tertiary index|>\let\end:cur=\empty}%
+   }
+   {\end:cur \def\chain:subsubitem{%
+       |<new index entry|>|<primary index|>|<end primary index|>%
+       |<secondary index|>|<end secondary index|>}%
+   }
+   {}
+>>>
+
+
+
+\<article, report, book\><<<
+\def\DB:index#1\indNum#2{%
+   \ifnum  #2=\index:N
+      \let\DB:index=\relax  #1\long\def\item##1\end{\end}%
+   \else \expandafter\gob:item \fi
+}
+\long\def\gob:item#1\item{\DB:index}
+\let\indNum=\:gobble
+>>>
+
+
+
+
+\<article, report, book\><<<
+\HAssign\index:N = 0
+\def\comNum#1{\tmp:cnt=}
+\let\db:index=\index
+\def\index{%
+   \immediate\openin15=\jobname.ind
+   \ifeof15 \else
+      \immediate\closein15
+      \bgroup
+       \def\gobble##1{}%
+       \gHAdvance\index:N by 1   
+       |<index entry|>%
+       \leavevmode \let\par=\empty
+       \input{\jobname.ind}%
+      \egroup
+    \fi
+    \db:index}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%
+\subsection{index}
+%%%%%%%%%%%%%%%%%%%%
+
+
+\<configure docbook latex\><<< 
+\Configure{idxmake}{\Beforeentry}
+>>>
+
+
+\<ams art,proc,book\><<<
+|<index throug printindex|>
+>>>
+
+
+\<configure docbook amsmidx\><<< 
+|<index throug printindex|>
+>>>
+
+\<configure docbook makeidx\><<< 
+|<index throug printindex|>
+>>>
+
+
+\<configure docbook index\><<< 
+|<index throug printindex|>
+>>>
+
+\<configure docbook multind\><<< 
+|<index throug printindex|>
+>>>
+
+
+\<index throug printindex\><<<
+\def\:temp{\HCode{<indexterm role="printindex" />}}
+\HLet\printindex\:temp
+\expandafter\ifx \csname db:index\endcsname\realx
+   \let\db:index=\index
+\fi
+\def\index{\bgroup
+    \HRestore\printindex
+    \def\gobble##1{}%
+    \gHAdvance\index:N by 1   
+    |<index entry|>%
+    \leavevmode \let\par=\empty
+    \printindex  
+   \egroup \db:index}
+\def\comNum#1{\tmp:cnt=}
+\def\brange#1{\HCode{<remark role="start">}\Link{to-#1}{from-#1}\EndLink
+   \HCode{</remark>}}
+\def\erange#1{\HCode{<remark role="to">}\Link{from-#1}{to-#1}\EndLink
+   \HCode{</remark>}}
+>>>
+
+
+
+\<\><<<
+\def\comNum{%
+   \def\:tempa{%
+      \ifx ,\:temp        \def\:tempa####1{\tmp:cnt=}%
+      \else \ifx {\:temp  \def\:tempa####1{\tmp:cnt=####1}%
+            \iffalse }\fi
+      \else               \def\:tempa{\tmp:cnt=}%
+      \fi\fi \:tempa}%
+   \futurelet\:temp\:tempa}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%%
+\subsection{theindex}
+%%%%%%%%%%%%%%%%%%%%
+
+
+\<article, report, book\><<<
+\Configure{theindex}
+    {\special{t4ht@[}}
+    {\special{t4ht@]}}
+    {}{}{}{}{}{}{}
+>>>
+
+
+
+\<configure docbook makeidx\><<<
+\Configure{see}
+  {\csname end:cur\endcsname \HCode{<seealso role="see">}}
+  {\HCode{</seealso>}%
+   \futurelet\:next\remove:comma}
+\def\remove:comma{\ifx ,\:next \expandafter\:gobble\fi}
+>>>
+
+
+
+\<primary index\><<<
+\HCode{<primary>}%
+>>>
+
+\<end primary index\><<<
+\HCode{</primary>}\hfil\break
+>>>
+
+\<secondary index\><<<
+\HCode{<secondary>}%
+>>>
+
+\<end secondary index\><<<
+\HCode{</secondary>}\hfil\break
+>>>
+
+\<tertiary index\><<<
+\HCode{<tertiary>}%
+>>>
+
+\<end tertiary index\><<<
+\HCode{</tertiary>}\hfil\break
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\subsection{splitindex}
+%%%%%%%%%%%%%%%%%%%%
+
+\<configure docbook splitidx\><<<
+\let\db:sindex=\sindex
+\def\:sindex{\bgroup
+    \HRestore\printindex
+    \def\gobble##1{}%
+    \gHAdvance\index:N by 1   
+    \leavevmode \let\par=\empty
+    \edef\:temp{\LikeRef{printindex}}\expandafter\printindex\:temp
+   \egroup \db:sindex}
+>>>
+
+\<configure docbook splitidx\><<<
+\def\:temp{%
+  \def\:tempa{%
+     \HCode{<indexterm role="printindex\ifx *\:temp -star\fi" />}%
+     \ifx *\:temp \Tag{printindex}{*}\expandafter\:gobble\fi
+  }%
+  \futurelet\:temp\:tempa
+}
+\HLet\printindex\:temp
+>>>
+
+\<configure docbook splitidx\><<<
+\def\sindex{%
+   \def\:tempa{%
+      \ifx [\:temp 
+            \def\:temp[####1]{\def\ind:ext{####1}\:sindex[####1]}%
+            \expandafter\:temp
+      \else \expandafter\:sindex \fi
+   }%
+   \futurelet\:temp\:tempa
+}
+\let\o:@@printindex:=\@@printindex
+\def\@@printindex[#1][#2]{%
+   \def\:temp{#1}%
+   \ifx \:temp\ind:ext \o:@@printindex:[#1][#2]\fi}
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Color}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<configure docbook color\><<<
+\Configure{color}{\:gobble}
+\Configure{HColor:gray}{%
+   \int:of\:tempa{255}{#1}%
+   \Configure{HColor}{}{rgb(\:tempa,\:tempa,\:tempa)}%
+}
+\Configure{HColor:rgb}{%
+   \int:of\:tempa{255}{#1}%
+   \int:of\:tempb{255}{#2}%
+   \int:of\:tempc{255}{#3}%
+   \Configure{HColor}{}{rgb(\:tempa,\:tempb,\:tempc)}%
+}
+\Configure{HColor:cmyk}{%
+   \int:of\:Cyan{255}{#1}%
+   \int:of\:Magenta{255}{#2}%
+   \int:of\:Yellow{255}{#3}%
+   \int:of\:Black{255}{#4}%
+   \:cmyk\:tempa\:Cyan
+   \:cmyk\:tempb\:Magenta
+   \:cmyk\:tempc\:Yellow
+   \Configure{HColor}{}{rgb(\:tempa,\:tempb,\:tempc)}%
+}
+|<HColor util|>
+>>>
+
+
+\<HColor util\><<<
+\def\int:of#1#2#3{%
+   \tmp:dim=#3pt \tmp:dim=#2\tmp:dim
+   \edef\:temp{\tmp:cnt\the\tmp:dim//}%
+   \def#1##1//{}\afterassignment#1\:temp
+   \edef#1{\the\tmp:cnt}%
+}
+>>>
+
+
+\begin{verbatim}
+cmyk -> gray
+(1 - 0.299c - 0.587m - 0.114y)(1 - k) 
+
+cmyk -> rgb
+Red   = 1-minimum(1,Cyan   *(1-Black)+Black)
+Green = 1-minimum(1,Magenta*(1-Black)+Black)
+Blue  = 1-minimum(1,Yellow *(1-Black)+Black)
+\end{verbatim}
+
+
+
+\<HColor util\><<<
+\def\:cmyk#1#2{%
+   \tmp:cnt=255 \advance\tmp:cnt by -\:Black
+   \multiply\tmp:cnt by#2 \advance\tmp:cnt by \:Black 
+   \advance\tmp:cnt by -255 \tmp:cnt=-\tmp:cnt
+   \ifnum \tmp:cnt<0 \tmp:cnt=0 \fi
+   \edef#1{\the\tmp:cnt}%
+}
+>>>
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Other}
+%%%%%%%%%%%%%%%%%%%%
+
+
+\<latex ltoutenc\><<<
+\Configure{textcircled}
+   {\@use@text@encoding \@curr@enc c}       
+   {\leavevmode \special{t4ht@+\string&\#x00A9;}c}
+   {\@use@text@encoding \@curr@enc \scshape r}
+   {\leavevmode \special{t4ht@+\string&\#x00AE;}r}
+   {}
+>>>
+
+
+\<configure docbook latex\><<<
+|<latex ltoutenc|>
+\def\:temp{LaTeX}
+\HLet\LaTeX\:temp
+>>>
+
+\<configure docbook amsmath\><<<
+\def\:temp{{\protect\AmSfont AMS}}
+\HLet\AmS\:temp
+>>>
+
+
+\<latex, plain\><<<
+|<unicode space|>
+>>>
+
+\<unicode space\><<<
+\def\:nbsp{\HCode{\string&}\HChar{-35}\HCode{x00A0;}}%
+>>>
+
+
+\<configure docbook latex\><<<
+\Configure{footnotetext}
+    {\HCode{<footnote><para>}\setbox\tmp:bx=\hbox\bgroup\let\@makefnmark\relax}
+    {\egroup}%
+    {\HCode{</para></footnote>}}
+\Configure{footnotemark}
+   {\setbox\tmp:bx=\hbox\bgroup}
+   {\egroup}
+\ifx \tmp:bx\:UnDef \csname newbox\endcsname \tmp:bx \fi 
+>>>
+
+
+Sub and super scripts
+
+
+\<configure docbook latex\><<<
+\Configure{textsuperscript}
+  {\HCode{<superscript>}}
+  {\HCode{</superscript>}}
+
+\Configure{textsubscript}
+  {\HCode{<subscript>}}
+  {\HCode{</subscript>}}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Underline and Overline}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<configure docbook latex\><<<
+\Configure{underline}
+   {\HCode{<emphasis role="underline">}\:gobble}
+   {\HCode{</emphasis>}}
+\Configure{overline}
+   {\HCode{<emphasis role="overline">}}
+   {\HCode{</emphasis>}}
+>>>
+
+\<configure docbook plain\><<<
+\Configure{underline}
+   {\HCode{<emphasis role="underline">}\hbox\bgroup \:gobble}
+   {\egroup \HCode{</emphasis>}}
+\Configure{overline}
+   {\HCode{<emphasis role="overline">}}
+   {\HCode{</emphasis>}}
+>>>
+
+
+
+
+
+
+
+\<configure docbook-mml latex\><<<
+\Configure{overline}
+   {\bgroup\ifmathml |<mathml overline|>\else
+         \HCode{<emphasis role="overline">}\fi}
+   {\ifmathml |<end mathml overline|>\else \HCode{</emphasis>}\fi\egroup}
+\Configure{underline}
+   {\bgroup
+    \ifmathml |<mathml underline|>%
+    \else |<nomath underline|>\HCode{<emphasis role="underline">}\fi}
+   {\ifmathml |<end mathml underline|>\else \HCode{</emphasis>}\fi \egroup}
+>>>
+
+
+\<mathml latex\><<<
+|<und/ov-erline|>
+>>>
+
+\<mathml plain\><<<
+|<und/ov-erline|>
+>>>
+
+
+\<und/ov-erline\><<<
+\Configure{overline}
+   {\bgroup |<mathml overline|>}
+   {|<end mathml overline|>\egroup}
+\Configure{underline}
+   {\bgroup \ifmmode |<mathml underline|>\else 
+     |<nomath underline|>\fi}
+   {|<end mathml underline|>\egroup}
+>>>
+
+\<nomath underline\><<<
+\expandafter\everymath
+\expandafter{\expandafter\everymath
+             \expandafter{\the\everymath}}%
+\let\o::@underline:\o:@@underline:
+\def\o:@@underline:{\let\o:@@underline:\o::@underline:}%
+>>>
+
+
+\<mathml overline\><<<
+\HCode{<\a:mathml mover  accent="false"\Hnewline
+\mml:class="mml-overline"><\a:mathml mrow>}%
+>>>
+
+\<end mathml overline\><<<
+\HCode{</\a:mathml mrow><\a:mathml mo\Hnewline
+ accent="true">&\#x00AF;</\a:mathml mo>%    
+</\a:mathml mover>}%
+>>>
+
+\verb'&#x00AF;' is the code of \verb'&OverBar;'
+
+
+\<mathml underline\><<<
+\HCode{<\a:mathml munder \a:mathml accentunder="false"\Hnewline
+\mml:class="mml-underline"><\a:mathml mrow>}% 
+>>>
+
+\<end mathml underline\><<<
+\HCode{</\a:mathml mrow><\a:mathml mo\Hnewline
+accent="true">&\#x0332;</\a:mathml mo></\a:mathml munder>}%
+>>>
+
+
+\verb'&#x0332;' is the code of \verb'&UnderBar;'
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{AMS}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Root}
+%%%%%%%%%%%%%%%%%%%%
+
+
+\<configure docbook amsart\><<< 
+|<article prologue|>
+|<sectioning utilities|>
+|<ams maketitle|>
+|<ams article,report maketitle|>
+|<ams art,proc,book|>
+|<ams art,proc|>
+>>>
+
+\<configure docbook amsbook\><<< 
+|<article prologue|>
+|<sectioning utilities|>
+|<ams maketitle|>
+|<ams article,report maketitle|>
+|<ams art,proc,book|>
+|<ams book|>
+>>>
+
+\<configure docbook amsproc\><<< 
+|<article prologue|>
+|<sectioning utilities|>
+|<ams maketitle|>
+|<ams article,report maketitle|>
+|<ams art,proc,book|>
+|<ams art,proc|>
+>>>
+
+\<configure docbook-mml amsart\><<< 
+|<ams dtd|>
+>>>
+
+\<ams dtd\><<<
+\:CheckOption{css} \if:Option
+   \:CheckOption{dtd} \if:Option
+      \Configure{VERSION}
+         {\HCode{<?xml version="1.0"?>\Hnewline}}
+      \Configure{DOCTYPE}
+        {\HCode{<!DOCTYPE article |<doctype 5.0|> >}}
+      \Configure{XML-STYLESHEET}
+        {\HCode{<?xml-stylesheet type="text/css" href="\jobname.css"?>
+            \Hnewline}}
+   \else
+      \Configure{VERSION}
+         {\HCode{<?xml version="1.0"?>\Hnewline}}
+      \Configure{DOCTYPE}
+      {\HCode{<!DOCTYPE article |<doctype 5.0|> >}}
+      \Configure{XML-STYLESHEET}
+        {\HCode{<?xml-stylesheet type="text/css" href="\jobname.css"?>
+            \Hnewline}}
+   \fi
+\else
+   \Configure{VERSION}
+      {\HCode{<?xml version="1.0"?>\Hnewline}}
+   \Configure{DOCTYPE}
+     {\HCode{<!DOCTYPE article |<doctype 5.0|> >\Hnewline }}
+\fi
+>>>
+
+
+
+\<configure docbook Preamble\><<<  
+\Configure{PROLOG}{VERSION,DOCTYPE,*XML-STYLESHEET}
+\:CheckOption{no-DOCTYPE} \if:Option
+   \Configure{PROLOG}{VERSION,*XML-STYLESHEET}
+\fi
+>>>
+
+
+
+\<configure docbook-mml amsbook\><<< 
+|<ams dtd|>
+>>>
+
+\<configure docbook-mml amsproc\><<< 
+|<ams dtd|>
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Css}
+%%%%%%%%%%%%%%%%%%%%
+
+\<configure docbook tex4ht\><<<
+|<cascade style sheets|>
+\Configure{Preamble}
+   {|<default cascade style sheets|>} {}
+\Configure{CssFile}{\jobname.css}
+  {/* \aa:CssFile\space from \jobname.tex (TeX4ht) */}
+\Configure{Needs}{l. 
+   \the\inputlineno\space--- needs --- #1 ---}
+\Configure{Needs-}{l.
+   \the\inputlineno\space--- needs --- #1 ---}
+>>>
+
+\<default cascade style sheets\><<<
+{\ifdim \lastskip>\z@ \unskip\fi  \IgnorePar\parindent\z@
+\leavevmode}%
+\immediate\write-1{--- file \aa:CssFile\space ---}%
+\ht:special{t4ht>\aa:CssFile}\ht:special{t4ht=\Hnewline /* css.sty */}%
+\ht:special{t4ht<\aa:CssFile}%
+>>>
+
+
+\<cascade style sheets\><<<
+\ScriptCommand{\CssFile}{%
+  \immediate\write-1{--- file \aa:CssFile\space ---}%
+  \def\FontSize##1##2{\:Context{##1}\ht:special{t4ht;\%##2}\%}%
+  \def\FontName##1{\:Context{##1}\ht:special{t4ht;=}}%
+  \def\:Context##1{\ht:special{t4ht>\jobname.tmp}##1\ht:special
+     {t4ht>\aa:CssFile}}%
+  \ht:special{t4ht>\jobname.tmp}\ht:special{t4ht>\aa:CssFile}\bb:CssFile
+  \hfil\break\NoFonts}{\EndNoFonts
+  \ht:special{t4ht<\aa:CssFile}\ht:special{t4ht<\jobname.tmp}}
+\let\Css:File|=\CssFile
+\def\CssFile{\futurelet\:temp\Css:Fl}
+\def\Css:Fl{\ifx [\:temp  \expandafter\Css:fl
+   \else \expand:after{\Css:File \space}\fi}
+\def\Css:fl[#1]{\Css:File\space \css:files #1,,|<par del|>}
+\def\css:files#1,#2|<par del|>{\def\:temp{#1}\ifx \:temp\empty
+   \else \def\:temp{\in:css#1.|<par del|>\css:files#2,,|<par del|>}\fi
+   \:temp }
+\def\in:css#1.#2|<par del|>{\def\:temp{#2}\ifx \:temp\empty \input #1.css
+   \else \inc:ss#1.#2|<par del|>\fi}
+\def\inc:ss#1.|<par del|>{\input #1 }
+\NewConfigure{CssFile}[2]{\def\aa:CssFile{#1}\def\bb:CssFile{#2}}
+>>>
+
+
+
+\<cascade style sheets\><<<
+\def\Css#1{{\def\:temp{\Configure{Needs}}%
+   \expandafter\:temp\expandafter{\aa:Css}\Needs{#1}}}
+>>>
+
+
+\<configure docbook tex4ht\><<< 
+\ifx \a:FontCss:\:UnDef
+   \Configure{FontCss}{Font\string_Css##1}
+                   {Font\string_Css\string_Plus\space##1}
+\fi
+\expandafter\ifx \csname aa:Css\endcsname\relax
+   \Configure{Css}{Css: ##1}
+\fi
+>>>
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Theorem}
+%%%%%%%%%%%%%%%%%%%%
+
+
+\<ams art,proc,book\><<<
+\ifx \deferred@thm@head\:UnDef\else   
+   |<shared ams thm/cls|>
+\fi
+>>>
+
+\<configure docbook amsthm\><<<
+|<shared ams thm/cls|>
+>>>
+
+\<shared ams thm/cls\><<<
+\Configure{proof}
+   {\IgnorePar\EndP\HCode{<blockquote role="proof"><title>}\IgnorePar}
+   {\ifvmode \IgnorePar\fi\EndP\HCode{</title>}\ShowPar\par}
+   {\IgnorePar\EndP\HCode{</blockquote>}\ShowPar\par}
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%
+\section{Title Page}
+%%%%%%%%%%%%%%%%%%%%
+
+\<ams maketitle\><<<
+\Configure{maketitle}
+   {\HCode{<articleinfo>}}
+   {\HCode{</articleinfo>}}
+   {\HCode{<title>}}{\HCode{</title>}}
+\Configure{thanks author date and} {}{}
+   {\HCode{<author><othername>}}
+   {\HCode{</othername></author>}}
+   {\HCode{<date>}}
+   {\HCode{</date>}}
+   {}{}
+>>>
+
+
+\<ams article,report maketitle\><<<
+\Configure{maketitle}
+   {\ifvmode \IgnorePar\fi\EndP
+    \HCode{<section role="maketitle"><title />}%
+    \ConfigureEnv{center}
+       {\ifvmode \IgnorePar\fi} {\ifvmode \IgnorePar\fi}
+       {\ifvmode \IgnorePar\fi} {\ifvmode \IgnorePar\fi}%
+   }
+   {\ifvmode \IgnorePar\fi\EndP \HCode{</section>}}
+   {\ifvmode \IgnorePar\fi\EndP \HCode{<para role="title">}}
+   {\ifvmode \IgnorePar\fi\HCode{</para>}}
+\Configure{thanks author date and}
+   {\par\IgnorePar\EndP \HCode{<note role="thanks">}\par\ShowPar}
+   {\ifvmode \IgnorePar\fi\EndP \HCode{</note>}}
+   {\ifvmode \IgnorePar\fi\EndP
+     |<para role|>\HCode{<para role="authorgroup"><author><personname><othername>}} 
+   {\ifvmode \IgnorePar\fi 
+    \HCode{</othername></personname></author><!--/author--></para><!--/authorgroup-->}}  
+   {\ifvmode \IgnorePar\fi\EndP \HCode{<para role="date">}}      
+   {\ifvmode \IgnorePar\fi \HCode{</para><!--/date-->}}  
+   {\ifvmode \IgnorePar\fi\lowercase{\HCode{</othername></personname></author>
+         <!--/author--><!--author--><author><personname><othername>}}}
+   {}
+>>>
+
+\<ams article,report maketitle\><<<
+\Configure{addresses}
+   {\ifvmode \IgnorePar\fi \EndP
+     \HCode{<note role="addresses">}\ShowPar}
+   {\ifvmode \IgnorePar\fi \EndP 
+     \HCode{</note><!--addresses-->}}
+\Configure{address}
+   {\HCode{<note role="address-title"><para>}}
+   {\ifvmode \IgnorePar\fi 
+      \HCode{</para></note><!--address-title--><note role="address"><para>}}
+   {\HCode{</para></note><!--address-->}}
+\Configure{curraddr}
+   {\HCode{<para role="curraddr-title">}}
+   {\ifvmode \IgnorePar\fi 
+     \HCode{</para><!--curraddr-title--><para role="curraddr">}}
+   {\HCode{</para><!--curraddr-->}}
+\Configure{email}
+   {\HCode{<note role="email-title"><para>}}
+   {\ifvmode \IgnorePar\fi 
+    \HCode{</para></note><!--email-title--><note role="email"><para>}}
+   {\HCode{</para></note><!--email-->}}
+\Configure{urladdr}
+   {\HCode{<para role="urladdr-title">}}
+   {\ifvmode \IgnorePar\fi
+      \HCode{</para><!--urladdr-title--><para role="urladdr">}}
+   {\HCode{</para><!--urladdr-->}}
+>>>
+
+\<ams art,proc,book\><<<
+\ConfigureEnv{abstract}
+   {\ifvmode \IgnorePar\fi \EndP}
+   {\ifvmode \IgnorePar\fi \EndP}
+   {}{}
+\ConfigureList{abstract}
+   {\ifvmode \IgnorePar\fi \EndP 
+       \HCode{<note role="abstract">}\IgnorePar}
+   {\ifvmode \IgnorePar\fi \EndP
+       \HCode{</note><!--abstract-->}\ShowPar}
+   {\IgnorePar\par\HCode{<title>}}
+   {\HCode{</title>}\ShowPar\par}
+\Configure{setabstract}
+   {\ifvmode \IgnorePar \fi \EndP}
+   {\ifvmode \IgnorePar \fi \EndP}
+>>>
+
+\<ams art,proc,book\><<<
+\Configure{subjclass}
+   {\par\IgnorePar\HCode{<note role="subjclass">}\par\ShowPar}
+   {\ifvmode \IgnorePar \fi\EndP\HCode{</note><!--subjclass-->}}
+\Configure{keywords}
+   {\par\IgnorePar\EndP \HCode{<note role="keywords">}\par\ShowPar}
+   {\ifvmode \IgnorePar \fi\EndP\HCode{</note>}}
+>>>
+
+
+
+\<ams book\><<<
+\Configure{translators}
+  {\par\IgnorePar\EndP  \HCode{<note role="translators">}\par\ShowPar}
+  {\ifvmode \IgnorePar \fi\EndP \HCode{</note>}}
+  {\HCode{<note role="translator"><para>}}
+  {\HCode{</para></note>}}
+>>>
+
+\<ams art,proc\><<<
+\Configure{translators}
+  {\par\IgnorePar\EndP  \HCode{<para role="translators">}\par\ShowPar}
+  {\ifvmode \IgnorePar \fi\EndP \HCode{</para>}}
+  {\HCode{<note role="translator"><para>}}
+  {\HCode{</para></note>}}
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{Sections}
+%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\<configure docbook amsart\><<<
+|<amsart + article sec|>
+>>>
+
+\<configure docbook amsbook\><<<
+|<amsart + article sec|>
+>>>
+
+
+\<configure docbook amsproc\><<<
+|<amsart + article sec|>
+>>>
+
+
+
+
+\<amsart + article sec\><<<
+\Configure{part}
+   {\OpenDiv{part}}   {\CloseDiv{part}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\Configure{section}
+   {\OpenDiv{section}}   {\CloseDiv{section}}
+   {\HCode{<title>}|<TitleMark|>}   {\HCode{</title>}\par\ShowPar}
+\Configure{subsection}
+   {\OpenDiv{subsection}}   {\CloseDiv{subsection}}
+   {\HCode{<title>}|<TitleMark|>}   {\HCode{</title>}\par\ShowPar}
+\Configure{subsubsection}
+   {\OpenDiv{subsubsection}}   {\CloseDiv{subsubsection}}
+   {\HCode{<title>}|<TitleMark|>}   {\HCode{</title>}\par\ShowPar}
+\Configure{paragraph}
+   {\OpenDiv{paragraph}}   {\CloseDiv{paragraph}}
+   {\HCode{<title>}|<TitleMark|>}   {\HCode{</title>}\par\ShowPar}
+\Configure{subparagraph}
+   {\OpenDiv{subparagraph}}   {\CloseDiv{subparagraph}}
+   {\HCode{<title>}|<TitleMark|>}   {\HCode{</title>}\par\ShowPar}
+|<sectioning utilities|>
+>>>
+
+
+\<amsart + article sec\><<<
+\ConfigureMark{section}
+   {\ifnum \c:secnumdepth>\c@secnumdepth \expandafter\:gobble
+    \else \HCode{<abbrev role="title-mark">}\thesection
+          \HCode{</abbrev>}\fi }
+\ConfigureMark{subsection}
+   {\ifnum \c:secnumdepth>\c@secnumdepth \expandafter\:gobble
+    \else \HCode{<abbrev role="title-mark">}\thesubsection
+          \HCode{</abbrev>}\fi }
+\ConfigureMark{subsubsection}
+   {\ifnum \c:secnumdepth>\c@secnumdepth \expandafter\:gobble
+    \else \HCode{<abbrev role="title-mark">}\thesubsubsection
+          \HCode{</abbrev>}\fi }
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{End Points}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<amsart + article sec\><<<
+\Configure{endsection}
+     {likesection,chapter,likechapter,appendix,part,likepart}
+\Configure{endsubsection}
+   {likesubsection,section,likesection,chapter,%
+      likechapter,appendix,part,likpart}
+\Configure{endsubsubsection}
+   {likesubsubsection,subsection,likesubsection,section,%
+      likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endparagraph}
+   {likeparagraph,subsubsection,likesubsubsection,subsection,%
+    likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endsubparagraph}
+   {likesubparagraph,likeparagraph,subsubsection,likesubsubsection,%
+    subsection,likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\ifx \part\:UnDef \else
+   \Configure{endpart}{likepart}
+\fi
+>>>
+
+%%%%%%%%%%%%%%%%%%%%
+\section{amsmath}
+%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<configure docbook-mml amsmath\><<<  
+\Configure{equation}
+  {\ifvmode \IgnorePar\fi   \EndP
+   \HCode{<blockquote role="equation">}%
+   \Configure{gather}
+     {\HCode{<mtable\Hnewline
+         class="equation"><mtr><mtd>}\IgnorePar }
+     {\HCode{</mtd></mtr></mtable>}}
+     {}
+     {}
+     {\ifnum\HCol=2 \IgnorePar
+         \HCode{</mtd><mtd>}\fi }
+     {}
+  }
+  {\ifvmode \IgnorePar\fi\EndP \HCode{<note role="equation"><para>}}
+  {\ifvmode \IgnorePar\fi\EndP \HCode{</para></note></blockquote>}\par
+   \ShowPar}
+
+% Mar 18, 2013 at 9:28 PM, Matteo Gamboz <gamboz@medialab.sissa.it>
+% wrote that starred equation caused an forgotten endgroup error, hence
+% the following fix. CVR Mar 22, 2013.
+
+\Configure{equation*}
+  {\ifvmode \IgnorePar\fi   \EndP
+   \HCode{<blockquote role="equation">}%
+   \Configure{gather}
+     {\HCode{<mtable\Hnewline
+         class="equation"><mtr><mtd>}\IgnorePar }
+     {\HCode{</mtd></mtr></mtable>}}
+     {}
+     {}
+     {}
+     {}
+  }
+  {\ifvmode \IgnorePar\fi\EndP \HCode{</blockquote>}\par
+   \ShowPar}
+>>>
+
+
+\<configure docbook-mml amsmath\><<<
+\ConfigureEnv{align*} 
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi} {}{}    
+\ConfigureEnv{alignat*}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+\ConfigureEnv{alignat}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}   
+\ConfigureEnv{align}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}   
+\ConfigureEnv{eqxample}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+\ConfigureEnv{flalign*}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+\ConfigureEnv{flalign}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+\ConfigureEnv{gather}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+\ConfigureEnv{gather*}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+\ConfigureEnv{gathered}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+\ConfigureEnv{matrix}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+\ConfigureEnv{xalignat*}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+\ConfigureEnv{xalignat}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+\ConfigureEnv{xxalignat}
+   {\ifmmode\else \ifvmode\else \IgnorePar\fi \EndP\fi}
+   {\ifmmode\else \par\ShowPar\fi}{}{}
+>>>
+
+
+
+
+\<configure docbook amsmath\><<<  
+\ConfigureEnv{subequations}
+  {\ifvmode \IgnorePar\fi   \EndP
+   \HCode{<blockquote role="subequations">}%
+  }
+  {\ifvmode \IgnorePar\fi\EndP \HCode{</blockquote>}\par
+   \ShowPar}
+  {}{}
+>>>
+
+\<configure docbook-math amsmath\><<<
+\Configure{equation}
+  {\ifmmode\else\par \IgnorePar\fi \EndP
+           \HCode{<blockquote role="equation">}\IgnorePar
+  }
+  {\ifvmode \IgnorePar\fi\EndP\HCode{<note role="equation"><para>}}
+  {\HCode{</para></note></blockquote>}}
+\Configure{equation*}
+  {\ifmmode\else\par \IgnorePar\fi \EndP
+   \HCode{<blockquote role="equation-star">}\IgnorePar   
+  }
+  {\ifmmode\else\par \IgnorePar\fi \EndP
+   \HCode{</blockquote>}}
+>>>
+
+
+\<configure docbook-math amsmath\><<<
+\def\:tempc#1#2{% 
+   \ConfigureEnv{#1} 
+     {\par\IgnorePar\EndP\HCode{<equation 
+            role="#1"><mathphrase>}\Picture*[]{}} 
+     {\EndPicture\EndP\HCode{</mathphrase></equation>}\par} 
+     {} {}} 
+\:tempc{align}{align}
+\:tempc{alignat}{alignat}
+\:tempc{xalignat}{xalignat}
+\:tempc{xxalignat}{xxalignat}
+\:tempc{flalign}{flalign}
+\:tempc{align*}{align-star}
+\:tempc{alignat*}{alignat-star}
+\:tempc{xalignat*}{xalignat-star}
+\:tempc{flalign*}{flalign-star}
+>>>
+
+%%%%%%%%%%%%%%%%%
+\chapter{Plain}
+%%%%%%%%%%%%%%%%%
+
+
+\<latex, plain\><<<
+\Configure{centerline}
+   {\IgnorePar\EndP\HCode{<blockquote 
+        role="centerline"><title></title>}\ShowPar\par}
+   {\IgnorePar\EndP\HCode{</blockquote>}\ShowPar\par}
+\Configure{leftline}
+   {\IgnorePar\EndP\HCode{<blockquote 
+        role="leftline"><title></title>}\ShowPar\par}
+   {\IgnorePar\EndP\HCode{</blockquote>}\ShowPar\par}
+\Configure{rightline}
+   {\ifvmode \IgnorePar \fi \EndP \HCode{<blockquote 
+        role="rightline"><title></title>}\ShowPar\par}
+   {\ifvmode \IgnorePar \fi \EndP \HCode{</blockquote>}\ShowPar\par}
+>>>
+
+
+%%%%%%%%%%%%%%%%%
+\chapter{TeXinfo}
+%%%%%%%%%%%%%%%%%
+
+
+
+
+\<configure docbook texinfo\><<<
+|<sectioning utilities|>
+\Configure{pdfurl}
+   {\let\sv:Link=\Link \let\sv:EndLink=\EndLink
+    \let\Link=\U:Link
+    \def\EndLink{\EndU:Link\let\Link=\sv:Link \let\EndLink=\sv:EndLink}}
+%\LinkCommand\U:Link{ulink, url,,,,}
+\LinkCommand\U:Link{link, xlink:href,,,,}
+>>>
+
+
+
+
+\<configure docbook texinfo\><<<
+\Configure{group}
+   {\IgnorePar\EndP\HCode{<blockquote 
+        role="group"><title></title>}\ShowPar\par}
+   {\IgnorePar\EndP\HCode{</blockquote>}\ShowPar\par}
+\Configure{multitable}
+   {\IgnorePar \EndP\HCode{<informaltable\Hnewline
+        role="multitable">}\IgnorePar }
+   {\HCode{</tbody></tgroup></informaltable>}}
+   {\HCode{\ifnum \HRow=1 <tgroup cols="\HCols"><tbody>\fi
+           <row><!-- cols="\HRow"-->}}
+   {\HCode{</row>}}
+   {\HCode{<entry\Hnewline><!-- cols="\the\colcount"--><para>}}
+   {\IgnorePar \EndP\HCode{</para></entry>}}
+>>>
+
+
+\<configure docbook texinfo\><<<
+\Configure{example}
+   {\IgnorePar\EndP\HCode{<example
+        role="example"><title></title><para>}\bgroup
+     \Configure{obeylines}{}{}{\hbox{\HCode{</para><para>}}}}
+   {\egroup\IgnorePar\EndP\HCode{</para></example>}\ShowPar\par}
+\Configure{smallexample}
+   {\IgnorePar\EndP\HCode{<example
+        role="smallexample"><title></title><para>}\bgroup
+     \Configure{obeylines}{}{}{\hbox{\HCode{</para><para>}}}}
+   {\egroup\IgnorePar\EndP\HCode{</para></example>}\ShowPar\par}
+>>>
+
+
+
+
+
+\<configure docbook texinfo\><<<
+\ConfigureMark{chapter}{\the\chapno}
+\Configure{chapter}
+   {\OpenDiv{chapter}}   {\CloseDiv{chapter}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\ConfigureMark{appendix}{\appendixletter}
+\Configure{appendix}
+   {\AppOpenDiv{appendix}}   {\AppCloseDiv{appendix}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\Configure{unnumbered}
+   {\OpenDiv{unnumbered}}   {\CloseDiv{unnumbered}}
+   {\HCode{<title>}} {\HCode{</title>}\par\ShowPar}
+\ConfigureMark{numberedsec}{\the\chapno.\the\secno}
+\Configure{numberedsec}
+   {\OpenDiv{numberedsec}}   {\CloseDiv{numberedsec}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\ConfigureMark{appendixsec}{\appendixletter.\the\secno}
+\Configure{appendixsec}
+   {\OpenDiv{appendixsec}}   {\CloseDiv{appendixsec}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\Configure{unnumberedsec}
+   {\OpenDiv{unnumberedsec}}   {\CloseDiv{unnumberedsec}}
+   {\HCode{<title>}} {\HCode{</title>}\par\ShowPar}
+\ConfigureMark{numberedsubsec}{\the\chapno.\the\secno .\the\subsecno}
+\Configure{numberedsubsec}
+   {\OpenDiv{numberedsubsec}}   {\CloseDiv{numberedsubsec}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\ConfigureMark{appendixsubsec}{\appendixletter .\the\secno.\the\subsecno}
+\Configure{appendixsubsec}
+   {\OpenDiv{appendixsubsec}}   {\CloseDiv{appendixsubsec}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\ConfigureMark{appendixsubsec}{\appendixletter.\the\secno
+                                        .\the\subsecno}
+\Configure{appendixsubsec}
+   {\OpenDiv{appendixsubsec}}   {\CloseDiv{appendixsubsec}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\Configure{unnumberedsubsec}
+   {\OpenDiv{unnumberedsubsec}}   {\CloseDiv{unnumberedsubsec}}
+   {\HCode{<title>}} {\HCode{</title>}\par\ShowPar}
+\ConfigureMark{numberedsubsubsec}{\the\chapno.\the\secno
+                      .\the\subsecno.\the\subsubsecno}
+\Configure{numberedsubsubsec}
+   {\OpenDiv{numberedsubsubsec}}   {\CloseDiv{numberedsubsubsec}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\ConfigureMark{appendixsubsubsec}{\appendixletter
+             .\the\secno.\the\subsecno.\the\subsubsecno}
+\Configure{appendixsubsubsec}
+   {\OpenDiv{appendixsubsubsec}}   {\CloseDiv{appendixsubsubsec}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\ConfigureMark{appendixsubsubsec}{\appendixletter.\the\secno
+                                  .\the\subsecno.\the\subsubsecno}
+\Configure{appendixsubsubsec}
+   {\OpenDiv{appendixsubsubsec}}   {\CloseDiv{appendixsubsubsec}}
+   {\HCode{<title>}|<TitleMark|>} {\HCode{</title>}\par\ShowPar}
+\Configure{unnumberedsubsubsec}
+   {\OpenDiv{unnumberedsubsubsec}}   {\CloseDiv{unnumberedsubsubsec}}
+   {\HCode{<title>}} {\HCode{</title>}\par\ShowPar}
+>>>
+
+
+
+
+
+
+
+
+\<configure docbook texinfo\><<<
+\Configure{enumerate}%
+   {\ifvmode\IgnorePar\fi \EndP \HCode{<orderedlist\Hnewline>}}
+   {\EndP\HCode{</listitem></orderedlist>}\ShowPar}
+   {\ifnum \itemno>1 
+       \ifvmode\IgnorePar\fi \EndP \Tg</listitem>\fi \DeleteMark}
+   {\ifvmode\IgnorePar\fi \EndP \HCode{<listitem>}\par\ShowPar}
+\Configure{itemize}%
+   {\ifvmode\IgnorePar\fi \EndP \HCode{<itemizedlist>}}
+   {\EndP\HCode{</listitem></itemizedlist>}\ShowPar}
+   {\ifnum \itemno>1 \ifvmode\IgnorePar\fi \EndP 
+      \Tg</listitem>\fi \DeleteMark}
+   {\ifvmode\IgnorePar\fi \EndP \HCode{<listitem>}\par\ShowPar}
+\Configure{table}%
+   {\EndP\HCode{<glosslist>}\let\end:itm=\empty}
+   {\EndP\HCode{</glossdef></glossentry></glosslist>}\ShowPar}
+   {\end:itm\def\end:itm{\EndP\HCode{</glossdef></glossentry>}}%
+      \HCode{<glossentry><glossterm><remark>}\bgroup \bf}
+   {\egroup\HCode{</remark></glossterm><glossdef\Hnewline>}\par\ShowPar}
+>>>
+
+\<configure docbook texinfo\><<<
+\Configure{titlepage}
+   {\ifvmode \IgnorePar \fi \EndP \HCode{<articleinfo>}\bgroup
+     \Configure{flushleft}
+        {\ifvmode \IgnorePar \fi \EndP \HCode{<abstract>}\bgroup
+          \Configure{obeylines}{}{}{\hbox{\HCode{<!--br /-->}}}\ShowPar\par
+         \leavevmode }
+        {\ifvmode \IgnorePar \fi \EndP \egroup\HCode{</abstract>}}
+   }
+   {\egroup\ifvmode \IgnorePar \fi \EndP \HCode{</articleinfo>}}
+\Configure{title}
+   {\ifvmode \IgnorePar \fi \EndP \HCode{<title>}\bgroup
+    \Configure{leftline}{}{}}
+   {\egroup\ifvmode \IgnorePar \fi \EndP \HCode{</title>}}
+\Configure{subtitle}
+   {\IgnorePar\EndP\HCode{<subtitle \Hnewline>}\bgroup
+    \Configure{rightline}{}{}}
+   {\egroup \IgnorePar\EndP\HCode{</subtitle>}}
+\Configure{author}
+   {\ifvmode \IgnorePar \fi \EndP \HCode{<author><othername>}\bgroup
+    \Configure{leftline}{}{}}
+   {\egroup \ifvmode \IgnorePar \fi \EndP \HCode{</othername></author>}}
+>>>
+
+
+
+
+\<configure docbook texinfo\><<<
+|<unicode space|>
+>>>
+
+
+
+
+% \HCode{\string&\#x00A0;}}
+
+
+\<configure docbook texinfo\><<<
+\Configure{contents}
+  {\b:titlepage   \let\b:titlepage=\empty
+   \ifvmode \IgnorePar \fi \EndP \HCode{<tocchap>}}
+  {\ifvmode \IgnorePar \fi \EndP \HCode{</tocchap>}}
+>>>
+
+
+
+
+\<configure docbook texinfo\><<<
+\Configure{endchapter}{appendix}
+\Configure{endappendix}{chapter}
+\Configure{endnumberedsec}
+   {chapter,appendix,appendixsec,unnumberedsec,unnumbered}
+\Configure{endappendixsec}
+   {chapter,appendix,umberedsec,unnumberedsec,unnumbered}
+\Configure{endunnumberedsec}
+   {chapter,appendix,umberedsec,appendixsec,unnumbered}
+\Configure{endunnumbered}
+   {chapter,appendix,umberedsec,appendixsec,unnumberedsec}
+\Configure{endnumberedsubsec}
+   {chapter,appendix,umberedsec,appendixsec,unnumberedsec,%
+    unnumbered,appendixsubsec,appendixsubsec,unnumberedsubsec}
+\Configure{endappendixsubsec}
+   {chapter,appendix,umberedsec,appendixsec,unnumberedsec,%
+    unnumbered,numberedsubsec,appendixsubsec,unnumberedsubsec}
+\Configure{endappendixsubsec}
+   {chapter,appendix,umberedsec,appendixsec,unnumberedsec,%
+    unnumbered,numberedsubsec,appendixsubsec,unnumberedsubsec}
+\Configure{endunnumberedsubsec}
+   {chapter,appendix,umberedsec,appendixsec,unnumberedsec,%
+    unnumbered,numberedsubsec,appendixsubsec,appendixsubsec}
+\Configure{endnumberedsubsubsec}{chapter,appendix,umberedsec,%
+    appendixsec,unnumberedsec,unnumbered,numberedsubsec,%
+    appendixsubsec,appendixsubsec,unnumberedsubsec,appendixsubsubsec,%
+    appendixsubsubsec,unnumberedsubsubsec}
+\Configure{endappendixsubsubsec}
+   {chapter,appendix,umberedsec,appendixsec,unnumberedsec,%
+    unnumbered,numberedsubsec,appendixsubsec,appendixsubsec,%
+    unnumberedsubsec,numberedsubsubsec,appendixsubsubsec,%
+    unnumberedsubsubsec}
+\Configure{endappendixsubsubsec}
+   {chapter,appendix,umberedsec,appendixsec,unnumberedsec,%
+    unnumbered,numberedsubsec,appendixsubsec,appendixsubsec,%
+    unnumberedsubsec,numberedsubsubsec,appendixsubsubsec,%
+    unnumberedsubsubsec}
+\Configure{endunnumberedsubsubsec}
+   {chapter,appendix,umberedsec,appendixsec,unnumberedsec,%
+    unnumbered,numberedsubsec,appendixsubsec,appendixsubsec,%
+    unnumberedsubsec,numberedsubsubsec,appendixsubsubsec,appendixsubsubsec}
+>>>
+
+
+
+
+
+
+
+
+
+\<configure docbook texinfo\><<<
+\Configure{index}
+  {\IgnorePar\leavevmode\EndP\Tg<div class="index">}
+  {\IgnorePar\EndP\Tg</div>}
+  {\leavevmode\Tg<span class="entry">}
+  {\Tg</span>\Tg<br />\IgnorePar}
+>>>
+
+
+%%%%%%%%%%%%%%%%%
+\chapter{Packages}
+%%%%%%%%%%%%%%%%%
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%
+\section{Verbatim}
+%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{fancyvrb}
+%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<configure docbook fancyvrb\><<<
+\Configure{fancyvrb}
+   {\ifvmode \IgnorePar \fi \EndP
+    \HCode{<literallayout role="fancyvrb" >}}
+   {\EndP\HCode{</literallayout>}}
+   {\HCode{<literal>}} {\HCode{</literal>}}
+   {\HCode{<literal>}} {\HCode{</literal>}}
+>>>
+
+
+\<fancyvrb.sty config 4.0t\><<<
+\Configure{fancyvrbcolor}
+  {\Css{div\#fancyvrb\fancyvrbNo { color: \HColor; }}}
+  {\Css{div\#fancyvrb\fancyvrbNo { background-color: \HColor;}}}
+  {\Css{div\#fancyvrb\fancyvrbNo { border-color: \HColor;}}}
+>>>
+
+\<fancyvrb.sty config 4.0t\><<<
+\Configure{fancyvrbframe}
+   {\Css{div\#fancyvrb\fancyvrbNo { border-top: solid \HSize; }}}
+   {\Css{div\#fancyvrb\fancyvrbNo { border-left: solid \HSize; }}}
+   {\Css{div\#fancyvrb\fancyvrbNo { border-bottom: solid \HSize; }}}
+   {\Css{div\#fancyvrb\fancyvrbNo { border-right: solid \HSize; }}}
+   {\Css{div\#fancyvrb\fancyvrbNo {border-width:\HSize;}}}
+   {\Css{div\#fancyvrb\fancyvrbNo {padding:\HSize;}}}
+>>>
+
+\<fancyvrb.sty config 4.0t\><<<
+\Configure{BVerbatimInput}
+   {\ifvmode \IgnorePar \fi \EndP 
+    \gHAssign\HRow=0
+    \HCode{<div class="BVerbatimInput">}}
+   {\ifvmode \IgnorePar \fi \EndP \HCode{</div>}}
+   {\gHAdvance\HRow by 1 \ifnum \HRow>1 \HCode{<br />}\fi}{}
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%%
+\section{Drawing Utilitis}
+%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{pgf}
+%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%
+\subsection{pgf}
+%%%%%%%%%%%%%%%%%%%
+
+\<configure docbook pgf\><<<
+\ConfigureEnv{pgfpicture}
+   {\hbox\bgroup\Picture+[ ]{}}
+   {\EndPicture\egroup} 
+   {}{}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%
+\section{beamer}
+%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\<configure docbook beamer\><<<
+|<article prologue|>
+|<beamer title page|>
+|<beamer toc|>
+|<beamer sections|>
+|<beamer slides|>
+|<beamer slide titles|>
+|<beamer environments|>
+|<beamer bib|>
+|<beamer other|>
+>>>
+
+\<beamer titlepage par\><<<
+\Configure{HtmlPar}
+   {\EndP\HCode{<!--l. \the\inputlineno--><note><para>}}
+   {\EndP\HCode{<!--l. \the\inputlineno--><note><para>}}
+   {\HCode{</para></note>}}     {\HCode{</para></note>}}
+>>>
+
+\<beamer title page\><<<
+\Configure{titlepage}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{<para role="titlepage">}%
+    \bgroup |<beamer titlepage par|>}
+   {\egroup \ifvmode \IgnorePar\fi \EndP \HCode{</para>}}
+\Configure{title}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{<note role="title"><para>}}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</para></note>}}
+\Configure{author}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{<note role="author"><para><personname><othername>}}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</othername></personname></para></note>}}
+\Configure{institute}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{<note role="institute"><para>}}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</para></note>}}
+\Configure{date}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{<note role="date"><para>}}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</para></note>}}
+\Configure{inst}
+   {\HCode{<superscript role="inst">}\bgroup \everymath{}\let\sp=\empty}
+   {\egroup\HCode{</superscript>}}
+\Configure{andtitle}{\HCode{<remark role="and"/>}}
+>>>
+
+
+
+\<beamer toc\><<<
+\Configure{tableofcontents}
+  {\ifvmode \IgnorePar\fi \EndP \HCode{<toc><tocpart>}}
+  {\ifvmode \IgnorePar\fi \EndP\HCode{</tocpart></toc>}}
+  {}{}{}
+\ConfigureToc{toc}  
+   {} {\HCode{\Hnewline<tocentry>}}
+   {} {\HCode{</tocentry>}}
+\Configure{sectionshadedintoc}
+   {\HCode{<phrase role="sectionshaded">}}
+   {\ifvmode \IgnorePar\fi \HCode{</phrase>}}
+\Configure{sectionintoc}
+   {\HCode{<phrase role="section">}}
+   {\ifvmode \IgnorePar\fi \HCode{</phrase>}}
+\Configure{subsectionshadedintoc}
+   {\HCode{<phrase role="subsectionshaded">}}
+   {\ifvmode \IgnorePar\fi \HCode{</phrase>}}
+\Configure{subsectionintoc}
+   {\HCode{<phrase role="subsection">}}
+   {\ifvmode \IgnorePar\fi \HCode{</phrase>}}
+>>>
+
+
+\<beamer slides\><<<
+\ConfigureEnv{slide}
+   {\ifvmode \IgnorePar\fi \EndP  
+    \HCode{<section role="slide"><title></title>}\par
+   }
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</section>}}
+   {} {}
+>>>
+
+
+
+\<beamer sections\><<<
+\let\no:section\section
+\Def:Section\section{\thesection}{#1}
+\let\no::section\section
+\let\section\no:section
+\let\no:section\@section
+\def\@section[#1]#2{\no::section{#2}%
+   \ifvmode \IgnorePar\fi \EndP
+   \HCode{<subtitle>}#1%
+   \ifvmode \IgnorePar\fi \EndP \HCode{</subtitle>}%
+   \no:section[#1]{#2}}
+
+\let\no:subsection\subsection
+\Def:Section\subsection{\thesubsection}{#1}
+\let\no::subsection\subsection
+\def\subsection#1{\no::subsection{#1}\no:subsection{#1}}
+
+\Configure{section}
+   {\IgnorePar\EndP \HCode{<!--l.
+       \the\inputlineno--><section\Hnewline role="section">}} 
+   {\IgnorePar\EndP\HCode{</section><!--end section-->}}
+   {\HCode{<title>}\TitleMark}
+   {\HCode{</title>}\par\ShowPar}
+\Configure{subsection}
+   {\IgnorePar\EndP \HCode{<!--l.
+       \the\inputlineno--><section\Hnewline role="subsection">}} 
+   {\IgnorePar\EndP\HCode{</section><!--end subsection-->}}
+   {\HCode{<title>}\TitleMark}
+   {\HCode{</title>}\par\ShowPar}
+\Configure{endsubsection}{section}
+>>>
+
+
+
+
+\<beamer environments\><<<
+\let\block:Name=\empty
+\ConfigureEnv{block}
+   {\par\IgnorePar\EndP 
+    \ifx \block:Name\empty \def\block:Name{block}\fi
+    \HCode{<blockquote
+            role="\block:Name">}\global\let\block:Name=\empty}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</blockquote>}}
+   {} {}
+\ConfigureEnv{alertblock}
+   {\par\IgnorePar\EndP 
+    \ifx \block:Name\empty \def\block:Name{alertblock}\fi
+    \HCode{<blockquote
+            role="\block:Name">}\global\let\block:Name=\empty}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</blockquote>}}
+   {} {}
+\ConfigureEnv{exampleblock}
+   {\par\IgnorePar\EndP 
+    \ifx \block:Name\empty \def\block:Name{exampleblock}\fi
+    \HCode{<blockquote
+            role="\block:Name">}\global\let\block:Name=\empty}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</blockquote>}}
+   {} {}
+\Configure{blocktitle}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{<title>}\par\IgnorePar}
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</title>}\par}
+>>>
+
+\<beamer environments\><<<
+\ConfigureEnv{Problem}
+   {\def\block:Name{Problem}} {} {} {}
+\ConfigureEnv{Loesung}
+   {\def\block:Name{Loesung}} {} {} {}
+\ConfigureEnv{Definition}
+   {\def\block:Name{Definition}} {} {} {}
+\ConfigureEnv{Satz}
+   {\def\block:Name{Satz}} {} {} {}
+\ConfigureEnv{Beweis}
+   {\def\block:Name{Beweis}} {} {} {}
+\ConfigureEnv{Folgerung}
+   {\def\block:Name{Folgerung}} {} {} {}
+\ConfigureEnv{Lemma}
+   {\def\block:Name{Lemma}} {} {} {}
+\ConfigureEnv{Fakt}
+   {\def\block:Name{Fakt}} {} {} {}
+\ConfigureEnv{Theorem}
+   {\def\block:Name{Theorem}} {} {} {}
+\ConfigureEnv{Proof}
+   {\def\block:Name{Proof}} {} {} {}
+\ConfigureEnv{Corollary}
+   {\def\block:Name{Corollary}} {} {} {}
+\ConfigureEnv{Fact}
+   {\def\block:Name{Fact}} {} {} {}
+\ConfigureEnv{definition}
+   {\def\block:Name{definition}} {} {} {}
+\ConfigureEnv{definitions}
+   {\def\block:Name{definitions}} {} {} {}
+\ConfigureEnv{theorem}
+   {\def\block:Name{theorem}} {} {} {}
+\ConfigureEnv{proof}
+   {\def\block:Name{proof}} {} {} {}
+\ConfigureEnv{corollary}
+   {\def\block:Name{corollary}} {} {} {}
+\ConfigureEnv{fact}
+   {\def\block:Name{fact}} {} {} {}
+\ConfigureEnv{Beispiel}
+   {\def\block:Name{Beispiel}} {} {} {}
+\ConfigureEnv{Beispiele}
+   {\def\block:Name{Beispiele}} {} {} {}
+\ConfigureEnv{Example}
+   {\def\block:Name{Example}} {} {} {}
+\ConfigureEnv{Examples}
+   {\def\block:Name{Examples}} {} {} {}
+\ConfigureEnv{example}
+   {\def\block:Name{example}} {} {} {}
+\ConfigureEnv{examples}
+   {\def\block:Name{examples}} {} {} {}
+>>>
+
+
+
+\<beamer slide titles\><<<
+\Configure{frametitle}
+   {\ifvmode \IgnorePar\fi \EndP 
+    \HCode{<para role="frametitle">}\bgroup
+    \Configure{HtmlPar}{ }{ }{}{}%
+   }
+   {\egroup \ifvmode \IgnorePar\fi \EndP \HCode{</para>}}
+>>>
+
+
+\<beamer environments\><<<
+\ConfigureEnv{columns}
+  {\ifvmode \IgnorePar\fi \EndP 
+   \HCode{<blockquote role="columns">}}
+  {\ifvmode \IgnorePar\fi \EndP \HCode{</blockquote>}\par}
+  {}{}
+\ConfigureEnv{column}
+  {\ifvmode \IgnorePar\fi \EndP 
+   \HCode{<blockquote role="column">}}
+  {\ifvmode \IgnorePar\fi \EndP \HCode{</blockquote>}}
+  {}{}
+>>>
+
+
+\<beamer other\><<<
+\Configure{alert}
+   {\HCode{<note role="alert"><para>}\bgroup
+    \Configure{HtmlPar}{\HCode{<!--br/-->}}{\HCode{<!--br/-->}}{}{}%
+   }
+   {\egroup\HCode{</para></note>}}
+>>>
+
+
+
+
+
+\<beamer bib\><<<
+\ConfigureList{thebibliography}%
+   {\IgnorePar\EndP
+      \HCode{<simplelist role="bibliography">}\let\en:bib=\empty}
+   {\en:bib\HCode{</simplelist>}}
+   {\en:bib\def\en:bib{\HCode{</member>}}%
+    \HCode{<member><!--l. 
+        \the\inputlineno--><abbrev role="biblioentry">}%
+    |<para within bib|>}
+   {\HCode{</abbrev>}}
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%%
+\section{prosper}
+%%%%%%%%%%%%%%%%%%%
+
+
+
+\<configure docbook prosper\><<<
+\ConfigureEnv{slide}
+  {\ifvmode \IgnorePar\fi \EndP
+   \HCode{<blockquote role="slide">}\par}
+  {\HCode{</blockquote>}}
+  {}{}
+\Configure{slidetitle}
+  {\HCode{<note role="title"><para>}}
+  {\HCode{</para></note>}}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%%
+\section{algorithmic}
+%%%%%%%%%%%%%%%%%%%
+
+
+
+\<configure docbook algorithmic\><<<
+\ConfigureEnv{algorithmic}
+   {\ifvmode\IgnorePar\fi \EndP
+    \HCode{<blockquote role="algorithmic"><para>}%
+    \bgroup 
+      \Configure{HtmlPar}{}{}{}{}}
+   {\egroup \ifvmode \IgnorePar\fi
+    \HCode{</para></blockquote>}\par\ShowPar}
+   {}{}
+\Configure{ALCitem}
+   {\HCode{\ifnum \c@ALC@line>1 </para><para>\fi
+           <remark role="line-number">}}
+   {\HCode{</remark>}}
+\Configure{algorithmiccomment}
+   {\HCode{<blockquote role="comment"><para>}} 
+   {\HCode{</para></blockquote>}}
+   {}{}  
+>>>
+
+%%%%%%%%%%%%%%%%%%%
+\section{llncs}
+%%%%%%%%%%%%%%%%%%%
+
+
+
+\<configure docbook llncs\><<<
+\Configure{email}
+   {\HCode{<email>}}
+   {\HCode{</email>}}
+\Configure{institute}
+   {\HCode{<note><para role="institute">}}
+   {\HCode{</para></note>}}
+>>>
+
+\<configure docbook llncs\><<<
+\ConfigureEnv{abstract}
+   {\ifvmode \IgnorePar\fi \EndP}
+   {\ifvmode \IgnorePar\fi \EndP}
+   {}{}
+\ConfigureList{abstract}
+   {\ifvmode \IgnorePar\fi \EndP
+       \HCode{<abstract>}\IgnorePar}
+   {\ifvmode \IgnorePar\fi \EndP
+       \HCode{</abstract>}\ShowPar}
+   {\IgnorePar\par\HCode{<title>}}
+   {\HCode{</title>}\ShowPar\par}
+>>>
+
+
+%%%%%%%%%%%%%%%%%%
+\section{array}
+%%%%%%%%%%%%%%%%%%
+
+
+
+\<configure docbook array\><<<
+|<html latex array/tabular Config 4.0t|>
+|<latex tables|>
+>>>
+
+
+\<configure html4-math array\><<<
+|<math html latex array/tabular|>
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%
+\subsection{subeqnarray}
+%%%%%%%%%%%%%
+
+
+\<configure docbook subeqnarray\><<<
+\ConfigureEnv{subeqnarray}  
+   {\ifvmode \IgnorePar\fi \EndP  
+    \HCode{<blockquote role="subeqnarray">}}  
+   {\ifvmode \IgnorePar\fi \EndP \HCode{</blockquote>}}  
+   {}{} 
+>>>
+
+\begin{thebibliography}{9}
+\bibitem{home}
+\url{http://www.docbook.org/}
+\bibitem{specs}
+Norman Walsh
+(With contributions from Leonard Muellner),
+DocBook 5.0: The Definitive Guide,
+3 March 2008,
+O'Reilly,
+\url{http://www.docbook.org/tdg5/en/html/}
+(\Link[http://www.docbook.org/tdg5/en/html/pt02.html]{}{}element references\EndLink, \Link[http://docbook.org/schemas/5x]{}{}relax ng\EndLink
+
+\bibitem{wiki}
+\url{http://en.wikipedia.org/wiki/DocBook}
+\end{thebibliography}
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Bitmaps}
+%%%%%%%%%%%%%%%%%%
+
+
+
+\<configure docbook graphics\><<< 
+\Configure{graphics*} 
+   {gif} 
+   {{\Configure{Needs}{File: \Gin@base.gif}\Needs{}}% 
+    \Picture[\a:GraphicsAlt]{\Gin@base.gif |<graphics dim|>}} 
+\Configure{graphics*} 
+   {png} 
+   {{\Configure{Needs}{File: \Gin@base.png}\Needs{}}% 
+    \Picture[\a:GraphicsAlt]{\Gin@base.png |<graphics dim|>}} 
+\Configure{graphics*} 
+   {jpg} 
+   {{\Configure{Needs}{File: \Gin@base.jpg}\Needs{}}% 
+    \Picture[\a:GraphicsAlt]{\Gin@base.jpg |<graphics dim|>}} 
+\Configure{graphics*} 
+   {jpeg} 
+   {{\Configure{Needs}{File: \Gin@base.jpeg}\Needs{}}% 
+    \Picture[\a:GraphicsAlt]{\Gin@base.jpeg |<graphics dim|>}}
+>>>
+
+\<graphics dim\><<< 
+\csname a:Gin-dim\endcsname 
+>>> 
+
+\<includegraphics dim\><<< 
+\NewConfigure{Gin-dim}{1}
+>>>
+
+\<configure docbook tex4ht\><<< 
+\:CheckOption{jpg} \if:Option 
+   \Configure{Picture}{.jpg}   
+\else 
+   \Log:Note{for jpg bitmaps of pictures, use the `jpg' 
+       command line option. |<ch bitmaps|>} 
+\fi 
+\:CheckOption{gif} \if:Option  
+   \Configure{Picture}{.gif}   
+\else 
+   \Log:Note{for gif bitmaps of pictures, use the `gif' 
+       command line option. |<ch bitmaps|>} 
+\fi 
+>>> 
+ 
+\<ch bitmaps\><<< 
+(Character bitmaps are controled only by `g' records of tex4ht.env and `-g' 
+switches of tex4ht.c) 
+>>> 
+
+\endinput

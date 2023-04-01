@@ -1,0 +1,309 @@
+% $Id: tex4ht-svg.tex 472 2018-12-30 17:39:42Z karl $
+% compile 3 times: latex tex4ht-svg   
+%           or   xhlatex tex4ht-svg "html,3,sections+"
+%
+% Copyright 2009-2018 TeX Users Group
+% Copyright 2000-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+%%%%%%%%%%%%%%%%%% load style files %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ifx \HTML\UnDef
+   \def\HTML{svg-option,html4-svg}                   
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}         
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common.tex}
+\input{tex4ht-cpright.tex}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Preamble}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<svg-option\><<<
+% svg-option.4ht (|version), generated from |jobname.tex
+% Copyright 2009-2018 TeX Users Group
+% Copyright |CopyYear.2001. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+% 2017-05-05 Michal
+% Change DTD and other stuff only for svg-inline
+% this is legacy option which will hold the original `svg` option behaviour
+\<configure svg-option tex4ht\><<<    
+\:CheckOption{svg-inline}\if:Option
+\Configure{VERSION}
+  {\IgnorePar\HCode{<?xml version="1.0" |<xml encoding|> ?> \Hnewline}}
+\Configure{DOCTYPE}{\HCode
+  {<!DOCTYPE html PUBLIC
+     "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//|<dtd lang|>"\Hnewline
+     "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">\Hnewline
+   <!--http://www.w3.org/TR/XHTMLplusMathMLplusSVG/-->\Hnewline
+}}
+>>>
+
+\<xml encoding\><<<
+ encoding="\expandafter\ifx \csname a:charset\endcsname\relax
+         \expandafter\:encoding\A:charset
+   \else \expandafter\:encoding\a:charset\fi"
+>>>
+
+\<configure svg-option tex4ht\><<<    
+\Configure{@DOCTYPE}
+  {<!ENTITY \% svg.dtd PUBLIC "-//W3C//DTD SVG 20010719//|<dtd lang|>"\Hnewline
+     "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">\Hnewline
+   \%svg.dtd; \Hnewline}
+>>>
+
+
+\<configure html4-svg tex4ht\><<<    
+% hmtl-svg.4ht (|version), generated from |jobname.tex
+% Copyright 2009-2018 TeX Users Group
+% Copyright |CopyYear.2001. Eitan M. Gurari
+|<TeX4ht copywrite|>
+\Configure{@DOCTYPE}
+  {<!ENTITY \% misc "ins || del || script || noscript || svg">\Hnewline}
+>>>
+
+
+\<dtd lang\><<<
+\expandafter
+\ifx \csname a:dtd-lang\endcsname\relax EN\else
+  \csname a:dtd-lang\endcsname
+\fi
+>>>
+
+\<configure svg-option tex4ht\><<<    
+\Configure{@HTML}
+  {\Hnewline xmlns:svg="http://www.w3.org/2000/svg"\Hnewline }
+\fi
+>>>
+
+
+
+%%%%%%%%%%%%%%%%%%
+\chapter{Code}
+%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%
+\section{DVI Images}
+%%%%%%%%%%%%%%%%%%
+
+
+
+
+
+\<configure svg-option tex4ht\><<<    
+\Configure{Picture}{.svg}
+\:CheckOption{svg-obj} \if:Option 
+   |<object svg-obj|>
+\else   \:CheckOption{svg-} \if:Option 
+      |<object svg|>
+\else 
+      \Log:Note{for external SVG files
+             try the command line options `svg-obj' and 'svg-'}
+\:CheckOption{svg-inline}\if:Option
+      |<internal svg|>
+\fi
+\fi\fi
+>>>
+
+
+
+\<object svg-obj\><<<
+\Configure{IMG}
+  {\special{t4ht=<object type="image/svg+xml"  data="}}
+  {\special{t4ht=" name="}}
+  {" }
+  {\special{t4ht=" }}
+  {\special{t4ht=></object>}}
+>>>
+
+
+
+
+
+\<object svg\><<<
+\Configure{IMG}
+  {\special{t4ht=<object type="image/svg+xml"><img src="}}
+  {\special{t4ht=" alt="}}
+  {" }
+  {\special{t4ht=" }}
+  {\special{t4ht=/></object>}}
+>>>
+
+
+\<internal svg\><<<
+\Configure{IMG}
+  {\special{t4ht=<!-- src="}}
+  {\special{t4ht=" alt="}}
+  {" }
+  {\special{t4ht=" }}
+  {\special{t4ht=-->}%
+   \openin15=\PictureFile \relax
+   \ifeof15  \:warning{\PictureFile\space is not available}%
+   \else     \closein15  \special{t4ht*<\PictureFile}\fi
+  }
+>>>
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\section{Include graphics}
+%%%%%%%%%%%%%%%%%%
+
+\<configure svg-option graphics\><<<
+\Configure{graphics*} 
+   {svg} 
+   {{\Configure{Needs}{File: \csname Gin@base\endcsname.svg}\Needs{}}%
+     \special{t4ht=<object type="image/svg+xml"  
+                          data="\Gin@base.svg" 
+                          name="picture \Gin@base"
+                         class="graphics"></object><!--tex4ht:graphics |<graphics dim|>-->}}
+>>>
+
+\<graphics dim\><<<
+\csname a:Gin-dim\endcsname
+>>>
+
+%%%%%%%%%%%%%%%%%%
+\section{Support for th4:draw}
+%%%%%%%%%%%%%%%%%%
+
+
+
+
+\<configure svg-option th4\><<<    
+\:CheckOption{draw} \if:Option \:CheckOption{th4} \if:Option 
+   \Configure{Fig}
+      {\Svg}
+      {\EndSvg}
+   \:CheckOption{svg-} \if:Option 
+      |<embed svg draw|>
+   \else
+      |<internal svg draw|>
+   \fi
+\fi \fi
+>>>
+
+
+
+\<external svg draw\><<<    
+\HAssign\:svgN = 0
+\def\Svg{%
+  \gHAdvance\:svgN by 1
+  \HCode{<embed src="\jobname\:svgN.svg"\Hnewline
+     name="svg\:svgN" type="image/svg+xml"
+%  height="600" width="600"
+     \Hnewline pluginspage="http://www.adobe.com/svg/viewer/install/">}%   
+  |<open embeded file|>%
+  |<open embeded svg|>%
+  \bgroup\Canvas \x:SUBOff  \x:SUPOff 
+     \let\Picture=\empty \everymath{}\everydisplay{}%
+}
+\def\EndSvg{\EndCanvas\egroup
+   |<close embeded svg|>%
+   |<close embeded file|>}
+>>>
+
+
+
+
+
+\<internal svg draw\><<<    
+\def\Svg{\HCode{<svg:svg>\Hnewline
+                <svg:g style="stroke:black;  stroke-width:1;
+                      stroke-opacity:1;">\Hnewline}%
+  \bgroup\Canvas \x:SUBOff  \x:SUPOff 
+     \let\Picture=\empty \everymath{}\everydisplay{}%
+}
+\def\EndSvg{\EndCanvas\egroup
+   \HCode{</svg:g></svg:svg>}}
+>>>
+
+
+
+
+\<embed svg draw\><<<    
+\let\:svg=\empty
+\NewConfigure{Canvas}[4]{\ht:special{t4ht"%
+   *%
+   *d\Hnewline<!--width="\%.1f#4" %
+   *D height="\%.1f#4" %
+   *y above-baseline="\%.1f#4" -->%
+   **\Hnewline<\:svg text x="\%.1f" y="\%.1f" >%
+   *</\:svg text>%
+   *\Hnewline<\:svg rect x="\%.1f#4" y="\%.1f#4"  
+                   width="\%.1f#4"  height="\%.1f#4" />%
+   *#1*#2*#1*#2*#3}}
+\Configure{Canvas}{0.0000152587890625}{0.0}{0.5}{}
+>>>
+
+
+65536 scaled units = 1 pt. 1 / 65536 = 0.0000152587890625.
+
+\<\><<<    
+\NewConfigure{Canvas}[4]{\ht:special{t4ht"%
+   *%
+   *d\Hnewline<!--width="\%.0f#4;" %
+   *D height="\%.0f#4;" -->\Hnewline %
+%   **<svg:text x="\%.0f" y="\%.0f" >%
+%   *</svg:text>\Hnewline %
+   **<svg:foreignObject x="\%.0f" y="\%.0f" >%
+   *</svg:foreignObject>\Hnewline %
+%   *\Hnewline<svg:rect x="\%.0f#4" y="\%.0f#4"  
+%                   width="\%.0f#4"  height="\%.0f#4"
+%                   fill="black" stroke-width="0" />%
+   *\Hnewline<svg:polyline points="\%.0f#4 \%.0f#4 \%.0f#4 \%.0f#4" 
+                           style="stroke-width:\%.0f#4" />%
+   *#1*#2*#1*#2*#3*2}}
+>>>
+
+
+
+
+
+\<open embeded file\><<<
+\ht:special{t4ht>\jobname\:svgN.svg}%
+\HCode{<?xml version="1.0" encoding="iso-8859-1"?>\Hnewline
+<!DOCTYPE svg  PUBLIC "-//W3C//DTD SVG 1.0//|<dtd lang|>"\Hnewline
+              "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+\Hnewline}
+>>>
+
+\<close embeded file\><<<
+\ht:special{t4ht<\jobname\:svgN.svg}%
+>>>
+
+\<open embeded svg\><<<
+\HCode{<\:svg svg>\Hnewline
+       <\:svg g style="stroke-width:0; fill:black;">\Hnewline}%
+>>>
+
+\<close embeded svg\><<<
+\HCode{</\:svg g></\:svg svg>}%
+>>>
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%
+\chapter{Notes}
+%%%%%%%%%%%%%%%%%%
+
+
+Requires two compilations (e.g., with \verb!mzlatex try "html,svg"!)
+for importing the SVG code.
+
+
+
+
+\endinput
+

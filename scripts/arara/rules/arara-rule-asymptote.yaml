@@ -1,0 +1,62 @@
+!config
+# Arara, the cool TeX automation tool
+# Copyright (c) 2022, Island of TeX
+# All rights reserved.
+#
+# This rule is part of arara.
+identifier: asymptote
+name: Asymptote
+authors:
+- Island of TeX
+commands:
+- name: Asymptote
+  command: >
+    @{
+        return getCommand('asy', color, engine, twice,
+               format, output, options, reference.fileName);
+    }
+arguments:
+- identifier: color
+  flag: >
+    @{
+        if ([ 'bw', 'cmyk', 'rgb', 'gray' ].contains(parameters.color)) {
+            return '-' + parameters.color;
+        } else {
+            throwError('The provided color enforcement is not valid.');
+        }
+    }
+- identifier: engine
+  flag: >
+    @{
+        if ([ 'latex', 'pdflatex' , 'xelatex', 'lualatex', 'tex', 'pdftex',
+              'luatex', 'context', 'none' ].contains(parameters.engine)) {
+            return [ '-tex', parameters.engine ];
+        } else {
+            throwError('The provided TeX engine is invalid.');
+        }
+    }
+  default: latex
+- identifier: twice
+  flag: >
+    @{
+        return isTrue(parameters.twice, '-twice');
+    }
+- identifier: format
+  flag: >
+    @{
+        return [ '-f', parameters.format ];
+    }
+- identifier: output
+  flag: >
+    @{
+        return [ '-o', parameters.output ];
+    }
+- identifier: options
+  flag: >
+    @{
+        if (isList(parameters.options)) {
+            return parameters.options;
+        } else {
+            throwError('I was expecting a list of options.');
+        }
+    }

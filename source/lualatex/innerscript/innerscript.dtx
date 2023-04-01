@@ -1,0 +1,805 @@
+% \iffalse     ---!!! META-COMMENT !!!---
+% 
+% This file is file from version 1.1 of the LuaLaTeX package
+% "innerscript," to be used in conjunction with the LuaTeX engine.
+% 
+% Copyright 2021 by Conrad Kosowsky
+% 
+% This file may be distributed and modified under the terms of the
+% LaTeX Public Project License, version 1.3c or any later version.
+% The most recent version of this license is available online at
+% 
+%            https://www.latex-project.org/lppl/.
+% 
+% This work has the LPPL status "maintained," and the current
+% maintainer is the package author, Conrad Kosowsky. He can be
+% reached at kosowsky.latex@gmail.com. The work consists of the
+% following items:
+% 
+%   (1) the base file innerscript.dtx;
+% 
+%   (2) the package code contained in innerscript.sty;
+% 
+%   (3) the pdf documentation file innerscript.pdf;
+% 
+%   (4) all other files created through the configuration process;
+% 
+%     and
+% 
+%   (5) the associated README.txt file.
+%
+% THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED
+% WARRANTY. BY USING THIS SOFTWARE, YOU AGREE TO RELEASE THE PACKAGE
+% AUTHOR, TO THE MAXIMUM EXTENT PERMITTED UNDER APPLICABLE LAW, FROM
+% LIABILITY THAT RESULTS FROM YOUR USE OF THE SOFTWARE, AND YOU AGREE
+% THAT ANY DAMAGES SOUGHT AGAINST THE PACKAGE AUTHOR WILL NOT EXCEED
+% THE MINIMUM DAMAGES ALLOWED UNDER APPLICABLE LAW.
+% 
+% For more information, see the original innerscript.dtx file. To
+% install innerscript on your computer, run innerscript.dtx through
+% LaTeX and place the derived file innerscript.sty in a directory
+% searchable by TeX.
+%
+% Happy TeXing!
+% 
+% \fi
+% \iffalse
+% 
+% The installation and driver files are incorporated into innerscript.dtx,
+% so we do not need to generate them separately. The <batchfile> and
+% <driver> tags are for reference.
+% 
+%<*batchfile>
+\begingroup
+\input docstrip.tex
+\keepsilent
+\askforoverwritefalse
+\preamble
+
+This file is file from version 1.1 of the LuaLaTeX package
+"innerscript," to be used in conjunction with the LuaTeX engine.
+
+Copyright 2021 by Conrad Kosowsky
+
+This file may be distributed and modified under the terms of the
+LaTeX Public Project License, version 1.3c or any later version.
+The most recent version of this license is available online at
+
+          https://www.latex-project.org/lppl/.
+
+This work has the LPPL status "maintained," and the current
+maintainer is the package author, Conrad Kosowsky. He can be
+reached at kosowsky.latex@gmail.com. The work consists of the
+following items:
+
+  (1) the base file innerscript.dtx;
+
+  (2) the package code contained in innerscript.sty;
+
+  (3) the pdf documentation file innerscript.pdf;
+
+  (4) all other files created through the configuration process;
+ 
+    and
+
+  (5) the associated README.txt file.
+
+THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT ANY EXPRESS OR IMPLIED
+WARRANTY. BY USING THIS SOFTWARE, YOU AGREE TO RELEASE THE PACKAGE
+AUTHOR, TO THE MAXIMUM EXTENT PERMITTED UNDER APPLICABLE LAW, FROM
+LIABILITY THAT RESULTS FROM YOUR USE OF THE SOFTWARE, AND YOU AGREE
+THAT ANY DAMAGES SOUGHT AGAINST THE PACKAGE AUTHOR WILL NOT EXCEED
+THE MINIMUM DAMAGES ALLOWED UNDER APPLICABLE LAW.
+
+For more information, see the original innerscript.dtx file. To
+install innerscript on your computer, run innerscript.dtx through
+LaTeX and place the derived file innerscript.sty in a directory
+searchable by TeX.
+
+Happy TeXing!
+
+\endpreamble
+\generate{\file{innerscript.sty}{\from{innerscript.dtx}{package}}}
+\catcode`\ =12\relax
+\message{^^J^^J
+*******************************************^^J
+*                                         *^^J
+* To finish the installation, move the    *^^J
+* following file into a directory         *^^J
+* searchable by TeX once                  *^^J
+* innerscript.dtx finishes compiling:     *^^J
+*                                         *^^J
+*             innerscript.sty             *^^J
+*                                         *^^J
+*******************************************^^J^^J^^J^^J^^J^^J}
+\endgroup
+%</batchfile>
+%<*driver>
+\documentclass[12pt]{ltxdoc}
+\makeatletter
+\usepackage[margin=72.27pt]{geometry}
+\usepackage[factor=700,stretch=14,shrink=14,step=1]{microtype}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{multicol}
+\pretolerance=20
+\hyphenpenalty=10
+\exhyphenpenalty=5
+\brokenpenalty=0
+\clubpenalty=0
+\widowpenalty=0
+\finalhyphendemerits=300
+\doublehyphendemerits=500
+\usepackage{graphicx}
+\MacroIndent=1.32em
+\begin{document}
+\DocInput{innerscript.dtx}
+\end{document}
+%</driver>
+%<*package>
+% 
+% \fi
+% 
+% 
+% \CheckSum{1207}
+% \init@checksum
+% 
+% \makeatother\CharacterTable
+%   {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%   Digits        \0\1\2\3\4\5\6\7\8\9
+%   Exclamation     \!      Double quote   \"      Hash (number)   \#
+%   Dollar          \$      Percent        \%      Ampersand       \&
+%   Acute accent    \'      Left paren     \(      Right paren     \)
+%   Asterisk        \*      Plus           \+      Comma           \,
+%   Minus           \-      Point          \.      Solidus         \/
+%   Colon           \:      Semicolon      \;      Less than       \<
+%   Equals          \=      Greater than   \>      Question mark   \?
+%   Commercial at   \@      Left bracket   \[      Backslash       \\
+%   Right bracket   \]      Circumflex     \^      Underscore      \_
+%   Grave accent    \`      Left brace     \{      Vertical bar    \|
+%   Right brace     \}      Tilde          \~}
+% \makeatletter
+% 
+% 
+% 
+% \newenvironment{code}
+%   {\strut\vadjust\bgroup\medskip\parindent\z@\leftskip=4em\relax
+%     \noindent\strut\ignorespaces}
+%   {\strut\par\medskip\egroup\hfill\break\strut\ignorespacesafterend}
+% \def\argtext#1{\ensuremath{\langle$\textit{#1}$\rangle}}
+% \def\vrb#1{\expandafter\texttt\expandafter{\string#1}}
+% \newdimen\displaypress
+% \displaypress=\textwidth
+% \divide\displaypress by 6
+% \def\showtwoeq#1#2{\global\advance\c@equation\@ne
+%   \hbox to \hsize{\hskip\the\displaypress plus 0.1pt minus 0.1pt\relax
+%     \hbox to 2\displaypress{\hss$\displaystyle#1$\hss}\relax
+%     \hbox to 2\displaypress{\hss$\displaystyle#2$\hss}\relax
+%     \hskip\the\displaypress plus 0.1pt minus 0.1pt\relax
+%     \llap{(\the\c@equation)}}}
+% 
+% 
+% {\large
+% \parindent=0pt
+% \leftskip=0pt plus 1 fil
+% \rightskip=0pt plus 1fil
+% \parfillskip=0pt
+% {\strut\Large Package \textsf{innerscript} v.\ 1.1 Documentation}\par
+% \strut Conrad Kosowsky\par
+% \strut February 2021\par
+% \strut\texttt{kosowsky.latex@gmail.com}\par}
+% 
+% \medskip
+% 
+% \begin{figure}[h]
+% \hrule height \p@
+% \hbox to \hsize{\relax
+%   \vrule width \p@\kern-\p@
+%   \vbox{\medskip
+%     \leftskip=8.5em\relax\rightskip=8.5em\relax
+%       \noindent\strut For easy, off-the-shelf use, type the following
+%       in your document preamble and compile using Lua\LaTeX:
+%     \vskip\medskipamount
+%       \noindent\hfil\strut|\usepackage{innerscript}|\hfil
+%     \vskip\medskipamount}\relax
+%   \kern-\p@\vrule width \p@}
+% \hrule height \p@
+% \end{figure}
+% 
+% 
+% 
+% \begin{abstract}
+% \noindent The \textsf{mathinner} package modifies two aspects of \TeX's automatic interatom mathematics spacing. The package uses Lua\TeX's |\Umath| primitives to make superscripts and subscripts more closely resemble |\textstyle| and |\displaystyle| math and to treat |\mathinner| subformulas as |\mathord|, effectively eliminating this class. Users must load \textsf{innerscript} with the Lua\TeX\ engine.
+% 
+% \medskip\smallskip
+% 
+% \noindent Keywords: superscript, subscript, spacing, mathinner, scriptstyle, scriptscriptstyle, Lua\TeX, Umath, atom
+% 
+% \end{abstract}
+% 
+% \bigskip
+% 
+% \noindent For several years now, I wondered whether it was possible to change two features of \TeX's mathematics spacing routine, namely the lack of automatic spacing in subscripts and superscripts and the extra space around |\mathinner| subformulas. For example, compare
+% \vadjust{\vskip\abovedisplayskip
+%   \showtwoeq{\sum_{i=1}^n{}x_i^{1+a}}%
+%     {f(x)=g\left(\frac1x\right)}
+%   \smallskip\smallskip
+%   \showtwoeq{\sum_{i\mskip\thinmuskip=\mskip\thinmuskip1}^n
+%     x^{1\mskip 0.7\thinmuskip+\mskip 0.7\thinmuskip a}_i}
+%     {f(x)=g{\left(\frac1x\right)}.}
+%   \vskip\belowdisplayskip}\hfil\break
+% Equation~(1) uses traditional \TeX\ spacing, and equation~(2) incorporates small adjustments. On the left, the subscript under the summation symbol and the superscript of $x_i$ contain small amounts of extra space around the |=| and |+| signs respectively, and on the right, the $g$ is directly next to the parenthesis instead of being an extra |\thinmuskip| away. In traditional \TeX, automating these changes would be impossible to do easily, but Lua\TeX's extra math-mode primitives provide direct access to the interatom space parameters.\footnote{See section 7.5 of the Lua\TeX\ manual.} The \textsf{innerscript} package is my attempt to automate the changes in equation~(2) using |\Umath| spacing commands, and as far as I am aware, it is the first package to do so. (Although please let me know if this is incorrect!) It provides no user-level commands and alters spacing automatically. This file explains how to load the package and documents the internal code.
+% 
+% 
+% 
+% Users can load \textsf{innerscript} with the standard
+% \begin{code}
+% |\usepackage[|\argtext{options}|]{innerscript}|
+% \end{code}
+% syntax.\vadjust{\break} The package must be loaded with Lua\LaTeX, and if it detects a different engine, \textsf{innerscript} will issue an error.\footnote{Specifically, \textsf{innerscript} checks whether \vrb\Umathordordspacing\ is defined.} It is possible to continue compiling past the error with no other issues, but if you do, \textsf{innerscript} will not be able to change any math spacing in your document. Table~1 shows the six package options, and by default \textsf{innerscript} selects the first three. The |script| and |scriptscript| options will affect spacing of symbols in superscripts and subscripts, and the |inner| option will eliminate extra spacing for |\mathinner| subformulas, such as fractions and |\left|-|\right| delimiter pairs. The |no-|~variants disable the spacing adjustments for the corresponding default option.
+% 
+% 
+% \begin{figure}[t]
+% \centering
+% Table~1: Package Options for \textsf{innerscript}
+% \vskip\smallskipamount
+% \begin{tabularx}\hsize{p{1.5in}>{\raggedright\arraybackslash}X}
+% \toprule
+% Package Option & Meaning\\
+% \midrule
+% |script| & Changes to |\scriptstyle| and |\crampedscriptstyle| spacing\\
+% |scriptscript| & Changes to |\scriptscriptstyle| and |\crampedscriptscriptstyle| spacing\\
+% |inner| & Treat |\mathinner| subformulas as |\mathord|\\\midrule
+% |no-script| & No changes to |\scriptstyle| and |\crampedscriptstyle| spacing\\
+% |no-scriptscript| & No changes to |\scriptscriptstyle| and |\crampedscriptscriptstyle| spacing\\
+% |no-inner| & No changes to treatment of |\mathinner| subformulas\\
+% \bottomrule
+% \end{tabularx}
+% \end{figure}
+% 
+% 
+% \begin{figure}[t!]
+% \centering
+% Table~2: Spacing Inserted by \textsf{innerscript} between Consecutive Atoms
+% \vskip\smallskipamount
+% \begin{tabularx}{\hsize}{XXX}
+% \toprule
+% Consecutive Atom Types & Option |script| & Option |scriptscript| \\\midrule
+% |\mathord||\mathop| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathord||\mathbin| & 0.7|\thinmuskip| & 0.5|\thinmuskip| \\
+% |\mathord||\mathrel| & |\thinmuskip| & 0.7|\thinmuskip| \\
+% |\mathord||\mathinner| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathop||\mathord| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathop||\mathop| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathop||\mathrel| & |\thinmuskip| & 0.7|\thinmuskip| \\
+% |\mathop||\mathinner| & |\thinmuskip| & 0.7|\thinmuskip| \\
+% |\mathbin||\mathord| & 0.7|\thinmuskip| & 0.5|\thinmuskip| \\
+% |\mathbin||\mathop| & 0.7|\thinmuskip| & 0.5|\thinmuskip| \\
+% |\mathbin||\mathopen| & 0.7|\thinmuskip| & 0.5|\thinmuskip| \\
+% |\mathbin||\mathinner| & 0.7|\thinmuskip| & 0.5|\thinmuskip| \\
+% |\mathrel||\mathord| & |\thinmuskip| & 0.7|\thinmuskip| \\
+% |\mathrel||\mathop| & |\thinmuskip| & 0.7|\thinmuskip| \\
+% |\mathrel||\mathopen| & |\thinmuskip| & 0.7|\thinmuskip| \\
+% |\mathrel||\mathinner| & |\thinmuskip| & 0.7|\thinmuskip| \\
+% |\mathclose||\mathop| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathclose||\mathbin| & 0.7|\thinmuskip| & 0.5|\thinmuskip| \\
+% |\mathclose||\mathrel| & |\thinmuskip| & 0.7|\thinmuskip| \\
+% |\mathclose||\mathinner| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathpunct||\mathord| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathpunct||\mathop| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathpunct||\mathrel| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathpunct||\mathopen| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathpunct||\mathclose| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathpunct||\mathpunct| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathpunct||\mathinner| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathinner||\mathord| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathinner||\mathop| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathinner||\mathbin| & 0.7|\thinmuskip| & 0.5|\thinmuskip| \\
+% |\mathinner||\mathrel| & |\thinmuskip| & 0.7|\thinmuskip| \\
+% |\mathinner||\mathopen| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathinner||\mathpunct| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% |\mathinner||\mathinner| & 0.6|\thinmuskip| & 0.4|\thinmuskip| \\
+% \bottomrule
+% \end{tabularx}
+% \end{figure}
+% 
+% 
+% In standard mathematics typesetting, \TeX\ uses different font sizes for different portions of math lists, and it chooses a certain size based on the math style currently in use.\footnote{The eight math styles are \vrb\displaystyle, \vrb\textstyle, \vrb\scriptstyle, \vrb\scriptscriptstyle, and cramped versions of those four, where the control sequence begins with the word ``cramped.'' Technically a math style is an instruction to pull math symbols from a specific font associated with a math family and to apply certain rules for assembling formulas to this part of the math list. See Donald Knuth, \textit{The \TeX book,} (Addison Wesley, 1986), 140--143, 441--447; David Salomon, \textit{The Advanced \TeX book,} (Springer, 1995), 254--256.} \TeX\ uses |\displaystyle| and |\textstyle| as the default for display and inline math respectively, and while in either of these styles or the corresponding cramped versions, it adds extra space between symbols of certain math classes.\footnote{The eight classes are \vrb\mathord, \vrb\mathop, \vrb\mathbin, \vrb\mathrel, \vrb\mathopen, \vrb\mathclose, \vrb\mathpunct, and \vrb\mathinner. They are specific to particular symbols and determine spacing in math formulas. As part of its definition, every math symbol is associated with a certain math class. See Donald Knuth, \textit{The \TeX book,} 170; David Salomon, \textit{The Advanced \TeX book,} 256--258.} \TeX\ switches to |\scriptstyle|, |\scriptscriptstyle|, or the corresponding cramped versions to typeset superscripts and subscripts, and in doing so, it forgoes most of the spacing additions from |\textstyle|.
+% 
+% The |script| and |scriptscript| options reverse this decision by forcing interatom spacing to more closely resemble that of |\textstyle|. Table~2 lists the amount of space that \textsf{innerscript} inserts between various pairs of math classes for each option, and adjustments of this type will resemble the changes to the summation from equation~(2). The |inner| package option forces all spacing around |\mathinner| subformulas to take the value it would if the formula had type |\mathord|. Traditionally \TeX\ places more space around |\mathinner| subformulas than it does around |\mathord| atoms, so loading \textsf{innerscript} with |inner| will remove a certain amount of space from math formulas. Changes of this type will typically resemble the adjustment to the function $g$ from equation~(2). Users who want to further change the spacing in their math formulas should manually add glue, muglue, or |\kern| to their math lists or provide new values for the |\Umath| spacing parameters in their document preamble.
+% 
+% \vfil\eject
+% \section*{Implementation}
+% 
+% Finally, we come to the implementation, and we begin by declaring the package. The conditionals |\ifIS@script|, |\ifIS@scriptscript|, and |\ifIS@inner| encode option information, and we set them according to the user's option declaration.
+%    \begin{macrocode}
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{innerscript}[2021/02/07 v. 1.1 Package innerscript]
+\newif\ifIS@script\IS@scripttrue
+\newif\ifIS@scriptscript\IS@scriptscripttrue
+\newif\ifIS@inner\IS@innertrue
+\DeclareOption{script}{\IS@scripttrue}
+\DeclareOption{scriptscript}{\IS@scriptscripttrue}
+\DeclareOption{inner}{\IS@innertrue}
+\DeclareOption{no-script}{\IS@scriptfalse}
+\DeclareOption{no-scriptscript}{\IS@scriptscriptfalse}
+\DeclareOption{no-inner}{\IS@innerfalse}
+\ProcessOptions*
+%    \end{macrocode}
+% Check whether |\Umathordordspacing| is defined. If not, issue an error and |\endinput|. We won't be able to print multiple spaces at once because \TeX\ collapses multiple space characters, so within a group, we change |+| to active and define it to be a space.
+%    \begin{macrocode}
+\ifx\Umathordordspacing\@undefined
+  \bgroup\catcode`\+=13
+    \def+{ }
+    \def\IS@LuaTeXError{\GenericError{}
+      {\MessageBreak\MessageBreak
+      Package innerscript error:
+      \MessageBreak\MessageBreak
+      ++*******************\MessageBreak
+      ++*+++++++++++++++++*\MessageBreak
+      ++*+++CANNOT LOAD+++*\MessageBreak
+      ++*+++INNERSCRIPT+++*\MessageBreak
+      ++*++LuaTeX Needed++*\MessageBreak
+      ++*+++++++++++++++++*\MessageBreak
+      ++*******************\MessageBreak\@gobbletwo}
+      {See the innerscript package documentation for explanation.}
+      {I need LuaTeX to make the innerscript package work. It\MessageBreak
+      looks like the current engine is something else, so I\MessageBreak
+      can't load the package file. To use innerscript, please\MessageBreak
+      typeset with LuaLaTeX. To continue without innerscript,\MessageBreak
+      press return.}}
+    \IS@LuaTeXError
+  \egroup
+  \expandafter\endinput% we \endinput with a balanced conditional
+\fi
+%    \end{macrocode}
+% We will use |\IS@skip| to store muglue information later.
+%    \begin{macrocode}
+\newmuskip\IS@skip
+%    \end{macrocode}
+% First we set the spacing for |\scriptstyle| and |\crampedscriptstyle| atoms. Each command has the form
+% \begin{code}
+%   |\Umath|\argtext{math classes}|spacing\|\argtext{math style}|=|\argtext{factor}|\thinmuskip|,
+% \end{code}
+% where the \textit{math classes} are a pair of choices from |ord|, |op|, |bin|, |rel|, |open|, |close|, |punct|, and |inner|. The \textit{math style} is either |scriptstyle| or |crampedscriptstyle|, and the \textit{factor} corresponds to the spacing listed in Table~2. We set the |\scriptstyle| and |\scriptscriptstyle| spacing before handling |\mathinner| subformulas because we want to use updated spacing values for the |\mathinner| space adjustments. Otherwise, the |\scriptstyle| and |\scriptscriptstyle| adjustments will overwrite changes to |\mathinner| spacing.
+%    \begin{macrocode}
+\ifIS@script
+  \wlog{Package innerscript Info:
+    Adjusting spacing for \string\scriptstyle.}
+  \Umathordopspacing\scriptstyle=0.6\thinmuskip
+  \Umathordbinspacing\scriptstyle=0.7\thinmuskip
+  \Umathordrelspacing\scriptstyle=\thinmuskip
+  \Umathordinnerspacing\scriptstyle=0.6\thinmuskip
+  \Umathopordspacing\scriptstyle=0.6\thinmuskip
+  \Umathopopspacing\scriptstyle=0.6\thinmuskip
+  \Umathoprelspacing\scriptstyle=\thinmuskip
+  \Umathopinnerspacing\scriptstyle=\thinmuskip
+  \Umathbinordspacing\scriptstyle=0.7\thinmuskip
+  \Umathbinopspacing\scriptstyle=0.7\thinmuskip
+  \Umathbinopenspacing\scriptstyle=0.7\thinmuskip
+  \Umathbininnerspacing\scriptstyle=0.7\thinmuskip
+  \Umathrelordspacing\scriptstyle=\thinmuskip
+  \Umathrelopspacing\scriptstyle=\thinmuskip
+  \Umathrelopenspacing\scriptstyle=\thinmuskip
+  \Umathrelinnerspacing\scriptstyle=\thinmuskip
+  \Umathcloseopspacing\scriptstyle=0.6\thinmuskip
+  \Umathclosebinspacing\scriptstyle=0.7\thinmuskip
+  \Umathcloserelspacing\scriptstyle=\thinmuskip
+  \Umathcloseinnerspacing\scriptstyle=0.6\thinmuskip
+  \Umathpunctordspacing\scriptstyle=0.6\thinmuskip
+  \Umathpunctopspacing\scriptstyle=0.6\thinmuskip
+  \Umathpunctrelspacing\scriptstyle=0.6\thinmuskip
+  \Umathpunctopenspacing\scriptstyle=0.6\thinmuskip
+  \Umathpunctclosespacing\scriptstyle=0.6\thinmuskip
+  \Umathpunctpunctspacing\scriptstyle=0.6\thinmuskip
+  \Umathpunctinnerspacing\scriptstyle=0.6\thinmuskip
+  \Umathinnerordspacing\scriptstyle=0.6\thinmuskip
+  \Umathinneropspacing\scriptstyle=0.6\thinmuskip
+  \Umathinnerbinspacing\scriptstyle=0.7\thinmuskip
+  \Umathinnerrelspacing\scriptstyle=\thinmuskip
+  \Umathinneropenspacing\scriptstyle=0.6\thinmuskip
+  \Umathinnerpunctspacing\scriptstyle=0.6\thinmuskip
+  \Umathinnerinnerspacing\scriptstyle=0.6\thinmuskip
+  \wlog{Package innerscript Info:
+    Adjusting spacing for \string\crampedscriptstyle.}
+  \Umathordopspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathordbinspacing\crampedscriptstyle=0.7\thinmuskip
+  \Umathordrelspacing\crampedscriptstyle=\thinmuskip
+  \Umathordinnerspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathopordspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathopopspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathoprelspacing\crampedscriptstyle=\thinmuskip
+  \Umathopinnerspacing\crampedscriptstyle=\thinmuskip
+  \Umathbinordspacing\crampedscriptstyle=0.7\thinmuskip
+  \Umathbinopspacing\crampedscriptstyle=0.7\thinmuskip
+  \Umathbinopenspacing\crampedscriptstyle=0.7\thinmuskip
+  \Umathbininnerspacing\crampedscriptstyle=0.7\thinmuskip
+  \Umathrelordspacing\crampedscriptstyle=\thinmuskip
+  \Umathrelopspacing\crampedscriptstyle=\thinmuskip
+  \Umathrelopenspacing\crampedscriptstyle=\thinmuskip
+  \Umathrelinnerspacing\crampedscriptstyle=\thinmuskip
+  \Umathcloseopspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathclosebinspacing\crampedscriptstyle=0.7\thinmuskip
+  \Umathcloserelspacing\crampedscriptstyle=\thinmuskip
+  \Umathcloseinnerspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathpunctordspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathpunctopspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathpunctrelspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathpunctopenspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathpunctclosespacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathpunctpunctspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathpunctinnerspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathinnerordspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathinneropspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathinnerbinspacing\crampedscriptstyle=0.7\thinmuskip
+  \Umathinnerrelspacing\crampedscriptstyle=\thinmuskip
+  \Umathinneropenspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathinnerpunctspacing\crampedscriptstyle=0.6\thinmuskip
+  \Umathinnerinnerspacing\crampedscriptstyle=0.6\thinmuskip
+\fi
+%    \end{macrocode}
+% Set the spacing for |\scriptscriptstyle| and |\crampedscriptscriptstyle|. The process is the same as it was for |\scriptstyle| except with different |\muskip| \textit{factors}.
+%    \begin{macrocode}
+\ifIS@scriptscript
+  \wlog{Package innerscript Info:
+    Adjusting spacing for \string\scriptscriptstyle.}
+  \Umathordopspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathordbinspacing\scriptscriptstyle=0.5\thinmuskip
+  \Umathordrelspacing\scriptscriptstyle=0.7\thinmuskip
+  \Umathordinnerspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathopordspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathopopspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathoprelspacing\scriptscriptstyle=0.7\thinmuskip
+  \Umathopinnerspacing\scriptscriptstyle=0.7\thinmuskip
+  \Umathbinordspacing\scriptscriptstyle=0.5\thinmuskip
+  \Umathbinopspacing\scriptscriptstyle=0.5\thinmuskip
+  \Umathbinopenspacing\scriptscriptstyle=0.5\thinmuskip
+  \Umathbininnerspacing\scriptscriptstyle=0.5\thinmuskip
+  \Umathrelordspacing\scriptscriptstyle=0.7\thinmuskip
+  \Umathrelopspacing\scriptscriptstyle=0.7\thinmuskip
+  \Umathrelopenspacing\scriptscriptstyle=0.7\thinmuskip
+  \Umathrelinnerspacing\scriptscriptstyle=0.7\thinmuskip
+  \Umathcloseopspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathclosebinspacing\scriptscriptstyle=0.5\thinmuskip
+  \Umathcloserelspacing\scriptscriptstyle=0.7\thinmuskip
+  \Umathcloseinnerspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathpunctordspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathpunctopspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathpunctrelspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathpunctopenspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathpunctclosespacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathpunctpunctspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathpunctinnerspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathinnerordspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathinneropspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathinnerbinspacing\scriptscriptstyle=0.5\thinmuskip
+  \Umathinnerrelspacing\scriptscriptstyle=0.7\thinmuskip
+  \Umathinneropenspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathinnerpunctspacing\scriptscriptstyle=0.4\thinmuskip
+  \Umathinnerinnerspacing\scriptscriptstyle=0.4\thinmuskip
+  \wlog{Package innerscript Info:
+    Adjusting spacing for \string\crampedscriptscriptstyle.}
+  \Umathordopspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathordbinspacing\crampedscriptscriptstyle=0.5\thinmuskip
+  \Umathordrelspacing\crampedscriptscriptstyle=0.7\thinmuskip
+  \Umathordinnerspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathopordspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathopopspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathoprelspacing\crampedscriptscriptstyle=0.7\thinmuskip
+  \Umathopinnerspacing\crampedscriptscriptstyle=0.7\thinmuskip
+  \Umathbinordspacing\crampedscriptscriptstyle=0.5\thinmuskip
+  \Umathbinopspacing\crampedscriptscriptstyle=0.5\thinmuskip
+  \Umathbinopenspacing\crampedscriptscriptstyle=0.5\thinmuskip
+  \Umathbininnerspacing\crampedscriptscriptstyle=0.5\thinmuskip
+  \Umathrelordspacing\crampedscriptscriptstyle=0.7\thinmuskip
+  \Umathrelopspacing\crampedscriptscriptstyle=0.7\thinmuskip
+  \Umathrelopenspacing\crampedscriptscriptstyle=0.7\thinmuskip
+  \Umathrelinnerspacing\crampedscriptscriptstyle=0.7\thinmuskip
+  \Umathcloseopspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathclosebinspacing\crampedscriptscriptstyle=0.5\thinmuskip
+  \Umathcloserelspacing\crampedscriptscriptstyle=0.7\thinmuskip
+  \Umathcloseinnerspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathpunctordspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathpunctopspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathpunctrelspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathpunctopenspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathpunctclosespacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathpunctpunctspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathpunctinnerspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathinnerordspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathinneropspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathinnerbinspacing\crampedscriptscriptstyle=0.5\thinmuskip
+  \Umathinnerrelspacing\crampedscriptscriptstyle=0.7\thinmuskip
+  \Umathinneropenspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathinnerpunctspacing\crampedscriptscriptstyle=0.4\thinmuskip
+  \Umathinnerinnerspacing\crampedscriptscriptstyle=0.4\thinmuskip
+\fi
+%    \end{macrocode}
+% Now set the spacing for |\mathinner| subformulas. We store each |\mathord| spacing dimension in |\IS@skip| and use it to reset the |\mathinner| spacing. Each command has the form
+% \begin{code}
+%   |\IS@skip\Umath|\argtext{math class}|ordspacing\|\argtext{math style}\\
+%   |\Umath|\argtext{math class}|innerspacing\|\argtext{math style}|\IS@skip|
+% \end{code}
+% or
+% \begin{code}
+%   |\IS@skip\Umathord|\argtext{math class}|spacing\|\argtext{math style}\\
+%   |\Umathinner|\argtext{math class}|spacing\|\argtext{math style}|\IS@skip|,
+% \end{code}
+% where \textit{math class} is one of |ord|, |op|, |bin|, |rel|, |open|, |close|, |punct|, or |inner|. The \textit{math style} is either |displaystyle|, |textstyle|, |scriptstyle|, |scriptscriptstyle|, or the cramped version of any of those four.
+%    \begin{macrocode}
+\ifIS@inner
+  \wlog{Package innerscript Info:
+    Adjusting spacing for \string\mathinner.}
+  \IS@skip\Umathordordspacing\displaystyle
+  \Umathordinnerspacing\displaystyle\IS@skip
+  \IS@skip\Umathordordspacing\textstyle
+  \Umathordinnerspacing\textstyle\IS@skip
+  \IS@skip\Umathordordspacing\scriptstyle
+  \Umathordinnerspacing\scriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\scriptscriptstyle
+  \Umathordinnerspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\crampeddisplaystyle
+  \Umathordinnerspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathordordspacing\crampedtextstyle
+  \Umathordinnerspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathordordspacing\crampedscriptstyle
+  \Umathordinnerspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\crampedscriptscriptstyle
+  \Umathordinnerspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathopordspacing\displaystyle
+  \Umathopinnerspacing\displaystyle\IS@skip
+  \IS@skip\Umathopordspacing\textstyle
+  \Umathopinnerspacing\textstyle\IS@skip
+  \IS@skip\Umathopordspacing\scriptstyle
+  \Umathopinnerspacing\scriptstyle\IS@skip
+  \IS@skip\Umathopordspacing\scriptscriptstyle
+  \Umathopinnerspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathopordspacing\crampeddisplaystyle
+  \Umathopinnerspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathopordspacing\crampedtextstyle
+  \Umathopinnerspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathopordspacing\crampedscriptstyle
+  \Umathopinnerspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathopordspacing\crampedscriptscriptstyle
+  \Umathopinnerspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathbinordspacing\displaystyle
+  \Umathbininnerspacing\displaystyle\IS@skip
+  \IS@skip\Umathbinordspacing\textstyle
+  \Umathbininnerspacing\textstyle\IS@skip
+  \IS@skip\Umathbinordspacing\scriptstyle
+  \Umathbininnerspacing\scriptstyle\IS@skip
+  \IS@skip\Umathbinordspacing\scriptscriptstyle
+  \Umathbininnerspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathbinordspacing\crampeddisplaystyle
+  \Umathbininnerspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathbinordspacing\crampedtextstyle
+  \Umathbininnerspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathbinordspacing\crampedscriptstyle
+  \Umathbininnerspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathbinordspacing\crampedscriptscriptstyle
+  \Umathbininnerspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathrelordspacing\displaystyle
+  \Umathrelinnerspacing\displaystyle\IS@skip
+  \IS@skip\Umathrelordspacing\textstyle
+  \Umathrelinnerspacing\textstyle\IS@skip
+  \IS@skip\Umathrelordspacing\scriptstyle
+  \Umathrelinnerspacing\scriptstyle\IS@skip
+  \IS@skip\Umathrelordspacing\scriptscriptstyle
+  \Umathrelinnerspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathrelordspacing\crampeddisplaystyle
+  \Umathrelinnerspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathrelordspacing\crampedtextstyle
+  \Umathrelinnerspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathrelordspacing\crampedscriptstyle
+  \Umathrelinnerspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathrelordspacing\crampedscriptscriptstyle
+  \Umathrelinnerspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathopenordspacing\displaystyle
+  \Umathopeninnerspacing\displaystyle\IS@skip
+  \IS@skip\Umathopenordspacing\textstyle
+  \Umathopeninnerspacing\textstyle\IS@skip
+  \IS@skip\Umathopenordspacing\scriptstyle
+  \Umathopeninnerspacing\scriptstyle\IS@skip
+  \IS@skip\Umathopenordspacing\scriptscriptstyle
+  \Umathopeninnerspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathopenordspacing\crampeddisplaystyle
+  \Umathopeninnerspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathopenordspacing\crampedtextstyle
+  \Umathopeninnerspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathopenordspacing\crampedscriptstyle
+  \Umathopeninnerspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathopenordspacing\crampedscriptscriptstyle
+  \Umathopeninnerspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathcloseordspacing\displaystyle
+  \Umathcloseinnerspacing\displaystyle\IS@skip
+  \IS@skip\Umathcloseordspacing\textstyle
+  \Umathcloseinnerspacing\textstyle\IS@skip
+  \IS@skip\Umathcloseordspacing\scriptstyle
+  \Umathcloseinnerspacing\scriptstyle\IS@skip
+  \IS@skip\Umathcloseordspacing\scriptscriptstyle
+  \Umathcloseinnerspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathcloseordspacing\crampeddisplaystyle
+  \Umathcloseinnerspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathcloseordspacing\crampedtextstyle
+  \Umathcloseinnerspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathcloseordspacing\crampedscriptstyle
+  \Umathcloseinnerspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathcloseordspacing\crampedscriptscriptstyle
+  \Umathcloseinnerspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathpunctordspacing\displaystyle
+  \Umathpunctinnerspacing\displaystyle\IS@skip
+  \IS@skip\Umathpunctordspacing\textstyle
+  \Umathpunctinnerspacing\textstyle\IS@skip
+  \IS@skip\Umathpunctordspacing\scriptstyle
+  \Umathpunctinnerspacing\scriptstyle\IS@skip
+  \IS@skip\Umathpunctordspacing\scriptscriptstyle
+  \Umathpunctinnerspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathpunctordspacing\crampeddisplaystyle
+  \Umathpunctinnerspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathpunctordspacing\crampedtextstyle
+  \Umathpunctinnerspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathpunctordspacing\crampedscriptstyle
+  \Umathpunctinnerspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathpunctordspacing\crampedscriptscriptstyle
+  \Umathpunctinnerspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\displaystyle
+  \Umathinnerordspacing\displaystyle\IS@skip
+  \IS@skip\Umathordordspacing\textstyle
+  \Umathinnerordspacing\textstyle\IS@skip
+  \IS@skip\Umathordordspacing\scriptstyle
+  \Umathinnerordspacing\scriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\scriptscriptstyle
+  \Umathinnerordspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\crampeddisplaystyle
+  \Umathinnerordspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathordordspacing\crampedtextstyle
+  \Umathinnerordspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathordordspacing\crampedscriptstyle
+  \Umathinnerordspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\crampedscriptscriptstyle
+  \Umathinnerordspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathordopspacing\displaystyle
+  \Umathinneropspacing\displaystyle\IS@skip
+  \IS@skip\Umathordopspacing\textstyle
+  \Umathinneropspacing\textstyle\IS@skip
+  \IS@skip\Umathordopspacing\scriptstyle
+  \Umathinneropspacing\scriptstyle\IS@skip
+  \IS@skip\Umathordopspacing\scriptscriptstyle
+  \Umathinneropspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathordopspacing\crampeddisplaystyle
+  \Umathinneropspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathordopspacing\crampedtextstyle
+  \Umathinneropspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathordopspacing\crampedscriptstyle
+  \Umathinneropspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathordopspacing\crampedscriptscriptstyle
+  \Umathinneropspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathordbinspacing\displaystyle
+  \Umathinnerbinspacing\displaystyle\IS@skip
+  \IS@skip\Umathordbinspacing\textstyle
+  \Umathinnerbinspacing\textstyle\IS@skip
+  \IS@skip\Umathordbinspacing\scriptstyle
+  \Umathinnerbinspacing\scriptstyle\IS@skip
+  \IS@skip\Umathordbinspacing\scriptscriptstyle
+  \Umathinnerbinspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathordbinspacing\crampeddisplaystyle
+  \Umathinnerbinspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathordbinspacing\crampedtextstyle
+  \Umathinnerbinspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathordbinspacing\crampedscriptstyle
+  \Umathinnerbinspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathordbinspacing\crampedscriptscriptstyle
+  \Umathinnerbinspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathordrelspacing\displaystyle
+  \Umathinnerrelspacing\displaystyle\IS@skip
+  \IS@skip\Umathordrelspacing\textstyle
+  \Umathinnerrelspacing\textstyle\IS@skip
+  \IS@skip\Umathordrelspacing\scriptstyle
+  \Umathinnerrelspacing\scriptstyle\IS@skip
+  \IS@skip\Umathordrelspacing\scriptscriptstyle
+  \Umathinnerrelspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathordrelspacing\crampeddisplaystyle
+  \Umathinnerrelspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathordrelspacing\crampedtextstyle
+  \Umathinnerrelspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathordrelspacing\crampedscriptstyle
+  \Umathinnerrelspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathordrelspacing\crampedscriptscriptstyle
+  \Umathinnerrelspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathordopenspacing\displaystyle
+  \Umathinneropenspacing\displaystyle\IS@skip
+  \IS@skip\Umathordopenspacing\textstyle
+  \Umathinneropenspacing\textstyle\IS@skip
+  \IS@skip\Umathordopenspacing\scriptstyle
+  \Umathinneropenspacing\scriptstyle\IS@skip
+  \IS@skip\Umathordopenspacing\scriptscriptstyle
+  \Umathinneropenspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathordopenspacing\crampeddisplaystyle
+  \Umathinneropenspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathordopenspacing\crampedtextstyle
+  \Umathinneropenspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathordopenspacing\crampedscriptstyle
+  \Umathinneropenspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathordopenspacing\crampedscriptscriptstyle
+  \Umathinneropenspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathordclosespacing\displaystyle
+  \Umathinnerclosespacing\displaystyle\IS@skip
+  \IS@skip\Umathordclosespacing\textstyle
+  \Umathinnerclosespacing\textstyle\IS@skip
+  \IS@skip\Umathordclosespacing\scriptstyle
+  \Umathinnerclosespacing\scriptstyle\IS@skip
+  \IS@skip\Umathordclosespacing\scriptscriptstyle
+  \Umathinnerclosespacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathordclosespacing\crampeddisplaystyle
+  \Umathinnerclosespacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathordclosespacing\crampedtextstyle
+  \Umathinnerclosespacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathordclosespacing\crampedscriptstyle
+  \Umathinnerclosespacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathordclosespacing\crampedscriptscriptstyle
+  \Umathinnerclosespacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathordpunctspacing\displaystyle
+  \Umathinnerpunctspacing\displaystyle\IS@skip
+  \IS@skip\Umathordpunctspacing\textstyle
+  \Umathinnerpunctspacing\textstyle\IS@skip
+  \IS@skip\Umathordpunctspacing\scriptstyle
+  \Umathinnerpunctspacing\scriptstyle\IS@skip
+  \IS@skip\Umathordpunctspacing\scriptscriptstyle
+  \Umathinnerpunctspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathordpunctspacing\crampeddisplaystyle
+  \Umathinnerpunctspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathordpunctspacing\crampedtextstyle
+  \Umathinnerpunctspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathordpunctspacing\crampedscriptstyle
+  \Umathinnerpunctspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathordpunctspacing\crampedscriptscriptstyle
+  \Umathinnerpunctspacing\crampedscriptscriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\displaystyle
+  \Umathinnerinnerspacing\displaystyle\IS@skip
+  \IS@skip\Umathordordspacing\textstyle
+  \Umathinnerinnerspacing\textstyle\IS@skip
+  \IS@skip\Umathordordspacing\scriptstyle
+  \Umathinnerinnerspacing\scriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\scriptscriptstyle
+  \Umathinnerinnerspacing\scriptscriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\crampeddisplaystyle
+  \Umathinnerinnerspacing\crampeddisplaystyle\IS@skip
+  \IS@skip\Umathordordspacing\crampedtextstyle
+  \Umathinnerinnerspacing\crampedtextstyle\IS@skip
+  \IS@skip\Umathordordspacing\crampedscriptstyle
+  \Umathinnerinnerspacing\crampedscriptstyle\IS@skip
+  \IS@skip\Umathordordspacing\crampedscriptscriptstyle
+  \Umathinnerinnerspacing\crampedscriptscriptstyle\IS@skip
+\fi
+%    \end{macrocode}
+% \vfil\eject
+% \section*{Version History}
+% \begin{multicols*}{2}
+% \bgroup\raggedright\parskip\z@\parindent\z@\leftskip1em\obeylines
+% \setbox0\hbox{\hskip 1pt.\hskip 1pt}
+% \def\version#1#2{\bigskip\hbox to \hsize{\textbf{#1} \cleaders\copy0\hfill\ #2}\par}
+% \def\item{---\kern0.2ex\relax}
+% 
+% \version{1.0}{February 2021}
+% \item initial release
+% 
+% \version{1.1}{Fegruary 2021}
+% \item bug fix for |\mathinner| spacing
+% \item added |\IS@skip| muglue register
+% 
+% \egroup
+% \end{multicols*}
+% 
+% 
+% 
+% \iffalse
+%</package>
+% \fi
+% 
+% 
+% \check@checksum
+% 
+% 
+\endinput

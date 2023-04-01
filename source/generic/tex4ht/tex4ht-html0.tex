@@ -1,0 +1,3863 @@
+% $Id: tex4ht-html0.tex 414 2018-06-12 23:04:41Z karl $
+%        latex tex4ht-html0
+% or   xhlatex tex4ht-html0 "html,3,sections+"
+%
+% Copyright 2009-2018 TeX Users Group
+% Copyright 1996-2009 Eitan M. Gurari
+% Released under LPPL 1.3c+.
+% See tex4ht-cpright.tex for license text.
+
+\ifx \HTML\UnDef
+   \def\HTML{html0} 
+   \def\CONFIG{\jobname}
+   \def\MAKETITLE{\author{Eitan M. Gurari}}
+   \def\next{\input mktex4ht.4ht  \endinput}
+   \expandafter\next
+\fi
+
+\input{common-code}
+\input{common}
+\input{tex4ht-cpright}
+
+\def\.{\string\a:mathml:\space}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{The Calling Tree for 4ht Files}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\<0,32,4 tex4ht\><<<
+\if:latex  |<Hinclude latex|>
+\else      |<Hinclude plain|>  \fi
+>>>
+
+
+\<0,32,4 plain\><<<
+|<Hinclude plain lib|>
+|<Hinclude plain + latex lib|>
+>>>
+
+\<0,32,4 latex\><<<
+|<Hinclude latex lib|>
+|<Hinclude plain + latex lib|>
+>>>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{HTML4 and XHTML}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\<0,32,4 preambles\><<<
+|<date utility|>
+|<cascade style sheets|>
+\Configure{Preamble}
+   {|<default cascade style sheets|>} {}
+>>>
+
+
+\<default cascade style sheets\><<<
+{\ifdim \lastskip>\z@ \unskip\fi  \IgnorePar\parindent\z@
+\leavevmode}%
+\writesixteen{--- file \aa:CssFile\space ---}%
+\ht:special{t4ht>\aa:CssFile}\ht:special{t4ht=\Hnewline /* css.sty */}%
+\ht:special{t4ht<\aa:CssFile}%
+>>>
+
+
+
+
+
+
+
+
+
+\verb'\special' are like \verb'\hbox', and they so they may introduve empty lines in
+vertical mode. That might be a problem if we don't want empty lines at
+the start of the files. Hence, in latex we give them special treatment.
+
+
+
+\<cascade style sheets\><<<
+\ScriptCommand{\CssFile}{%
+  \writesixteen{--- file \aa:CssFile\space ---}%
+  \def\FontSize##1##2{\:Context{##1}\ht:special{t4ht;\%##2}\%}%
+  \def\FontName##1{\:Context{##1}\ht:special{t4ht;=}}%
+  \def\:Context##1{\ht:special{t4ht>\jobname.tmp}##1\ht:special
+     {t4ht>\aa:CssFile}}%
+  \ht:special{t4ht>\jobname.tmp}\ht:special{t4ht>\aa:CssFile}\bb:CssFile
+  \hfil\break\NoFonts}{\EndNoFonts
+  \ht:special{t4ht<\aa:CssFile}\ht:special{t4ht<\jobname.tmp}}
+\let\Css:File|=\CssFile
+\def\CssFile{\futurelet\:temp\Css:Fl}
+\def\Css:Fl{\ifx [\:temp  \expandafter\Css:fl
+   \else \expand:after{\Css:File \space}\fi}
+\def\Css:fl[#1]{\Css:File\space \css:files #1,,|<par del|>}
+\def\css:files#1,#2|<par del|>{\def\:temp{#1}\ifx \:temp\empty
+   \else \def\:temp{\in:css#1.|<par del|>\css:files#2,,|<par del|>}\fi
+   \:temp }
+\def\in:css#1.#2|<par del|>{\def\:temp{#2}\ifx \:temp\empty \input #1.css
+   \else \inc:ss#1.#2|<par del|>\fi}
+\def\inc:ss#1.|<par del|>{\input #1 }
+\NewConfigure{CssFile}[2]{\def\aa:CssFile{#1}\def\bb:CssFile{#2}}
+>>>
+
+\verb'\CssFile[file-name,filename.ext,..]...\EndCssFile'.
+
+Default file, just in case the user doesn't provide one. If
+the user does, the following file will be overwritten.
+
+Can't use below \verb'\a:CssFile' and \verb'\b:CssFile', because
+\verb'\ScriptFile{\CssFile}' also needs them.
+
+
+
+\verb'\Css' changes its definition upon reachin \verb'\CssFile'.  The 
+first definition is needed within the sty files, and the info is
+sent to the lg file (where else it can be sent?).
+
+
+\<cascade style sheets\><<<
+\def\Css#1{{\def\:temp{\Configure{Needs}}%
+   \expandafter\:temp\expandafter{\aa:Css}\Needs{#1}}}
+\let\send:css|=\Css
+\ScriptCommand{\Css}{\HCode{<style
+   type="text/css">\Hnewline\NoFonts}}{\EndNoFonts\HCode{</style>}}
+\let\loc:css|=\Css
+\def\Css{\futurelet\:temp\:Css}
+\def\:Css{\ifx \:temp\bgroup \expandafter\send:css
+   \else \expandafter\loc:css\fi}
+>>>
+
+
+
+\<date utility\><<<
+\tmp:cnt|=\time  \divide\tmp:cnt |by 60
+\edef\:temp{\the\tmp:cnt}
+\multiply\tmp:cnt |by -60 \advance\tmp:cnt |by \time
+\edef\:today{\the\year-\ifnum \month<10 0\fi
+  \the\month-\ifnum \day<10 0\fi\the\day 
+   \space\ifnum \:temp<10 0\fi \:temp 
+   :\ifnum \tmp:cnt<10 0\fi\the\tmp:cnt :00}
+>>>
+
+
+\<date utility\><<<
+\:CheckOption{hooks++} \if:Option
+    \else \:CheckOption{hooks+}  
+          \if:Option \else \:CheckOption{hooks}\fi
+    \fi
+\if:Option
+   \Configure{hooks}
+      {\HCode{<strong class="hooks">&lt;}}{\HCode{&gt;</strong>}}{}{}  
+\fi
+>>>
+
+
+
+\<xhtml.4ht\><<<
+\:CheckOption{0.0}\if:Option 
+\else  \:CheckOption{core}  \fi
+\if:Option \else \ifx \a:DOCTYPE\relax
+   \Configure{DOCTYPE}{|<xhtml dtd|>}   
+\fi\fi
+>>>
+
+
+\<xhtml dtd\><<<
+\IgnorePar\HCode{\Hnewline 
+    <?xml version="1.1"?>\Hnewline
+    <!DOCTYPE html SYSTEM "xhtml.dtd">\Hnewline}\Hnewline
+<!--http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd-->
+>>>
+
+
+
+The following provides a faster version
+than \verb'\LinkCommand\Link{a,href,name,}' for the \verb'\Link'
+command
+
+
+
+
+
+\section{article}
+
+
+
+
+\<configure html0 Preamble\><<<
+\Configure{PROLOG}{}
+>>>
+
+
+
+
+\section{latex.ltx}
+
+
+
+
+
+
+
+
+
+
+\<latex options 1, 2, 3\><<<
+|<options for cutoff points|>
+\:CheckOption{4}     \if:Option
+    \expandafter\ifx \csname @chapter\endcsname\relax
+                          \:tempa \:tempc \:tempd
+    \else                 \:tempa \:tempb \:tempc \:tempd  \fi
+\else\:CheckOption{3}     \if:Option
+    \expandafter\ifx \csname @chapter\endcsname\relax
+                          \:tempa \:tempc  \:tempd
+    \else                 \:tempa \:tempb  \:tempc  \fi
+\else\:CheckOption{2}     \if:Option
+    \expandafter\ifx \csname @chapter\endcsname\relax  \:tempa \:tempc 
+    \else                 \:tempa \:tempb    \fi
+\else\:CheckOption{1}     \if:Option
+    \:tempa
+\fi \fi \fi \fi
+>>>
+
+
+\<options for cutoff points\><<<
+\def\:tempa{
+   \CutAt{part}
+   \CutAt{likepart}
+   \Configure{tableofcontents*}
+      {part,likepart,chapter,likechapter,appendix}
+}
+\def\:tempb{
+   \TocAt*{part,/likepart,chapter,likechapter,appendix,%
+             section,likesection}
+   \TocAt*{likepart,/part,chapter,likechapter,appendix,%
+             section,likesection}
+   \CutAt{chapter,likechapter,appendix,part}
+   \CutAt{likechapter,appendix,part}
+   \CutAt{appendix,chapter,likechapter,part}
+   \Configure{tableofcontents*}{part,likepart,chapter,likechapter,appendix,%
+      section,likesection\expandafter\ifx \csname @chapter\endcsname\relax 
+      ,subsection,likesubsection\fi
+    }
+}
+\def\:tempc{
+   \TocAt*{chapter,/likechapter,/appendix,/part,%
+             section,likesection,subsection,likesubsection}
+   \TocAt*{likechapter,/appendix,/chapter,/part,%
+             section,likesection,subsection,likesubsection}
+   \TocAt*{appendix,/chapter,/likechapter,/part,%
+             section,likesection,subsection,likesubsection}
+   \CutAt{section,likesection,chapter,likechapter,appendix,part}
+   \CutAt{likesection,chapter,likechapter,appendix,part}
+   \Configure{tableofcontents*}{part,likepart,chapter,likechapter,%
+      appendix,section,%
+             likesection\expandafter\ifx \csname @chapter\endcsname\relax
+      ,subsection,likesubsection\fi}
+}
+\def\:tempd{
+   \TocAt*{section,/likesection,/chapter,/likechapter,/appendix,/part,%
+             subsection,likesubsection,subsubsection,likesubsubsection}
+   \TocAt*{likesection,/section,/chapter,/likechapter,/appendix,/part,%
+             subsection,likesubsection,subsubsection,likesubsubsection}
+   \CutAt{subsection,section,likesection,%
+                     chapter,likechapter,appendix,part}
+   \CutAt{likesubsection,section,likesection,%
+                     chapter,likechapter,appendix,part}
+   \Configure{tableofcontents*}{part,likepart,chapter,likechapter,%
+       appendix,section,likesection,likesubsection,subsection}
+}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+                                              % ltoutenc.dtx
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<0,32,4 plain,latex accents\><<<
+\:CheckOption{new-accents}     \if:Option
+   |<new accents|>
+\else
+   |<old accents|>
+\fi
+\let\^^_|=\v
+>>>
+
+
+\<0,32,4 latex\><<<
+|<0,32,4 plain,latex accents|>
+\let\@acci|=\' \let\@accii|=\` \let\@acciii|=\=       
+>>>
+
+\<0,32,4 plain\><<<
+|<0,32,4 plain,latex accents|>
+>>>
+
+
+\<new accents\><<<
+\:CheckOption{accent-}     \if:Option
+  \Configure{HAccent}\acute{AEIOUYaeiouy{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\bar{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\breve{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\check{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\ddot{AEIOUYaeiouy{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\dot{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\grave{AEIOUaeiou{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\hat{AEIOUaeiou{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\tilde{AOaoNn{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\vec{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\widehat{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\widetilde{}{\Picture+{}}{\EndPicture}
+\fi
+\:CheckOption{mathaccent-}     \if:Option
+  \Configure{HAccent}\"{AEIOUYaeiouy{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\'{AEIOUYaeiouy{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\.{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\={}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\H{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\^{AEIOUaeiou{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\`{AEIOUaeiou{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\b{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\c{Cc{}}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\d{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\t{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\u{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\v{}{\Picture+{}}{\EndPicture}
+  \Configure{HAccent}\~{AOaoNn{}}{\Picture+{}}{\EndPicture}
+\fi
+>>>
+
+\<new accents\><<<
+\Configure{accent}{*}
+   {<!--tex4ht:accent\Hnewline font="}{" char="}{" type="}{"-->}
+   {<!--tex4ht:end accent-->}
+\Configure{mathaccent}{*}
+   {<!--tex4ht:mathaccent\Hnewline font="}{" char="}{" type="}{"-->}
+   {<!--tex4ht:end mathaccent-->}
+\Configure{accented}{*}
+   {<!--tex4ht:accented\Hnewline font="}{" char="}{" type="}{"-->}
+   {<!--tex4ht:end accented-->}
+\Configure{accenting}{*}
+   {<!--tex4ht:accenting\Hnewline-->}
+   {<!--tex4ht:end accenting-->}
+>>>
+
+
+\<old accents\><<<
+\Configure{accent}\`\grave{A{A}E{E}I{I}O{O}U{U}%
+                    a{a}e{e}i{i}\i{i}o{o}u{u}{}{}}
+   {\a:accents{grave}{#1}}   {\b:accents{grave}{#1}{#2}}
+\Configure{accent}\'\acute{A{A}E{E}I{I}O{O}U{U}Y%
+           {Y}a{a}e{e}i{i}\i{i}o{o}u{u}y{y}{}{}}
+   {\a:accents{acute}{#1}}   {\b:accents{acute}{#1}{#2}}
+\Configure{accent}\^\hat{A{A}E{E}I{I}O{O}U{U}a{a}%
+                      e{e}i{i}\i{i}o{o}u{u}{}{}}
+   {\a:accents{circ}{#1}}   {\b:accents{hat}{#1}{#2}}
+\Configure{accent}\~\tilde{A{A}O{O}a{a}o{o}N{N}n{n}{}{}}
+   {\a:accents{tilde}{#1}}   {\b:accents{tilde}{#1}{#2}}
+\Configure{accent}\"\ddot{A{A}E{E}I{I}O{O}U{U}Y%
+           {Y}a{a}e{e}i{i}\i{i}o{o}u{u}y{y}{}{34}}
+   {\a:accents{uml}{#1}}     {\b:accents{uml}{#1}{#2}}
+>>>
+
+
+
+
+
+The following are also placed under accents configuration.
+
+\<old accents\><<<
+\Configure{accent}\c\c{C{C}c{c}{}{}}
+   {\a:accents{cedil}{#1}}     {\b:accents{cedil}{#1}{#2}}
+\Configure{accent}\t\t{{}{}}
+   {\a:accents{udot}{#1}}     {\b:accents{udot}{#1}{#2}}
+\Configure{accent}\H\H{{}{}} {}{\b:accents{Huml}{#1}{#2}}
+>>>
+
+The following originally have been defined to be parameter-less.
+
+
+
+\<old accents\><<<
+\Configure{accent}\.\dot{{}{}}  {}{\b:accents{dot}{#1}{#2}}
+\Configure{accent}\u\breve{{}{}}{}{\b:accents{breve}{#1}{#2}}
+\Configure{accent}\vec\vec{{}{}}{}{\b:accents{vec}{#1}{#2}}
+\Configure{accent}\v\check{{}{}}{}{\b:accents{check}{#1}{#2}} 
+\Configure{accent}\=\bar{{}{}}  {}{\b:accents{bar}{#1}{#2}}
+>>>
+
+
+%  \= macron
+
+\<old accents\><<<
+\Configure{accent}\widetilde\widetilde{{}{}} 
+   {}{\b:accents{widetilde}{#1}{#2}}
+\Configure{accent}\widehat\widehat{{}{}} 
+   {}{\b:accents{widehat}{#1}{#2}}
+>>>
+
+
+\verb'\vec', \verb'\widetilde', and \verb'\widehat' are for math mode.
+\verb'\b', \verb'\c', \verb'\d', \verb'\t', and \verb'\H' are for text mode.
+
+
+
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+                                              % ltfssini.dtx
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{tt Font}
+
+\<0,32,4 latex\><<<
+\ifx \ttfamily\:UnDef \else \Configure{tt}{\ttfamily} \fi
+>>>
+
+
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+                                              % ltmath.dtx
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Math Setup}
+
+
+
+
+
+
+
+
+\<PIC eqnarray Config\><<<
+\ConfigureEnv{eqnarray}
+     {\IgnorePar\EndP\Tg<div class="pic-eqnarray">\Picture*{}}
+     {\EndPicture\Tg</div>}{}{}
+\Css{div.pic-eqnarray {text-align:center;}}  
+\ConfigureEnv{eqnarray*}
+     {\IgnorePar\EndP\Tg<div class="pic-eqnarray-star">\Picture*{}}
+     {\EndPicture\Tg</div>}{}{}
+\Css{div.pic-eqnarray-star {text-align:center;}}  
+>>>
+
+
+
+
+
+
+
+
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+                                              % lttab.dtx
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Tabbing, Tabular and Array Environments}
+
+
+
+
+
+
+
+
+
+
+
+
+\<vspace body for array/tabular\><<<
+\append:def\vspc:s{\h:HBorder}%
+\def\:tempb{\ifnum \tmp:cnt<\ar:cnt 
+    \advance\tmp:cnt by 1 \append:def\vspc:s{\i:HBorder}%
+    \expandafter\:tempb
+  \fi }
+\tmp:cnt|=0 \:tempb
+\append:def\vspc:s{\j:HBorder}\global\let\vspc:s|=\vspc:s
+>>>
+
+
+\<0,32,4 latex\><<<
+\Configure{hline}{\ifx \ar:cnt\:UnDef 
+   \else\o:noalign:{|<hline body for array/tabular|>}\fi}
+\Configure{//[]}{\ifx \ar:cnt\:UnDef 
+   \else\o:noalign:{|<vspace body for array/tabular|>}\fi}
+>>>
+
+
+
+\<hline body for array/tabular\><<<
+\append:def\hline:s{\a:HBorder}%
+\def\:tempb{\ifnum \tmp:cnt<\ar:cnt 
+    \advance\tmp:cnt by 1 \append:def\hline:s{\b:HBorder}%
+    \expandafter\:tempb
+  \fi }
+\tmp:cnt|=0 \:tempb
+\append:def\hline:s{\c:HBorder}\global\let\hline:s|=\hline:s
+>>>
+
+
+
+
+
+\<configure clear noalign\><<<
+\Configure{noalign}{}{}
+>>>
+
+\<configure tabular noalign\><<<
+\Configure{noalign}%
+  {\f:tabular\d:tabular \HCode{<tr><td colspan="\ar:cnt">}}
+  {\HCode{</td></tr>}\pend:def\TableNo{0}\c:tabular\e:tabular}%
+>>>
+
+
+
+
+
+
+\verb'\AllColMargins' Return a binary string in which 1 represents
+a column, and 0 represents a `@'. \verb'\ColMargins' retrieves the
+zeros before the 1's that represent the current and following 1's.
+
+
+
+
+
+
+
+
+
+
+
+\subsection{The option @()}
+
+
+
+
+
+
+
+
+\<configuring @()\><<<
+\Configure{@{}}{}
+>>>
+
+
+
+
+
+
+We force border around the full table whenever a vertical line is
+requested, because it makes the tables better looking within the
+existing capabilities.
+
+
+
+Currently, we either have empty \verb'\VBorder', or one defined to
+\verb'\def\VBorder{border="1"}'.
+
+
+
+When \verb'\putVBorder' is call  in \verb'\VBorder' 
+we have a sequence of the form
+\verb'<COLGROUP><COL ...">...</COLGROUP>...' with the last 
+tag possibly missing.
+
+
+
+
+
+
+
+
+   
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%% to be placed %%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{to be placed}
+%%%%%%%%%%%%%%%%%%%
+
+
+
+
+\<0,32,4 plain,latex\><<<
+\Configure{ }{\:nbsp}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\<0,32,4 latex\><<<
+\Configure{framebox}
+   {\Picture+[]{ \a:@Picture{framebox}}} {\EndPicture}
+\Configure{InsertTitle}{\let\label|=\lb:l
+   \let\ref|=\o:ref \Configure{ref}{}{}{}}
+\Configure{AfterTitle}{\let\index|=\:index
+       \let\ref|=\:ref  \let\label|=\lb:l }
+\Configure{NoSection}
+  {\let\sv:index|=\index \let\sv:label|=\label \let\sv:ref|=\ref
+   \let\sv:newline|=\newline \def\newline{ }%
+   \let\sv:setfontsize|=\@setfontsize  \let\@setfontsize|=\:gobbleIII
+   \let\index|=\@gobble  \let\label|=\@gobble  \let\ref|=\@gobble
+  }
+  {\let\index|=\sv:index \let\label|=\sv:label \let\ref|=\sv:ref
+   \let\newline|=\sv:newline    \let\@setfontsize|=\sv:setfontsize 
+  }
+\Configure{oalign}{\Picture+{ \a:@Picture{oalign}}}{\EndPicture}
+
+\Configure{TocLink}
+  {\Link{#2}{#3}{\Configure{ref}{}{}{}\Configure{cite}{}{}{}{}#4}\EndLink}
+>>>
+
+
+
+
+
+
+
+
+
+\<0,32,4 latex\><<<
+\Configure{picture}
+    {\Picture+[PICT]{}}
+    {\EndPicture}
+>>>
+
+
+
+\<config book-report-article 0.0\><<<
+\Configure{section}{}{}{\thesection\space}{}
+\Configure{likesection}{}{}{}{}
+>>>
+
+\<latex shared div config\><<<
+\Configure{endsection}
+     {likesection,chapter,likechapter,appendix,part,likepart}
+\Configure{endlikesection}
+     {section,chapter,likechapter,appendix,part,likepart}
+>>>
+
+\<config book-report-article 0.0\><<<
+\Configure{subsection}{}{}{\thesubsection\space}{}
+\Configure{likesubsection}{}{}{}{}
+>>>
+
+
+
+\<latex shared div config\><<<
+\Configure{endsubsection}
+   {likesubsection,section,likesection,chapter,%
+      likechapter,appendix,part,likpart}
+\Configure{endlikesubsection}
+   {subsection,section,likesection,chapter,%
+      likechapter,appendix,part,likpart}
+>>>
+
+\<latex shared div config\><<<
+\Configure{subsubsection}{}{}{\thesubsubsection\space}{}
+>>>
+
+\<latex shared div config\><<<
+\Configure{endsubsubsection}
+   {likesubsubsection,subsection,likesubsection,section,%
+      likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endlikesubsubsection}
+   {subsubsection,subsection,likesubsection,section,%
+      likesection,chapter,likechapter,appendix,part,likpart}
+>>>
+
+\<latex shared div config\><<<
+\ConfigureEnv{thebibliography}{\IgnorePar}{\IgnorePar\par}{}{}
+\Configure{endparagraph}
+   {likeparagraph,subsubsection,likesubsubsection,subsection,%
+    likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endlikeparagraph}
+   {paragraph,subsubsection,likesubsubsection,subsection,%
+    likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endsubparagraph}
+   {likesubparagraph,likeparagraph,subsubsection,likesubsubsection,%
+    subsection,likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\Configure{endlikesubparagraph}
+   {subparagraph,likeparagraph,subsubsection,likesubsubsection,%
+    subsection,likesubsection,section,%
+    likesection,chapter,likechapter,appendix,part,likpart}
+\ifx \part\:UnDef \else
+   |<latex shared part config|>
+\fi
+>>>
+
+
+
+
+
+
+
+
+\<latex shared part config\><<<
+\Configure{endpart}{likepart}
+\Configure{endlikepart}{endpart}
+>>>
+
+
+
+\<latex shared part config\><<<
+\Configure{part}{}{}
+   {\IgnorePar \IgnorePar\HCode{<h1 class="partHead">}%
+    \partname \ \thepart\HCode{<br\xml:empty>}}
+   {\HCode{</h1>}\IgnoreIndent}
+\Configure{likepart}{}{}
+   {\IgnorePar\IgnorePar\HCode{<h1 class="likepartHead">}}
+   {\HCode{</h1>}\IgnoreIndent}
+\Configure{partTITLE+}{\thepart\space #1}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+It is better to put the LI in the third field to avoid extra space 
+to the following text.
+
+
+
+
+
+
+
+
+
+
+
+
+
+\<save configure tableofcontents\><<<
+\let\sv:atoc|=\a:tableofcontents
+\let\sv:btoc|=\b:tableofcontents
+\let\sv:ctoc|=\c:tableofcontents
+\let\sv:dtoc|=\d:tableofcontents
+\let\sv:etoc|=\e:tableofcontents
+>>>
+
+
+\<recall configure tableofcontents\><<<
+\let\a:tableofcontents|=\sv:atoc
+\let\b:tableofcontents|=\sv:btoc
+\let\c:tableofcontents|=\sv:ctoc
+\let\d:tableofcontents|=\sv:dtoc
+\let\e:tableofcontents|=\sv:etoc
+>>>
+
+
+
+
+Earlier we had 
+\verb'\:CheckOption{no-halign} \if:Option \else |<pic array|> \fi', 
+and the same for pic tabular. Why?
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+The \verb'<TABLE>' is needed as a grouping mechanism for \verb'<CENTER>'.
+
+
+
+\section{Shared}
+
+
+
+
+
+\<0,32,4 article,report,book\><<<
+|<latex options 1, 2, 3|>
+>>>
+
+
+
+
+
+
+
+\<description 4\><<<
+\ConfigureList{description}%
+   {\EndP\HCode{<dl class="description">}\let\end:itm=\empty}
+   {\EndP\HCode{</dd></dl>}\ShowPar}
+   {\end:itm\def\end:itm{\EndP\Tg</dd>}\HCode{<dt
+        class="description">}\bgroup \bf}
+   {\egroup\EndP\HCode{</dt><dd\Hnewline class="description">}}
+>>>
+
+
+
+
+\<thebib 4\><<<
+\ConfigureList{thebibliography}%
+   {\:xhtml{\IgnorePar\EndP}\HCode{<div
+                            class="thebibliography">}\let\en:bib=\empty} 
+   {\en:bib\HCode{</div>}}
+   {\en:bib\def\en:bib{\HCode{</p>}}\HCode{<p  class="bibitem">}} {~~~}
+\Css{p.bibitem { text-indent: -2em; margin-left: 2em; }}
+   |<latex config div 4.0t|>
+>>>
+
+
+
+
+
+
+
+
+
+\<0,32,4 article,report,book\><<<
+|<latex shared div config|>
+>>>
+
+
+
+\<maketitle 4\><<<
+\Configure{maketitle}
+   {|<title for TITLE|>%
+    \HCode{<div align="center" class="maketitle">}}
+   {\HCode{</div>}}
+   {\NoFonts\IgnorePar\HCode{<h2 class="titleHead">}\IgnorePar}
+   {\HCode{</h2>}\IgnoreIndent\EndNoFonts}
+\Configure{thanks author date and}{}{}
+   {\HCode{<div class="author" align="center">}}{\HCode{</div>}}
+   {\HCode{<div class="date" align="center">}}{\HCode{</div>}}
+   {\SPAN:{and}\:nbsp\:nbsp\:nbsp\EndSPAN:}
+   {\HCode{<br\xml:empty>}}
+\Css{h2.titleHead{text-align:center;}}
+\Css{div.maketitle{ margin-bottom: 2em; }}
+>>>
+
+
+
+\<maketitle amsart 4\><<<
+\Configure{maketitle}
+   {\HCode{<div class="maketitle">}}
+   {\HCode{</div>}}
+   {\NoFonts\IgnorePar\HCode{<h2 class="titleHead">}\IgnorePar}
+   {\HCode{</h2>}\IgnoreIndent\EndNoFonts}
+\Css{div.maketitle{text-align:center;}}
+>>>
+
+\section{amsart.cls}
+
+
+
+
+
+
+
+
+
+
+
+\section{aa}
+
+
+
+
+
+\subsection{Sizes of Fonts}
+
+
+
+pages should honor the base font sizes the
+readers choose for their browsers. Hence, under this assumption, all
+tex4ht should do is just assure appropriate relative dimensions for
+fonts of other sizes. To meet this end, I modified latex.4ht to
+automatically include
+
+   \verb'{\Configure{Needs}{Font\string_Size: #1}\Needs{1...}}'
+
+when options 11pt and 12pt are listed in \verb'\documentclass'.
+
+
+
+
+
+\<ams art,proc,book 32\><<<
+|<base font size|>
+>>>>
+
+
+
+\<base font size\><<<
+{\Configure{Needs}{Font\string_Size: #1}\ifcase  \@ptsize
+   \or \Needs{11}\or \Needs{12}\else \fi}
+>>>
+
+
+
+
+
+
+
+\<configure aa 3.2/4.0t\><<<
+\Configure{subtitle institute}
+   {\HCode{<br\xml:empty><span class="subtitle">}}{\HCode{</span>}}
+   {\HCode{<div class="institute">}}{\HCode{</div>}}
+   {\Tg<sup>}{\Tg</sup>}
+   {\HCode{<br\xml:empty>}}
+
+\Configure{maketitle}
+   {\HCode{<div align="center" class="maketitle">}}
+   {\HCode{</div>}}
+   {\NoFonts\IgnorePar\HCode{<h2 class="maketitleHead">}\IgnorePar}
+   {\HCode{</h2>}\IgnoreIndent\EndNoFonts}
+\Configure{thanks author date and}{}{}
+   {\HCode{<div class="author" align="center">}}{\HCode{</div>}}
+   {\HCode{<div class="date" align="center">}}{\HCode{</div>}}
+   {\SPAN:{and}and\EndSPAN:}
+   {\HCode{<br\xml:empty>}}
+>>>
+
+
+
+\<configure aa 3.2/4.0t\><<<
+\ConfigureEnv{abstract}
+   {\:xhtml{\IgnorePar\EndP}\HCode {<div class="abstract">}}
+   {\HCode{</div>}}{}{}
+
+\Css{div.abstract{text-align:center;}}
+
+\Configure{makeheadbox}
+   {\HCode{<table class="makeheadbox"
+       width="100\%"><tr><td><table><tr><td>}}
+   {\HCode{</td></tr><tr><td>}}
+   {\HCode{</td></tr><tr><td>}}
+   {\HCode{</td></tr></table></td><td class="AALogo" width="10\%">}}
+   {\HCode{</td></tr></table>}}
+\Css{.AALogo{font-size:120\%;font-weight: bold; text-align:right;}}
+>>>
+
+\section{plain}
+
+
+
+
+
+
+
+
+
+
+
+\<0,32,4 plain\><<<
+\Configure{settabs}[1.5]{}{}{}{}{}
+\Configure{line}{\HCode{<br\xml:empty>}}
+>>>
+
+
+\<html plain+ 0\><<<
+      |<plain+ 4.0t|>               
+>>>
+
+
+
+
+
+\<under/over line css\><<<
+\Configure{underline}
+   {\HCode{<span class="underline">}} {\HCode{</span>}}
+\Configure{overline}
+   {\HCode{<span class="overline">}} {\HCode{</span>}}
+\Css{.underline{ text-decoration:underline; }}
+\Css{.overline{ text-decoration:overline; }}
+>>>
+
+
+
+
+
+\section{babel.sty}
+
+
+
+
+
+
+
+
+\<configure html0 babel\><<<
+|<0,32,4 babel|>
+>>>
+
+\<0,32,4 babel.def\><<<
+\Configure{quotedblbase}{\HCode{&\#132;}}
+\Configure{quotesinglbase}{\HCode{&\#130;}}
+>>>
+
+
+
+
+\<configure html0 tcilatex\><<<
+|<0,32,4 tcilatex|>
+>>>
+
+
+
+\<0,32,4 tcilatex\><<<
+\Configure{GRAPHICSPS}
+   {\Picture+[PICT]{}}  {\EndPicture}
+\Configure{GRAPHICSHP}
+   {\Picture+[PICT]{}}  {\EndPicture}
+>>>
+
+
+
+
+\<0,32,4 babel\><<<
+|<0,32,4 babel.def|>
+\ifx \@begindocumenthook\:UnDef\else
+   \:CheckOption{new-accents}     \if:Option \else
+      \def\:temp{russian}\ifx \languagename\:temp
+         |<russian|>
+      \fi
+\fi\fi
+>>>
+
+We had also \verb'\append:def\@begindocumenthook{\HLet\"|=\ddot}' in
+babel. It gets russian and brazil into infinite loop.  Why it was
+inserted.
+
+
+\<russian\><<<
+\Configure{accent}\"\ddot{A{A}E{E}I{I}O{O}U{U}Y%
+           {Y}a{a}e{e}i{i}\i{i}o{o}u{u}y{y}å{e}{}{34}}
+   {\a:accents{uml}{#1}}    
+   {\def\:temp{>}\def\:tempa{#2}\ifx \:temp\:tempa\HCode{»}%
+    \else \def\:temp{<}\ifx \:temp\:tempa\HCode{«}%
+    \else \b:accents{uml}{#1}{#2}\fi\fi}
+>>> 
+
+
+
+
+
+\section{fontmath}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{1: Large Operators}
+
+\begin{verbatim}
+\mathchardef\coprod="1360
+\mathchardef\bigvee="1357
+\mathchardef\bigwedge="1356
+\mathchardef\biguplus="1355
+\mathchardef\bigcap="1354
+\mathchardef\bigcup="1353
+\mathchardef\intop="1352 \def\int{\intop\nolimits}
+\mathchardef\prod="1351
+\mathchardef\sum="1350
+\mathchardef\bigotimes="134E
+\mathchardef\bigoplus="134C
+\mathchardef\bigodot="134A
+\mathchardef\ointop="1348 \def\oint{\ointop\nolimits}
+\mathchardef\bigsqcup="1346
+\mathchardef\smallint="1273
+\end{verbatim}
+
+
+
+
+
+
+
+\<plain tex classes\><<<
+\Configure{MathClass}{1}{}{}{}{
+   \mathchar"1360
+   \mathchar"1357
+   \mathchar"1356
+   \mathchar"1355
+   \mathchar"1354
+   \mathchar"1353
+   \mathchar"1352
+   \mathchar"1351
+   \mathchar"1350
+   \mathchar"134E
+   \mathchar"134C
+   \mathchar"134A
+   \mathchar"1348
+   \mathchar"1346
+   \mathchar"1273
+}
+>>>
+
+
+\subsection{2: Binary Operations}
+
+\begin{verbatim}
+\mathchardef\triangleleft="212F
+\mathchardef\triangleright="212E
+\mathchardef\bigtriangleup="2234
+\mathchardef\bigtriangledown="2235
+\mathchardef\wedge="225E \let\land=\wedge
+\mathchardef\vee="225F \let\lor=\vee
+\mathchardef\cap="225C
+\mathchardef\cup="225B
+\mathchardef\ddagger="227A
+\mathchardef\dagger="2279
+\mathchardef\sqcap="2275
+\mathchardef\sqcup="2274
+\mathchardef\uplus="225D
+\mathchardef\amalg="2271
+\mathchardef\diamond="2205
+\mathchardef\bullet="220F
+\mathchardef\wr="226F
+\mathchardef\div="2204
+\mathchardef\odot="220C
+\mathchardef\oslash="220B
+\mathchardef\otimes="220A
+\mathchardef\ominus="2209
+\mathchardef\oplus="2208
+\mathchardef\mp="2207
+\mathchardef\pm="2206
+\mathchardef\circ="220E
+\mathchardef\bigcirc="220D
+\mathchardef\setminus="226E % for set difference A\setminus B
+\mathchardef\cdot="2201
+\mathchardef\ast="2203
+\mathchardef\times="2202
+\mathchardef\star="213F
+\mathcode`\*="2203 % \ast
+\mathcode`\+="202B
+\mathcode`\-="2200
+\end{verbatim}
+
+\<plain tex classes\><<<
+\Configure{MathClass}{2}{}{}{}{
+*-+/
+\mathchar"212F
+\mathchar"212E
+\mathchar"2234
+\mathchar"2235
+\mathchar"225E 
+\mathchar"225F 
+\mathchar"225C
+\mathchar"225B
+\mathchar"227A
+\mathchar"2279
+\mathchar"2275
+\mathchar"2274
+\mathchar"225D
+\mathchar"2271
+\mathchar"2205
+\mathchar"220F
+\mathchar"226F
+\mathchar"2204
+\mathchar"220C
+\mathchar"220B
+\mathchar"220A
+\mathchar"2209
+\mathchar"2208
+\mathchar"2207
+\mathchar"2206
+\mathchar"220E
+\mathchar"220D
+\mathchar"226E 
+\mathchar"2201
+\mathchar"2203
+\mathchar"2202
+\mathchar"213F
+}
+>>>
+
+
+\subsection{3: Relational Operations}
+
+
+
+
+
+The catcode is needed because 303A is \verb':'.
+
+\<plain tex classes\><<<
+\Configure{MathClass}{3}{}{}{}{
+   \mathchar"3128
+   \mathchar"3129
+   \mathchar"312A
+   \mathchar"312B
+   \mathchar"315E
+   \mathchar"315F
+   \mathchar"3210
+   \mathchar"3211
+   \mathchar"3212
+   \mathchar"3213
+   \mathchar"3214
+   \mathchar"3215
+   \mathchar"3216
+   \mathchar"3217
+   \mathchar"3218
+   \mathchar"3219
+   \mathchar"321A
+   \mathchar"321B
+   \mathchar"321C
+   \mathchar"321D
+   \mathchar"321E
+   \mathchar"321F
+   \mathchar"3220
+   \mathchar"3221
+   \mathchar"3224
+   \mathchar"3227
+   \mathchar"3232
+   \mathchar"3233
+   \mathchar"3236
+   \mathchar"3237
+   \mathchar"323F
+   :=><
+   \mathchar"322F
+   \mathchar"3276
+   \mathchar"3277
+   \mathchar"326B
+   \mathchar"326A
+   \mathchar"3261
+   \mathchar"3260
+   \mathchar"3225
+   \mathchar"3226
+   \mathchar"322D
+   \mathchar"322E
+   \mathchar"322C
+   \mathchar"3228
+   \mathchar"3229
+}
+>>>
+
+
+
+
+
+
+
+\begin{verbatim}
+\mathcode`\>="313E
+\mathcode`\<="313C
+\mathcode`\=="303D
+\mathcode`\:="303A
+\mathchardef\leq="3214 \let\le=\leq
+\mathchardef\geq="3215 \let\ge=\geq
+\mathchardef\succ="321F
+\mathchardef\prec="321E
+\mathchardef\approx="3219
+\mathchardef\succeq="3217
+\mathchardef\preceq="3216
+\mathchardef\supset="321B
+\mathchardef\set="321A
+\mathchardef\supseteq="3213
+\mathchardef\seteq="3212
+\mathchardef\in="3232
+\mathchardef\ni="3233 \let\owns=\ni
+\mathchardef\gg="321D
+\mathchardef\ll="321C
+\mathchardef\not="3236
+\mathchardef\leftrightarrow="3224
+\mathchardef\leftarrow="3220 \let\gets=\leftarrow
+\mathchardef\rightarrow="3221 \let\to=\rightarrow
+\mathchardef\mapstochar="3237 \def\mapsto{\mapstochar\rightarrow}
+\mathchardef\sim="3218
+\mathchardef\simeq="3227
+\mathchardef\perp="323F
+\mathchardef\equiv="3211
+\mathchardef\asymp="3210
+\mathchardef\smile="315E
+\mathchardef\frown="315F
+\mathchardef\leftharpoonup="3128
+\mathchardef\leftharpoondown="3129
+\mathchardef\rightharpoonup="312A
+\mathchardef\rightharpoondown="312B
+\mathchardef\propto="322F
+\mathchardef\sqsubseteq="3276
+\mathchardef\sqsupseteq="3277
+\mathchardef\parallel="326B
+\mathchardef\mid="326A
+\mathchardef\dashv="3261
+\mathchardef\vdash="3260
+\mathchardef\nearrow="3225
+\mathchardef\searrow="3226
+\mathchardef\nwarrow="322D
+\mathchardef\swarrow="322E
+\mathchardef\Leftrightarrow="322C
+\mathchardef\Leftarrow="3228
+\mathchardef\Rightarrow="3229
+\end{verbatim}
+
+
+\subsection{4/5: Delimiters}
+
+\begin{verbatim}
+\mathcode`\(="4028
+\mathcode`\)="5029
+\mathcode`\[="405B
+\mathcode`\]="505D
+\mathcode`\{="4266
+\mathcode`\}="5267
+\delcode`\(="028300
+\delcode`\)="029301
+\delcode`\[="05B302
+\delcode`\]="05D303
+\def\lmoustache{\delimiter"437A340 } % top from (, bottom from )
+\def\rmoustache{\delimiter"537B341 } % top from ), bottom from (
+\def\lgroup{\delimiter"462833A } % extensible ( with sharper tips
+\def\rgroup{\delimiter"562933B } % extensible ) with sharper tips
+\def\backslash{\delimiter"26E30F } % for double coset G\backslash H
+\def\rangle{\delimiter"526930B }
+\def\langle{\delimiter"426830A }
+\def\rbrace{\delimiter"5267309 } \let\}=\rbrace
+\def\lbrace{\delimiter"4266308 } \let\{=\lbrace
+\def\rceil{\delimiter"5265307 }
+\def\lceil{\delimiter"4264306 }
+\def\rfloor{\delimiter"5263305 }
+\def\lfloor{\delimiter"4262304 }
+\def\arrowvert{\delimiter"26A33C } % arrow without arrowheads
+\def\Arrowvert{\delimiter"26B33D } % double arrow without arrowheads
+\def\bracevert{\delimiter"77C33E } % the vertical bar that extends braces
+\def\Vert{\delimiter"26B30D } \let\|=\Vert         How should these be treated?
+\def\vert{\delimiter"26A30C }                       "   "       "    "   "
+\def\uparrow{\delimiter"3222378 }
+\def\downarrow{\delimiter"3223379 }
+\def\updownarrow{\delimiter"326C33F }
+\def\Uparrow{\delimiter"322A37E }
+\def\Downarrow{\delimiter"322B37F }
+\def\Updownarrow{\delimiter"326D377 }
+\end{verbatim}
+
+The comamnds \verb'\Configure{MathClass}{4}...'
+and \verb'\Configure{MathClass}{5}...'
+are for unmatched delimiters, and the comamnd
+\verb'\Configure{MathDelimiters}{(}{)}' is for matched ones.
+
+
+
+
+\<plain tex classes\><<<
+\Configure{MathClass}{4}{}{}{}{}
+\Configure{MathDelimiters}{(}{)}
+\Configure{MathDelimiters}{[}{]}
+\Configure{MathDelimiters}{\mathchar"4262}{\mathchar"5263}
+\Configure{MathDelimiters}{\mathchar"4264}{\mathchar"5265}
+\Configure{MathDelimiters}{\mathchar"4266}{\mathchar"5267}
+\Configure{MathDelimiters}{\mathchar"4268}{\mathchar"5269}
+\Configure{MathDelimiters}{\mathchar"4300}{\mathchar"5301}
+\Configure{MathDelimiters}{\mathchar"4302}{\mathchar"5303}
+\Configure{MathDelimiters}{\mathchar"4304}{\mathchar"5305}
+\Configure{MathDelimiters}{\mathchar"4306}{\mathchar"5307}
+\Configure{MathDelimiters}{\mathchar"4308}{\mathchar"5309} 
+\Configure{MathDelimiters}{\mathchar"430A}{\mathchar"530B}
+>>>
+
+
+
+\begin{verbatim}
+\mathcode`\?="503F
+\end{verbatim}
+
+
+
+
+
+
+\subsection{6: Punctuation Marks}
+
+\begin{verbatim}
+\mathchardef\ldotp="613A % ldot as a punctuation mark
+\mathchardef\cdotp="6201 % cdot as a punctuation mark
+\mathchardef\colon="603A % colon as a punctuation mark
+\mathcode`\;="603B
+\mathcode`\,="613B
+\end{verbatim}
+
+
+
+
+
+
+
+\<plain tex classes\><<<
+\Configure{MathClass}{6}{}{}{}{
+\mathchar"613A 
+\mathchar"6201 
+\mathchar"603A 
+?; ,
+}
+>>>
+
+
+
+
+\subsection{Questions}
+
+\begin{verbatim}
+
+
+\delcode`\<="26830A
+\delcode`\>="26930B
+\delcode`\|="26A30C
+\delcode`\\="26E30F
+
+% N.B. { and } should NOT get delcodes; otherwise parameter grouping fails!
+
+\def\mathhexbox#1#2#3{\leavevmode
+  \hbox{$\m@th \mathchar"#1#2#3$}}
+\def\dag{\mathhexbox279}
+\def\ddag{\mathhexbox27A}
+\def\S{\mathhexbox278}
+\def\P{\mathhexbox27B}
+\end{verbatim}
+
+
+
+
+\section{amsppt.sty}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\<dagger\><<<
+\HChar{167}>>>
+
+
+
+
+
+\<32 amsppt, 32,4 vanilla\><<<
+\Configure{title}
+   {\IgnorePar\EndP\HCode{<div class="title">}\begingroup\bf}
+   {\endgroup\IgnorePar\HCode{</div>}}
+\Css{div.title {margin-top: 0.5em;}}
+\Configure{author}
+   {\IgnorePar\EndP\HCode{<br\xml:empty><center>}\IgnorePar\par}
+   {\IgnorePar\EndP\HCode{</center>}}
+
+>>>
+
+\<32 amsppt\><<<
+\Configure{affil}{\IgnorePar\HCode{<br\xml:empty><center>}\IgnorePar}
+                  {\IgnorePar\HCode{</center>}}
+\Configure{abstract} {\HCode{<br\xml:empty><center>}} {\HCode{</center>}}
+   {\IgnorePar\HCode{<table cellpadding="15"><tr><td>}\IgnorePar\par}
+   {\IgnorePar\HCode{</td></tr></table>}\IgnorePar\par}
+\Configure{date}{\IgnorePar\HCode{<center>}\IgnorePar}
+   {\IgnorePar\HCode{</center>}}
+|<32 amsppt, 32,4 vanilla|>
+>>>
+
+
+
+
+
+\<bib in amsppt.sty\><<<
+\Configure{vol}{\HCode{<strong>}}{\HCode{</strong>}}
+\Configure{book}{\HCode{<em>}}{\HCode{</em>}}
+\Configure{paper}{\HCode{<em>}}{\HCode{</em>}}
+\Configure{Refs}{\IgnorePar\EndP\HCode{<table class="Refs">}}
+                {\HCode{</table>}}
+\Configure{ref}{\HCode{<tr valign="top"><td align="right">}}
+               {\EndP\HCode{</td></tr>}}{}
+\Configure{keyformat}{}{\EndP\HCode{</td><td>}}
+>>>
+
+
+
+
+
+
+\section{amstex.tex}
+
+
+\<amstex.tex m:env\><<<
+|<amsmath / amstex1 m:env|>
+>>>
+
+
+\<NO\><<<
+\def\m:env#1{\:xhtml{\IgnorePar\EndP}\HCode{<center><table class="#1"
+   border="0" cellpadding="0" cellspacing="15"><tr><td>}}
+\def\endm:env{\HCode
+  {</td></tr></table></center>}\IgnorePar}
+>>>
+
+\<amsmath / amstex1 m:env\><<<
+\def\m:env#1{\relax\ifmmode\else\par\fi\:xhtml{\IgnorePar\EndP}%
+  \HCode{<center class="#1"><table class="#1"\Hnewline
+   border="0" cellpadding="0" cellspacing="15"><tr><td>}}
+\def\endm:env{\:xhtml{\IgnorePar\EndP}%
+   \HCode{</td></tr></table></center>}\IgnorePar
+   \ifmmode\else\par\fi}
+>>>
+
+
+
+
+
+
+
+
+
+\section{tex4ht}
+
+
+
+\<title for TITLE\><<<
+{\Configure{maketitle}{}{}{}{}%
+\a:NoSection |<disable latex fonts|>\more:no \let\thanks|=\:gobble
+\let\\|=\empty \def\TeX{TeX}%
+\def\gobble:font##1##2{##2}\:TITLE: \no:fonts
+\Tag{TITLE+}{\@title}}
+>>>
+
+
+Old latex files need \verb'\no:fonts', but not new ones.---wrong, as far as writing to toc in 0.0?
+
+
+\<disable latex fonts\><<<
+\let\leavevmode|=\empty \let\not@math@alphabet|=\:gobbleII
+\def\text@command##1{##1}\let\selectfont|=\empty
+\def\check@icl ##1\check@icr{}%
+>>>
+
+
+
+
+
+
+
+
+
+
+\<0,32,4 tex4ht\><<<
+\Configure{HVerbatim+}{\z@}{\:nbsp}
+\:CheckOption{jpg} \if:Option \Configure{Picture}{.jpg}  \fi
+\:CheckOption{gif} \if:Option \Configure{Picture}{.gif}  \fi
+\Configure{Link}{!--}{class=}{id=}{X}
+>>>
+
+
+
+
+\<doc xhtml\><<<
+\Configure{DOCTYPE}{\HCode{<?xml version="1.1"?>\Hnewline
+   <!DOCTYPE html PUBLIC
+      "-//W3C//DTD XHTML 1.0 Transitional//EN"\Hnewline
+      \space\space
+      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  \Hnewline}}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+\verb'\Hnewline' is needed at end of file to avoid loosing the
+last line under some applications.
+
+
+
+
+
+
+\section{th4}
+
+
+\<0 th4\><<<
+\Configure{Chapter}
+   {}{}    {Chapter  \theChapterCounter} {}
+\Configure{Appendix}
+   {}{}    {Appendix  \theChapterCounter} {}
+\Configure{LikeChapter}
+   {}{}    {} {}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+\section{epsfig}
+
+
+
+\<0,32,4 epsfig\><<<
+\Configure{epsfig} {\Picture+[epsfig]{}}{\EndPicture}
+>>>
+
+\section{psfig}
+
+
+
+\<0,32,4 psfig\><<<
+\Configure{psfig} {\Picture+[psfig]{}}{\EndPicture}
+>>>
+
+\section{graphics}
+
+
+
+\<0,32,4 graphics\><<<
+\Configure{graphics}{\Picture+[PIC]{}}{\EndPicture}
+\Configure{graphics*}
+   {gif}
+   {\Picture[pict]{\csname Gin@base\endcsname.gif}}
+\Configure{graphics*}
+   {png}
+   {\Picture[pict]{\csname Gin@base\endcsname.png}}
+\Configure{graphics*}
+   {jpeg}
+   {\Picture[pict]{\csname Gin@base\endcsname.jpeg}}
+\Configure{graphics*}
+   {jpg}
+   {\Picture[pict]{\csname Gin@base\endcsname.jpg}}
+>>>
+
+
+
+
+
+
+\section{index}
+
+
+
+\<configure html0 index\><<<
+\Configure{NoSection}
+  {\let\sv:index|=\p@index \let\sv:label|=\label \let\sv:ref|=\ref
+   \let\sv:newline|=\newline \def\newline{ }%
+   \def\p@index[##1]{\@gobble}\let\label|=\@gobble  \let\ref|=\@gobble
+  }
+  {\let\p@index|=\sv:index \let\label|=\sv:label \let\ref|=\sv:ref
+   \let\newline|=\sv:newline
+  }
+>>>
+
+
+
+
+\section{hyperref}
+
+\<config hyperref form 4\><<<
+\Configure{Form}
+   {\IgnorePar\EndP\leavevmode \Tg<form \Hnewline \Attributes>}
+   {\IgnorePar\EndP\Tg</form>}
+>>>
+
+
+
+\<hyperref shared\><<<
+\NewConfigure{::value}{1}
+\Configure{::value}
+   {\edef\Attributes{\Attributes\space value="\AttributeVal"}}
+\NewConfigure{::name}{1}
+\Configure{::name}
+   {\edef\Attributes{\Attributes\space name="\AttributeVal"}}
+\NewConfigure{::default}{1}
+\Configure{::default}
+   {\let\::default=\AttributeVal}
+\def\get:int#1.#2//{\tmp:cnt=#1 }
+>>>
+
+\<\><<<
+\NewConfigure{::borderwidth}{1}
+\Configure{::borderwidth}
+   {\Css{div\#form-\form:id {border-width: \AttributeVal;
+                              border-style:solid;}}}
+\NewConfigure{::bordercolor}{1}
+\Configure{::bordercolor}
+   {\expandafter\get:colors\AttributeVal//%
+      \Css{div\#form-\form:id {border-color:\AttributeVal}}}
+\def\get:colors#1 #2 #3//{%
+   \get:color{#1}\edef\AttributeVal{\the\tmp:cnt\%}%
+   \get:color{#2}\edef\AttributeVal{\AttributeVal,
+        \the\tmp:cnt\%}%
+   \get:color{#3}\edef\AttributeVal{rgb(\AttributeVal,
+        \the\tmp:cnt\%)}%
+}
+\def\get:color#1{%
+   \tmp:dim=#1pt \multiply\tmp:dim by 100
+   \expandafter\get:int\the\tmp:dim//}
+>>>
+
+
+
+
+
+
+
+
+
+\<hyperref on...\><<<
+\def\:tempc#1{%
+  \NewConfigure{::#1}{1}%
+  \Configure{::#1}%
+    {\edef\Attributes{\Attributes\space #1="\AttributeVal"}}}
+\:tempc{onclick}
+\:tempc{onblur}
+\:tempc{onchange}
+\:tempc{onclick}
+\:tempc{ondblclick}
+\:tempc{onfocus}
+\:tempc{onkeydown}
+\:tempc{onkeypress}
+\:tempc{onkeyup}
+\:tempc{onmousedown}
+\:tempc{onmousemove}
+\:tempc{onmouseout}
+\:tempc{onmouseover}
+\:tempc{onmouseup}
+\:tempc{onselect}
+>>>
+
+
+
+\<hyperref TextField\><<<
+\NewConfigure{TextField::}{2}
+\Configure{TextField::}{}{ \Tg<input type="text" \Attributes />}
+\NewConfigure{TextField::width}{1}
+\Configure{TextField::width}
+   {\tmp:dim=\AttributeVal   \divide\tmp:dim by 6
+    \expandafter\get:int\the\tmp:dim//%
+    \edef\Attributes{\Attributes\space size="\the\tmp:cnt"}}
+\NewConfigure{TextField::default}{1}
+\Configure{TextField::default}
+   {\edef\Attributes{\Attributes\space value="\AttributeVal"}}
+>>>
+
+
+\<hyperref multiline\><<<
+\NewConfigure{TextField::multiline}{2}
+\Configure{TextField::multiline}
+  {}
+  { \Tg<textarea
+        \Attributes>\expandafter\set:ln\multiline:value,|<par del|>%
+  \global\let\multiline:value=\empty \Tg</textarea>}
+
+\let\multiline:value=\empty
+\def\set:ln#1,#2|<par del|>{#1%
+  \def\:temp{#2}\ifx \:temp\empty \else
+     \hfil\break  \def\:temp{\set:ln#2|<par del|>}%
+  \fi \:temp}
+
+\NewConfigure{multiline::value}{1}
+\Configure{multiline::value}
+  {\let\multiline:value=\AttributeVal}
+
+\NewConfigure{multiline::width}{1}
+\Configure{multiline::width}
+   {\tmp:dim=\AttributeVal   \divide\tmp:dim by 6
+    \expandafter\get:int\the\tmp:dim//%
+    \edef\Attributes{\Attributes\space cols="\the\tmp:cnt"}}
+>>>
+
+
+\<hyperref password\><<<
+\NewConfigure{TextField::password}{2}
+\Configure{TextField::password}
+  {}{\Tg<input type="password" \Attributes />}
+>>>
+
+\<hyperref shared\><<<
+\def\Default:Checked#1{%
+   \let\:temp=\relax
+   \let\:tempa=\relax
+   \edef\:temp{\def\:temp####1#1#1####2//{\def\:temp{####2}}%
+                   \:temp \AttributeVal #1=#1#1//%
+       \def\:tempa####1=####2//{\def\noexpand\AttributeVal{####1}}%
+           \:tempa\AttributeVal=//}%
+   \:temp}
+>>>
+
+\<hyperref radio\><<<
+\NewConfigure{ChoiceMenu::radio}{5}
+\Configure{ChoiceMenu::radio}
+   {\IgnorePar\EndP\leavevmode
+      \Tg<div id="form-\form:id">\gHAdvance\form:id by 1 }
+   { }{\IgnorePar\EndP\Tg</div>}
+   {\Default:Checked\radio::default
+    \Tg<input\Hnewline type="radio" 
+            \ifx \:temp\empty\else checked="checked" \fi
+            \Attributes\space />}
+   {}
+\NewConfigure{radio::default}{1}
+\Configure{radio::default}
+   {\let\radio::default=\AttributeVal}
+>>>
+
+
+\<hyperref radio\><<<
+\NewConfigure{ChoiceMenu::combo}{5}
+\Configure{ChoiceMenu::combo}
+   {}
+   {~\Tg<select\Hnewline \Attributes \Hnewline size="1">}
+   {\Tg</select>}
+   {\Tg<option \ifx\::default\AttributeVal selected="selected"\fi
+        \Hnewline>} 
+   {\Tg</option>}
+\NewConfigure{combo::default}{1}
+\Configure{combo::default}
+   {\let\radio::default=\AttributeVal}
+>>>
+
+
+
+
+
+\<hyperref radio\><<<
+\NewConfigure{ChoiceMenu::popdown}{5}
+\Configure{ChoiceMenu::popdown}
+   {}{\HCode{\Hnewline <select \Attributes \Hnewline size="1">}}
+   {\Tg</select>}
+   {\Tg<option \ifx\::default\AttributeVal selected="selected"\fi
+        \Hnewline>} {\Tg</option>}
+>>>
+
+The \verb'size="1"' makes the select a popout memnu
+
+
+\<hyperref radio\><<<
+\NewConfigure{ChoiceMenu::}{5}
+\Configure{ChoiceMenu::}
+   {}{\HCode{\Hnewline <select\Hnewline \Attributes>}}{\Tg</select>}
+   {\Tg<option \ifx\::default\AttributeVal selected="selected"\fi
+        \Hnewline>}  {\Tg</option>}
+\NewConfigure{::menulength}{1}
+\Configure{::menulength}
+   {\edef\Attributes{\Attributes\space size="\AttributeVal"}}
+>>>
+
+
+
+
+\section{exerquiz}
+
+
+
+
+
+
+
+
+\<-NOPE\><<<
+\Configure{quiz*}
+   {qthis=this;
+    ProcessQuestion(\ANS,"\alph{quizno}",\thequestionno,
+      0,"\eq@bqlabel",\Quiz:N)}
+>>>
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\<exerqz\><<<
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  
+% exerqz.4ht                            |version %
+% Copyright (C) |CopyYear.1999.                         % 
+%                      Donald P. Story & Eitan M. Gurari %
+|<TeX4ht copyright|>
+|<exerqz's vars|>
+|<predefined exerquiz javascript|>
+>>>
+
+
+
+\<predefined exerquiz javascript\><<<
+\JavaScript-$
+var QuizInitialized;
+var EndQuizPushed;
+var CurrentQuizNo;
+var Responses;
+var ResponsesAddr;
+var Cor;
+var CorAddr;
+var qthis;
+var prev_notify;
+function InitializeQuiz(qtfield,mark,quizN,ansN,lbrc,rbrc) {
+  Score=0;
+  QuizInitialized=1;
+  CurrentQuizNo=quizN;
+  eval( 'document.form'+qtfield+'.'+qtfield+'.value="$eqScore";' )  
+  RightWrong=new Array();
+  |<hide sol|>
+  Responses=new Array();
+  ResponsesAddr=new Array();
+  |<hide cor|>  
+  Cor=new Array();
+  CorAddr=new Array();
+  EndQuizPushed=0;
+  for(var i=1; i<=ansN; i++){
+     RightWrong[i]=0;
+  }
+}
+\EndJavaScript
+>>>
+
+
+
+\<show sol\><<<
+if( ResponsesAddr[probno] != null ){
+  if (notify == 0 ) {
+    ResponsesAddr[probno].value=Responses[probno];
+  } else {
+    ResponsesAddr[probno].value="("+Responses[probno]+")";
+} }
+qthis.value = "#";  ResponsesAddr[probno]=qthis;
+>>>
+
+\<hide sol\><<<
+for(var i in Responses){
+  if (prev_notify == 0 ) {
+    ResponsesAddr[i].value=Responses[i];
+  } else {
+    ResponsesAddr[i].value="("+Responses[i]+")"; 
+} }
+>>>
+
+% if( Responses != null ){
+
+
+\<record cor\><<<
+var k=Cor.length;
+eval('Cor[k]=thisform'+quizN+'.ans'+quizN+'x'+i+'.value');
+eval('CorAddr[k]=thisform'+quizN+'.ans'+quizN+'x'+i);
+>>>
+
+
+\<hide cor\><<<
+for(var i in Cor){
+  CorAddr[i].value=Cor[i];
+} 
+>>>
+
+% if( Cor != null ){
+
+
+
+\<predefined exerquiz javascript\><<<
+\JavaScript
+function href(addr) { top.location.href=addr; }
+\EndJavaScript
+>>>
+
+% function href(addr) { window.navigate(addr); }
+
+
+
+
+\<predefined exerquiz javascript\><<<
+\JavaScript
+function Corrections(lbl1,lbl2,quizN) {
+  if ( (EndQuizPushed == 1) && ( CurrentQuizNo == quizN ) ){
+    for(var i in RightWrong){
+      if( (RightWrong[i]==0) ){
+        |<record cor|>
+        eval('thisform'+quizN+'.ans'+quizN+'x'+i+'.value= "*"');
+  } }
+} } 
+\EndJavaScript
+>>>
+
+
+
+
+
+
+
+
+\<predefined exerquiz javascript\><<<
+\JavaScript
+function LinkTo(addr) {
+}
+\EndJavaScript
+>>>
+
+\<exerqz's vars\><<<
+\def\eqXInitQuizMsg{\hbox{%
+   \let\noexpand|=\string
+   \csname eq@InitQuizMsg\endcsname}}
+\expandafter\ifx \csname eq@InitQuizMsg\endcsname\relax
+    \expandafter\def\csname eq@InitQuizMsg\endcsname{
+        "You must initialize the Quiz! Click on "+bqlabel}
+\fi
+\def\eqXQuizTotalMsg{\hbox{%
+   \let\noexpand|=\string
+   \def\thequestionno{"+thequestionno+"}%
+   \csname eq@QuizTotalMsg\endcsname}}
+\expandafter\ifx \csname eq@QuizTotalMsg\endcsname\relax
+    \expandafter\def\csname eq@QuizTotalMsg\endcsname{"Score: '
+         +Score +' out of '+thequestionno+'"}
+\fi
+\def\eqXMadeChoice{\hbox{%
+   \let\noexpand|=\string
+   \csname eq@MadeChoice\endcsname}}
+\expandafter\ifx \csname eq@MadeChoice\endcsname\relax
+    \expandafter\def\csname eq@MadeChoice\endcsname{
+            "You have already made a choice. Your choice was ("
+            +Responses[probno]+")."
+            +" Do you want to change it?"}
+\fi
+\expandafter\ifx \csname eqScore\endcsname\relax
+    \def\eqScore{Score:}
+\fi
+>>>
+
+The \verb'Wollen Sie dies \noexpand\344ndern?' is a problem because it
+takes the \verb'\344' into \verb'44'. A \verb'\string' will properly 
+produce \verb'\344'; hence, the above dirty trick.
+
+\begin{verbatim}
+Doesn't IE escape in the way that Acrobat JavaScript does?
+
+Another possibility is to use String.fromCharCode()
+
+Convert Octal \344 to decimal 228, then use
+String.fromCharCode(228)
+
+
+
+   
+          How to deliver browser specific content using JavaScript
+                                      
+
+<SCRIPT LANGUAGE="JavaScript">
+<!--
+  if( -1 != navigator.userAgent.
+      indexOf ("AOL") )
+  {
+    // load America Online version
+    location.href="aol.htm";
+  }
+  else
+  if( -1 != navigator.userAgent.
+      indexOf ("MSIE") )
+  {
+    // load Microsoft Internet
+    // Explorer version
+    location.href="msie.htm";
+  }
+  else
+  if( -1 != navigator.userAgent.
+      indexOf ("Mozilla") )
+  {
+    // load Netscape version
+    location.href="netscape.htm";
+  }
+  else
+  {
+    // load other version
+    location.href="other.htm";
+  }
+-->
+</SCRIPT>
+
+\end{verbatim}
+
+
+
+\<predefined exerquiz javascript\><<<
+\JavaScript-$
+function QuizEnd(bqlabel,thequestionno,quiztotal,quizN){
+  if ((QuizInitialized !=1) |||| ( CurrentQuizNo!= quizN )){   
+     alert($eqXInitQuizMsg,3);
+  } else {
+     eval( 'document.form'+quiztotal+'.'+quiztotal+
+       '.value=$eqXQuizTotalMsg');
+         QuizInitialized=-1;
+         EndQuizPushed=1; 
+} }
+\EndJavaScript
+
+\JavaScript-$
+function  ProcessQuestion
+  (key,letterresp,probno,notify,bqlabel,quizN) {
+    if ((QuizInitialized !=1) |||| ( CurrentQuizNo!= quizN )){   
+      alert($eqXInitQuizMsg,3);
+    } else {
+      |<function ProcUserResp(key,letterresp,probno,notify)|> 
+      prev_notify = notify;
+}   }
+\EndJavaScript
+>>>
+
+
+
+
+
+\<function ProcUserResp(key,letterresp,probno,notify)\><<<
+if (Responses[probno] == null) {
+   if (key==1) {
+      Score++;
+      RightWrong[probno]=1;
+   }
+   else
+      RightWrong[probno]=0;
+   |<show sol|>
+   Responses[probno]=letterresp;
+}
+else {
+   if (notify==0)
+      User=true;
+   else
+      User=confirm($eqXMadeChoice);
+   if (User) {
+      if (RightWrong[probno]==1) {
+          if (key==0) {
+            Score -= 1;
+            RightWrong[probno]=0;
+            |<show sol|>
+            Responses[probno]=letterresp;
+         }
+      }
+      else {
+          if (key==1) {
+            Score++;
+            RightWrong[probno]=1;
+            |<show sol|>
+            Responses[probno]=letterresp;
+         }
+         else {
+            RightWrong[probno]=0;
+            |<show sol|>
+            Responses[probno]=letterresp;
+         }
+      }
+   }
+}
+>>>
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{html0}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\<html0\><<<
+% html0.4ht (|version), generated from |jobname.tex
+% Copyright (C) 2009-2016 TeX Users Group
+% Copyright (C) |CopyYear.1996. Eitan M. Gurari
+|<TeX4ht copywrite|>
+>>>
+
+
+
+
+
+
+\section{latex}
+
+
+\<configure html0 latex\><<<
+|<0,32,4 latex|>
+|<0 latex|>
+|<0,32,4 plain,latex|>
+|<config latex.ltx 0.0|> 
+|<0 plain,latex|> 
+|<0 th4,latex|> 
+>>>
+
+
+
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+                                              % ltplain.dtx
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{obeylines}
+
+\<0 plain,latex\><<<
+\Configure{obeylines}{}{}{}
+>>>
+
+
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+                                              % ltmiscen.dtx
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Miscellaneous Environments}
+
+
+
+\<config latex.ltx 0.0\><<<
+\Configure{verbatim}{}{ }
+\Configure{verb}{}{}
+>>>
+
+
+\<config latex.ltx 0.0\><<<
+\let\env:verb|=\:gobble
+>>>
+
+
+
+\<config latex.ltx 0.0\><<<
+\ConfigureEnv{verbatim}{}{\null}{}{}
+\ConfigureEnv{verbatim*}{}{\null}{}{}
+>>>
+
+\<config latex.ltx 0.0\><<<
+\ConfigureEnv{center}{}{}{}{}
+>>>
+
+
+
+
+\<config latex.ltx 0.0\><<<
+\Configure{centercr}{}{}
+>>>
+
+
+
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+                                              % ltmath.dtx
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Math Setup}
+
+\<config latex.ltx 0.0\><<<
+\:CheckOption{pic-eqnarray}
+\if:Option 
+   \ConfigureEnv{eqnarray} {\Picture*{}} {\EndPicture}{}{}
+   \ConfigureEnv{eqnarray*} {\Picture*{}} {\EndPicture}{}{}
+\else 
+   \Configure{eqnarray}{}{}{}{}{}{}
+\fi
+>>>
+
+
+
+
+
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+                                              % lttab.dtx
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{Tabbing, Tabular and Array Environments}
+
+
+\<config latex.ltx 0.0\><<<
+\Configure{array} {}{}{}{}{}{}
+\Configure{tabular} {}{}{}{}{}{}
+>>>
+
+
+
+
+\<config latex.ltx 0.0\><<<
+\:CheckOption{no-array}\if:Option \else
+   \:ifpackageloaded{array}{\:Optiontrue}{}
+\fi
+\if:Option \else
+   |<html latex array/tabular Config tty|>
+\fi
+>>>
+
+
+
+
+\<html latex array/tabular Config tty\><<<
+\def\:array:{<>}
+\def\:tabular:{<>}
+\Configure{array}{}{}{}{}{}{}
+\Configure{tabular}{}{}{}{}{}{}
+\ConfigureEnv{array}{}{}{}{}
+\ConfigureEnv{tabular}{}{}{}{}
+>>>
+
+
+
+\<html latex array/tabular Config tty\><<<
+\:ifpackageloaded{array}{\:Optiontrue}{\:Optionfalse}
+\if:Option 
+   |<array.sty Configure tty|>
+\else 
+   \Configure{VBorder}{}{}{}{}
+\fi
+>>>
+
+\<array.sty Configure tty\><<<
+\Configure{VBorder}{}{}{}{}
+>>>
+
+
+
+\<config latex.ltx 0.0\><<<
+\:CheckOption{pic-tabbing}  \if:Option
+    \ConfigureEnv{tabbing}{\Picture*{}}{\EndPicture}{}{}
+\else 
+    |<TABLE tabbing Config tty|>   
+    \:CheckOption{pic-tabbing'} \if:Option
+       |<PICT tabbing Config 0.0|>  
+       |<PICT dot tabbing|>
+    \fi 
+\fi
+>>>
+
+
+
+\<TABLE tabbing Config tty\><<<
+\Configure{tabbing}[1.5]{}
+   {}
+   {}
+   {}
+>>>   
+
+\<PICT tabbing Config 0.0\><<<
+\expandafter\def\csname
+    c:pic-tabbing:\endcsname#1{\def\p:tabbing{#1}}
+>>>
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%% to be placed %%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{to be placed}
+
+
+
+
+\<0 th4,latex\><<<
+\Configure{()}{$}{$}
+\Configure{[]}{\:xhtml{\IgnorePar\EndP}$$}{$$}
+>>>
+
+
+
+
+
+\<config latex.ltx 0.0\><<<
+\ConfigureList{trivlist}{}{}{}{}
+\ConfigureList{list}{}{}{}{}
+\ConfigureList{itemize}{}{}{}{}{}{}
+\ConfigureList{enumerate}{}{}{}{}{}{}
+>>>
+
+
+
+
+
+\<config latex.ltx 0.0\><<<
+\Configure{tableofcontents}{}{}{}{}{}
+>>>
+
+\<config latex.ltx 0.0\><<<
+\Configure{TocAt}{}{}
+\Configure{TocAt*}{}{}
+>>>
+
+
+
+
+
+\<config latex.ltx 0.0\><<<
+\ConfigureEnv{minipage}{}{}{}{}
+>>>
+
+
+\<config latex.ltx 0.0\><<<
+\Configure{float}{}{}{}
+>>>
+
+
+\<config latex.ltx 0.0\><<<
+\Configure{newline}{}
+>>>
+
+
+
+
+\<0 plain,latex\><<<
+\Configure{ }{ }
+>>>
+
+
+\<0 plain,latex\><<<
+\def\:zbsp#1{cellpadding="0" border="0" cellspacing="0"\Hnewline
+   class="#1"}
+>>>
+
+
+\<0 plain,latex\><<<
+\:CheckOption{new-accents}     \if:Option \else
+  \Configure{accents}{(#1 #2)}{(#1 #3)}
+  \immediate\write-1{\string\Configure{accents}{found-case}{missing-case}}
+\fi
+\Configure{centerline}{}{}
+\Configure{leftline}{}{}
+\Configure{rightline}{}{}
+>>>
+
+\<0 plain,latexNO\><<<
+\Configure{choose}{}{}
+>>>
+
+
+
+
+
+
+
+\section{tex4ht}
+
+
+
+\<title for hypertext page\><<<
+\Configure{TITLE+}{\HCode{\jobname.\:html}}
+>>>
+
+\<0,32,4 latex\><<<
+\ifTag{TITLE+}
+   {\Configure{TITLE+}{\HCode{\LikeRef{TITLE+}}}}{}
+>>>
+
+
+
+
+
+
+\<configure html0 tex4ht\><<<
+|<0,32,4 tex4ht|>
+\Configure{HtmlPar}{}{}{}{}
+\ifx \a:HTML\:UnDef  \Configure{HTML}{}{} \fi
+\ifx \a:HEAD\:UnDef  \Configure{HEAD}{}{} \fi
+\ifx \a:BODY\:UnDef  \Configure{BODY}{}{} \fi
+\ifx \a:TITLE\:UnDef \Configure{TITLE}{}{} \fi
+\Configure{TITLE+}{}
+|<no css|>
+>>>
+
+
+\<configure html0 tex4ht\><<<
+\Configure{crosslinks+}{\IgnorePar}{\par\ShowPar}{\IgnorePar}{}
+\Configure{IMG}{}{ }{}{}{}
+\Configure{Picture*}{}{}
+\Configure{SUB}{}{}
+\Configure{SUP}{}{}
+\Configure{MkHalign}{}{}{}{}{}{}
+\Configure{halignTD} {}{} {}{}{}{}{}{}{}{}
+\Configure{halign}{}{}{}{}{}{}{}
+\Configure{pic-halign}{}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+\<0,32,4 tex4ht\><<<
+|<0,32,4 preambles|>
+\ifx \a:FontCss:\:UnDef
+   \Configure{FontCss}{Font\string_Css##1}
+                   {Font\string_Css\string_Plus\space##1}
+\fi
+\expandafter\ifx \csname aa:Css\endcsname\relax
+   \Configure{Css}{Css: ##1}
+\fi
+\:CheckOption{edit} \if:Option 
+   \Configure{edit}{\HCode{<strong>&lt;}}{\HCode{&gt;</strong>}}
+                {<strong>&lt;}{&gt;</strong>}
+\fi
+\:CheckOption{hooks++} \if:Option
+\else \:CheckOption{hooks+}  \if:Option
+\else \:CheckOption{hooks}  \if:Option
+\fi\fi\fi
+\if:Option
+   \Configure{hooks}
+      {\HCode{<strong class="hooks">&lt;}}{\HCode{&gt;</strong>}}{}{}  
+\fi
+
+
+\Configure{ExitHPage}{exit}{exit }{}
+\Configure{TocLink}{\Link{#2}{#3}#4\EndLink}
+\Configure{MiniHalign}{\hlg:a}{\hlg:b}\hlg:c\hlg:d{\hlg:e}\hlg:f
+\:CheckOption{no-halign} \if:Option \else
+  \Configure{noalign-}{}{}
+\fi
+\Configure{PictureAlt*+}
+   {\let\sv:HtmlPar|=\HtmlPar   \let\HtmlPar|=\empty
+     |<postscript for /Picture|>%
+     |<tex halign and cr/crcr|>%
+     \NoFonts\csname PauseMathClass\endcsname \SUBOff \SUPOff
+     \let\HCode|=\:gobble     |%\offinterlineskip|%
+     \let\EndPicture|=\empty}
+   {\let\HCode|=\:HCode
+     \let\EndPicture|=\:UnDef \let\HtmlPar|=\sv:HtmlPar \SUBOn \SUPOn
+     \csname EndPauseMathClass\endcsname \EndNoFonts
+     |<tex4ht halign and cr/crcr|>%
+     |<delay postscript|>}%
+>>>
+
+\<postscript for /Picture\><<<
+\def\PsCode##1{{\ht:special{\PsCodeSpecial##1}}}%
+>>>
+
+\<tex halign and cr/crcr\><<<
+\iffalse{\fi   
+\let\sv:halign|=\halign
+\let\sv:cr|=\cr
+\let\sv:crcr|=\crcr
+\iffalse}\fi 
+\RecallTeXcr \let\halign |=\TeXhalign
+>>>
+
+
+\<tex4ht halign and cr/crcr\><<<
+\iffalse{\fi   
+\let\halign|=\sv:halign
+\let\cr|=\sv:cr
+\let\crcr|=\sv:crcr
+\iffalse}\fi 
+>>>
+
+
+\<delay postscript\><<<
+\let\PsCode|=\relax
+>>>
+
+
+
+
+
+\<0,32,4 tex4ht\><<<
+\Configure{CutAtTITLE+}{}
+\Configure{HPageTITLE+}{}
+\Configure{AtBeginDocument} 
+  {\edef\recallcatcodes{%
+      \catcode`\noexpand\_|=\the\catcode`\_
+      \catcode`\noexpand\^|=\the\catcode`\^ }%
+   \catcode`\_=8\catcode`\^=7}
+  {\recallcatcodes}
+>>>
+
+\<0,32,4 tex4ht\><<<
+\Configure{crosslinks}{[}{]
+   }{next}{prev}{prev-|<tail|>}{front}{tail}{up}
+\:CheckOption{next}     \if:Option   
+   \Configure{next+}{\ShowPar\par\noindent [}{]}
+\fi
+\Configure{TocAt*}{}{}
+\Configure{TocAt}{}{}
+
+\Configure{halignTB}{\HCode{<table }}{\HCode{>}}
+\def\t:HA{\HCode{</table>}}
+\def\R:HA{\HCode{<tr \Hnewline valign="baseline">}}
+\def\r:HA{\HCode{</tr>}}
+\def\D:HA{\HCode{<td \ifnum \HMultispan>1 colspan="\HMultispan"\fi}%
+   \halignTD \HCode{\Hnewline>}}
+\def\d:HA{\HCode{</td>}}
+\Configure{HVerbatim+}{\z@}{\:nbsp}
+\Configure{CssFile}{\jobname.css}
+  {/* \aa:CssFile\space from \jobname.tex (TeX4ht) */}
+\Configure{Picture+}{}{}
+\Configure{Picture*}{}{}
+\Configure{Needs}{l. 
+   \the\inputlineno\space--- needs --- #1 ---}
+\Configure{Needs-}{l.
+   \the\inputlineno\space--- needs --- #1 ---}
+|<yes css|>
+>>>
+
+\<0,32,4 tex4ht\><<<
+\Configure{moveright}{\leavevmode\endgraf }
+\Configure{HChar}{x}
+>>>
+
+
+
+
+\<yes css\><<<
+   \def\:SPAN#1#2{\HCode{<span class="#1">}#2\HCode{</span>}} 
+   \def\SPAN:#1{\HCode{<span class="#1">}}
+   \def\EndSPAN:{\HCode{</span>}} 
+   \def\DIV:#1{\HCode{<div class="#1">}}
+   \def\EndDIV:{\HCode{</div>}} 
+>>>
+
+\<no css\><<<
+   \def\:SPAN#1#2{#2}
+   \let\SPAN:|=\:gobble  \let\EndSPAN:|=\empty
+   \let\DIV:|=\:gobble  \let\EndDIV:|=\empty
+>>>
+
+
+
+
+
+\section{plain}
+
+
+\<configure html0 plain\><<<
+|<0,32,4 plain|>
+|<0,32,4 plain,latex|>
+|<0 plain|> 
+|<0 plain,latex|> 
+|<0 plain+|>             |%keep last in html mode|%
+>>>
+
+\<0 plain\><<<
+\Configure{centerline}{}{}
+\Configure{leftline}{}{}
+\Configure{rightline}{}{}
+\Configure{insert}{}{}
+>>>
+
+\<0 plain\><<<
+\:CheckOption{pic-eqalign}  \if:Option      
+   \:CheckOption{no-halign} \if:Option \else      
+   \fi
+\else  |<TABLE eqalign shared Configure tty|>
+\fi
+>>>
+
+
+\<TABLE eqalign shared Configure tty\><<<
+\Configure{eqalign}{}{}{}{}{}{}
+>>>
+
+\<TABLE eqalign shared Configure tty\><<<
+\Configure{eqalignno}{}{}{}{}{}{}
+>>>
+
+\<TABLE eqalign shared Configure tty\><<<
+\Configure{leqalignno}{}{}{}{}{}{}
+>>>
+
+
+
+
+
+\<0 plain\><<<
+\Configure{narrower}{}{}
+>>>
+
+
+\<0 plain\><<<
+\Configure{proclaim}{}{}{}
+>>>
+
+
+\<0 plain\><<<
+\Configure{line}{}
+>>>
+
+
+
+
+
+
+
+
+
+\<0 plain+\><<<
+|<plain+ 0.0|> 
+\:CheckOption{plain-} \if:Option \else
+   |<itemitem 0.0|> 
+\fi
+>>>
+
+\<plain+ 0.0\><<<
+\Configure{item}{}{}{\par\leavevmode}{}
+>>>
+
+
+
+
+
+\section{article, book, report}
+
+\<configure html0 article\><<<
+     |<config report / article 0.0|>
+     |<config book-report-article 0.0|> 
+>>>
+
+
+
+
+
+
+\<configure html0 report\><<<
+     |<config book-report 0.0|> 
+     |<config report / article 0.0|>
+     |<config book-report-article 0.0|> 
+>>>
+
+
+
+
+
+
+\<configure html0 book\><<<
+   |<config book-report-article 0.0|> 
+   |<config book-report 0.0|> 
+>>>
+
+
+
+\<config report / article 0.0\><<<
+\ConfigureEnv{abstract}{}{}{}{}
+>>>
+
+
+\<config book-report-article 0.0\><<<
+|<0,32,4 article,report,book|>
+|<article,report,book tocs|>
+   \ConfigureToc{lof}{\empty}{ }{}{}
+   \ConfigureToc{lot}{\empty}{ }{}{}
+\ConfigureEnv{quote}{}{}{}{}
+\ConfigureList{description}{}{}{}{}{}{}
+\Configure{maketitle}{}{}{}{}
+\Configure{thanks author date and} {}{} {}{} {}{} {}{}
+\Configure{theindex}{}{}{}{}{}{}{}{}{}
+\Configure{paragraph}{}{}{}{}
+\Configure{likeparagraph}{}{}{}{}
+\Configure{subparagraph}{}{}{\thesubparagraph\space}{}
+\Configure{likesubparagraph}{}{}{}{}
+
+
+   \ifx \part\:UnDef  \else  
+\Configure{part}{}{} {\partname \ \thepart\space} {}
+\Configure{likepart}{}{}{\empty}{}
+   \fi
+>>>
+
+
+\<report,book tocsNO\><<<
+\ConfigureToc{appendix} {\empty}{\ }{}{\ }
+\ConfigureToc{chapter} {\empty}{\ }{}{\ }
+\ConfigureToc{likechapter} {\empty}{\ }{}{\ }
+>>>
+
+
+\<article,report,book tocsNO\><<<
+\ConfigureToc{likeparagraph} {}{\empty}{}{\ }
+\ConfigureToc{likepart} {}{\empty}{}{\ }
+\ConfigureToc{likesection} {}{\empty}{}{\ }
+\ConfigureToc{likesubparagraph} {}{\empty}{}{\ }
+\ConfigureToc{likesubsection} {}{\empty}{}{\ }
+\ConfigureToc{likesubsubsection} {}{\empty}{}{\ }
+\ConfigureToc{paragraph} {\empty}{\ }{}{\ }
+\ConfigureToc{part} {\empty}{\ }{}{\ }
+\ConfigureToc{section} {\empty}{\ }{}{\ }
+\ConfigureToc{subparagraph} {\empty}{\ }{}{\ }
+\ConfigureToc{subsection} {\empty}{\ }{}{\ }
+\ConfigureToc{subsubsection} {\empty}{\ }{}{\ }
+>>>
+
+
+
+\<config book-report 0.0\><<<
+|<report,book tocs|>
+\Configure{chapter}{}{} {\chaptername \ \thechapter} {}
+\Configure{chapterTITLE+}{}
+\Configure{likechapter}{}{}{\empty}{}
+\Configure{appendix}{}{}{\appendixname \ \thechapter}{}
+\Configure{appendixTITLE+}{}
+>>>
+
+
+
+\section{emulateapj}
+
+
+\<configure html0 emulateapj\><<<
+|<config emulateapj.clo 0.0|> 
+>>>
+   
+
+
+\<config emulateapj.clo 0.0\><<<
+\Configure{slugcomment}{}{}
+>>>
+
+\<config emulateapj.clo 0.0\><<<
+\Configure{subtitle}{}{}
+>>>
+
+\<config emulateapj.clo 0.0\><<<
+\Configure{submitted}{}{}
+>>>
+
+\<config emulateapj.clo 0.0\><<<
+\Configure{title}{}{}
+>>>
+
+\<config emulateapj.clo 0.0\><<<
+\Configure{author}{}{}
+>>>
+
+\<config emulateapj.clo 0.0\><<<
+\Configure{affil}{}{}
+>>>
+
+
+\<config emulateapj.clo 0.0\><<<
+\Configure{keywords}{}{}
+>>>
+
+\<config emulateapj.clo 0.0\><<<
+\Configure{subjectheadings}{}{}
+>>>
+
+
+
+
+
+\section{aa}
+
+
+\<configure html0 aa\><<<
+|<configure aa 0.0|>
+|<makeketitle config 0.0|>
+|<latex shared div config|>
+>>>
+
+\<configure aa 0.0\><<<
+\Configure{subtitle institute}{}{}{}{}{}{}{}
+\Configure{maketitle}{}{}{}{}
+\Configure{thanks author date and}{}{}{}{}{}{}{}{}
+>>>
+
+
+
+
+
+
+
+\section{vanilla}
+
+
+\<configure html0 vanilla\><<<
+|<config vanilla.sty 0.0|> 
+|<config amsppt + vanilla 0.0|> 
+>>>
+
+
+\<config vanilla.sty 0.0\><<<
+\Configure{heading}{}{}{}{}
+\ConfigureToc{heading}{}{}{}{}
+\Configure{subheading}{}{}{}{}
+\ConfigureToc{subheading}{}{}{}{}
+\Configure{demo}{}{}{}{}
+>>>
+
+
+\<config vanilla.sty 0.0\><<<
+\Configure{aligned}{}{}{}{}{}{}
+>>>
+
+\<config vanilla.sty 0.0\><<<
+\Configure{align}{}{}{}{}{}{}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+\section{amsart, amsproc, amsbook}
+
+
+\<configure html0 amsart\><<<
+|<ams art,proc,book 0|>
+>>>
+
+
+
+\<configure html0 amsproc\><<<
+|<ams art,proc,book 0|>
+>>>
+
+
+
+\<configure html0 amsbook\><<<
+|<ams art,proc,book 0|>
+>>>
+
+
+
+
+\section{amstex}
+
+
+\<configure picmath0 amstex\><<<
+\:CheckOption{no-matrix} \if:Option \else
+\:CheckOption{pic-matrix}   \if:Option
+      |<pic amstex.tex matrix 0.0|> 
+\else
+      |<tabular amstex.tex matrix 0.0|> 
+\fi\fi
+\:CheckOption{no-align} \if:Option \else
+\:CheckOption{pic-align}   \if:Option
+      |<pic amstex.tex align 0.0|> 
+\else
+      |<tabular amstex.tex align 0.0|> 
+\fi\fi
+>>>
+
+
+
+
+
+
+
+
+
+
+Do we need the following? Don't those of plain.sty are good here?
+
+\<pic amstex.tex matrix 0.0\><<<
+\Configure{matrix}{}{}
+>>>
+
+
+\<pic amstex.tex matrix 0.0\><<<
+\Configure{pmatrix}{}{}
+>>>
+
+
+\<tabular amstex.tex matrix 0.0\><<<
+\Configure{matrix}{}{}{}{}{}{}
+>>>
+
+\<tabular amstex.tex matrix 0.0\><<<
+\Configure{pmatrix}{}{}
+>>>
+
+
+
+
+
+
+
+
+\section{amsppt}
+
+
+\<configure html0 amsppt\><<<
+   |<config amsppt + vanilla 0.0|> 
+>>>
+
+
+
+
+\section{moreverb.sty}
+
+
+\<configure html0 moreverb\><<<
+\ConfigureEnv{verbatimtab}{}{}{}{\null}
+\ConfigureEnv{verbatimtab*}{}{}{}{\null}
+\ConfigureEnv{boxedverbatim}{}{}{}{\null}
+\ConfigureEnv{boxedverbatim*}{}{}{}{\null}
+>>>
+
+
+\section{url}
+
+
+\<configure html0 url\><<<
+\Configure{url}{#1}
+>>>
+
+
+\section{array.sty}
+
+
+\<configure html0 array\><<<
+   \Configure{VBorder}{}{}{}{}
+   \Configure{array}{}{}{}{}{}{}
+   \Configure{tabular}{}{}{}{}{}{}
+>>>
+
+
+\section{slidesec}
+
+
+\<configure html0 slidesec\><<<
+   \ConfigureToc{slidesection}{\empty}{ }{}{}
+>>>
+
+
+
+\section{epsfig}
+
+\<configure html0 epsfig\><<<
+|<0,32,4 epsfig|>
+>>>
+
+\section{psfig}
+
+\<configure html0 psfig\><<<
+|<0,32,4 psfig|>
+>>>
+
+\section{graphics}
+
+\<configure html0 graphics\><<<
+|<0,32,4 graphics|>
+>>>
+
+
+\section{th4}
+
+\<configure html0 th4\><<<
+\Configure{Verbatim}{}{}{}{}
+|<0 th4,latex|> 
+|<0 th4|>
+>>>
+
+
+
+
+
+
+
+
+\section{Shared in html0}
+
+
+
+\<ams art,proc,book 0\><<<
+|<makeketitle config 0.0|>
+>>>
+
+
+\<config book-report-article 0.0\><<<
+|<makeketitle config 0.0|>
+>>>
+
+
+\<makeketitle config 0.0\><<<
+\Configure{caption}{}{}{}{}
+>>>
+
+
+\<itemitem 0.0\><<<
+\Configure{itemitem}{}{}{\par\leavevmode}{}
+>>>
+
+
+\<config amsppt + vanilla 0.0\><<<
+\Configure{title}{}{}
+>>>
+
+\<config amsppt + vanilla 0.0\><<<
+\Configure{author}{}{}
+>>>
+
+\section{amsart}
+
+
+
+
+
+\<ams art,proc,book 32\><<<
+   |<config sections 3.2|>
+|<book-report-article caption 3.2|>
+     |<latex report,... config 3.2|>
+|<32,4 ams art,proc,book|>
+>>>
+
+
+
+
+
+
+
+
+\section{latex.ltx}
+
+
+
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+                                              % ltplain.dtx
+                                              %%%%%%%%%%%%%%%%%%%%%%%
+
+\subsection{obeylines}
+
+
+
+
+
+
+\<obeylines confg\><<<
+\Configure{obeylines}
+   {} {} {\hbox{\HCode{<br>}}}
+>>>
+
+Typically, \verb'\obeylines' appears in a separate line before the
+content. The following option is introduced to avoid an extra leading
+empty line.
+
+\<delayed obeylines confg\><<<
+\Configure{obeylines}
+   {\def\Line:Break{\def\Line:Break{\hbox{\HCode{<br>}}}}} {}
+   {\Line:Break}
+>>>
+
+
+
+
+
+\subsection{Tabbing, Tabular and Array Environments}
+
+
+
+
+
+
+\<PICT dot tabbing\><<<
+\:CheckOption{pic-tabbing'} \if:Option
+  \edef\:temp{\LikeRef{|<tabbing tag|>.}}%
+  \def\:tempa{.}\ifx \:temp\:tempa 
+      \ConfigureEnv{tabbing}{\Picture*{}}{\EndPicture}{}{}
+  \fi
+\fi 
+>>>
+
+
+
+
+
+   
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%% to be placed %%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{to be placed}
+
+
+\<32 picmath th4,latex\><<<
+\Configure{[]} 
+  {\PicDisplay$$\everymath{}\everydisplay{}}
+  {$$\EndPicDisplay}
+\Configure{()}{\PicMath$}{$\EndPicMath}
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{plain}
+
+
+
+
+
+
+A `\verb'\begin{multline}...\end{multline}' is not a standard environment
+in the sense that the environment as a whole is read in one piece and
+then processed, instead of reading it piecewise and process it as it
+goes.  That is, we have a behavior similar to that in verbatim
+environments. The behavior is due to multline being implemented in
+terms of \verb'\gather@#1{..}'.  Hence, for the picture environment, we
+need to change early the catcodes of `\verb'_' and `\verb'^'.
+
+
+
+
+\<extract amsmath labels\><<<
+\def\ExtractHLabel{%
+   \def\tagform@##1{{\xdef\:HLabel{\noexpand\tagform@{##1}}}}}
+\def\PutHLabel{\:HLabel}
+>>>
+
+
+
+
+
+
+
+
+\section{tex4ht}
+
+
+
+
+
+
+
+\<src note\><<<
+<!--\FileName\space from \jobname.tex
+(TeX4ht)-->%
+>>>
+
+
+
+\section{tex4ht}
+
+
+
+
+\<try inline par\><<<
+\ShowPar\par{\HCondtrue\noindent}%
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\verb'\endgraf' is safer than \verb'\par', because the latter may be redefined.
+For instance, see p 262 in texbook.
+
+
+
+
+\section{latex}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\<0 plain,latex\><<<
+\Configure{l}                     {}
+\Configure{L}                     {}
+>>>
+
+
+
+
+
+\<0 latex\><<<
+\Configure{mathellipsis}          {}
+>>>
+
+
+\<0 plain\><<<
+\Configure{ldots}                 {}
+>>>
+
+\<configure html4-math amsmath\><<<
+\Configure{@cdots}                {}
+\Configure{iint}                  {}
+\Configure{iiint}                 {}
+\Configure{iiiint}                {}
+\Configure{idotsint}              {}
+\Configure{doteq}                 {}
+>>>
+
+
+\section{amsmath}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+  
+
+     
+
+\<temp hcode accents\><<<
+\HCode{&\expandafter \ifx\csname U#2#1\endcsname\relax
+                 #2#1\else \#x\csname U#2#1\endcsname\fi;}%
+>>>
+
+
+
+
+
+
+
+\<xmlns\><<<
+xmlns="http://www.w3.org/1999/xhtml"
+>>>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{TeX Engine}
+
+
+
+
+
+
+
+The \verb'\trap:base' is to catch empty bases of exponents like, e.g.,
+in \verb'$a^{^b}$'.
+
+
+
+
+
+
+
+
+
+
+
+\<?\><<<
+\def\MathRow#1{%
+   \Configure{\expandafter\:gobble\string#1*}{*}%
+      {<|.mrow\Hnewline 
+         class="\expandafter\:gobble\string#1">}{</|.mrow>}%
+      {\Configure{\expandafter\:gobble\string#1}{}{}{}{}}#1}%
+>>>
+
+
+\<recall dvimath par\><<<
+\sv:ignore
+>>>
+
+
+
+\<sv dvimath par\><<<
+\edef\sv:ignore{\if:nopar  
+    \noexpand\IgnorePar\else \noexpand\ShowPar\fi}%
+>>>
+
+
+
+
+The \verb'\MathRow' requests a \verb'<|.mrow\Hnewline>...</|.mrow>', instead of the contributions
+of \verb'\mathop', \verb'\mathrel',...., for the next parameter.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{latex.ltx}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Definitions like \verb'\def\mathbf#1{\a:mathbf#1\b:mathbf}'
+can't be done on a global level, because \verb'\mathbf' is just
+a name of a font. So, for instance, \verb'\bf' expands to \verb'\mathbf',
+and so  \verb'$\bf R$' indirectly brings up the latter command.
+
+
+
+
+
+\subsection{plain.sty}
+
+
+
+
+
+
+
+\subsection{Palin + LaTeX}
+
+The default \verb'\left' and \verb'\right' in their default definition
+with tex produce multi-part delimiters, from cmex, on large
+subformulas. Hence, the `'.' below is needed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+%    \def\:tempa{\{}\ifx \:tempa\:DEL  \let\:DEL\lbrc: \else
+%    \def\:tempa{\}}\ifx \:tempa\:DEL  \let\:DEL\rbrc: \else
+%    \def\:tempa{<}\ifx \:tempa\:DEL  \def\:DEL{\string&lt;}\else
+%    \def\:tempa{>}\ifx \:tempa\:DEL  \def\:DEL{\string&gt;}%
+%    \fi\fi\fi\fi }
+% \edef\lbrc:{\string{}     \edef\rbrc:{\string}}
+
+
+
+
+
+% \HCode{\string&#2#1;}%
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ The \verb'\HCode{}' in \verb'\sideset' is for catching superscripts and subscripts
+
+
+
+
+
+
+\section{Eqnarray}
+
+
+
+
+
+Had `BASELINE' before `MIDDLE', but changed to conform with math
+in page 252-- in intro to theory book.
+
+
+
+
+
+
+
+
+
+\section{Big, BIG, ....}
+
+
+
+The 
+\verb'\special{t4ht@[}...\special{t4ht@]}' gobble the enclosed stuff.
+The external pair is provided as grouping mechanism for
+sub/super-scripts cases like \verb'\bigl(...\bigr)^x' within dvimath
+mode. The \verb'{\HCode{}}' is neded for creating content delimiters
+\verb'.' delimiters like in \verb'$\bigl. a_b \bigr)$'; without that mathml 
+gets something wrong there. 
+
+
+
+\verb+\bigl{.}+ et al produce empty para,etr , hence the \verb+\:EMPTY+ is a ompensation for such cases.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\section{Accents through `accents' Configurations}
+
+
+
+
+
+Why originally the accents are defined within a group? (knuth answer
+this in the texbook.)
+
+
+
+
+\section{Underline and Overline}
+
+
+
+
+
+
+
+
+
+\section{Space Characters}
+
+
+
+
+
+\subsection{Cases}
+
+
+
+
+\subsection{matrix}
+
+
+
+\subsection{pmatrix}
+
+
+The grouping below is handle the case that the matrix is a base of an exponent.
+
+
+
+\section{TeX}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\chapter{Shared}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\<par del\><<<
+!*?: >>>
+
+
+\<tag of Tag\><<<
+ cw:>>>
+
+\<tail\><<<
+tail>>>
+
+\<addr for Tag and Ref of Sec\><<<
+\xdef\:cursec{|<section html addr|>}%
+>>>
+
+
+
+
+
+
+
+\<redefine Configure\><<<
+\let\:tempd|=\Configure
+\def\Configure#1#2{%
+   \:CheckOption{#1}\if:Option \def\:tempc{#2}\fi}
+>>>
+
+\<recall Configure\><<<
+\let\Configure|=\:tempd
+>>>
+
+
+\<user's configuration files\><<<
+\openin15=tex4ht.usr \ifeof15 \else \closein15 
+   \input tex4ht.usr
+\fi
+>>>
+
+
+
+
+
+
+
+\<save catcodes\><<<
+\expandafter\edef\csname :RestoreCatcodes\endcsname{%
+   \expandafter\ifx \csname :RestoreCatcodes\endcsname\relax\else
+      \csname :RestoreCatcodes\endcsname \fi
+   \catcode`\noexpand :|=\the\catcode`:%
+   \ifnum \the\catcode`\#=6 \else
+      \catcode`\noexpand \#|=\the\catcode`\#\fi
+   \let\expandafter\noexpand\csname :RestoreCatcodes\endcsname|=
+                                   \noexpand\UnDefcS}
+\catcode`\:|=11  \catcode`\#|=6 
+>>>
+
+\endinput
