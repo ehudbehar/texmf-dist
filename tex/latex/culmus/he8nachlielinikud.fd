@@ -1,0 +1,12 @@
+\ProvidesFile{he8nachlielinikud.fd}
+       [Hebrew font with Nikud (Culmus)]
+\DeclareFontShape{HE8}{nachlielinikud}{m}{n}   {<-> nachlieliClmNkd}{}
+\DeclareFontShape{HE8}{nachlielinikud}{m}{it}  {<-> nachlieliClmNkdi}{}
+\DeclareFontShape{HE8}{nachlielinikud}{m}{sl}  {<-> nachlieliClmNkdi}{}
+\DeclareFontShape{HE8}{nachlielinikud}{b}{n}   {<-> nachlieliClmNkdb}{}
+\DeclareFontShape{HE8}{nachlielinikud}{b}{it}  {<-> nachlieliClmNkdbi}{}
+\DeclareFontShape{HE8}{nachlielinikud}{b}{sl}  {<-> nachlieliClmNkdbi}{}
+\DeclareFontShape{HE8}{nachlielinikud}{bx}{n}  {<-> nachlieliClmNkdb}{}
+\DeclareFontShape{HE8}{nachlielinikud}{bx}{it} {<-> nachlieliClmNkdbi}{}
+\DeclareFontShape{HE8}{nachlielinikud}{bx}{sl} {<-> nachlieliClmNkdbi}{}
+\endinput

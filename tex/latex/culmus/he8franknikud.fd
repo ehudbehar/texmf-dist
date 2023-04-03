@@ -1,0 +1,12 @@
+\ProvidesFile{he8franknikud.fd}
+       [Hebrew font with Nikud (Culmus)]
+\DeclareFontShape{HE8}{franknikud}{m}{n}   {<-> frankClmNkd}{}
+\DeclareFontShape{HE8}{franknikud}{m}{it}  {<-> frankClmNkdi}{}
+\DeclareFontShape{HE8}{franknikud}{m}{sl}  {<-> frankClmNkdi}{}
+\DeclareFontShape{HE8}{franknikud}{b}{n}   {<-> frankClmNkdb}{}
+\DeclareFontShape{HE8}{franknikud}{b}{it}  {<-> frankClmNkdbi}{}
+\DeclareFontShape{HE8}{franknikud}{b}{sl}  {<-> frankClmNkdbi}{}
+\DeclareFontShape{HE8}{franknikud}{bx}{n}  {<-> frankClmNkdb}{}
+\DeclareFontShape{HE8}{franknikud}{bx}{it} {<-> frankClmNkdbi}{}
+\DeclareFontShape{HE8}{franknikud}{bx}{sl} {<-> frankClmNkdbi}{}
+\endinput

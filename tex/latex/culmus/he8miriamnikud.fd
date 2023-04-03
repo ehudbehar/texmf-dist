@@ -1,0 +1,12 @@
+\ProvidesFile{he8miriamnikud.fd}
+       [Hebrew font with Nikud (Culmus)]
+\DeclareFontShape{HE8}{miriamnikud}{m}{n}   {<-> miriamClmNkd}{}
+\DeclareFontShape{HE8}{miriamnikud}{m}{it}  {<-> miriamClmNkdi}{}
+\DeclareFontShape{HE8}{miriamnikud}{m}{sl}  {<-> miriamClmNkdi}{}
+\DeclareFontShape{HE8}{miriamnikud}{b}{n}   {<-> miriamClmNkdb}{}
+\DeclareFontShape{HE8}{miriamnikud}{b}{it}  {<-> miriamClmNkdbi}{}
+\DeclareFontShape{HE8}{miriamnikud}{b}{sl}  {<-> miriamClmNkdbi}{}
+\DeclareFontShape{HE8}{miriamnikud}{bx}{n}  {<-> miriamClmNkdb}{}
+\DeclareFontShape{HE8}{miriamnikud}{bx}{it} {<-> miriamClmNkdbi}{}
+\DeclareFontShape{HE8}{miriamnikud}{bx}{sl} {<-> miriamClmNkdbi}{}
+\endinput
